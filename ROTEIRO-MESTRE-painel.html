@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Voo — Pesquisa, Concorrentes e Ofertas com IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --card: #0F0F0F;
+    --raised: #262626;
+    --border: #262626;
+    --foreground: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #C9B298;
+    --primary-light: #D9CBB9;
+    --primary-deep: #8D7556;
+    --primary-foreground: #1A1A1A;
+    --status-success: #23E169;
+    --status-warning: #FF9D0A;
+    --status-error: #FF4438;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, 'Source Sans Pro', system-ui, sans-serif;
+    --font-display: Rajdhani, Inter, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* Topo: kicker + titulo + timer */
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+  }
+  .top-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; flex-direction: column; gap: 2px; }
+  .kicker {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted-foreground);
+  }
+  .brand h1 {
+    margin: 0; font-family: var(--font-display);
+    font-size: 1.5rem; font-weight: 600; line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .timer-box {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .timer {
+    font-family: var(--font-display);
+    font-size: 2rem; font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+    min-width: 110px; text-align: right;
+  }
+  .timer.paused { color: var(--muted-foreground); }
+  .btn {
+    background: transparent; color: var(--foreground);
+    border: 1px solid var(--raised);
+    border-radius: 0.375rem;
+    padding: 8px 16px; height: 40px;
+    font-family: var(--font-ui); font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .btn:hover { border-color: var(--primary); color: var(--primary); }
+  .btn.primary {
+    background: var(--primary); color: var(--primary-foreground);
+    border-color: var(--primary);
+  }
+  .btn.primary:hover { background: var(--primary-deep); border-color: var(--primary-deep); color: var(--primary-foreground); }
+  .btn-small { padding: 4px 10px; height: 28px; font-size: 0.75rem; }
+
+  /* Layout principal: 2 colunas */
+  main {
+    max-width: 1400px; margin: 0 auto;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1024px) {
+    main { grid-template-columns: 1fr; }
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 24px;
+  }
+  .card h2 {
+    margin: 0 0 16px; font-family: var(--font-ui);
+    font-size: 1rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--muted-foreground);
+  }
+  .card-section + .card-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--raised); }
+
+  /* Cronograma */
+  .schedule-list { display: flex; flex-direction: column; gap: 8px; }
+  .row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--raised);
+    border-radius: 0.5rem;
+    background: var(--card);
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .row:hover { border-color: var(--primary-deep); }
+  .row.active {
+    border-color: var(--primary);
+    background: rgba(201, 178, 152, 0.06);
+    box-shadow: inset 2px 0 0 var(--primary);
+  }
+  .row.done {
+    opacity: 0.55;
+  }
+  .row.done .title { text-decoration: line-through; text-decoration-color: var(--muted-foreground); }
+  .row .time {
+    font-family: var(--font-mono); font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+  .row.active .time { color: var(--primary); font-weight: 600; }
+  .row .title {
+    font-family: var(--font-ui); font-weight: 600; font-size: 0.95rem;
+    color: var(--foreground);
+  }
+  .row .meta {
+    font-size: 0.75rem; color: var(--muted-foreground);
+    margin-top: 2px;
+  }
+  .row .energy-tag {
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 8px; border-radius: 9999px;
+    border: 1px solid var(--raised);
+  }
+  .row .energy-tag.alta { color: var(--primary); border-color: var(--primary-deep); }
+  .row .energy-tag.media { color: var(--muted-foreground); }
+  .row .energy-tag.pausa { color: var(--status-warning); border-color: var(--status-warning); opacity: 0.7; }
+
+  /* Bloco ativo: detalhes */
+  .block-detail {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--primary);
+    border-radius: 1rem;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .block-detail .label {
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--primary); margin-bottom: 8px;
+  }
+  .block-detail h2 {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: 1.75rem; font-weight: 600; line-height: 1.15;
+    text-transform: none; letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+  .block-detail .tese {
+    font-family: var(--font-body); font-size: 1.1rem;
+    color: var(--foreground); font-style: italic;
+    margin: 0 0 20px; padding: 16px 20px;
+    background: rgba(0,0,0,0.3); border-left: 1px solid var(--primary-deep);
+    border-radius: 0.375rem;
+  }
+  .microstructure {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    margin: 20px 0;
+  }
+  .micro-step {
+    background: var(--background); border: 1px solid var(--raised);
+    border-radius: 0.5rem; padding: 12px;
+  }
+  .micro-step .time {
+    font-family: var(--font-mono); font-size: 0.75rem;
+    color: var(--primary); font-weight: 600;
+  }
+  .micro-step .name {
+    font-size: 0.875rem; font-weight: 600; margin-top: 4px;
+    color: var(--foreground);
+  }
+  .micro-step .desc {
+    font-size: 0.75rem; color: var(--muted-foreground); margin-top: 4px;
+  }
+  @media (max-width: 640px) {
+    .microstructure { grid-template-columns: 1fr 1fr; }
+  }
+
+  .transition-quote {
+    background: var(--background); border: 1px solid var(--raised);
+    border-radius: 0.5rem; padding: 16px 20px;
+    font-family: var(--font-body); font-style: italic;
+    color: var(--foreground); margin-top: 16px;
+  }
+  .transition-quote .from {
+    display: block; font-family: var(--font-ui); font-style: normal;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 6px;
+  }
+
+  /* Checklist */
+  .checklist { display: flex; flex-direction: column; gap: 8px; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 12px; border-radius: 0.375rem;
+    border: 1px solid transparent;
+    cursor: pointer; transition: all 0.15s ease;
+    font-size: 0.875rem;
+  }
+  .check-item:hover { background: rgba(255,255,255,0.02); }
+  .check-item input[type="checkbox"] {
+    margin: 0; flex-shrink: 0; margin-top: 2px;
+    width: 16px; height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+  .check-item.checked { opacity: 0.5; }
+  .check-item.checked label { text-decoration: line-through; }
+  .check-item label { cursor: pointer; flex: 1; line-height: 1.4; }
+
+  /* Para o quadro */
+  .quadro {
+    background: rgba(201, 178, 152, 0.04);
+    border: 1px solid var(--primary-deep);
+    border-radius: 0.5rem;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-family: var(--font-body);
+    font-style: italic; font-size: 1rem;
+    color: var(--foreground);
+  }
+  .quadro strong { color: var(--primary); font-style: normal; font-family: var(--font-ui); }
+
+  /* Quick links */
+  .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a {
+    display: inline-block; padding: 6px 12px;
+    border: 1px solid var(--raised); border-radius: 9999px;
+    color: var(--muted-foreground); text-decoration: none;
+    font-size: 0.75rem; font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .links a:hover { border-color: var(--primary); color: var(--primary); }
+
+  /* Sidebar: contingencia */
+  .alert-box {
+    background: rgba(255, 157, 10, 0.05);
+    border: 1px solid rgba(255, 157, 10, 0.3);
+    border-radius: 0.5rem;
+    padding: 14px 16px;
+    font-size: 0.8125rem;
+  }
+  .alert-box .label {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--status-warning);
+    margin-bottom: 6px;
+  }
+  .alert-box ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted-foreground); }
+  .alert-box ul li { margin-bottom: 4px; }
+
+  .scenario { margin-bottom: 14px; }
+  .scenario:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <span class="kicker">Painel de Voo</span>
+      <h1>Pesquisa, Concorrentes e Ofertas com IA</h1>
+    </div>
+    <div class="timer-box">
+      <span id="block-now" style="color: var(--muted-foreground); font-size: 0.875rem;">aguardando</span>
+      <span class="timer paused" id="timer">00:00:00</span>
+      <button class="btn primary" id="btn-start">Iniciar</button>
+      <button class="btn" id="btn-reset">Zerar</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="card" style="margin-bottom: 24px;">
+      <h2>Cronograma de 4 horas</h2>
+      <p style="font-size: 0.875rem; color: var(--muted-foreground); margin: 0 0 16px;">Clique em um bloco para abrir os detalhes abaixo. Duplo clique marca como concluído.</p>
+      <div class="schedule-list" id="schedule"></div>
+    </div>
+
+    <div id="detail-zone"></div>
+  </section>
+
+  <aside>
+    <div class="card" style="margin-bottom: 24px;">
+      <h2>Tese-mãe</h2>
+      <p style="font-family: var(--font-body); font-style: italic; font-size: 1.05rem; color: var(--foreground); margin: 0;">Pesquisa antes da oferta: o jogo que se ganha antes do anúncio.</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 24px;">
+      <h2>Pré-aula 30 min antes</h2>
+      <div class="card-section">
+        <p style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-foreground); margin: 0 0 8px;">Técnico</p>
+        <div class="checklist" id="check-tec"></div>
+      </div>
+      <div class="card-section">
+        <p style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-foreground); margin: 0 0 8px;">Conteúdo</p>
+        <div class="checklist" id="check-cont"></div>
+      </div>
+      <div class="card-section">
+        <p style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-foreground); margin: 0 0 8px;">Pessoal</p>
+        <div class="checklist" id="check-pess"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 24px;">
+      <h2>Plano de contingência</h2>
+      <div class="scenario">
+        <div class="alert-box">
+          <div class="label">Se atrasar 5 min</div>
+          <ul>
+            <li>Cortar segunda demo do Bloco 1 (mandar pós-aula)</li>
+            <li>Pular 1 pergunta do Q&amp;A guiado</li>
+          </ul>
+        </div>
+      </div>
+      <div class="scenario">
+        <div class="alert-box">
+          <div class="label">Se atrasar 15 min</div>
+          <ul>
+            <li>Cortar exercício intermediário do Bloco 3</li>
+            <li>Q&amp;A do Bloco 3 vira escrito (pós-aula)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="scenario">
+        <div class="alert-box" style="background: rgba(35, 225, 105, 0.04); border-color: rgba(35, 225, 105, 0.3);">
+          <div class="label" style="color: var(--status-success);">Se sobrar 15 min</div>
+          <ul>
+            <li>Estender Q&amp;A do Bloco 4</li>
+            <li>Demo bônus: 1 caso real da plateia</li>
+          </ul>
+        </div>
+      </div>
+      <div class="scenario">
+        <div class="alert-box" style="background: rgba(255, 68, 56, 0.04); border-color: rgba(255, 68, 56, 0.3);">
+          <div class="label" style="color: var(--status-error);">Se internet cair</div>
+          <ul>
+            <li>Ler output esperado em voz alta (do roteiro)</li>
+            <li>Avisar que prompt vai no pós-aula</li>
+            <li>Não esperar mais de 60s</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Arquivos da aula</h2>
+      <div class="links">
+        <a href="00-abertura.md">00 abertura</a>
+        <a href="01-vacuo-e-diagnostico.md">01 vácuo</a>
+        <a href="02-focus-group-sintetico.md">02 focus group</a>
+        <a href="03-concorrentes.md">03 concorrentes</a>
+        <a href="04-grand-slam-offer.md">04 oferta</a>
+        <a href="05-fechamento.md">05 fechamento</a>
+        <a href="insumos/alan-nicolas-mapped.md">insumos Alan</a>
+        <a href="ROTEIRO-MESTRE.md">roteiro fonte</a>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<script>
+const blocks = [
+  {
+    id: "00",
+    inicio: "00:00", fim: "00:15", dur: 15, energia: "alta",
+    titulo: "Abertura",
+    arquivo: "00-abertura.md",
+    tese: "Pesquisa antes da oferta: o jogo que se ganha antes do anúncio.",
+    micro: [
+      { t: "0-3", n: "Hook", d: "Por que pesquisa antes" },
+      { t: "3-8", n: "Mapa", d: "4 blocos" },
+      { t: "8-12", n: "Acordo", d: "Computador, anotação, perguntas" },
+      { t: "12-15", n: "Ordem", d: "Por que importa" }
+    ],
+    quadro: [
+      "A tese-mãe: pesquisa antes da oferta.",
+      "A ordem: dor cara + solução simples + pitch específico = contrato fechado.",
+      "Sobre IA: você não vende IA, vende solução."
+    ],
+    transicao: "Agora que você sabe por que pesquisa vem antes de oferta, no próximo bloco a gente vai aprender onde a dor real mora."
+  },
+  {
+    id: "01",
+    inicio: "00:15", fim: "01:05", dur: 50, energia: "alta",
+    titulo: "Bloco 1: Vácuo e Diagnóstico de Dor",
+    arquivo: "01-vacuo-e-diagnostico.md",
+    tese: "Vácuo e dor real vivem em lugares públicos invisíveis. Triangulação reviews + redes + comunidades devolve a frase exata do cliente.",
+    micro: [
+      { t: "0-15", n: "Teoria", d: "4 critérios da dor cara" },
+      { t: "15-35", n: "Demo", d: "Minerar reviews com Claude" },
+      { t: "35-45", n: "Exercício", d: "1 nicho, 2 níveis" },
+      { t: "45-50", n: "Quiz + Q&A", d: "3 perguntas" }
+    ],
+    quadro: [
+      "Dor cara já sangra no caixa antes da IA entrar.",
+      "Triangulação: 1 fonte mente, 2 sugerem, 3 confirmam.",
+      "Verbatim: dor real não é o que ele te conta, é o que ele escreve quando ninguém olha."
+    ],
+    transicao: "Você acabou de aprender a minerar dor. Guarda a frase do cliente. Vai usar no próximo bloco. Intervalo de 10 minutos."
+  },
+  {
+    id: "int1",
+    inicio: "01:05", fim: "01:15", dur: 10, energia: "pausa",
+    titulo: "Intervalo (planejado)",
+    arquivo: null,
+    tese: "Pausa de 10 minutos. Volte com energia."
+  },
+  {
+    id: "02",
+    inicio: "01:15", fim: "02:05", dur: 50, energia: "alta",
+    titulo: "Bloco 2: Focus Group Sintético",
+    arquivo: "02-focus-group-sintetico.md",
+    tese: "Persona sintética testa mensagem com custo zero em 10 minutos. Antes de qualquer mídia paga.",
+    micro: [
+      { t: "0-15", n: "Teoria", d: "7 dimensões da persona" },
+      { t: "15-35", n: "Demo", d: "3 personas, 1 headline" },
+      { t: "35-45", n: "Exercício", d: "Sua headline, 2 níveis" },
+      { t: "45-50", n: "Quiz + Q&A", d: "3 perguntas" }
+    ],
+    quadro: [
+      "Persona profunda = 7 dimensões. Menos é caricatura.",
+      "Três personas, uma headline. Se ressoa em 2 de 3 sem ofender a 3ª, vai para mídia.",
+      "Custo zero vs Meta Ads que custa semanas e mil reais para descobrir o que não funciona."
+    ],
+    transicao: "Headline testada. Próximo bloco: olhar o concorrente do alto. Intervalo de 10 minutos."
+  },
+  {
+    id: "int2",
+    inicio: "02:05", fim: "02:15", dur: 10, energia: "pausa",
+    titulo: "Intervalo (planejado)",
+    arquivo: null,
+    tese: "Pausa de 10 minutos."
+  },
+  {
+    id: "03",
+    inicio: "02:15", fim: "03:05", dur: 50, energia: "media",
+    titulo: "Bloco 3: Concorrentes em 4 Vetores",
+    arquivo: "03-concorrentes.md",
+    tese: "Concorrente bem analisado mostra brecha. 4 vetores: posicionamento, preço, promessa, ângulos. Dossiê em 15 minutos.",
+    micro: [
+      { t: "0-15", n: "Teoria", d: "4 vetores e brecha" },
+      { t: "15-35", n: "Demo", d: "Dossiê de 1 concorrente" },
+      { t: "35-45", n: "Exercício", d: "Seu concorrente, 2 níveis" },
+      { t: "45-50", n: "Quiz + Q&A", d: "3 perguntas" }
+    ],
+    quadro: [
+      "4 vetores: posicionamento, preço, promessa, ângulo.",
+      "Brecha é onde TODOS são fracos.",
+      "Brecha de ângulo é a mais difícil de copiar. Brecha de preço é a mais fácil."
+    ],
+    transicao: "Dor, mensagem e brecha nas mãos. Agora empilhamos a oferta. SEM intervalo, vamos direto."
+  },
+  {
+    id: "04",
+    inicio: "03:05", fim: "03:55", dur: 50, energia: "alta",
+    titulo: "Bloco 4: Grand Slam Offer com IA",
+    arquivo: "04-grand-slam-offer.md",
+    tese: "Preço sem valor é ruído. Empilhamento de valor faz preço sumir. Regra 10x: você cobra um décimo do que entrega.",
+    micro: [
+      { t: "0-15", n: "Teoria", d: "Regra 10x + 4 componentes" },
+      { t: "15-35", n: "Demo", d: "Oferta do zero com Claude" },
+      { t: "35-45", n: "Exercício", d: "Sua oferta, 2 níveis" },
+      { t: "45-50", n: "Quiz + Q&A", d: "3 perguntas" }
+    ],
+    quadro: [
+      "Regra 10x: cobre um décimo do que entrega.",
+      "4 componentes: promessa específica, garantia, ancoragem, nome.",
+      "Nome ruim mata oferta boa. Nome bom vende oferta mediana."
+    ],
+    transicao: "Você tem tudo nas mãos. Vamos fechar."
+  },
+  {
+    id: "05",
+    inicio: "03:55", fim: "04:00", dur: 5, energia: "alta",
+    titulo: "Fechamento",
+    arquivo: "05-fechamento.md",
+    tese: "4 frases para o quadro + ação concreta de 24 horas.",
+    micro: [
+      { t: "0-3", n: "Síntese", d: "4 frases dos blocos" },
+      { t: "3-4", n: "Ação 24h", d: "Escolha 1 das 3 opções" },
+      { t: "4-5", n: "Última coisa", d: "Em 1 semana volta o resultado" }
+    ],
+    quadro: [
+      "Pesquisa antes de oferta, oferta antes de anúncio, anúncio antes de escala.",
+      "Em 24h: uma coisa, não três.",
+      "O método em uma linha: dor cara + solução simples + pitch específico = contrato fechado."
+    ],
+    transicao: null
+  }
+];
+
+const checklistData = {
+  tec: [
+    "Computador conectado a projetor ou streaming",
+    "Áudio testado (microfone e alto-falante)",
+    "Câmera enquadrada e iluminação OK",
+    "Internet estável + backup 4G",
+    "Bateria carregada e cabo de força conectado",
+    "Tela do Claude testada em projeção (texto grande)"
+  ],
+  cont: [
+    "Claude aberto, 1 aba por bloco (4 abas)",
+    "50 reviews de contabilidade no clipboard (Bloco 1)",
+    "30 mensagens de comunidade prontas (Bloco 1)",
+    "Material do concorrente fictício pronto (Bloco 3)",
+    "Material Codex/GPT pronto para envio pós-aula",
+    "Cronômetro visível"
+  ],
+  pess: [
+    "Água em garrafa fechada perto",
+    "Folha em branco e caneta para perguntas",
+    "Lanche leve para o intervalo",
+    "5 minutos de respiração antes de começar",
+    "Roupa testada na câmera (se online)"
+  ]
+};
+
+// ===== Render schedule =====
+const sched = document.getElementById('schedule');
+const detailZone = document.getElementById('detail-zone');
+let activeId = null;
+const doneSet = new Set();
+
+function renderSchedule() {
+  sched.innerHTML = blocks.map(b => `
+    <div class="row ${activeId === b.id ? 'active' : ''} ${doneSet.has(b.id) ? 'done' : ''}" data-id="${b.id}">
+      <div class="time">${b.inicio}<br/><span style="opacity:0.5;">${b.fim}</span></div>
+      <div>
+        <div class="title">${b.titulo}</div>
+        <div class="meta">${b.dur} min</div>
+      </div>
+      <span class="energy-tag ${b.energia}">${b.energia}</span>
+    </div>
+  `).join('');
+  sched.querySelectorAll('.row').forEach(r => {
+    r.addEventListener('click', () => {
+      activeId = r.dataset.id;
+      renderSchedule();
+      renderDetail();
+    });
+    r.addEventListener('dblclick', () => {
+      const id = r.dataset.id;
+      if (doneSet.has(id)) doneSet.delete(id); else doneSet.add(id);
+      saveState();
+      renderSchedule();
+    });
+  });
+}
+
+function renderDetail() {
+  if (!activeId) { detailZone.innerHTML = ''; document.getElementById('block-now').textContent = 'aguardando'; return; }
+  const b = blocks.find(x => x.id === activeId);
+  if (!b) return;
+  document.getElementById('block-now').textContent = b.titulo.toLowerCase();
+  const microHTML = b.micro ? `
+    <div class="microstructure">
+      ${b.micro.map(m => `
+        <div class="micro-step">
+          <div class="time">${m.t} min</div>
+          <div class="name">${m.n}</div>
+          <div class="desc">${m.d}</div>
+        </div>
+      `).join('')}
+    </div>` : '';
+  const quadroHTML = b.quadro ? b.quadro.map(q => `<div class="quadro">${q}</div>`).join('') : '';
+  const transicaoHTML = b.transicao ? `
+    <div class="transition-quote">
+      <span class="from">Transição para o próximo</span>
+      "${b.transicao}"
+    </div>` : '';
+  const arquivoHTML = b.arquivo ? `
+    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--raised);">
+      <a href="${b.arquivo}" style="color: var(--primary); font-family: var(--font-ui); font-weight: 600; font-size: 0.875rem; text-decoration: none;">→ abrir roteiro completo (${b.arquivo})</a>
+    </div>` : '';
+  detailZone.innerHTML = `
+    <div class="block-detail">
+      <div class="label">${b.inicio} — ${b.fim} · ${b.dur} min · energia ${b.energia}</div>
+      <h2>${b.titulo}</h2>
+      <p class="tese">${b.tese}</p>
+      ${microHTML}
+      ${b.quadro ? `<div style="margin-top: 20px;"><p style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-foreground); margin: 0 0 8px;">Para o quadro</p>${quadroHTML}</div>` : ''}
+      ${transicaoHTML}
+      ${arquivoHTML}
+    </div>`;
+}
+
+// ===== Render checklists =====
+function renderChecklist(boxId, items, group) {
+  const box = document.getElementById(boxId);
+  box.innerHTML = items.map((item, i) => `
+    <div class="check-item" data-group="${group}" data-i="${i}">
+      <input type="checkbox" id="${group}-${i}" />
+      <label for="${group}-${i}">${item}</label>
+    </div>
+  `).join('');
+  box.querySelectorAll('.check-item').forEach(it => {
+    const cb = it.querySelector('input');
+    cb.addEventListener('change', () => {
+      it.classList.toggle('checked', cb.checked);
+      saveState();
+    });
+  });
+}
+renderChecklist('check-tec', checklistData.tec, 'tec');
+renderChecklist('check-cont', checklistData.cont, 'cont');
+renderChecklist('check-pess', checklistData.pess, 'pess');
+
+// ===== Timer =====
+let timerInterval = null;
+let elapsedSec = 0;
+const timerEl = document.getElementById('timer');
+const btnStart = document.getElementById('btn-start');
+const btnReset = document.getElementById('btn-reset');
+
+function fmtTime(s) {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+function updateTimer() {
+  timerEl.textContent = fmtTime(elapsedSec);
+  // marca bloco atual com base no tempo decorrido
+  let cur = null;
+  for (const b of blocks) {
+    const [h, m] = b.inicio.split(':').map(Number);
+    const startSec = h * 3600 + m * 60;
+    const endSec = startSec + b.dur * 60;
+    if (elapsedSec >= startSec && elapsedSec < endSec) { cur = b.id; break; }
+  }
+  if (cur && cur !== activeId) {
+    activeId = cur;
+    renderSchedule(); renderDetail();
+  }
+}
+btnStart.addEventListener('click', () => {
+  if (timerInterval) {
+    clearInterval(timerInterval); timerInterval = null;
+    btnStart.textContent = 'Continuar';
+    timerEl.classList.add('paused');
+  } else {
+    timerInterval = setInterval(() => { elapsedSec++; updateTimer(); }, 1000);
+    btnStart.textContent = 'Pausar';
+    timerEl.classList.remove('paused');
+  }
+});
+btnReset.addEventListener('click', () => {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  elapsedSec = 0; timerEl.textContent = '00:00:00';
+  timerEl.classList.add('paused');
+  btnStart.textContent = 'Iniciar';
+});
+
+// ===== State persistence =====
+function saveState() {
+  const state = {
+    done: Array.from(doneSet),
+    checked: {}
+  };
+  ['tec','cont','pess'].forEach(g => {
+    state.checked[g] = [];
+    document.querySelectorAll(`[data-group="${g}"] input`).forEach((cb, i) => {
+      if (cb.checked) state.checked[g].push(i);
+    });
+  });
+  try { localStorage.setItem('roteiro-painel-state', JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem('roteiro-painel-state');
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    (state.done || []).forEach(id => doneSet.add(id));
+    Object.entries(state.checked || {}).forEach(([g, indices]) => {
+      indices.forEach(i => {
+        const cb = document.getElementById(`${g}-${i}`);
+        if (cb) { cb.checked = true; cb.closest('.check-item').classList.add('checked'); }
+      });
+    });
+  } catch(e) {}
+}
+
+// init
+renderSchedule();
+activeId = '00';
+renderSchedule();
+renderDetail();
+loadState();
+renderSchedule();
+</script>
+
+</body>
+</html>

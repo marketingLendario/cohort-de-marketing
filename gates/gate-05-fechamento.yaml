@@ -1,0 +1,25 @@
+gate:
+  bloco_id: "05-fechamento"
+  bloco_path: "workspace/aulas-ao-vivo/pesquisa-ofertas-com-ia/05-fechamento.md"
+  verdict: PASS
+  score: 9/10
+  validator_exit_code: 0
+  timestamp: "2026-06-14T21:52:29.508416+00:00"
+  checklist:
+    gps_presente: pass
+    regra_uma_coisa: pass
+    microestrutura_completa: n/a (abertura/fechamento nao usam microestrutura padrao)
+    para_o_quadro: pass
+    fato_vs_narrativa: pass
+    verbatim_quando_aplicavel: pass
+    demo_executavel: n/a
+    exercicio_dois_niveis: n/a
+    anti_slop: pass
+    validator_script: pass
+issues:
+  - severity: low
+    category: estrutura
+    descricao: "aula sem fence quiz (esperado em fechamento, esta correto pedagogicamente)"
+    recomendacao: "manter como esta; abertura e fechamento por design nao tem quiz, sao sintese"
+    bloqueia: false
+  next_action: deliver

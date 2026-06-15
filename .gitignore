@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.thumbnail
+._*
+.Spotlight-V100
+.Trashes
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs e temporarios
+*.log
+*.tmp
+*.bak
+.cache/
+
+# Node (caso adicione build no futuro)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Material de terceiros que nao deve ir para o repo
+# (transcripts originais ficam no diretorio local, nao no repo)
+# Insumos mapeados (citaveis) ficam, transcripts brutos nao
+*.vtt
+*.srt
+
+# Arquivos sensiveis (caso apareca)
+.env
+.env.local
+secrets.json

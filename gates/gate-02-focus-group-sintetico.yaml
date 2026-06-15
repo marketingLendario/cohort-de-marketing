@@ -1,0 +1,20 @@
+gate:
+  bloco_id: "02-focus-group-sintetico"
+  bloco_path: "workspace/aulas-ao-vivo/pesquisa-ofertas-com-ia/02-focus-group-sintetico.md"
+  verdict: PASS
+  score: 10/10
+  validator_exit_code: 0
+  timestamp: "2026-06-14T21:52:29.508416+00:00"
+  checklist:
+    gps_presente: pass
+    regra_uma_coisa: pass
+    microestrutura_completa: pass
+    para_o_quadro: pass
+    fato_vs_narrativa: pass
+    verbatim_quando_aplicavel: pass
+    demo_executavel: pass
+    exercicio_dois_niveis: pass
+    anti_slop: pass
+    validator_script: pass
+issues: []
+  next_action: deliver

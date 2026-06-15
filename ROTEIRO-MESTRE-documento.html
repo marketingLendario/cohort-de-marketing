@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiro Mestre — Pesquisa, Concorrentes e Ofertas com IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&family=Rajdhani:wght@600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --card: #0F0F0F;
+    --raised: #262626;
+    --border: #262626;
+    --foreground: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #C9B298;
+    --primary-light: #D9CBB9;
+    --primary-deep: #8D7556;
+    --primary-foreground: #1A1A1A;
+    --status-success: #23E169;
+    --status-warning: #FF9D0A;
+    --status-error: #FF4438;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, 'Source Sans Pro', system-ui, sans-serif;
+    --font-display: Rajdhani, Inter, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 21px;
+    line-height: 1.6;
+    letter-spacing: 0.012em;
+    margin: 0;
+    padding: 4rem 1.5rem 5rem;
+  }
+  main { max-width: 70ch; margin: 0 auto; }
+
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0;
+    background: var(--primary);
+    box-shadow: 0 0 15px rgba(201, 178, 152, 0.6);
+    z-index: 10;
+  }
+
+  header.lesson { margin-bottom: 3rem; }
+  .kicker {
+    font-family: var(--font-ui); font-size: 0.833rem; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--primary); margin-bottom: 0.75rem;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(2.074rem, 5vw, 2.986rem);
+    line-height: 1.1; letter-spacing: -0.01em; margin: 0 0 0.75rem;
+  }
+  .summary { color: var(--muted-foreground); font-style: italic; margin: 0; font-size: 1.05rem; }
+
+  h2 {
+    font-family: var(--font-ui); font-weight: 600; font-size: 1.728rem;
+    line-height: 1.25; letter-spacing: -0.01em; margin: 3.5rem 0 1rem;
+  }
+  h2 .n {
+    display: block; font-family: var(--font-ui); font-size: 0.833rem;
+    font-weight: 600; letter-spacing: 0.05em; color: var(--primary);
+    margin-bottom: 0.25rem; text-transform: uppercase;
+  }
+  h3 { font-family: var(--font-ui); font-weight: 600; font-size: 1.4rem; line-height: 1.25; margin: 2.5rem 0 0.6rem; }
+  h4 { font-family: var(--font-ui); font-weight: 600; font-size: 1.1rem; line-height: 1.3; margin: 1.5rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted-foreground); }
+
+  a { color: var(--primary); text-underline-offset: 3px; }
+  a:hover { color: var(--primary-light); }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  p { margin: 0.8em 0; }
+
+  .exec {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 2px solid var(--primary);
+    border-radius: 1rem; padding: 24px; margin: 2rem 0;
+  }
+  .exec p { margin: 0.4rem 0; }
+  .exec strong { color: var(--primary); font-family: var(--font-ui); font-weight: 600; }
+
+  .aside {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 0.5rem; padding: 16px 24px; margin: 1.5rem 0;
+    font-size: 0.92em; color: var(--muted-foreground);
+  }
+  .aside strong { color: var(--foreground); font-family: var(--font-ui); font-weight: 600; }
+
+  .board {
+    background: rgba(201, 178, 152, 0.04);
+    border: 1px solid var(--primary-deep);
+    border-radius: 0.5rem; padding: 16px 22px; margin: 1rem 0;
+    font-family: var(--font-body); font-style: italic;
+  }
+  .board strong { color: var(--primary); font-style: normal; font-family: var(--font-ui); font-weight: 600; }
+
+  table {
+    border-collapse: collapse; width: 100%; margin: 1.5rem 0;
+    font-family: var(--font-ui); font-size: 0.92em;
+  }
+  th, td {
+    text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--raised);
+    vertical-align: top;
+  }
+  th {
+    font-weight: 600; color: var(--muted-foreground); font-size: 0.78rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    border-bottom: 1px solid var(--primary-deep);
+  }
+  tr:last-child td { border-bottom: none; }
+  td .time-cell { font-family: var(--font-mono); color: var(--primary); font-size: 0.9rem; }
+  td .energy { font-size: 0.7rem; padding: 2px 8px; border-radius: 9999px; border: 1px solid var(--raised); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  td .energy.alta { color: var(--primary); border-color: var(--primary-deep); }
+  td .energy.media { color: var(--muted-foreground); }
+  td .energy.pausa { color: var(--status-warning); border-color: var(--status-warning); }
+
+  ul.check { list-style: none; padding-left: 0; }
+  ul.check li {
+    position: relative; padding-left: 28px; margin-bottom: 8px;
+    font-family: var(--font-ui); font-size: 1rem; line-height: 1.5;
+  }
+  ul.check li::before {
+    content: "□"; position: absolute; left: 0; top: -2px;
+    color: var(--primary); font-size: 1.2rem; font-family: var(--font-ui);
+  }
+
+  .alert {
+    border: 1px solid; border-radius: 0.5rem; padding: 16px 20px; margin: 1.2rem 0;
+    font-family: var(--font-ui); font-size: 0.95rem;
+  }
+  .alert.warning { border-color: rgba(255, 157, 10, 0.4); background: rgba(255, 157, 10, 0.04); }
+  .alert.success { border-color: rgba(35, 225, 105, 0.4); background: rgba(35, 225, 105, 0.04); }
+  .alert.error { border-color: rgba(255, 68, 56, 0.4); background: rgba(255, 68, 56, 0.04); }
+  .alert .alert-label {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .alert.warning .alert-label { color: var(--status-warning); }
+  .alert.success .alert-label { color: var(--status-success); }
+  .alert.error .alert-label { color: var(--status-error); }
+  .alert ul { margin: 4px 0 0; padding-left: 20px; }
+  .alert ul li { margin-bottom: 4px; }
+
+  code, .code {
+    font-family: var(--font-mono); font-size: 0.85em;
+    background: var(--raised); color: var(--foreground);
+    padding: 2px 6px; border-radius: 0.25rem;
+  }
+
+  .tese-mae {
+    text-align: center;
+    margin: 3rem 0;
+    padding: 2.5rem 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--primary-deep);
+    border-radius: 1rem;
+  }
+  .tese-mae .tag {
+    font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground);
+    margin-bottom: 12px;
+  }
+  .tese-mae .frase {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(1.5rem, 4vw, 2.2rem); line-height: 1.2;
+    color: var(--foreground); margin: 0;
+  }
+
+  hr.section {
+    border: none; height: 1px;
+    background: linear-gradient(to right, transparent, var(--primary-deep), transparent);
+    margin: 4rem 0 2rem;
+  }
+
+  @media print {
+    body { background: white; color: black; padding: 1cm; font-size: 11pt; }
+    .exec, .aside, .board, .alert, .tese-mae { background: #f5f5f5; color: black; border-color: #ccc; }
+    .kicker, .exec strong, .aside strong, .board strong, h2 .n { color: #8D7556; }
+    a { color: #8D7556; }
+    #progress { display: none; }
+    h1, h2 { page-break-after: avoid; }
+    table, .exec, .alert { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<main>
+  <header class="lesson">
+    <p class="kicker">Roteiro Mestre · Aula ao vivo · 4 horas</p>
+    <h1>Pesquisa, Concorrentes e Ofertas com IA</h1>
+    <p class="summary">O mapa de voo da instrutora. Cronograma, transições, checklist pré-aula, contingência. Para abrir antes da aula e ter em segunda tela durante.</p>
+  </header>
+
+  <div class="tese-mae">
+    <p class="tag">Tese-mãe</p>
+    <p class="frase">Pesquisa antes da oferta: o jogo que se ganha antes do anúncio.</p>
+  </div>
+
+  <p>Quatro blocos didáticos. Cada um com tese própria. Insumo: transcript verbatim da Alan Nicolas mapeado em <code>insumos/alan-nicolas-mapped.md</code>.</p>
+
+  <hr class="section">
+
+  <h2><span class="n">Parte 1</span>Cronograma minuto a minuto</h2>
+
+  <table>
+    <thead>
+      <tr><th>Tempo</th><th>Bloco</th><th>Duração</th><th>Energia</th><th>Arquivo</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="time-cell">00:00 — 00:15</td><td>Abertura · GPS, mapa, acordo</td><td>15 min</td><td><span class="energy alta">alta</span></td><td><a href="00-abertura.md">00-abertura</a></td></tr>
+      <tr><td class="time-cell">00:15 — 01:05</td><td>Bloco 1 · Vácuo e Diagnóstico de Dor</td><td>50 min</td><td><span class="energy alta">alta</span></td><td><a href="01-vacuo-e-diagnostico.md">01-vacuo</a></td></tr>
+      <tr><td class="time-cell">01:05 — 01:15</td><td>Intervalo planejado</td><td>10 min</td><td><span class="energy pausa">pausa</span></td><td>—</td></tr>
+      <tr><td class="time-cell">01:15 — 02:05</td><td>Bloco 2 · Focus Group Sintético</td><td>50 min</td><td><span class="energy alta">alta</span></td><td><a href="02-focus-group-sintetico.md">02-focus</a></td></tr>
+      <tr><td class="time-cell">02:05 — 02:15</td><td>Intervalo planejado</td><td>10 min</td><td><span class="energy pausa">pausa</span></td><td>—</td></tr>
+      <tr><td class="time-cell">02:15 — 03:05</td><td>Bloco 3 · Concorrentes em 4 Vetores</td><td>50 min</td><td><span class="energy media">média</span></td><td><a href="03-concorrentes.md">03-concorrentes</a></td></tr>
+      <tr><td class="time-cell">03:05 — 03:55</td><td>Bloco 4 · Grand Slam Offer com IA</td><td>50 min</td><td><span class="energy alta">alta</span></td><td><a href="04-grand-slam-offer.md">04-oferta</a></td></tr>
+      <tr><td class="time-cell">03:55 — 04:00</td><td>Fechamento · 4 frases + ação 24h</td><td>5 min</td><td><span class="energy alta">alta</span></td><td><a href="05-fechamento.md">05-fechamento</a></td></tr>
+    </tbody>
+  </table>
+
+  <div class="exec">
+    <p><strong>Soma:</strong> 200 min de conteúdo (4 × 50 min) + 20 min de intervalo (2 × 10) + 15 min de abertura + 5 min de fechamento = 240 min exatos.</p>
+  </div>
+
+  <hr class="section">
+
+  <h2><span class="n">Parte 2</span>Transições entre blocos</h2>
+
+  <p>Frases-ponte para falar ao vivo. Não improvise transição. A frase-ponte é o que faz a turma sentir continuidade.</p>
+
+  <h3>Abertura → Bloco 1</h3>
+  <div class="board">"Agora que você sabe por que pesquisa vem antes de oferta, no próximo bloco a gente vai aprender onde a dor real mora. Não na sua cabeça. Em lugares públicos que ninguém olha. Bora."</div>
+
+  <h3>Bloco 1 → Intervalo</h3>
+  <div class="board">"Você acabou de aprender a minerar dor com triangulação. Quem fez o exercício deve ter pelo menos um tema da comunidade que não aparece em review. Esse é seu candidato a vácuo. Guarda essa frase do cliente. Você vai usar ela no próximo bloco. Intervalo de 10 minutos. Volta às [hora]."</div>
+
+  <h3>Intervalo → Bloco 2</h3>
+  <div class="board">"Bem-vindos de volta. Você tem a frase do cliente nas mãos. Agora a gente transforma essa frase em três personas e testa uma headline antes de gastar um real em mídia. Bora."</div>
+
+  <h3>Bloco 2 → Intervalo</h3>
+  <div class="board">"Headline testada. Se ressoou em duas das três personas, ela está pronta. Se não, você sabe por onde refazer. Próximo bloco: olhar concorrente do alto. Intervalo de 10 minutos."</div>
+
+  <h3>Intervalo → Bloco 3</h3>
+  <div class="board">"Volta. Agora a gente sai do micro (dor e mensagem) e vai para o macro: como o seu nicho está disputado e onde tem brecha. Bora."</div>
+
+  <h3>Bloco 3 → Bloco 4 (SEM intervalo)</h3>
+  <div class="board">"Você tem dor mapeada, mensagem testada e brecha identificada. Agora vamos empilhar a oferta inteira em cima disso. Sem intervalo, porque o bloco 4 só faz sentido depois do bloco 3 fresco. Bora."</div>
+
+  <h3>Bloco 4 → Fechamento</h3>
+  <div class="board">"Você tem tudo nas mãos. Agora eu vou comprimir o que você precisa lembrar uma semana depois e te dar a ação concreta para amanhã. Bora fechar."</div>
+
+  <hr class="section">
+
+  <h2><span class="n">Parte 3</span>Checklist pré-aula · 30 min antes</h2>
+
+  <h4>Técnico</h4>
+  <ul class="check">
+    <li>Computador conectado a projetor ou plataforma de streaming</li>
+    <li>Áudio testado (microfone e alto-falante ou monitor)</li>
+    <li>Câmera enquadrada e iluminação OK</li>
+    <li>Conexão de internet estável e backup 4G ou hotspot</li>
+    <li>Bateria do computador carregada e cabo de força conectado</li>
+    <li>Tela do Claude testada em projeção (texto grande para o fundo da sala)</li>
+  </ul>
+
+  <h4>Conteúdo</h4>
+  <ul class="check">
+    <li>Claude aberto em janela limpa, 1 aba por bloco (4 abas)</li>
+    <li>50 reviews do nicho de contabilidade carregados no clipboard (Bloco 1)</li>
+    <li>30 mensagens de comunidade prontas (Bloco 1)</li>
+    <li>Material público do concorrente fictício pronto (Bloco 3)</li>
+    <li>Material de envio pós-aula pronto em pasta separada</li>
+    <li>Insumos abertos em segunda tela (alan-nicolas-mapped.md, frase do cliente, headline candidata)</li>
+    <li>ROTEIRO-MESTRE-painel.html aberto em segunda tela</li>
+    <li>Cronômetro ou timer visível</li>
+  </ul>
+
+  <h4>Pessoal</h4>
+  <ul class="check">
+    <li>Água perto, em garrafa fechada</li>
+    <li>Folha em branco e caneta para anotar perguntas</li>
+    <li>Lanche leve para o intervalo</li>
+    <li>5 minutos de respiração antes de começar</li>
+    <li>Roupa testada na câmera com 1h de antecedência (se online)</li>
+  </ul>
+
+  <hr class="section">
+
+  <h2><span class="n">Parte 4</span>Plano de contingência</h2>
+
+  <div class="alert warning">
+    <div class="alert-label">Se atrasar 5 min até o meio da aula</div>
+    <p style="margin: 6px 0 8px;"><strong>Cortar:</strong></p>
+    <ul>
+      <li>A segunda demo do Bloco 1 (mandar no envio pós-aula)</li>
+      <li>Q&amp;A guiado de uma das perguntas (responder no chat depois)</li>
+    </ul>
+    <p style="margin: 8px 0 0;"><strong>Manter sempre:</strong> demos principais, exercícios em tela, Para o quadro.</p>
+  </div>
+
+  <div class="alert warning">
+    <div class="alert-label">Se atrasar 15 min (entre Bloco 2 e Bloco 3)</div>
+    <p style="margin: 6px 0 8px;"><strong>Cortar:</strong></p>
+    <ul>
+      <li>Exercício intermediário do Bloco 3, manter só o iniciante</li>
+      <li>Q&amp;A do Bloco 3 (responder por escrito no fim)</li>
+    </ul>
+    <p style="margin: 8px 0 0;"><strong>Não cortar:</strong> demos ao vivo (3 prompts por bloco), nenhum bloco inteiro.</p>
+  </div>
+
+  <div class="alert success">
+    <div class="alert-label">Se sobrar 15 min</div>
+    <p style="margin: 6px 0 8px;"><strong>Estender:</strong></p>
+    <ul>
+      <li>Q&amp;A guiado do Bloco 4 (Grand Slam gera mais perguntas)</li>
+      <li>Demo bônus: aplicar os 4 blocos em 1 caso real da plateia</li>
+      <li>Pergunta aberta para sintetizar dúvidas restantes</li>
+    </ul>
+  </div>
+
+  <div class="alert error">
+    <div class="alert-label">Se internet cair durante uma demo</div>
+    <ul>
+      <li>Mostrar output esperado do prompt (que está no .md) lendo em voz alta</li>
+      <li>Comentar o que estava no clipboard</li>
+      <li>Avisar que a gravação do prompt vai no material pós-aula</li>
+      <li>Não esperar internet voltar mais que 60 segundos</li>
+    </ul>
+  </div>
+
+  <div class="alert warning">
+    <div class="alert-label">Se a plateia esfriar (energia caindo)</div>
+    <ul>
+      <li>Lançar um poll (uma pergunta de cenário, mão levantada)</li>
+      <li>Pedir um caso real da plateia para aplicar a técnica</li>
+      <li>Parar a demo e fazer Q&amp;A relâmpago de 3 minutos</li>
+      <li>Mudar de voz: mais firme, mais lenta, mais perto do microfone</li>
+    </ul>
+  </div>
+
+  <hr class="section">
+
+  <h2><span class="n">Parte 5</span>Ensaio de 1 hora · véspera ou manhã</h2>
+
+  <ol style="font-family: var(--font-ui); font-size: 1rem; line-height: 1.6; padding-left: 24px;">
+    <li>Ler abertura em voz alta (alvo 15 min cronometrados)</li>
+    <li>Rodar prompts da demo do Bloco 1 e Bloco 4 (os mais densos) no Claude real</li>
+    <li>Validar que outputs ainda são os esperados (modelos mudam, prompts podem precisar de ajuste)</li>
+    <li>Cronometrar a transição Bloco 3 → Bloco 4 (a única sem intervalo, ponto de risco de energia)</li>
+    <li>Reler "Para o quadro" de cada bloco para garantir que está na ponta da língua</li>
+  </ol>
+
+  <hr class="section">
+
+  <h2><span class="n">Parte 6</span>Pós-aula · imediatamente após o fechamento</h2>
+
+  <h4>Enviar para a turma</h4>
+  <ul class="check">
+    <li>Prompts paralelos Codex/GPT dos 4 blocos</li>
+    <li>"Para o quadro" de cada bloco em uma página de resumo</li>
+    <li>Link para o insumos/alan-nicolas-mapped.md com timestamps verbatim</li>
+  </ul>
+
+  <h4>Anotar enquanto fresco</h4>
+  <ul class="check">
+    <li>3 momentos que funcionaram melhor (manter)</li>
+    <li>3 ajustes para a próxima edição (corrigir)</li>
+    <li>3 perguntas da plateia que não foram cobertas no Q&amp;A (responder por escrito)</li>
+  </ul>
+
+  <hr class="section">
+
+  <div class="exec" style="margin-top: 3rem;">
+    <p style="font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 12px;">Painel ao vivo</p>
+    <p style="margin: 0;">Para usar durante a aula com timer, cronograma vivo e checklist clicável, abra <a href="ROTEIRO-MESTRE-painel.html"><strong>ROTEIRO-MESTRE-painel.html</strong></a> em segunda tela.</p>
+  </div>
+
+</main>
+
+<script>
+  // Reading progress bar
+  const bar = document.getElementById('progress');
+  function updateBar() {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', updateBar);
+  updateBar();
+</script>
+
+</body>
+</html>
