@@ -47,7 +47,7 @@ Se preferir markdown puro, o conteúdo está abaixo.
 **1. Clone este repo**
 
 ```bash
-git clone https://github.com/fran-lendaria/cohort-de-marketing.git
+git clone https://github.com/marketingLendario/cohort-de-marketing.git
 cd cohort-de-marketing
 ```
 
