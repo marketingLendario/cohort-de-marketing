@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O que você vai sair construindo hoje — Pesquisa, Concorrentes e Ofertas com IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --card: #0F0F0F;
+    --raised: #262626;
+    --border: #262626;
+    --foreground: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #C9B298;
+    --primary-light: #D9CBB9;
+    --primary-deep: #8D7556;
+    --primary-foreground: #1A1A1A;
+    --status-success: #23E169;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, 'Source Sans Pro', system-ui, sans-serif;
+    --font-display: Rajdhani, Inter, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 19px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* Reading progress */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0;
+    background: var(--primary);
+    box-shadow: 0 0 15px rgba(201, 178, 152, 0.6);
+    z-index: 100;
+  }
+
+  /* Container */
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 64px 32px 96px; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 32px 0 64px;
+    border-bottom: 1px solid var(--raised);
+    margin-bottom: 64px;
+  }
+  .hero .kicker {
+    display: inline-block;
+    font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary);
+    padding: 6px 16px;
+    border: 1px solid var(--primary-deep);
+    border-radius: 9999px;
+    margin-bottom: 32px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    color: var(--foreground);
+  }
+  .hero h1 em {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--primary);
+  }
+  .hero .lead {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--muted-foreground);
+    max-width: 70ch;
+    margin: 0 auto;
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 48px 0 16px;
+  }
+  .stat {
+    text-align: center;
+    padding: 24px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+  }
+  .stat .num {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+    display: block;
+  }
+  .stat .label {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    margin-top: 8px;
+    display: block;
+  }
+  @media (max-width: 700px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Sections */
+  section.deliverable {
+    margin: 96px 0;
+    scroll-margin-top: 32px;
+  }
+  .label-bloco {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+  section.deliverable h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    color: var(--foreground);
+  }
+  section.deliverable h2 em {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--primary);
+  }
+  section.deliverable .tese {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    color: var(--muted-foreground);
+    font-style: italic;
+    margin: 0 0 40px;
+    max-width: 65ch;
+  }
+
+  /* Antes vs Depois */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 32px 0;
+  }
+  @media (max-width: 900px) {
+    .compare { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 28px;
+    position: relative;
+  }
+  .panel.empty {
+    border-style: dashed;
+    border-color: var(--raised);
+  }
+  .panel.filled {
+    border-left: 2px solid var(--primary);
+  }
+  .panel-label {
+    display: inline-block;
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    margin-bottom: 20px;
+  }
+  .panel.empty .panel-label {
+    color: var(--muted-foreground);
+    border: 1px solid var(--raised);
+  }
+  .panel.filled .panel-label {
+    color: var(--primary);
+    border: 1px solid var(--primary-deep);
+    background: rgba(201, 178, 152, 0.06);
+  }
+
+  /* Conteudo dentro do panel */
+  .panel h3 {
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: var(--foreground);
+  }
+  .panel.empty h3 { color: var(--muted-foreground); }
+
+  /* Tabela compacta */
+  .panel table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    margin-top: 8px;
+  }
+  .panel table th {
+    text-align: left;
+    padding: 8px 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    border-bottom: 1px solid var(--primary-deep);
+  }
+  .panel table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--raised);
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .panel.empty table td {
+    color: var(--muted-foreground);
+    font-style: italic;
+  }
+  .panel table tr:last-child td { border-bottom: none; }
+
+  /* Quote/citacao verbatim */
+  .verbatim {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--foreground);
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.3);
+    border-left: 1px solid var(--primary-deep);
+    border-radius: 0.375rem;
+    margin: 12px 0;
+  }
+  .panel.empty .verbatim {
+    color: var(--muted-foreground);
+  }
+  .verbatim-meta {
+    font-family: var(--font-ui);
+    font-style: normal;
+    font-size: 0.7rem;
+    color: var(--muted-foreground);
+    margin-top: 8px;
+    display: block;
+  }
+
+  /* Lista de criterios */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+  }
+  .checklist li {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    padding: 6px 0 6px 28px;
+    position: relative;
+    color: var(--foreground);
+  }
+  .checklist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .panel.empty .checklist li::before { content: "□"; color: var(--muted-foreground); }
+  .panel.empty .checklist li { color: var(--muted-foreground); }
+
+  /* Persona card */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    font-size: 0.85rem;
+  }
+  .persona-col h4 {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin: 0 0 8px;
+  }
+  .persona-col p {
+    font-family: var(--font-ui);
+    margin: 4px 0;
+    line-height: 1.4;
+  }
+  .panel.empty .persona-col h4 { color: var(--muted-foreground); }
+  .panel.empty .persona-col p { color: var(--muted-foreground); font-style: italic; }
+  @media (max-width: 700px) { .persona-grid { grid-template-columns: 1fr; } }
+
+  /* Oferta card */
+  .offer-stack { display: flex; flex-direction: column; gap: 12px; }
+  .offer-item {
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 0.5rem;
+    border: 1px solid var(--raised);
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+  }
+  .offer-item .tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .panel.empty .offer-item { color: var(--muted-foreground); font-style: italic; }
+  .panel.empty .offer-item .tag { color: var(--muted-foreground); }
+
+  .vetor-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 80px;
+    gap: 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--raised);
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    align-items: center;
+  }
+  .vetor-row:last-child { border-bottom: none; }
+  .vetor-row .name { font-weight: 600; color: var(--foreground); }
+  .vetor-row .desc { color: var(--muted-foreground); line-height: 1.3; font-size: 0.8rem; }
+  .vetor-row .force {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    border: 1px solid var(--raised);
+  }
+  .vetor-row .force.forte { color: var(--primary); border-color: var(--primary-deep); }
+  .vetor-row .force.medio { color: var(--muted-foreground); }
+  .vetor-row .force.fraco { color: var(--status-success); border-color: var(--status-success); background: rgba(35, 225, 105, 0.06); }
+  .panel.empty .vetor-row .name,
+  .panel.empty .vetor-row .desc { color: var(--muted-foreground); font-style: italic; }
+
+  /* Prompt block */
+  .prompt-block {
+    margin-top: 32px;
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  .prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--raised);
+  }
+  .prompt-header .label {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .copy-btn {
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--raised);
+    border-radius: 0.375rem;
+    padding: 6px 14px;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .copy-btn.copied {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+  }
+  .prompt-body {
+    padding: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--foreground);
+    white-space: pre-wrap;
+    overflow-x: auto;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .prompt-body::-webkit-scrollbar { width: 8px; }
+  .prompt-body::-webkit-scrollbar-track { background: transparent; }
+  .prompt-body::-webkit-scrollbar-thumb { background: var(--raised); border-radius: 4px; }
+
+  /* Index nav */
+  .quick-nav {
+    position: sticky;
+    top: 16px;
+    z-index: 50;
+    background: var(--background);
+    border: 1px solid var(--raised);
+    border-radius: 9999px;
+    padding: 8px 16px;
+    margin: 32px auto;
+    max-width: max-content;
+    display: flex;
+    gap: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+  .quick-nav a {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    color: var(--muted-foreground);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .quick-nav a:hover, .quick-nav a.active {
+    background: var(--card);
+    color: var(--primary);
+  }
+
+  /* Final CTA */
+  .final-cta {
+    text-align: center;
+    padding: 80px 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    margin-top: 96px;
+  }
+  .final-cta h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin: 0 0 16px;
+    line-height: 1.1;
+  }
+  .final-cta h2 em {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--primary);
+  }
+  .final-cta p {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--muted-foreground);
+    max-width: 60ch;
+    margin: 0 auto;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 9999px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 24px rgba(201, 178, 152, 0.4);
+    opacity: 0;
+    transition: all 0.25s ease;
+    z-index: 200;
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker">O que você vai sair construindo hoje</span>
+    <h1>Em 4 horas, você sai com<br/><em>4 entregáveis prontos</em></h1>
+    <p class="lead">Não é teoria. Cada bloco entrega uma peça concreta da sua próxima oferta. Veja antes e depois de cada uma.</p>
+
+    <div class="stats">
+      <div class="stat"><span class="num">4</span><span class="label">Entregáveis</span></div>
+      <div class="stat"><span class="num">12</span><span class="label">Prompts prontos</span></div>
+      <div class="stat"><span class="num">10x</span><span class="label">Valor sobre preço</span></div>
+      <div class="stat"><span class="num">0</span><span class="label">Custo dos testes</span></div>
+    </div>
+  </header>
+
+  <nav class="quick-nav">
+    <a href="#entregavel-1">Frase do cliente</a>
+    <a href="#entregavel-2">Headline testada</a>
+    <a href="#entregavel-3">Dossiê</a>
+    <a href="#entregavel-4">Oferta empilhada</a>
+  </nav>
+
+  <!-- =========================================== -->
+  <!-- ENTREGAVEL 1: FRASE DO CLIENTE -->
+  <!-- =========================================== -->
+  <section class="deliverable" id="entregavel-1">
+    <p class="label-bloco">Bloco 1 · 50 minutos</p>
+    <h2>Entregável 1: a <em>frase do cliente</em> em palavras literais</h2>
+    <p class="tese">A frase verbatim que seu cliente usa quando está bravo. Passa nos 4 critérios da dor cara: frequência, custo visível, controle de orçamento, palavras literais. É a matéria-prima de tudo que vem depois.</p>
+
+    <div class="compare">
+      <div class="panel empty">
+        <span class="panel-label">Você entra com</span>
+        <h3>Hipótese vaga na sua cabeça</h3>
+        <div class="verbatim">"Acho que meus clientes querem mais agilidade no atendimento."</div>
+        <ul class="checklist">
+          <li>Frequência alta</li>
+          <li>Custo visível em R$ ou horas</li>
+          <li>Quem sente controla orçamento</li>
+          <li>Palavras literais do cliente</li>
+        </ul>
+      </div>
+
+      <div class="panel filled">
+        <span class="panel-label">Você sai com</span>
+        <h3>Frase verbatim auditável</h3>
+        <div class="verbatim">"Perdi três clientes esse mês porque a equipe demorou mais de duas horas para responder. O sócio está me cobrando na reunião de sexta."<span class="verbatim-meta">Minerada em 30 reviews + 15 mensagens de comunidade · Reclame Aqui + grupo Facebook contadores BR</span></div>
+        <ul class="checklist">
+          <li>Frequência: 3 vezes este mês (alta)</li>
+          <li>Custo: R$ 15 mil em receita perdida</li>
+          <li>Decisor: sócia (assina cheque)</li>
+          <li>Voz do cliente, sem paráfrase</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-header">
+        <span class="label">Prompt 3 do Bloco 1 · Claude</span>
+        <button class="copy-btn" data-target="prompt-1">
+          <span class="copy-icon">⧉</span>
+          <span class="copy-text">Copiar prompt</span>
+        </button>
+      </div>
+      <div class="prompt-body" id="prompt-1">Com base nos dois prompts anteriores, escolha A DOR mais frequente, mais cara, e que aparece com palavras consistentes em todas as fontes. Para essa dor, me devolva:
+
+1. A frase exata como o cliente escreve (verbatim, na 1ª pessoa)
+2. O custo médio em reais ou horas
+3. A frequência (quantas vezes por mês)
+4. Quem na empresa controla o orçamento para resolver essa dor
+5. Se essa dor passa nos 4 critérios da dor cara: frequência alta, custo visível, controle de orçamento, palavras literais</div>
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <!-- ENTREGAVEL 2: HEADLINE TESTADA -->
+  <!-- =========================================== -->
+  <section class="deliverable" id="entregavel-2">
+    <p class="label-bloco">Bloco 2 · 50 minutos</p>
+    <h2>Entregável 2: uma <em>headline testada</em> em 3 personas</h2>
+    <p class="tese">Sua mensagem candidata passada por 3 perfis decisórios (racional, emocional, pragmático) com notas de 0 a 10. Se ressoa em 2 dos 3 sem ofender o terceiro, vai para mídia. Custo: zero. Tempo: 10 minutos.</p>
+
+    <div class="compare">
+      <div class="panel empty">
+        <span class="panel-label">Você entra com</span>
+        <h3>Headline testada na sua cabeça</h3>
+        <div class="verbatim">"Otimize o atendimento do seu escritório com inteligência artificial"</div>
+
+        <div class="persona-grid" style="margin-top: 20px;">
+          <div class="persona-col">
+            <h4>Decisor racional</h4>
+            <p>—</p>
+            <p>—</p>
+          </div>
+          <div class="persona-col">
+            <h4>Decisor emocional</h4>
+            <p>—</p>
+            <p>—</p>
+          </div>
+          <div class="persona-col">
+            <h4>Decisor pragmático</h4>
+            <p>—</p>
+            <p>—</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel filled">
+        <span class="panel-label">Você sai com</span>
+        <h3>Headline com 3 reações documentadas</h3>
+        <div class="verbatim">"Sua equipe vai responder cliente em 8 minutos ou devolvemos. Em 60 dias."</div>
+
+        <div class="persona-grid" style="margin-top: 20px;">
+          <div class="persona-col">
+            <h4>Racional</h4>
+            <p><strong style="color: var(--primary);">Nota 9</strong></p>
+            <p>"8 minutos é mensurável, garantia em 60 dias é prazo aceitável para comitê."</p>
+          </div>
+          <div class="persona-col">
+            <h4>Emocional</h4>
+            <p><strong style="color: var(--primary);">Nota 7</strong></p>
+            <p>"'Devolvemos' tira meu medo. Quero saber quem está por trás."</p>
+          </div>
+          <div class="persona-col">
+            <h4>Pragmático</h4>
+            <p><strong style="color: var(--primary);">Nota 8</strong></p>
+            <p>"Quantos dias para implementar? Se cabe no calendário, fecho."</p>
+          </div>
+        </div>
+
+        <ul class="checklist" style="margin-top: 16px;">
+          <li>Ressoou em 3 de 3 (mais que o mínimo)</li>
+          <li>Não ofendeu nenhum perfil</li>
+          <li>Pronta para Meta Ads ou Google Ads</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-header">
+        <span class="label">Prompt 2 do Bloco 2 · Claude</span>
+        <button class="copy-btn" data-target="prompt-2">
+          <span class="copy-icon">⧉</span>
+          <span class="copy-text">Copiar prompt</span>
+        </button>
+      </div>
+      <div class="prompt-body" id="prompt-2">Agora você vai assumir o papel de cada uma das 3 personas, uma por vez, e reagir a esta headline candidata como se ela aparecesse no LinkedIn ou Google Ads para você:
+
+Headline candidata: "Sua equipe vai responder cliente em 8 minutos ou devolvemos. Em 60 dias."
+
+Para cada uma das 3 personas:
+1. Reação imediata em uma frase (na voz da persona, primeira pessoa)
+2. O que chamou atenção (positivo)
+3. O que gerou objeção ou desconfiança
+4. Probabilidade de clicar de 0 a 10
+5. O que precisaria mudar para subir essa nota em 3 pontos
+
+Sintetize no final: a headline ressoou em quantas das 3 personas? Qual versão refinada você recomenda testar a seguir?</div>
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <!-- ENTREGAVEL 3: DOSSIE DE CONCORRENTE -->
+  <!-- =========================================== -->
+  <section class="deliverable" id="entregavel-3">
+    <p class="label-bloco">Bloco 3 · 50 minutos</p>
+    <h2>Entregável 3: <em>dossiê</em> de concorrente em 4 vetores</h2>
+    <p class="tese">Concorrente bem analisado mostra brecha. 4 vetores mapeados (posicionamento, preço, promessa, ângulo) revelam onde TODOS são fracos. Brecha defensável em 15 minutos.</p>
+
+    <div class="compare">
+      <div class="panel empty">
+        <span class="panel-label">Você entra com</span>
+        <h3>Planilha sem decisão</h3>
+        <div class="vetor-row">
+          <span class="name">Posicionamento</span>
+          <span class="desc">—</span>
+          <span class="force">?</span>
+        </div>
+        <div class="vetor-row">
+          <span class="name">Preço</span>
+          <span class="desc">—</span>
+          <span class="force">?</span>
+        </div>
+        <div class="vetor-row">
+          <span class="name">Promessa</span>
+          <span class="desc">—</span>
+          <span class="force">?</span>
+        </div>
+        <div class="vetor-row">
+          <span class="name">Ângulo</span>
+          <span class="desc">—</span>
+          <span class="force">?</span>
+        </div>
+        <p style="font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted-foreground); font-style: italic; margin-top: 16px;">Brecha: não sei.</p>
+      </div>
+
+      <div class="panel filled">
+        <span class="panel-label">Você sai com</span>
+        <h3>Mapa com brecha apontada</h3>
+        <div class="vetor-row">
+          <span class="name">Posicionamento</span>
+          <span class="desc">Se vende como pioneiro tech para escritórios grandes</span>
+          <span class="force forte">Forte</span>
+        </div>
+        <div class="vetor-row">
+          <span class="name">Preço</span>
+          <span class="desc">R$ 3.490/mês anual com 30% desconto à vista</span>
+          <span class="force forte">Forte</span>
+        </div>
+        <div class="vetor-row">
+          <span class="name">Promessa</span>
+          <span class="desc">"Automatize seu escritório" (genérica, sem prazo)</span>
+          <span class="force medio">Médio</span>
+        </div>
+        <div class="vetor-row">
+          <span class="name">Ângulo</span>
+          <span class="desc">Sem história. Página "Sobre" com bullets corporativos</span>
+          <span class="force fraco">BRECHA</span>
+        </div>
+        <p style="font-family: var(--font-ui); font-size: 0.9rem; color: var(--primary); font-weight: 600; margin-top: 20px;">Brecha defensável: <strong>ângulo (história)</strong>. Difícil de copiar. Você ataca por aqui.</p>
+      </div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-header">
+        <span class="label">Prompt 3 do Bloco 3 · Claude</span>
+        <button class="copy-btn" data-target="prompt-3">
+          <span class="copy-icon">⧉</span>
+          <span class="copy-text">Copiar prompt</span>
+        </button>
+      </div>
+      <div class="prompt-body" id="prompt-3">1. Ângulo (história): qual história o concorrente conta sobre por que existe. Em 2 frases.
+2. Ressonância emocional: a história ressoa em qual perfil decisório (racional, emocional, pragmático)? Por quê?
+3. Mapa final dos 4 vetores: para cada vetor (posicionamento, preço, promessa, ângulo), marque a força do concorrente como Forte, Médio ou Fraco, e justifique em 1 frase.
+4. Sugestão de brecha: qual vetor é o mais fraco e poderia virar seu campo de batalha?
+
+Material:
+[colar 10 posts, 5 depoimentos, página Sobre]</div>
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <!-- ENTREGAVEL 4: OFERTA EMPILHADA -->
+  <!-- =========================================== -->
+  <section class="deliverable" id="entregavel-4">
+    <p class="label-bloco">Bloco 4 · 50 minutos</p>
+    <h2>Entregável 4: <em>oferta empilhada</em> com regra 10x</h2>
+    <p class="tese">Promessa específica, garantia que tira risco, ancoragem que dá referência, nome que vende. Os 4 componentes juntos fazem o cliente falar "tá barato" antes de você responder o preço.</p>
+
+    <div class="compare">
+      <div class="panel empty">
+        <span class="panel-label">Você entra com</span>
+        <h3>Preço chutado, oferta vazia</h3>
+        <div class="offer-stack">
+          <div class="offer-item"><span class="tag">Nome</span> "Sistema de Atendimento Inteligente"</div>
+          <div class="offer-item"><span class="tag">Promessa</span> "Ajudamos seu escritório a crescer."</div>
+          <div class="offer-item"><span class="tag">Garantia</span> Nenhuma.</div>
+          <div class="offer-item"><span class="tag">Ancoragem</span> "R$ 50 mil. Caro?"</div>
+        </div>
+        <p style="font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted-foreground); font-style: italic; margin-top: 16px;">Cliente: "Tá caro." Você baixa preço. Margem fina, escala impossível.</p>
+      </div>
+
+      <div class="panel filled">
+        <span class="panel-label">Você sai com</span>
+        <h3>Grand Slam Offer empilhada</h3>
+        <div class="offer-stack">
+          <div class="offer-item"><span class="tag">Nome</span> <strong>Resposta 60</strong> — para sócios de escritórios contábeis</div>
+          <div class="offer-item"><span class="tag">Promessa</span> Sua equipe responde cliente em 8 minutos ou devolvemos. Em 60 dias.</div>
+          <div class="offer-item"><span class="tag">Garantia</span> Devolução total se não bater meta. Risco transferido para nós.</div>
+          <div class="offer-item"><span class="tag">Ancoragem</span> Você perde R$ 15 mil/mês em clientes que abandonam. Em 12 meses, R$ 180 mil. Investimento: R$ 50 mil. Retorno em 4 meses.</div>
+        </div>
+        <p style="font-family: var(--font-ui); font-size: 0.9rem; color: var(--primary); font-weight: 600; margin-top: 20px;">Regra 10x verificada: entrega R$ 500 mil em 24 meses (cliente recuperado + crescimento) ÷ cobra R$ 50 mil. Relação 1:10.</p>
+      </div>
+    </div>
+
+    <div class="prompt-block">
+      <div class="prompt-header">
+        <span class="label">Prompt 3 do Bloco 4 · Claude · naming</span>
+        <button class="copy-btn" data-target="prompt-4">
+          <span class="copy-icon">⧉</span>
+          <span class="copy-text">Copiar prompt</span>
+        </button>
+      </div>
+      <div class="prompt-body" id="prompt-4">Você tem agora:
+- Promessa: "[colar a vencedora]"
+- Garantia: "[colar]"
+- Ancoragem: "[colar]"
+- Persona-alvo: sócia de escritório de contabilidade médio porte, decisor racional
+- Brecha competitiva: ângulo (história) único
+
+Sua tarefa: gerar 5 nomes candidatos para esta oferta seguindo critérios:
+1. Diz para quem é em 1 ou 2 palavras
+2. Sugere o resultado, não o método
+3. Memorizável em uma leitura
+4. Funciona como assunto de e-mail e como título de página
+5. Não é genérico (evitar "Sistema de", "Programa de", "Método")
+
+Para cada nome, dê justificativa em 1 frase do porquê funciona. Recomende o vencedor com argumento de 2 frases.</div>
+    </div>
+  </section>
+
+  <!-- =========================================== -->
+  <!-- CTA FINAL -->
+  <!-- =========================================== -->
+  <section class="final-cta">
+    <h2>Em 4 horas, <em>do nada à oferta</em>.</h2>
+    <p>Você entra com hipótese. Sai com frase do cliente, headline testada, brecha identificada e oferta empilhada. Pronta para anunciar amanhã.</p>
+  </section>
+</div>
+
+<div id="toast">Prompt copiado</div>
+
+<script>
+  // Reading progress bar
+  const bar = document.getElementById('progress');
+  function updateBar() {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', updateBar);
+  updateBar();
+
+  // Copy prompt
+  const toast = document.getElementById('toast');
+  let toastTimer = null;
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const targetId = btn.dataset.target;
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      const text = el.innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch(e) {
+        // Fallback antigo
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      btn.classList.add('copied');
+      btn.querySelector('.copy-text').textContent = 'Copiado';
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+        btn.classList.remove('copied');
+        btn.querySelector('.copy-text').textContent = 'Copiar prompt';
+      }, 1800);
+    });
+  });
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section.deliverable');
+  const navLinks = document.querySelectorAll('.quick-nav a');
+  function highlightNav() {
+    let activeId = null;
+    sections.forEach(s => {
+      const rect = s.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.4) activeId = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + activeId);
+    });
+  }
+  document.addEventListener('scroll', highlightNav);
+  highlightNav();
+</script>
+
+</body>
+</html>
