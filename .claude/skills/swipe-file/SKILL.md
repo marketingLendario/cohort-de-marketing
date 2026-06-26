@@ -156,7 +156,31 @@ A skill gera (depende da acao):
 3. Instrucoes Figma (link para adicionar frame manualmente, se usar Figma)
 
 **Para `/swipe-file briefing [tipo]`:**
-1. Documento `briefing-{tipo}-{data}.md` com 10-20 referencias organizadas
+1. Documento `briefing-{tipo}-{data}.md` com 10-20 referencias organizadas (granular, por tipo)
+2. **`briefing-swipe-file.md`** (handoff master) — index unico que consolida TODOS os briefings gerados ate aqui, e e o arquivo que voce passa pro Copy (`/copy-funil`) e pro Media Buyer. Atualizado a cada novo briefing gerado.
+
+Estrutura do `briefing-swipe-file.md`:
+
+```markdown
+# Briefing Swipe File — {Nicho}
+
+Atualizado: {data}
+Briefings ativos: {n}
+
+## Top 3 padroes vencedores (cross-tipo)
+1. [padrao] — usado em {n} criativos, performance media: {x}
+2. ...
+
+## Briefings por tipo
+- [hooks-vsl](./briefing-hooks-vsl-{data}.md) — 18 referencias
+- [headlines-meta-ads](./briefing-headlines-meta-ads-{data}.md) — 12 referencias
+
+## Para Copy
+Top 5 hooks adaptaveis ao ICP: ...
+
+## Para Media Buyer
+Top 5 angulos validados pelo algoritmo: ...
+```
 
 **Para `/swipe-file organizar`:**
 1. Relatorio de reorganizacao com estatisticas (total, por categoria, mais antigo, etc.)

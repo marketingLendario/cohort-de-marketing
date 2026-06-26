@@ -143,8 +143,10 @@ Consolida pesquisa de avatar + dossiê do concorrente + tendências + swipe file
 │   └── Template-Offerbook.docx     template Word oficial
 ├── exemplos/                       exemplos preenchidos
 └── docs/
-    ├── workflow.md                 fluxo completo da Aula 01
-    └── conexao-aula-02.md          handoff para próxima aula
+    ├── workflow.md                       fluxo completo da Aula 01
+    ├── conexao-aula-02.md                handoff para próxima aula
+    ├── template-lacunas-aula-01.md       template do artefato manual de fechamento
+    └── SKILLS-INDEX.md                   mapa de nomes (aliases → canônico) para suporte
 ```
 
 ---

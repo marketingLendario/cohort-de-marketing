@@ -93,7 +93,7 @@ Todas instaladas em `.claude/skills/` na raiz. Funcionam de qualquer aula.
 ├── aula-01/                     Pesquisa, Concorrentes e Ofertas
 │   ├── README.md
 │   ├── GUIA-DO-ALUNO.html       leia primeiro
-│   ├── docs/                    workflow + handoff para Aula 2
+│   ├── docs/                    workflow + handoff + SKILLS-INDEX (mapa de nomes)
 │   └── templates/               Template-Offerbook.docx
 └── aula-02/                     Funil e Páginas
     ├── README.md
@@ -135,6 +135,7 @@ Nada de LP, e-mail ou ad antes do offerbook aprovado pelo dono do negócio.
 
 ## Suporte
 
+- **"Tinha uma skill chamada X, qual é?":** consulte [`aula-01/docs/SKILLS-INDEX.md`](./aula-01/docs/SKILLS-INDEX.md) — mapa de nomes (aliases antigos → canônico)
 - **Dúvidas técnicas:** abra issue neste repo
 - **Dúvidas de conteúdo:** canal do cohort
 - **Bug ou melhoria:** PR direto neste repo

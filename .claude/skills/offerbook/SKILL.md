@@ -34,13 +34,42 @@ Se não vier o nome do produto, **pergunte qual é a oferta e PARE** até recebe
 
 ## Pipeline (passo a passo)
 
-1. **Criar o documento** "Offerbook — [Produto]" (cópia de um template, ou do zero usando a estrutura abaixo).
-2. **Checar o que já existe** antes de produzir (materiais da oferta, pesquisas, depoimentos, voz da marca). Não inventar.
-3. **Avatar e Análise de Cliente vêm da pesquisa real** (obrigatório). Trazer N, % e citações literais dos leads/clientes. Onde faltar dado: "SEM DADO NA PESQUISA".
-4. **Escrever o conteúdo** (Oferta, História, Copy) com dados reais + a voz da marca.
-5. **Organizar em blocos/guias separadas**, uma por bloco: Capa e Materiais · Posicionamento (Oferta) · Avatar · História · Análise de Cliente · Copy · Lacunas.
-6. **Lacunas:** o que não dá pra inventar (datas, stack oficial, bônus da turma, garantia, links) vai numa seção "Lacunas e Próximos Passos", separado **por quem resolve** (dono da oferta vs. equipe de marketing).
-7. **Apresentar e conferir campo a campo** contra a estrutura antes de declarar "completo".
+1. **Gerar o `briefing-offerbook.md`** — antes de escrever o offerbook, consolidar inputs em 1 arquivo curto (1-2 páginas) que será o checklist de fontes:
+
+   ```markdown
+   # Briefing Offerbook — [Produto]
+
+   ## Inputs disponíveis (checklist)
+   - [ ] `relatorio-avatar.md` — caminho: ...
+   - [ ] `dossie-{concorrente}.md` (1+ concorrentes) — caminhos: ...
+   - [ ] `briefing-swipe-file.md` — caminho: ...
+   - [ ] Depoimentos/cases (N=?)
+   - [ ] Voz da marca / DESIGN.md
+   - [ ] Materiais existentes (transcrições, e-mails aprovados, etc.)
+
+   ## Decisões prévias do dono da oferta
+   - Promessa central (1 frase): ...
+   - Mecanismo único (nome interno): ...
+   - Preço-âncora pretendido: ...
+   - Garantia: ...
+   - Bônus já confirmados: ...
+
+   ## Lacunas conhecidas (vão pra "Lacunas e Próximos Passos")
+   - ...
+
+   ## Autorização do dono
+   - [ ] Dono da oferta aprovou esse briefing para virar offerbook
+   ```
+
+   **Regra:** se o briefing ficar com mais de 30% de campos vazios ou sem `relatorio-avatar.md`, **PARAR e pedir os dados antes** de escrever o offerbook. Offerbook sem briefing aprovado = ficção.
+
+2. **Criar o documento** "Offerbook — [Produto]" (cópia de um template, ou do zero usando a estrutura abaixo).
+3. **Checar o que já existe** antes de produzir (materiais da oferta, pesquisas, depoimentos, voz da marca). Não inventar.
+4. **Avatar e Análise de Cliente vêm da pesquisa real** (obrigatório). Trazer N, % e citações literais dos leads/clientes. Onde faltar dado: "SEM DADO NA PESQUISA".
+5. **Escrever o conteúdo** (Oferta, História, Copy) com dados reais + a voz da marca.
+6. **Organizar em blocos/guias separadas**, uma por bloco: Capa e Materiais · Posicionamento (Oferta) · Avatar · História · Análise de Cliente · Copy · Lacunas.
+7. **Lacunas:** o que não dá pra inventar (datas, stack oficial, bônus da turma, garantia, links) vai numa seção "Lacunas e Próximos Passos", separado **por quem resolve** (dono da oferta vs. equipe de marketing).
+8. **Apresentar e conferir campo a campo** contra a estrutura antes de declarar "completo".
 
 > Só depois do offerbook aprovado é que se escreve LP, e-mails e ads.
 
@@ -105,6 +134,22 @@ Preencher TODOS os campos. Não reorganizar, não resumir, não pular campo.
 - Ads
 - Landing Page (Versão A, B, C)
 - E-mails
+
+---
+
+## Output (3 arquivos)
+
+A skill **sempre** entrega 3 arquivos no diretório atual:
+
+1. **`briefing-offerbook.md`** — gerado no Passo 1 do Pipeline. Consolida inputs (avatar + concorrentes + swipe-file + decisões do dono) e serve de gate: sem briefing aprovado, não escreve offerbook.
+2. **`offerbook-{slug}.md`** — fonte de verdade (Markdown com os 7 blocos completos).
+3. **`offerbook-{slug}.docx`** — gerado a partir do MD com `python scripts/gerar_docx.py offerbook-{slug}.md` usando o `Template-Offerbook.docx` oficial.
+
+Regras de geração:
+- MD é a fonte de verdade. Nunca editar só o DOCX; corrigir o MD e regenerar.
+- Template original do DOCX NUNCA é modificado — o script faz cópia.
+- Se faltar campo no MD, o DOCX gera com `[A PREENCHER]` no lugar (não falha).
+- Pré-requisito DOCX: `pip install python-docx` (uma vez).
 
 ---
 
