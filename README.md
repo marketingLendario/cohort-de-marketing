@@ -1,127 +1,83 @@
-# Cohort de Marketing — Aula 01
+# Cohort de Marketing com Claude Code
 
-> **Academia Lendária · Squad Marketing**
+> **Academia Lendária**
 >
-> Pesquisa, Concorrentes e Ofertas com Claude Code
+> Sua máquina de marketing com IA, rodando em 4 semanas.
 
-Bem-vinda ao repositório da **Aula 01** do Cohort de Marketing. Este repo contém tudo o que você precisa para mapear mercado, ler concorrentes e desenhar uma oferta que sai da gaveta — com o Claude Code orquestrando a pesquisa.
+Bem-vinda ao repositório oficial do **Cohort de Marketing**. Este repo contém todo o material das aulas ao vivo, skills do Claude Code, templates e exemplos. É clone-and-run: você clona, abre Claude Code, e começa a executar.
 
 ---
 
 ## Comece por aqui
 
-**Antes de qualquer coisa, abra o guia visual no navegador:**
-
-👉 **[`GUIA-DO-ALUNO.html`](./GUIA-DO-ALUNO.html)** — clica e abre. Tem tudo o que você precisa saber para começar (5 minutos de leitura).
-
-Se preferir markdown puro, o conteúdo está abaixo.
-
----
-
-## O que você ganha na Aula 01
-
-5 skills para o Claude Code que orquestram todo o squad **Research Analyst**:
-
-| Skill | O que faz | Output |
-|---|---|---|
-| `/pesquisa-de-avatar` | Minera dor real em reviews + comunidades + redes, monta avatar em 7 dimensões e roda focus group sintético em 3 personas | Relatório completo de dor + avatar + headline validada |
-| `/espiao-do-concorrente` | Varre toda presença pública de 1 concorrente (anúncios pagos + orgânico + site + reputação) e devolve dossiê com brechas | Dossiê com ganchos, ofertas, ângulos, formatos e oportunidades acionáveis |
-| `/trend-hunting` | Identifica tendências emergentes em 4 fontes (X, Reels, TikTok, LinkedIn) | Relatório + variações prontas para teste |
-| `/swipe-file` | Organiza criativos winners categorizados | Biblioteca pesquisável + briefing para Copy |
-| `/offerbook` | Consolida tudo num offerbook de 7 blocos (squad 3 mentes: Jobs + Musk + Hormozi) | Livro da Oferta pronto para alimentar Funil |
-
-**Tese-mãe da Aula 01:** mapear mercado, ler concorrentes e desenhar uma oferta que sai da gaveta.
-
----
-
-## Setup em 5 minutos
-
-### Pré-requisitos
-
-- **Claude Code** instalado ([download](https://docs.claude.com/claude-code))
-- **Git** instalado
-- **Python 3.9+** (para os scripts de coleta de algumas skills)
-
-### Passo a passo
-
-**1. Clone este repo**
-
 ```bash
 git clone https://github.com/marketingLendario/cohort-de-marketing.git
 cd cohort-de-marketing
-```
-
-**2. Configure suas chaves de API (opcional, mas recomendado)**
-
-```bash
-cp .env.example .env
-```
-
-Abra o `.env` no editor e preencha as chaves que você quiser usar. **Todas são opcionais** — as skills funcionam sem elas em modo manual (você cola o material, a IA analisa). O `.env.example` explica como pegar cada chave (Meta Ad Library, Apify, OpenAI, etc.) e o que cada uma habilita.
-
-**3. Abra o Claude Code no diretório**
-
-```bash
 claude
 ```
 
-As 5 skills em `.claude/skills/` são carregadas automaticamente.
-
-**4. Teste que as skills estão instaladas**
-
-No Claude Code, digite:
-
-```
-/pesquisa-de-avatar
-```
-
-Se aparecer o menu da skill, está funcionando.
+As skills em `.claude/skills/` carregam automaticamente. Digite `/` no Claude Code e veja as 16 skills disponíveis.
 
 ---
 
-## Fluxo da aula (4 horas)
+## Aulas do cohort
 
-### Bloco 1 (50 min) — Pesquisa de Avatar com `/pesquisa-de-avatar`
+### Aula 1 · Pesquisa, Concorrentes e Ofertas com Claude Code
 
-```
-/pesquisa-de-avatar [nome do seu negócio ou nicho]
-```
+**Status:** disponível
+**Onde:** [`aula-01/`](./aula-01/)
 
-A skill faz 4 passos: minera dor real em 3 fontes (reviews, comunidades, redes), ranqueia dores nos 4 critérios da dor cara, monta avatar em 7 dimensões e ainda roda **focus group sintético** com 3 personas testando sua headline. Saída: relatório completo.
+Mapear mercado, ler concorrentes e desenhar uma oferta que sai da gaveta. Skills usadas: `/avatar-funil`, `/espiao-do-concorrente`, `/trend-hunting`, `/swipe-file`, `/offerbook`.
 
-**Pré-requisito:** mínimo 20 trechos de dor de 2 fontes diferentes (ou ela cai para modo offline, você cola o que tem).
+**Comece pelo guia visual:** [`aula-01/GUIA-DO-ALUNO.html`](./aula-01/GUIA-DO-ALUNO.html)
 
-### Bloco 2 (50 min) — Concorrentes + Tendências (paralelo)
+### Aula 2 · Funil e Páginas
 
-```
-/espiao-do-concorrente [nome ou @ do concorrente]
-```
+**Status:** disponível
+**Onde:** [`aula-02/`](./aula-02/)
 
-A skill varre **toda presença pública** do concorrente (Meta Ad Library, Google Ads Transparency, TikTok Ads, redes sociais, site, reviews, Reclame Aqui) e monta dossiê com ganchos, ofertas, ângulos, brechas e 3 jogadas recomendadas.
+Estruturar o funil, gerar a página de venda e produzir uma bateria de criativos prontos para rodar. Skills usadas: `/metodo-funil`, `/pagina-vendas`, `/vsl-funil`, `/copy-funil`, `/criativos-funil`, `/email-funil`, `/whatsapp-funil`, `/recuperacao`, `/cro-funil`, `/back-end`, `/conteudo-funil`, `/design-md`.
 
-Em outra aba do Claude Code:
+### Aula 3 · Tráfego e Criativos
 
-```
-/trend-hunting [seu nicho]
-```
+**Status:** em breve (11/07)
 
-### Bloco 3 (50 min) — Swipe File
+### Aula 4 · Dados e Receita
 
-```
-/swipe-file capturar
-```
+**Status:** em breve (18/07)
 
-A skill usa os briefings do bloco 2 para organizar 10-15 criativos winners.
+---
 
-### Bloco 4 (50 min) — Offerbook com squad 3 mentes
+## As 16 skills do cohort
 
-```
-/offerbook [nome do seu produto]
-```
+Todas instaladas em `.claude/skills/` na raiz. Funcionam de qualquer aula.
 
-Consolida pesquisa de avatar + dossiê do concorrente + tendências + swipe file + as 3 mentes (Jobs + Musk + Hormozi) em 7 blocos.
+### Pesquisa e Oferta (Aula 1)
 
-**Output final:** offerbook completo pronto para alimentar a Aula 02 (Arquiteto de Funil).
+| Skill | O que faz |
+|---|---|
+| `/avatar-funil` | Pesquisa de avatar em 7 dimensões + focus group sintético (MD + HTML + PDF) |
+| `/espiao-do-concorrente` | Dossiê multi-fonte de 1 concorrente (Meta Ad Library + Google Ads + redes + site + reviews) |
+| `/trend-hunting` | Identifica tendências emergentes em 4 fontes antes da saturação |
+| `/swipe-file` | Organiza criativos winners categorizados por tipo/formato/padrão |
+| `/offerbook` | Livro da Oferta em 7 blocos (MD + DOCX usando template oficial) |
+
+### Funil e Páginas (Aula 2)
+
+| Skill | O que faz |
+|---|---|
+| `/metodo-funil` | Método de construção de funil (Alan Nicolas) |
+| `/pagina-vendas` | Página de vendas estruturada |
+| `/vsl-funil` | Video Sales Letter |
+| `/copy-funil` | Copy específica para funil |
+| `/criativos-funil` | Criativos para anúncios |
+| `/email-funil` | Email marketing do funil |
+| `/whatsapp-funil` | WhatsApp marketing do funil |
+| `/recuperacao` | Recuperação de carrinho abandonado |
+| `/cro-funil` | Otimização de conversão |
+| `/back-end` | Backend e integrações |
+| `/conteudo-funil` | Conteúdo para LP e VSL |
+| `/design-md` | Design system markdown que renderiza HTML com brand |
 
 ---
 
@@ -129,67 +85,51 @@ Consolida pesquisa de avatar + dossiê do concorrente + tendências + swipe file
 
 ```
 .
-├── README.md                       este arquivo
-├── GUIA-DO-ALUNO.html              guia visual interativo (leia primeiro)
-├── .env.example                    template de chaves de API (copie para .env)
+├── README.md                    este arquivo
+├── .env.example                 template de chaves de API (copie para .env)
+├── .gitignore
 ├── .claude/
-│   └── skills/                     as 5 skills (Claude Code carrega automático)
-│       ├── pesquisa-de-avatar/     dor + avatar + focus group (com scripts)
-│       ├── espiao-do-concorrente/  dossiê multi-fonte (com scripts)
-│       ├── trend-hunting/
-│       ├── swipe-file/
-│       └── offerbook/
-├── templates/
-│   └── Template-Offerbook.docx     template Word oficial
-├── exemplos/                       exemplos preenchidos
-└── docs/
-    ├── workflow.md                 fluxo completo da Aula 01
-    └── conexao-aula-02.md          handoff para próxima aula
+│   └── skills/                  16 skills carregam automaticamente
+├── aula-01/                     Pesquisa, Concorrentes e Ofertas
+│   ├── README.md
+│   ├── GUIA-DO-ALUNO.html       leia primeiro
+│   ├── docs/                    workflow + handoff para Aula 2
+│   └── templates/               Template-Offerbook.docx
+└── aula-02/                     Funil e Páginas
+    ├── README.md
+    ├── DESIGN.md
+    └── slides-aula-funil-claude-design.md
 ```
 
 ---
 
-## Onde você está no cohort
+## Configuração (chaves de API opcionais)
 
+```bash
+cp .env.example .env
 ```
-VOCÊ
- |
- v
- Squad Marketing
- |
- +-- AULA 01: Research Analyst        <- você está aqui
- +-- AULA 02: Arquiteto de Funil      próxima
- +-- AULA 03: Tráfego Pago            depois
- +-- AULA 04: Análise de Dados        final
-```
+
+Abra o `.env` e preencha as chaves que quiser usar. Todas são opcionais — as skills funcionam em modo manual sem chaves. Cada chave tem instrução de onde pegar no `.env.example`.
 
 ---
 
-## Regras de ouro
+## Regras de ouro do cohort
 
 ### Pesquisa antes da oferta
 
-A regra-mãe do cohort: **pesquisa antes da oferta, oferta antes de copy, copy antes de ads**. Pular essa ordem queima verba.
+A regra-mãe: **pesquisa antes da oferta, oferta antes de copy, copy antes de ads**. Pular essa ordem queima verba.
 
 ### Voz do cliente, sempre verbatim
 
-Toda seção com dados reais precisa de citação literal do cliente. Sem citação, marcar `[SUPOSIÇÃO]` ou `SEM DADO NA PESQUISA`. Persona inventada vira oferta que não vende.
+Toda seção com dados reais precisa de citação literal. Sem citação, marcar `[SUPOSIÇÃO]`. Persona inventada vira oferta que não vende.
 
 ### Brecha de ângulo > brecha de preço
 
 Preço é copiável em 30 dias. História (ângulo) não se copia.
 
-### Swipe file é inspiração, não cópia
-
-Você extrai o **padrão** e adapta ao seu ICP. Copiar literal é pena algorítmica + risco jurídico.
-
 ### Offerbook antes de qualquer copy
 
 Nada de LP, e-mail ou ad antes do offerbook aprovado pelo dono do negócio.
-
-### Chaves de API ficam no .env
-
-Nunca cole chave de API direto em código ou em prompt. Sempre no `.env` (gitignored). O `.env.example` explica onde pegar cada uma.
 
 ---
 
@@ -198,14 +138,6 @@ Nunca cole chave de API direto em código ou em prompt. Sempre no `.env` (gitign
 - **Dúvidas técnicas:** abra issue neste repo
 - **Dúvidas de conteúdo:** canal do cohort
 - **Bug ou melhoria:** PR direto neste repo
-
----
-
-## Próxima aula
-
-**Aula 02 — Arquiteto de Funil:** estruturar o funil, gerar a página de venda e produzir uma bateria de criativos prontos para rodar.
-
-Ver [`docs/conexao-aula-02.md`](./docs/conexao-aula-02.md) para o handoff completo.
 
 ---
 

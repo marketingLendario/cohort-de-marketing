@@ -12,7 +12,7 @@ VOCE
  |
  +-- AULA 01: Research Analyst   <- voce esta aqui
  |    |
- |    +-- /pesquisa-de-avatar           (Pesquisa Lendaria)
+ |    +-- /avatar-funil           (Pesquisa Lendaria)
  |    +-- /espiao-do-concorrente    (Apify + Claude)
  |    +-- /trend-hunting          (Claude + Twitter/X)
  |    +-- /swipe-file             (organiza criativos)
@@ -40,7 +40,7 @@ Esse pacote vira input direto da **Aula 02 (Arquiteto de Funil)**.
 ### Bloco 1 (50 min) — ICP
 
 1. Abrir Claude Code no projeto do aluno
-2. `/pesquisa-de-avatar [seu nicho]` -> a skill faz 10 modulos de perguntas
+2. `/avatar-funil [seu nicho]` -> a skill faz 10 modulos de perguntas
 3. Aluno responde com dados reais (formularios, entrevistas, reviews)
 4. Output: 3 arquivos ICP (md, html, resumo)
 5. Validar com checklist do Modulo 10
@@ -67,7 +67,7 @@ Esse pacote vira input direto da **Aula 02 (Arquiteto de Funil)**.
 ## Conexao entre as skills
 
 ```
-/pesquisa-de-avatar
+/avatar-funil
     \
      v output: icp-{negocio}.md
 /espiao-do-concorrente  -- briefing-offerbook.md ---->  /offerbook
