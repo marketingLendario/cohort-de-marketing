@@ -73,7 +73,7 @@
   }
   .hero h1 em {
     font-family: var(--font-body);
-    font-style: italic;
+    font-style: normal;
     font-weight: 400;
     color: var(--primary);
   }
@@ -87,7 +87,7 @@
   }
   .hero .lead {
     font-family: var(--font-body);
-    font-style: italic;
+    font-style: normal;
     font-size: 1.3rem;
     color: var(--foreground);
     max-width: 65ch;
@@ -157,7 +157,7 @@
   }
   section h2 em {
     font-family: var(--font-body);
-    font-style: italic;
+    font-style: normal;
     font-weight: 400;
     color: var(--primary);
   }
@@ -423,13 +423,13 @@
   }
   .cta-final h2 em {
     font-family: var(--font-body);
-    font-style: italic;
+    font-style: normal;
     color: var(--primary);
     font-weight: 400;
   }
   .cta-final p {
     font-family: var(--font-body);
-    font-style: italic;
+    font-style: normal;
     color: var(--muted-foreground);
     max-width: 50ch;
     margin: 16px auto 24px;
@@ -461,6 +461,7 @@
       <li><a href="#secao-4">As 5 skills do squad</a></li>
       <li><a href="#secao-5">Fluxo da aula (4 horas, 4 blocos)</a></li>
       <li><a href="#secao-6">As 5 regras de ouro</a></li>
+      <li><a href="#secao-passo-a-passo">Passo a passo: 5 skills, 13 arquivos</a></li>
       <li><a href="#secao-7">O que entregar no fim</a></li>
     </ol>
   </nav>
@@ -699,8 +700,211 @@
     </div>
   </section>
 
-  <section id="secao-7">
+  <section id="secao-passo-a-passo">
     <div class="section-num">Parte 7</div>
+    <h2>Passo a passo: <em>5 skills, 13 arquivos</em></h2>
+    <p>Esse é o manual operacional. Cada skill tem um comando, um output esperado, e um gate de qualidade antes de avançar pra próxima. Se você seguir na ordem, sai da aula com 13 arquivos prontos pra alimentar a Aula 02.</p>
+
+    <div class="bloco" style="margin-top: 32px;">
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 8px;">Resumo do que cada skill entrega:</p>
+      <ul style="font-family: var(--font-ui); font-size: 0.95rem; list-style: none; padding: 0; margin: 0; line-height: 2;">
+        <li><code style="font-family: var(--font-mono); color: var(--primary);">/avatar-funil</code> → 3 arquivos (md + html + pdf)</li>
+        <li><code style="font-family: var(--font-mono); color: var(--primary);">/espiao-do-concorrente</code> → 1 arquivo por concorrente</li>
+        <li><code style="font-family: var(--font-mono); color: var(--primary);">/trend-hunting</code> → 3 arquivos (trends + variações + briefing media buyer)</li>
+        <li><code style="font-family: var(--font-mono); color: var(--primary);">/swipe-file</code> → 2 arquivos (index + briefing)</li>
+        <li><code style="font-family: var(--font-mono); color: var(--primary);">/offerbook</code> → 3 arquivos (briefing + md + docx)</li>
+        <li>Manual de fechamento → 1 arquivo (<code style="font-family: var(--font-mono);">lacunas-aula-01.md</code>)</li>
+      </ul>
+    </div>
+
+    <!-- PASSO 0: BRAND -->
+    <h3 style="margin-top: 56px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Passo 0 — Qual brand você quer no relatório visual?</h3>
+    <p>Antes de rodar a primeira skill, decida: o <code style="font-family: var(--font-mono);">relatorio-avatar.html</code> (e qualquer entregável visual depois) vai sair com a brand da Academia Lendária ou com a sua brand?</p>
+
+    <div class="bloco" style="border-left: 3px solid var(--primary); padding-left: 20px; margin: 16px 0 24px;">
+      <p style="margin: 0 0 12px;"><strong>Opção A — Brand Academia Lendária (padrão, zero esforço):</strong></p>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">O template HTML já vem com a brand AL (dark mode, Ouro Velado, Source Serif 4). Você não faz nada. A skill <code style="font-family: var(--font-mono);">/avatar-funil</code> gera direto.</p>
+
+      <p style="margin: 0 0 12px;"><strong>Opção B — Sua brand:</strong></p>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0;">Primeiro rode <code style="font-family: var(--font-mono); color: var(--primary);">/design-md</code> apontando para a sua marca (logo + cores + fontes). Isso gera um <code style="font-family: var(--font-mono);">DESIGN.md</code> na raiz. A partir daí, qualquer skill que gera HTML pega esse DESIGN.md e aplica a sua brand automaticamente.</p>
+    </div>
+
+    <p style="font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted-foreground);"><strong>Recomendação:</strong> se é seu primeiro projeto no cohort, comece com a brand AL (Opção A). Aplique sua brand depois que o conteúdo estiver validado.</p>
+
+    <!-- SKILL 1 -->
+    <h3 style="margin-top: 72px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Skill 1/5 — <code style="font-family: var(--font-mono); font-size: 1.4rem;">/avatar-funil</code></h3>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Pesquisa de avatar em 7 dimensões + focus group sintético em 3 personas testando sua headline.</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Comando:</p>
+    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 24px;">
+      /avatar-funil [nome-do-seu-negocio-ou-nicho]
+    </div>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">O que ela faz (4 passos internos):</p>
+    <ol style="font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.8;">
+      <li>Coleta dor real em 3 fontes (reviews, comunidades, redes)</li>
+      <li>Ranqueia dores pelos 4 critérios da "dor cara"</li>
+      <li>Monta avatar em 7 dimensões ancorado na frase verbatim do lead</li>
+      <li>Roda focus group sintético com 3 personas testando sua headline</li>
+    </ol>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px;">Arquivos entregues (3):</p>
+    <ul style="font-family: var(--font-ui); list-style: none; padding: 0; margin: 0; line-height: 2;">
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">relatorio-avatar.md</code> — fonte de verdade (markdown editável)</li>
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">relatorio-avatar.html</code> — versão visual (com a brand escolhida no Passo 0)</li>
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">relatorio-avatar.pdf</code> — versão para imprimir ou compartilhar</li>
+    </ul>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px; color: var(--status-success);">Gate antes de avançar:</p>
+    <ul style="font-family: var(--font-ui); font-size: 0.9rem; padding-left: 20px; line-height: 1.8;">
+      <li>Avatar tem nome, idade, frase verbatim do lead?</li>
+      <li>Headline foi validada nos 3 perfis do focus group?</li>
+      <li>Campos sem dado estão marcados como <code style="font-family: var(--font-mono);">[SUPOSIÇÃO]</code> (e não inventados)?</li>
+    </ul>
+
+    <!-- SKILL 2 -->
+    <h3 style="margin-top: 72px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Skill 2/5 — <code style="font-family: var(--font-mono); font-size: 1.4rem;">/espiao-do-concorrente</code></h3>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Dossiê multi-fonte de 1 concorrente (anúncios pagos + orgânico + site + reputação). Rode 1 vez para cada concorrente.</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Comando:</p>
+    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 24px;">
+      /espiao-do-concorrente [nome-do-concorrente]
+    </div>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Fontes que ela varre:</p>
+    <ul style="font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.8;">
+      <li>Meta Ad Library (anúncios pagos rodando)</li>
+      <li>Google Ads Transparency</li>
+      <li>TikTok Ads Library</li>
+      <li>Redes orgânicas (Instagram, LinkedIn, X)</li>
+      <li>Site oficial (oferta, preço, garantia)</li>
+      <li>Reviews e menções públicas (reputação)</li>
+    </ul>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px;">Arquivos entregues (1 por concorrente):</p>
+    <ul style="font-family: var(--font-ui); list-style: none; padding: 0; margin: 0; line-height: 2;">
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">dossie-{nome-do-concorrente}.md</code> — 9 seções (resumo executivo, fontes, ganchos, ofertas, ângulos, formatos, reputação, brechas, 3 jogadas recomendadas)</li>
+    </ul>
+    <p style="font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted-foreground); margin-top: 8px;">Exemplo: <code style="font-family: var(--font-mono);">dossie-erico-rocha.md</code>, <code style="font-family: var(--font-mono);">dossie-hotmart.md</code>.</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px; color: var(--status-success);">Gate antes de avançar:</p>
+    <ul style="font-family: var(--font-ui); font-size: 0.9rem; padding-left: 20px; line-height: 1.8;">
+      <li>Rodou para no mínimo 3 concorrentes diretos?</li>
+      <li>Cada dossiê tem pelo menos 10 peças analisadas (senão sinalize "amostra parcial")?</li>
+      <li>Cada dossiê termina com 3 jogadas acionáveis (não "blá-blá estratégico")?</li>
+    </ul>
+
+    <!-- SKILL 3 -->
+    <h3 style="margin-top: 72px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Skill 3/5 — <code style="font-family: var(--font-mono); font-size: 1.4rem;">/trend-hunting</code></h3>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Identifica tendências emergentes em 4 fontes (X, Reels, TikTok, LinkedIn) antes da saturação. Já gera variações de hook prontas para teste.</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Comando:</p>
+    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 24px;">
+      /trend-hunting [nicho]
+    </div>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px;">Arquivos entregues (3):</p>
+    <ul style="font-family: var(--font-ui); list-style: none; padding: 0; margin: 0; line-height: 2;">
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">trends-{nicho}-{data}.md</code> — relatório com 3-5 padrões emergentes + 2-3 em alta, classificados por timing</li>
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">variacoes-teste-{data}.md</code> — hooks prontos para teste, com estrutura e CTA</li>
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">briefing-media-buyer.md</code> — briefing acionável de tráfego (orçamento, métrica de validação)</li>
+    </ul>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px; color: var(--status-success);">Gate antes de avançar:</p>
+    <ul style="font-family: var(--font-ui); font-size: 0.9rem; padding-left: 20px; line-height: 1.8;">
+      <li>Pelo menos 3 padrões na fase "emergente" identificados?</li>
+      <li>Cada variação de hook tem hook + estrutura + CTA (não só o hook solto)?</li>
+      <li>O briefing do media buyer tem métrica de validação clara (CTR x%, CPL R$y)?</li>
+    </ul>
+
+    <!-- SKILL 4 -->
+    <h3 style="margin-top: 72px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Skill 4/5 — <code style="font-family: var(--font-mono); font-size: 1.4rem;">/swipe-file</code></h3>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Organiza os criativos vencedores que vieram do <code style="font-family: var(--font-mono);">/espiao-do-concorrente</code> e do <code style="font-family: var(--font-mono);">/trend-hunting</code> em uma biblioteca categorizada. Vira referência viva para Copy e Media Buyer.</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Comandos (em ordem):</p>
+    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 8px;">
+      /swipe-file capturar
+    </div>
+    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 8px;">
+      /swipe-file briefing [tipo]
+    </div>
+    <p style="font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted-foreground); margin-bottom: 24px;">Exemplo de tipo: <code style="font-family: var(--font-mono);">hooks-vsl</code>, <code style="font-family: var(--font-mono);">headlines-meta-ads</code>, <code style="font-family: var(--font-mono);">ctas-checkout</code>.</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px;">Arquivos entregues (2):</p>
+    <ul style="font-family: var(--font-ui); list-style: none; padding: 0; margin: 0; line-height: 2;">
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">swipe-file-index.md</code> — índice master da biblioteca (todos os criativos capturados)</li>
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">briefing-swipe-file.md</code> — handoff master que vai para Copy e Media Buyer (top padrões + adaptações sugeridas ao seu ICP)</li>
+    </ul>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px; color: var(--status-success);">Gate antes de avançar:</p>
+    <ul style="font-family: var(--font-ui); font-size: 0.9rem; padding-left: 20px; line-height: 1.8;">
+      <li>Você capturou só criativos rodando há mais de 7 dias (com prova de performance)?</li>
+      <li>Cada criativo tem link da fonte (sem link → descarta)?</li>
+      <li>O briefing tem pelo menos 10 referências adaptadas ao seu ICP (não copy-paste do concorrente)?</li>
+    </ul>
+
+    <!-- SKILL 5 -->
+    <h3 style="margin-top: 72px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Skill 5/5 — <code style="font-family: var(--font-mono); font-size: 1.4rem;">/offerbook</code></h3>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Consolida tudo num offerbook de 7 blocos (Materiais · Oferta · Avatar · História · História v2 · Análise de Cliente · Copy). É o brief de Story Selling que vai alimentar TODA a copy depois (LP, e-mails, ads).</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Comando:</p>
+    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 24px;">
+      /offerbook [nome-do-produto]
+    </div>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Pipeline interno (8 passos):</p>
+    <ol style="font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.8;">
+      <li>Gera <code style="font-family: var(--font-mono);">briefing-offerbook.md</code> consolidando inputs (avatar + concorrentes + swipe-file + decisões do dono)</li>
+      <li>Confere se inputs suficientes (sem isso, PARA e pede dado)</li>
+      <li>Cria o documento "Offerbook — [Produto]"</li>
+      <li>Avatar e Análise de Cliente vêm da pesquisa REAL (sem invenção)</li>
+      <li>Escreve Oferta, História e Copy com a voz da marca</li>
+      <li>Organiza em blocos separados (7 blocos)</li>
+      <li>Marca lacunas: dono da oferta vs. equipe de marketing</li>
+      <li>Confere campo a campo antes de declarar completo</li>
+    </ol>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px;">Arquivos entregues (3):</p>
+    <ul style="font-family: var(--font-ui); list-style: none; padding: 0; margin: 0; line-height: 2;">
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">briefing-offerbook.md</code> — gate que precisa estar aprovado antes do offerbook</li>
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">offerbook-{produto}.md</code> — Livro da Oferta (fonte de verdade)</li>
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">offerbook-{produto}.docx</code> — versão Word usando o Template Academia Lendária oficial</li>
+    </ul>
+
+    <p style="font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted-foreground); margin-top: 8px;"><strong>Pré-requisito DOCX:</strong> <code style="font-family: var(--font-mono);">pip install python-docx</code> (instala uma vez).</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px; color: var(--status-success);">Gate antes de fechar:</p>
+    <ul style="font-family: var(--font-ui); font-size: 0.9rem; padding-left: 20px; line-height: 1.8;">
+      <li>Todos os 7 blocos preenchidos (não pulou nenhum campo)?</li>
+      <li>Avatar e Análise de Cliente têm citações verbatim do lead?</li>
+      <li>Dono da oferta aprovou? (sem aprovação, não libera copy)</li>
+    </ul>
+
+    <!-- FECHAMENTO -->
+    <h3 style="margin-top: 72px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Fechamento — <code style="font-family: var(--font-mono); font-size: 1.4rem;">lacunas-aula-01.md</code></h3>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Esse é o único artefato manual da Aula 01. Não tem skill que gera — você que preenche em até 30 minutos depois de fechar a aula. Mas existe template pronto.</p>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Como fazer:</p>
+    <ol style="font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.8;">
+      <li>Copie <code style="font-family: var(--font-mono);">aula-01/docs/template-lacunas-aula-01.md</code> para a raiz do seu projeto</li>
+      <li>Renomeie para <code style="font-family: var(--font-mono);">lacunas-aula-01.md</code></li>
+      <li>Preencha as 5 seções: lacunas de dado · lacunas de decisão do dono · lacunas de validação · backlog · handoff pra Aula 02</li>
+    </ol>
+
+    <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px;">Arquivo entregue (1):</p>
+    <ul style="font-family: var(--font-ui); list-style: none; padding: 0; margin: 0; line-height: 2;">
+      <li>📄 <code style="font-family: var(--font-mono); color: var(--primary);">lacunas-aula-01.md</code> — o que ficou pendente e quem resolve</li>
+    </ul>
+
+    <!-- TOTAL -->
+    <div class="bloco" style="margin-top: 56px; background: var(--card); border: 1px solid var(--raised); border-left: 4px solid var(--primary); padding: 24px 28px; border-radius: 0.5rem;">
+      <p style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--primary); margin: 0 0 8px;">Total da Aula 01: 13 arquivos</p>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0;">3 (avatar) + 1+ (espião, por concorrente) + 3 (trends) + 2 (swipe) + 3 (offerbook) + 1 (lacunas) = pacote completo que vai virar input direto da Aula 02 (Arquiteto de Funil).</p>
+    </div>
+  </section>
+
+  <section id="secao-7">
+    <div class="section-num">Parte 8</div>
     <h2>O que entregar <em>no fim</em></h2>
     <p>Ao final das 4 horas, você terá uma pasta com tudo isso, pronta para virar input da Aula 02:</p>
 
