@@ -183,31 +183,44 @@ Preencher TODOS os campos. Não reorganizar, não resumir, não pular campo.
 
 ---
 
-## Output (3 arquivos)
+## Output (4 arquivos)
 
-A skill **sempre** entrega 3 arquivos no diretório atual:
+A skill **sempre** entrega 4 arquivos no diretório atual:
 
 1. **`briefing-offerbook.md`** — gerado no Passo 1 do Pipeline. Consolida inputs (avatar + concorrentes + swipe-file + decisões do dono) e serve de gate: sem briefing aprovado, não escreve offerbook.
 2. **`offerbook-{slug}.md`** — fonte de verdade (Markdown com os 7 blocos completos).
 3. **`offerbook-{slug}.docx`** — gerado a partir do MD com `python scripts/gerar_docx.py offerbook-{slug}.md` usando o `Template-Offerbook.docx` oficial.
+4. **`offerbook-{slug}.html`** — versão visual com TOC sticky lateral, gerado com `python scripts/gerar_html.py offerbook-{slug}.md`. Útil pra navegar rápido pelos 7 blocos no browser.
 
 Regras de geração:
-- MD é a fonte de verdade. Nunca editar só o DOCX; corrigir o MD e regenerar.
+- MD é a fonte de verdade. Nunca editar só o DOCX/HTML; corrigir o MD e regenerar ambos.
 - Template original do DOCX NUNCA é modificado — o script faz cópia.
 - Se faltar campo no MD, o DOCX gera com `[A PREENCHER]` no lugar (não falha).
 - Pré-requisito DOCX: `pip install python-docx` (uma vez).
+- HTML não tem dependência externa (script puro Python 3).
+- HTML respeita o `.cohort-brand-choice` do projeto (neutro padrão ou DESIGN.md).
 
-### Abrir o DOCX automaticamente (entrega visual ao aluno)
+### Comandos completos pra gerar os 4 arquivos
 
-Logo após gerar o `offerbook-{slug}.docx`, **rode automaticamente** o comando para abrir no Word/editor padrão:
+Depois de salvar o `offerbook-{slug}.md`:
+
+```
+python scripts/gerar_docx.py offerbook-{slug}.md
+python scripts/gerar_html.py offerbook-{slug}.md
+```
+
+### Abrir DOCX e HTML automaticamente (entrega visual ao aluno)
+
+Logo após gerar, **rode automaticamente** os comandos para abrir:
 
 ```
 open offerbook-{slug}.docx
+open offerbook-{slug}.html
 ```
 
-(No Windows: `start offerbook-{slug}.docx`. No Linux: `xdg-open offerbook-{slug}.docx`.)
+(No Windows: `start ...`. No Linux: `xdg-open ...`.)
 
-Diga ao usuário: *"Abri o offerbook no Word pra você revisar."*
+Diga ao usuário: *"Abri o offerbook no Word (revisão/edição) e no navegador (TOC pra navegar rápido entre os 7 blocos)."*
 
 ### Anúncio de fechamento (última skill da Aula 01)
 
@@ -215,12 +228,12 @@ Após confirmar entrega, **sempre** diga ao usuário em texto separado:
 
 > 🎉 **Aula 01 concluída.** Você completou as 5 skills.
 >
-> Você tem agora 13 arquivos no projeto:
+> Você tem agora 24+ arquivos no projeto:
 > - 3 do `/avatar-funil` (relatorio-avatar.md/html/pdf)
-> - 1+ do `/espiao-do-concorrente` (dossie-{concorrente}.md)
-> - 3 do `/trend-hunting` (trends + variacoes + briefing-media-buyer)
-> - 2 do `/swipe-file` (index + briefing-swipe-file)
-> - 3 do `/offerbook` (briefing-offerbook + offerbook.md + offerbook.docx — abri pra você)
+> - 3+ do `/espiao-do-concorrente` por concorrente (dossie-{concorrente}.md/html/pdf)
+> - 7 do `/trend-hunting` (trends md/html/pdf + variacoes md/html/pdf + briefing-media-buyer.md)
+> - 6+ do `/swipe-file` (index md/html/pdf + briefing-swipe-file md/html/pdf + 2 por criativo capturado)
+> - 4 do `/offerbook` (briefing-offerbook + offerbook.md + offerbook.docx + offerbook.html — abri os 2 visuais pra você)
 >
 > **Próximo passo manual:** crie o `lacunas-aula-01.md` (copie de `aula-01/docs/template-lacunas-aula-01.md` pra raiz do projeto). É o único artefato que não tem skill — você preenche o que ficou pendente em até 30 minutos.
 >
