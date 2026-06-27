@@ -1,66 +1,131 @@
 ---
 name: trend-hunting
-description: "Identifica tendencias emergentes no nicho usando Claude + Twitter/X + Apify. Mapeia formatos virais (Reels, carousels, threads), detecta timing antes da saturacao, gera 2+ variacoes de hook e identifica vencedor por engajamento. Output: relatorio de tendencias acionavel + variacoes prontas para teste. Triggers: 'tendencias', 'trends', 'trend hunting', '/trend-hunting', 'o que ta bombando', 'formato viral'."
+description: "Identifica tendências emergentes no nicho usando Claude + Twitter/X + Apify. Mapeia formatos virais (Reels, carousels, threads), detecta timing antes da saturação, gera 2+ variações de hook e identifica vencedor por engajamento. Output: relatório de tendências acionável + variações prontas para teste. Triggers: 'tendencias', 'trends', 'trend hunting', '/trend-hunting', 'o que ta bombando', 'formato viral'."
 user_invocable: true
 ---
 
-# Trend Hunting (Caca de Tendencias)
+# Trend Hunting (Caça de Tendências)
 
-## Posicao na Aula 01
+## Posição na Aula 01
 
-Esta e a **Skill 3 de 5** da Aula 01 do Cohort de Marketing.
+Esta é a **Skill 3 de 5** da Aula 01 do Cohort de Marketing.
 
-**Sequencia:** `/avatar-funil` -> `/espiao-do-concorrente` -> `/trend-hunting` (voce esta aqui) -> `/swipe-file` -> `/offerbook`.
+**Sequência:** `/avatar-funil` -> `/espiao-do-concorrente` -> `/trend-hunting` (você está aqui) -> `/swipe-file` -> `/offerbook`.
 
-### Gate de pre-requisito (executar ANTES de qualquer coisa)
+### Gate de pré-requisito (executar ANTES de qualquer coisa)
 
-Antes de comecar, **verifique no diretorio atual** se existe `relatorio-avatar.md`:
+Antes de começar, **verifique no diretório atual** se existe `relatorio-avatar.md`:
 
 ```
 ls relatorio-avatar.md 2>/dev/null
 ```
 
-**Se NAO existir**, exiba este aviso e pergunte:
+**Se NÃO existir**, exiba este aviso e pergunte:
 
-> Detectei que voce ainda nao rodou `/avatar-funil` neste projeto. Sem avatar, as variacoes de hook saem genericas (sem ancora no que o seu cliente realmente diz).
+> Detectei que você ainda não rodou `/avatar-funil` neste projeto. Sem avatar, as variações de hook saem genéricas (sem âncora no que o seu cliente realmente diz).
 >
 > Recomendo voltar e rodar `/avatar-funil` primeiro. Quer continuar mesmo assim? (s/n)
 
-Se o usuario responder `n`, encerre dizendo: *"Beleza. Rode `/avatar-funil [nicho]` e volte aqui depois."*
+Se o usuário responder `n`, encerre dizendo: *"Beleza. Rode `/avatar-funil [nicho]` e volte aqui depois."*
 
-Se responder `s`, prossiga mas marque no relatorio que as variacoes nao foram ancoradas em avatar real.
+Se responder `s`, prossiga mas marque no relatório que as variações não foram ancoradas em avatar real.
 
-**Se EXISTIR**, leia rapidamente o avatar (vocabulario do cliente, dor principal) e use essa linguagem nas variacoes de hook. Mencione: *"Encontrei seu avatar. Vou ancorar as variacoes na linguagem dele."*
+**Se EXISTIR**, leia rapidamente o avatar (vocabulário do cliente, dor principal) e use essa linguagem nas variações de hook. Mencione: *"Encontrei seu avatar. Vou ancorar as variações na linguagem dele."*
 
 ---
 
-Esta skill detecta **tendencias emergentes** no seu nicho ANTES de virarem saturadas. Mapeia formatos virais (Reels, carousels, threads, vsl curta), identifica timing de entrada e gera variacoes prontas para testar.
+Esta skill detecta **tendências emergentes** no seu nicho ANTES de virarem saturadas. Mapeia formatos virais (Reels, carousels, threads, vsl curta), identifica timing de entrada e gera variações prontas para testar.
 
-A regra: voce nao quer pegar tendencia no pico (todo mundo ja fez). Quer pegar **na rampa de subida** (timing de 2-3 semanas antes da saturacao).
+A regra: você não quer pegar tendência no pico (todo mundo já fez). Quer pegar **na rampa de subida** (timing de 2-3 semanas antes da saturação).
 
 ---
 
 ## Quando usar
 
 - Briefing semanal de criativos (alimenta /swipe-file e media buyer)
-- Lancamento de oferta nova (escolher formato com tracao)
-- Diagnostico de campanha que perdeu performance (saturacao de formato)
-- Gatilhos: "tendencias", "o que ta bombando", "formato viral", "trend hunting"
+- Lançamento de oferta nova (escolher formato com tração)
+- Diagnóstico de campanha que perdeu performance (saturação de formato)
+- Gatilhos: "tendências", "o que tá bombando", "formato viral", "trend hunting"
 
 ## Como ativar
 
 `/trend-hunting [nicho]` — ex.: `/trend-hunting marketing-digital-br`.
 
-Se nao vier o nicho, **pergunte e PARE** ate receber.
+Se não vier o nicho, **pergunte e PARE** até receber.
+
+### Opção: pesquisar a partir de concorrentes
+
+Além do nicho, o usuário pode (opcionalmente) colar **links de concorrentes** para a skill puxar as tendências direto dos perfis deles. Logo após receber o nicho, pergunte:
+
+> Quer que eu também cace tendências a partir de concorrentes específicos? Cole os links dos perfis (Instagram, TikTok, YouTube ou LinkedIn) — um por linha. Eu uso o Apify para raspar os posts recentes deles e extrair os formatos que estão funcionando.
+>
+> Se não tiver concorrentes em mente, é só dizer "não" que eu sigo só pelo nicho.
+
+- Se o usuário colar links, **valide cada um** (perfil público, plataforma suportada) e trate cada perfil como uma fonte extra na Etapa 2 (ver "Concorrentes" na Etapa 2). Use o Apify para raspar os últimos 14 dias de cada perfil.
+- Se o usuário disser "não", siga só pelo nicho normalmente.
+- **Distinção importante:** aqui você coleta o **orgânico** dos concorrentes (Reels, TikToks, posts) para mapear formato/tendência. Quem analisa os **anúncios pagos** do concorrente é a `/espiao-do-concorrente`. Não misture os dois (ver Anti-patterns).
 
 ---
 
-## Pre-requisitos
+## Pré-requisitos
 
-1. **Nicho ou palavras-chave** definidas (5-10 termos)
-2. **Acesso a Twitter/X** (busca publica, sem login obrigatorio)
-3. **Apify MCP** (opcional, para scrape de TikTok/Instagram)
-4. **Output do `/pesquisa-de-avatar`** (recomendado) — para filtrar tendencias relevantes ao perfil do cliente
+1. **Apify configurado** (OBRIGATÓRIO) — token no `.env` + MCP no Claude Code. Sem isso a skill não roda. Veja a seção **Setup do Apify** logo abaixo. É o que dá o scrape de Reels (Instagram), TikTok e perfis de concorrentes.
+2. **Nicho ou palavras-chave** definidas (5-10 termos)
+3. **Acesso a Twitter/X** (busca pública, sem login obrigatório)
+4. **Output do `/avatar-funil`** (recomendado) — para filtrar tendências relevantes ao perfil do cliente
+
+---
+
+## Setup do Apify (OBRIGATÓRIO — fazer 1 vez)
+
+Esta skill **depende do Apify** para raspar Instagram Reels, TikTok e perfis de concorrentes. Sem o token e o MCP configurados, ela não tem como coletar as fontes visuais. Faça esse setup uma única vez; depois é só usar.
+
+### É grátis?
+
+Sim, dá pra começar de graça. O plano **Free** da Apify não pede cartão e entrega **US$ 5 de crédito por mês**. Cada scrape consome um pouco desse crédito (centavos por post/perfil). Para uso leve de trend hunting (alguns perfis e dezenas de Reels por mês), os **US$ 5 grátis costumam bastar**. Se você for raspar muito toda semana, o crédito acaba e o próximo plano é o Starter (US$ 29/mês). Comece no Free e só suba se precisar.
+
+### Passo 1 — Criar conta e pegar o token
+
+1. Acesse https://console.apify.com/sign-up e crie a conta gratuita (sem cartão).
+2. No console, vá em **Settings -> Integrations -> API tokens**.
+3. Copie o **Personal API token**.
+
+### Passo 2 — Colocar a chave no `.env`
+
+Na raiz do projeto, abra (ou crie a partir do `.env.example`) o arquivo `.env` e cole o token na variável `APIFY_API_TOKEN`:
+
+```
+APIFY_API_TOKEN=apify_api_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Se ainda não tem `.env`, rode na raiz: `cp .env.example .env` e depois edite a linha do `APIFY_API_TOKEN`. O `.env` já está no `.gitignore` — sua chave não vai pro GitHub.
+
+### Passo 3 — Instalar o Apify MCP no Claude Code
+
+O MCP é o que deixa o Claude chamar o Apify de dentro do chat. Adicione o servidor uma vez:
+
+```
+claude mcp add apify --env APIFY_API_TOKEN=$APIFY_API_TOKEN -- npx -y @apify/actors-mcp-server
+```
+
+Referência oficial: https://docs.apify.com/platform/integrations/mcp
+
+Depois de adicionar, reinicie o Claude Code e confirme com `claude mcp list` que o `apify` aparece como conectado.
+
+### Passo 4 — Verificar antes de rodar a skill
+
+No início de cada execução, **cheque se o Apify está pronto**:
+
+```
+grep -q "APIFY_API_TOKEN=apify" .env 2>/dev/null && echo "token ok" || echo "token faltando"
+```
+
+- Se o token estiver faltando OU o MCP `apify` não estiver conectado, **PARE** e mostre ao usuário:
+
+  > Esta skill precisa do Apify configurado para raspar Reels, TikTok e perfis de concorrentes, e ele ainda não está pronto aqui. Siga o **Setup do Apify** (4 passos) na SKILL: criar conta (US$ 5 grátis, sem cartão), colar o `APIFY_API_TOKEN` no `.env` e adicionar o MCP com `claude mcp add apify`. Quando terminar, rode `/trend-hunting [nicho]` de novo.
+
+  Não tente cair para coleta manual: o Apify é pré-requisito desta skill agora.
+- Se estiver tudo pronto, siga o pipeline normalmente.
 
 ---
 
@@ -68,97 +133,102 @@ Se nao vier o nicho, **pergunte e PARE** ate receber.
 
 ### Etapa 1 — Definir palavras-chave de busca
 
-Apartir do nicho, gerar 5-10 termos de busca em 3 categorias:
+A partir do nicho, gerar 5-10 termos de busca em 3 categorias:
 
-- **Termos diretos** (nome do nicho: "contabilidade", "escritorio contabil")
+- **Termos diretos** (nome do nicho: "contabilidade", "escritório contábil")
 - **Termos de dor** (problemas: "perda de cliente", "atendimento lento")
-- **Termos de solucao** (o que oferece: "automatizar contabilidade", "IA contabil")
+- **Termos de solução** (o que oferece: "automatizar contabilidade", "IA contábil")
 
-### Etapa 2 — Scan em 4 fontes
+### Etapa 2 — Scan nas fontes
 
-**A. Twitter/X** (busca publica)
+**A. Twitter/X** (busca pública)
 - Buscar cada termo
-- Filtrar posts dos ultimos 14 dias com 100+ likes
-- Capturar: texto do post, formato (thread, single, video), engajamento
+- Filtrar posts dos últimos 14 dias com 100+ likes
+- Capturar: texto do post, formato (thread, single, vídeo), engajamento
 
-**B. Instagram Reels** (via Apify ou manual)
-- Buscar hashtags do nicho
-- Capturar Reels com 50k+ views dos ultimos 14 dias
+**B. Instagram Reels** (via Apify — obrigatório)
+- Buscar hashtags do nicho com o scraper de Instagram
+- Capturar Reels com 50k+ views dos últimos 14 dias
 - Estrutura: hook (primeiros 3s), formato, narrativa, CTA
 
-**C. TikTok** (via Apify ou manual)
-- Mesmo processo dos Reels
-- Atentar a formatos especificos de TikTok (POV, story, tutorial)
+**C. TikTok** (via Apify — obrigatório)
+- Mesmo processo dos Reels, com o scraper de TikTok
+- Atentar a formatos específicos de TikTok (POV, story, tutorial)
 
 **D. LinkedIn** (se nicho B2B)
-- Posts com 500+ reacoes ultimos 14 dias
-- Formato: carousel PDF, post longo, video, enquete
+- Posts com 500+ reações últimos 14 dias
+- Formato: carousel PDF, post longo, vídeo, enquete
 
-### Etapa 3 — Identificacao de padroes
+**E. Concorrentes** (só se o usuário colou links na ativação — via Apify)
+- Para cada perfil que o usuário colou, use o scraper Apify da plataforma certa (Instagram, TikTok, YouTube ou LinkedIn) para puxar os posts dos últimos 14 dias.
+- Capture os mesmos campos das outras fontes (hook, formato, narrativa, CTA, engajamento) e **marque a origem como `[CONCORRENTE: @perfil]`** em cada exemplo.
+- Foque no **orgânico** do concorrente (o que ele posta). Anúncio pago é com a `/espiao-do-concorrente`.
 
-Agrupar achados em **padroes recorrentes**:
+### Etapa 3 — Identificação de padrões
 
-- **Padrao de hook** (3 primeiras linhas / 3 primeiros segundos)
-- **Padrao de estrutura** (problema-agitacao-solucao, antes-depois, lista, narrativa, etc.)
-- **Padrao de formato** (single image, carousel, video curto, video longo, thread)
-- **Padrao de CTA** (link na bio, DM, comentar palavra, etc.)
+Agrupar achados em **padrões recorrentes**:
 
-Para cada padrao, registrar:
+- **Padrão de hook** (3 primeiras linhas / 3 primeiros segundos)
+- **Padrão de estrutura** (problema-agitação-solução, antes-depois, lista, narrativa, etc.)
+- **Padrão de formato** (single image, carousel, vídeo curto, vídeo longo, thread)
+- **Padrão de CTA** (link na bio, DM, comentar palavra, etc.)
+
+Para cada padrão, registrar:
 - 5 exemplos verbatim (com link)
-- Engajamento medio
-- Timing (quando comecou a aparecer)
+- Engajamento médio
+- Timing (quando começou a aparecer)
 
-### Etapa 4 — Classificacao por timing
+### Etapa 4 — Classificação por timing
 
-Cada padrao em 1 das 4 fases:
+Cada padrão em 1 das 4 fases:
 
 - **Emergente** (1-3 semanas, baixo volume mas crescendo) — **timing ideal**
 - **Em alta** (3-6 semanas, volume crescente) — ainda OK, mais saturado
-- **Pico** (6-10 semanas, alto volume) — risco de saturacao
-- **Declinio** (10+ semanas, queda de engajamento) — evitar
+- **Pico** (6-10 semanas, alto volume) — risco de saturação
+- **Declínio** (10+ semanas, queda de engajamento) — evitar
 
-Output: 3-5 padroes na fase **emergente** + 2-3 na fase **em alta** para experimentar.
+Output: 3-5 padrões na fase **emergente** + 2-3 na fase **em alta** para experimentar.
 
-### Etapa 5 — Geracao de variacoes (2+ por padrao)
+### Etapa 5 — Geração de variações (2+ por padrão)
 
-Para cada padrao escolhido, gerar 2-4 variacoes adaptadas ao seu nicho:
+Para cada padrão escolhido, gerar 2-4 variações adaptadas ao seu nicho:
 
-- **Variacao A** (replica do padrao com seu produto)
-- **Variacao B** (adaptacao com angulo do seu ICP)
-- **Variacao C** (opcional, hibrido com outro padrao em alta)
+- **Variação A** (réplica do padrão com seu produto)
+- **Variação B** (adaptação com ângulo do seu ICP)
+- **Variação C** (opcional, híbrido com outro padrão em alta)
 
-Cada variacao com:
+Cada variação com:
 - Hook (texto exato)
-- Estrutura (bullet do conteudo)
-- Formato (imagem, video, carousel, etc.)
+- Estrutura (bullet do conteúdo)
+- Formato (imagem, vídeo, carousel, etc.)
 - CTA
 
 ### Etapa 6 — Briefing para teste
 
-Saida final: briefing acionavel para o Media Buyer ou Designer testar as variacoes em 2 plataformas (Meta + Google ou Meta + TikTok), com:
+Saída final: briefing acionável para o Media Buyer ou Designer testar as variações em 2 plataformas (Meta + Google ou Meta + TikTok), com:
 
-- Orcamento de teste sugerido (R$ 200-500 por variacao por 3 dias)
-- Metrica vencedora (CTR + CPL + watch time)
-- Criterio de vencedor (qual variacao escala, qual mata)
+- Orçamento de teste sugerido (R$ 200-500 por variação por 3 dias)
+- Métrica vencedora (CTR + CPL + watch time)
+- Critério de vencedor (qual variação escala, qual mata)
 
 ---
 
 ## Output
 
-A skill gera 7 arquivos no total (MD + HTML + PDF dos 2 entregaveis visuais, mais o briefing):
+A skill gera 7 arquivos no total (MD + HTML + PDF dos 2 entregáveis visuais, mais o briefing):
 
 **Trends (3 formatos):**
-1. `trends-{nicho}-{data}.md` — relatorio completo com 4 fontes, padroes identificados, classificacao por timing
-2. `trends-{nicho}-{data}.html` — versao visual
-3. `trends-{nicho}-{data}.pdf` — versao para imprimir/compartilhar
+1. `trends-{nicho}-{data}.md` — relatório completo com as fontes, padrões identificados, classificação por timing
+2. `trends-{nicho}-{data}.html` — versão visual
+3. `trends-{nicho}-{data}.pdf` — versão para imprimir/compartilhar
 
-**Variacoes (3 formatos):**
-4. `variacoes-teste-{data}.md` — lista de variacoes prontas para teste, com hook + estrutura + CTA
-5. `variacoes-teste-{data}.html` — versao visual em cards
-6. `variacoes-teste-{data}.pdf` — versao para imprimir/compartilhar
+**Variações (3 formatos):**
+4. `variacoes-teste-{data}.md` — lista de variações prontas para teste, com hook + estrutura + CTA
+5. `variacoes-teste-{data}.html` — versão visual em cards
+6. `variacoes-teste-{data}.pdf` — versão para imprimir/compartilhar
 
 **Briefing:**
-7. `briefing-media-buyer.md` — briefing acionavel com orcamento e metricas (so MD, e arquivo de trabalho)
+7. `briefing-media-buyer.md` — briefing acionável com orçamento e métricas (só MD, é arquivo de trabalho)
 
 ### Como gerar os 7 arquivos
 
@@ -169,35 +239,35 @@ ls .cohort-brand-choice 2>/dev/null
 ```
 
 - Se existir, ler e usar a escolha salva (neutro ou design-md)
-- Se nao existir, perguntar (3 opcoes) e salvar
+- Se não existir, perguntar (3 opções) e salvar
 
-**Passo 2 — Gerar os 3 MD** (trends, variacoes, briefing) conforme as etapas anteriores
+**Passo 2 — Gerar os 3 MD** (trends, variações, briefing) conforme as etapas anteriores
 
 **Passo 3 — Gerar os 2 HTML** copiando os templates:
 
 Para `trends-{nicho}-{data}.html`, copiar `templates/trends.html` e substituir:
 - `{{TITULO}}` — nicho (ex.: "Marketing digital para advogados")
-- `{{SUBTITULO}}` — fontes + amostra (ex.: "Twitter/X + Reels + TikTok + LinkedIn · 47 padroes")
+- `{{SUBTITULO}}` — fontes + amostra (ex.: "Twitter/X + Reels + TikTok + LinkedIn · 47 padrões")
 - `{{DATA}}` — data de hoje
 - `{{MARCA}}` — vazio se neutro, ou nome do `DESIGN.md`
-- `{{CONTEUDO}}` — secoes em HTML com `<h2>`, `<h3>`, `<table>`, `<blockquote class="padrao">`. Use os badges `<span class="timing emergente">`, `<span class="timing em-alta">` e `<span class="timing saturado">` ao lado dos padroes.
+- `{{CONTEUDO}}` — seções em HTML com `<h2>`, `<h3>`, `<table>`, `<blockquote class="padrao">`. Use os badges `<span class="timing emergente">`, `<span class="timing em-alta">` e `<span class="timing saturado">` ao lado dos padrões.
 
 Para `variacoes-teste-{data}.html`, copiar `templates/variacoes.html` e substituir:
 - `{{TITULO}}` — nicho
-- `{{SUBTITULO}}` — quantidade de variacoes (ex.: "12 variacoes prontas para teste A/B")
-- `{{CONTEUDO}}` — cada variacao envolvida em `<div class="variacao">`:
+- `{{SUBTITULO}}` — quantidade de variações (ex.: "12 variações prontas para teste A/B")
+- `{{CONTEUDO}}` — cada variação envolvida em `<div class="variacao">`:
 
 ```html
 <div class="variacao">
-  <span class="numero">Variacao 1 — Formato: Reels POV</span>
-  <p class="hook">"Voce nunca mais vai escrever uma peticao do zero depois de ver isso"</p>
+  <span class="numero">Variação 1 — Formato: Reels POV</span>
+  <p class="hook">"Você nunca mais vai escrever uma petição do zero depois de ver isso"</p>
   <ul class="estrutura">
     <li>0-3s: gancho visual (cliente bravo na delegacia)</li>
-    <li>3-10s: revelacao (modelo de IA pronto)</li>
-    <li>10-20s: demo rapida</li>
+    <li>3-10s: revelação (modelo de IA pronto)</li>
+    <li>10-20s: demo rápida</li>
     <li>20-25s: CTA</li>
   </ul>
-  <p class="meta"><strong>Tom:</strong> direto · <strong>Persona:</strong> advogado autonomo</p>
+  <p class="meta"><strong>Tom:</strong> direto · <strong>Persona:</strong> advogado autônomo</p>
   <span class="cta">CTA: link na bio</span>
 </div>
 ```
@@ -211,7 +281,7 @@ bash scripts/gerar_pdf.sh trends-{nicho}-{data}.html
 bash scripts/gerar_pdf.sh variacoes-teste-{data}.html
 ```
 
-**Passo 5 — Abrir HTML automaticamente** (so os 2 visuais, briefing-media-buyer fica em MD):
+**Passo 5 — Abrir HTML automaticamente** (só os 2 visuais, briefing-media-buyer fica em MD):
 
 ```
 open trends-{nicho}-{data}.html
@@ -220,119 +290,120 @@ open variacoes-teste-{data}.html
 
 (Windows: `start`. Linux: `xdg-open`.)
 
-Diga ao usuario: *"Abri o trend report e as variacoes no seu navegador."*
+Diga ao usuário: *"Abri o trend report e as variações no seu navegador."*
 
 ---
 
 ## Prompts internos (Claude)
 
-### Prompt 1 — Analise de Twitter/X
+### Prompt 1 — Análise de Twitter/X
 
 ```
-Voce e analista de tendencias de midia social. Vou colar 30 posts de Twitter/X do nicho [nicho] dos ultimos 14 dias com 100+ likes.
+Você é analista de tendências de mídia social. Vou colar 30 posts de Twitter/X do nicho [nicho] dos últimos 14 dias com 100+ likes.
 
 Identifique:
-1. Os 5 padroes de hook mais recorrentes (texto literal do hook)
-2. Para cada padrao: 3 exemplos verbatim com link
-3. Engajamento medio (likes/replies/retweets)
-4. Timing estimado (quando esse padrao apareceu na timeline)
-5. Classificacao: emergente / em alta / pico / declinio
+1. Os 5 padrões de hook mais recorrentes (texto literal do hook)
+2. Para cada padrão: 3 exemplos verbatim com link
+3. Engajamento médio (likes/replies/retweets)
+4. Timing estimado (quando esse padrão apareceu na timeline)
+5. Classificação: emergente / em alta / pico / declínio
 
 Posts:
 [colar 30 posts com link]
 ```
 
-### Prompt 2 — Geracao de variacoes
+### Prompt 2 — Geração de variações
 
 ```
-Tenho um padrao de tendencia emergente: [colar padrao + 3 exemplos]
+Tenho um padrão de tendência emergente: [colar padrão + 3 exemplos]
 
-Meu produto e: [briefing]
-Meu ICP e: [colar 1 paragrafo do /pesquisa-de-avatar]
+Meu produto é: [briefing]
+Meu ICP é: [colar 1 parágrafo do /avatar-funil]
 
-Gere 3 variacoes adaptadas:
-- Variacao A: replica fiel do padrao com meu produto
-- Variacao B: adaptacao com angulo do meu ICP
-- Variacao C: hibrido (combina este padrao com outro complementar)
+Gere 3 variações adaptadas:
+- Variação A: réplica fiel do padrão com meu produto
+- Variação B: adaptação com ângulo do meu ICP
+- Variação C: híbrido (combina este padrão com outro complementar)
 
-Para cada variacao:
+Para cada variação:
 - Hook (texto exato, primeiras 3 linhas ou 3 segundos)
-- Estrutura completa (bullet do conteudo)
+- Estrutura completa (bullet do conteúdo)
 - Formato sugerido
 - CTA
 
-E recomende qual testar primeiro e por que.
+E recomende qual testar primeiro e por quê.
 ```
 
 ---
 
 ## Regras
 
-- **Sempre cite link da fonte.** Sem link, vira invencao.
-- **Foque em conteudo organico**, nao em ads pagos (esses sao analisados pelo `/espiao-do-concorrente`).
-- **Janela de tempo: 14 dias.** Mais que isso, ja e tendencia velha.
-- **Engajamento minimo** para considerar: 100 likes (Twitter), 50k views (Reels/TikTok), 500 reacoes (LinkedIn).
-- **Saida do timing classification** e o que importa. Padrao em "pico" entra como aviso, nao como recomendacao.
+- **Sempre cite link da fonte.** Sem link, vira invenção.
+- **Foque em conteúdo orgânico**, não em ads pagos (esses são analisados pelo `/espiao-do-concorrente`).
+- **Janela de tempo: 14 dias.** Mais que isso, já é tendência velha.
+- **Engajamento mínimo** para considerar: 100 likes (Twitter), 50k views (Reels/TikTok), 500 reações (LinkedIn).
+- **Saída do timing classification** é o que importa. Padrão em "pico" entra como aviso, não como recomendação.
 
 ---
 
 ## Checklist de qualidade
 
-**Fundacao**
+**Fundação**
+- [ ] Apify configurado (token no `.env` + MCP conectado) — pré-requisito bloqueante
 - [ ] Nicho e palavras-chave definidos (5-10 termos)
-- [ ] 4 fontes scaneadas (ou pelo menos 2 das mais relevantes ao formato)
+- [ ] Fontes scaneadas (Twitter/X + Reels + TikTok; LinkedIn se B2B; concorrentes se houver links)
 - [ ] Janela de 14 dias respeitada
 
-**Padroes**
-- [ ] 5-10 padroes identificados com 3+ exemplos verbatim cada
-- [ ] Engajamento medio documentado
-- [ ] Timing classificado (emergente/em alta/pico/declinio)
+**Padrões**
+- [ ] 5-10 padrões identificados com 3+ exemplos verbatim cada
+- [ ] Engajamento médio documentado
+- [ ] Timing classificado (emergente/em alta/pico/declínio)
 
-**Variacoes**
-- [ ] 2-4 variacoes geradas para cada padrao escolhido
+**Variações**
+- [ ] 2-4 variações geradas para cada padrão escolhido
 - [ ] Hook, estrutura, formato, CTA preenchidos
-- [ ] Adaptadas ao ICP (se ICP disponivel)
+- [ ] Adaptadas ao ICP (se ICP disponível)
 
 **Briefing**
-- [ ] Orcamento de teste sugerido
-- [ ] Metrica vencedora definida
-- [ ] Criterio de vencedor explicito
+- [ ] Orçamento de teste sugerido
+- [ ] Métrica vencedora definida
+- [ ] Critério de vencedor explícito
 
 ---
 
 ## Anti-patterns (NUNCA fazer)
 
-- Recomendar tendencia em "pico" como prioridade (vai dar fadiga rapido)
+- Recomendar tendência em "pico" como prioridade (vai dar fadiga rápido)
 - Citar exemplo sem link de origem
-- Generalizar de 5 posts para "a tendencia toda"
-- Misturar conteudo organico com ads (usar /espiao-do-concorrente para ads)
-- Pular Etapa 5 (variacoes) e mandar so o relatorio sem acionavel
+- Generalizar de 5 posts para "a tendência toda"
+- Misturar conteúdo orgânico com ads (usar /espiao-do-concorrente para ads)
+- Pular Etapa 5 (variações) e mandar só o relatório sem acionável
 
 ---
 
-## Conexao com outras skills
+## Conexão com outras skills
 
 ```
-/avatar-funil (pre-requisito recomendado)
+/avatar-funil (pré-requisito recomendado)
     ↓
 /trend-hunting (esta skill)
     ↓ trends-{nicho}-{data}.md + variacoes-teste-{data}.md + briefing-media-buyer.md
-/swipe-file (organiza criativos winners apos teste)
+/swipe-file (organiza criativos winners após teste)
     ↓
 /offerbook
 ```
 
-## Anuncio de fechamento (proxima skill)
+## Anúncio de fechamento (próxima skill)
 
-Apos gerar os 7 arquivos, **sempre** diga ao usuario em texto separado:
+Após gerar os 7 arquivos, **sempre** diga ao usuário em texto separado:
 
-> Skill 3/5 entregue. Voce tem agora 7 arquivos:
-> - trends-{nicho}-{data}.md / .html (abri pra voce) / .pdf
-> - variacoes-teste-{data}.md / .html (abri pra voce) / .pdf
+> Skill 3/5 entregue. Você tem agora 7 arquivos:
+> - trends-{nicho}-{data}.md / .html (abri pra você) / .pdf
+> - variacoes-teste-{data}.md / .html (abri pra você) / .pdf
 > - briefing-media-buyer.md
 >
-> **Proxima skill da Aula 01:** `/swipe-file capturar`
+> **Próxima skill da Aula 01:** `/swipe-file capturar`
 >
-> Swipe file vai organizar os criativos vencedores do `/espiao` e do `/trend-hunting` numa biblioteca pesquisavel. Ela alimenta Copy e Media Buyer.
+> Swipe file vai organizar os criativos vencedores do `/espiao` e do `/trend-hunting` numa biblioteca pesquisável. Ela alimenta Copy e Media Buyer.
 
-Nao pule esse anuncio — e o que orienta o aluno a seguir o trilho da Aula 01.
+Não pule esse anúncio — é o que orienta o aluno a seguir o trilho da Aula 01.

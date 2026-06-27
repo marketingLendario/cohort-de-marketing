@@ -541,7 +541,7 @@
         <h3>Configure suas chaves de API (opcional)</h3>
         <p>Copie o template de variáveis de ambiente e preencha o que tiver:</p>
         <div class="command-block">cp .env.example .env</div>
-        <p>Abra o <code>.env</code> no editor. Cada chave tem instrução de <strong>onde pegar</strong> (Meta Ad Library, Apify, OpenAI etc.). Todas são <strong>opcionais</strong>: sem chave, as skills caem para modo manual (você cola o material, a IA analisa). O <code>.env</code> nunca vai para o GitHub (já está no <code>.gitignore</code>).</p>
+        <p>Abra o <code>.env</code> no editor. Cada chave tem instrução de <strong>onde pegar</strong> (Meta Ad Library, Apify, OpenAI etc.). Quase todas são <strong>opcionais</strong>: sem chave, as skills caem para modo manual (você cola o material, a IA analisa). <strong>Exceção:</strong> a <code>/trend-hunting</code> exige o <code>APIFY_API_TOKEN</code> (grátis, US$ 5/mês) — veja o setup na seção dessa skill. O <code>.env</code> nunca vai para o GitHub (já está no <code>.gitignore</code>).</p>
       </div>
     </div>
 
@@ -585,7 +585,7 @@
 
       <div class="skill-card">
         <div class="skill-name">/trend-hunting</div>
-        <p class="skill-what">Identifica tendências emergentes em 4 fontes (Twitter, Reels, TikTok, LinkedIn) antes da saturação.</p>
+        <p class="skill-what">Identifica tendências emergentes no nicho (Twitter, Reels, TikTok, LinkedIn + concorrentes) antes da saturação. <strong>Requer Apify</strong> (grátis, US$ 5/mês).</p>
         <p class="skill-out"><strong>Sai com:</strong> Relatório + variações prontas para teste</p>
       </div>
 
@@ -877,12 +877,27 @@
 
     <!-- SKILL 3 -->
     <h3 style="margin-top: 72px; font-family: var(--font-display); font-size: 1.5rem; color: var(--primary);">Skill 3/5 — <code style="font-family: var(--font-mono); font-size: 1.4rem;">/trend-hunting</code></h3>
-    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Identifica tendências emergentes em 4 fontes (X, Reels, TikTok, LinkedIn) antes da saturação. Já gera variações de hook prontas para teste.</p>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 16px;">Identifica tendências emergentes nas fontes do nicho (X, Reels, TikTok, LinkedIn) antes da saturação. Já gera variações de hook prontas para teste.</p>
+
+    <div style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--status-warning, #d97706); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-ui); font-size: 0.9rem; line-height: 1.7; margin-bottom: 24px;">
+      <p style="font-weight: 700; margin: 0 0 8px;">⚙️ Pré-requisito desta skill: Apify (obrigatório)</p>
+      <p style="margin: 0 0 8px;">Diferente das outras skills, a <code style="font-family: var(--font-mono);">/trend-hunting</code> <strong>precisa do Apify</strong> para raspar Reels, TikTok e perfis de concorrentes. Sem ele a skill não roda. É <strong>grátis para começar</strong>: o plano Free dá <strong>US$ 5 de crédito por mês, sem cartão</strong> — suficiente para uso leve.</p>
+      <p style="font-weight: 600; margin: 0 0 4px;">Setup (1 vez só):</p>
+      <ol style="margin: 0 0 8px; padding-left: 20px;">
+        <li>Crie a conta grátis em <code style="font-family: var(--font-mono);">console.apify.com/sign-up</code> e copie o <strong>Personal API token</strong> (Settings → Integrations → API tokens).</li>
+        <li>Cole o token no arquivo <code style="font-family: var(--font-mono);">.env</code> na raiz, na variável <code style="font-family: var(--font-mono);">APIFY_API_TOKEN</code> (se não tiver <code style="font-family: var(--font-mono);">.env</code>, rode <code style="font-family: var(--font-mono);">cp .env.example .env</code>).</li>
+        <li>Instale o MCP no Claude Code: <code style="font-family: var(--font-mono);">claude mcp add apify --env APIFY_API_TOKEN=$APIFY_API_TOKEN -- npx -y @apify/actors-mcp-server</code></li>
+        <li>Reinicie o Claude Code e confirme com <code style="font-family: var(--font-mono);">claude mcp list</code> que o <code style="font-family: var(--font-mono);">apify</code> aparece conectado.</li>
+      </ol>
+      <p style="margin: 0;">O <code style="font-family: var(--font-mono);">.env</code> nunca vai para o GitHub (já está no <code style="font-family: var(--font-mono);">.gitignore</code>).</p>
+    </div>
 
     <p style="font-family: var(--font-ui); font-weight: 600; margin-bottom: 8px;">Comando:</p>
-    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 24px;">
+    <div class="command-block" style="background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); padding: 16px 20px; border-radius: 0.5rem; font-family: var(--font-mono); font-size: 0.95rem; color: var(--primary-light); margin-bottom: 16px;">
       /trend-hunting [nicho]
     </div>
+
+    <p style="font-family: var(--font-ui); font-size: 0.9rem; color: var(--muted-foreground); margin: 0 0 24px; line-height: 1.7;">💡 <strong>Concorrentes (opcional):</strong> ao ativar, a skill pergunta se você quer caçar tendências também a partir de concorrentes. Cole os links dos perfis (Instagram, TikTok, YouTube ou LinkedIn) e ela raspa o orgânico deles como fonte extra. Se disser "não", ela varre só o tema do nicho. O tema sempre é varrido — concorrente é um acréscimo.</p>
 
     <p style="font-family: var(--font-ui); font-weight: 600; margin: 24px 0 8px;">Arquivos entregues (3):</p>
     <ul style="font-family: var(--font-ui); list-style: none; padding: 0; margin: 0; line-height: 2;">
