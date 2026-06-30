@@ -92,12 +92,14 @@ def rodar_actor(actor: str, payload: dict, token: str, limite_seg: int = 280):
 
 
 def cmd_instagram_hashtag(termo: str, limite: int, token: str):
+    # Aponta direto pra pagina da hashtag (resultsType=posts traz os posts;
+    # usar "search" so devolve metadados da tag, sem os posts).
+    tag = termo.lstrip("#")
     payload = {
-        "search": termo,
-        "searchType": "hashtag",
-        "searchLimit": 1,
+        "directUrls": [f"https://www.instagram.com/explore/tags/{tag}/"],
         "resultsType": "posts",
         "resultsLimit": limite,
+        "searchLimit": 1,
     }
     return rodar_actor(ACTOR_INSTAGRAM, payload, token)
 
