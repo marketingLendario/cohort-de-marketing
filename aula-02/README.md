@@ -24,7 +24,7 @@ O `/metodo-funil` lê o seu offerbook, identifica o estágio de consciência do 
 
 ## O que você ganha na Aula 02
 
-17 skills para o Claude Code que montam o squad **Arquiteto de Funil**:
+18 skills para o Claude Code que montam o squad **Arquiteto de Funil**:
 
 | Skill | O que faz | Output |
 |---|---|---|
@@ -35,6 +35,7 @@ O `/metodo-funil` lê o seu offerbook, identifica o estágio de consciência do 
 | `/pagina-vendas` | Estrutura completa da página de vendas (15 blocos) | Página pronta para publicar |
 | `/vsl-funil` | Roteiro de VSL Direct Response | Script de vídeo de vendas |
 | `/advertorial-funil` | Página editorial de pré-venda pra público frio (nível 5) | Estrutura de advertorial |
+| `/lancamento-funil` | Funil de lançamento/PLF pra público frio com lista (nível 5) | PLCs → carrinho → fechamento |
 | `/webinario-funil` | Funil de webinário/aula que vende (níveis 4-3) | Registro → roteiro → pós-venda |
 | `/quiz-funil` | Funil de quiz/diagnóstico que segmenta e casa a oferta (nível 4) | Quiz + páginas de resultado |
 | `/mockup-produto` | Mockups dos produtos/bônus na identidade da marca | Prompts de mockup prontos |
@@ -73,7 +74,7 @@ cd cohort-de-marketing
 claude
 ```
 
-As 17 skills em `.claude/skills/` são carregadas automaticamente (junto com as da Aula 01).
+As 18 skills em `.claude/skills/` são carregadas automaticamente (junto com as da Aula 01).
 
 **3. Teste que as skills estão instaladas**
 
@@ -172,6 +173,7 @@ Monta a estrutura de upsell, OTO, downsell e janela de 4h.
 │       ├── recuperacao/               aula 02
 │       ├── cro-funil/                 aula 02
 │       ├── advertorial-funil/         aula 02
+│       ├── lancamento-funil/          aula 02
 │       ├── webinario-funil/           aula 02
 │       ├── quiz-funil/                aula 02
 │       └── mockup-produto/            aula 02

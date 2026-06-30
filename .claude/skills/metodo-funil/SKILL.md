@@ -50,6 +50,7 @@ Quando você precisar montar/diagnosticar um funil ou decidir o tipo de funil/an
 |-----------------|-------|-------|
 | VSL | `/vsl-funil` | 5 |
 | Advertorial | `/advertorial-funil` | 5 |
+| Lançamento / PLF | `/lancamento-funil` | 5 |
 | Webinário / aula | `/webinario-funil` | 4 e 3 |
 | Quiz / diagnóstico | `/quiz-funil` | 4 |
 | Página de vendas | `/pagina-vendas` | 2 e 1 |
@@ -130,7 +131,7 @@ PEÇA            SKILL             O QUE ENTREGA
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 01 Offerbook    (pré-requisito)   oferta, mecanismo, ancoragem, bônus ← precisa existir antes
 02 Funil        (pelo nível)      o formato de funil de topo casado ao estágio:
-   (formato)    nível 5 → /advertorial-funil (+ /vsl-funil)
+   (formato)    nível 5 → /advertorial-funil ou /lancamento-funil (+ /vsl-funil)
                 nível 4 → /webinario-funil ou /quiz-funil
                 nível 3 → /webinario-funil
                 nível 2-1 → /pagina-vendas
