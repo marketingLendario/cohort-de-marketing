@@ -174,3 +174,19 @@ Entregar sempre neste formato, preenchido com o caso real:
 ---
 
 *Skill advertorial-funil v1 — funil de topo do nível 5 no método do Alan Nicolas. Modela a tradição de magalog/long-form jornalística (Jim Rutz) e os níveis de consciência (Eugene Schwartz). Estrutura genérica; a copy sai da `/copy-funil`. Toda montagem calibra no KB-advertorial-funil.md.*
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/advertorial-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

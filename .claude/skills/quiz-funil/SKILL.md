@@ -226,3 +226,19 @@ No `/metodo-funil`, depois de diagnosticar o público como **nível 4 (conscient
 ---
 
 *Skill quiz-funil — funil de quiz/diagnóstico pelo método de elevação de consciência (autoria Alan Nicolas), base teórica em Hormozi (Equação de Valor). Captação ideal de NÍVEL 4. Toda montagem calibra no KB-quiz-funil.md. A skill estrutura; a copy é sua, a publicação é sua.*
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/quiz-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

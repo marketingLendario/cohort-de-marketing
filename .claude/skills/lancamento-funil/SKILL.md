@@ -267,3 +267,19 @@ O lançamento é a **peça 02** do nível 5 (alternativa ao advertorial+VSL): ve
 *Skill lancamento-funil v1 — funil de topo do nível 5 (com lista) no método do Alan Nicolas. Modela o Product Launch Formula (Jeff Walker) e os níveis de consciência (Eugene Schwartz). Estrutura genérica; a copy sai da `/copy-funil` e os e-mails da `/email-funil`. Toda montagem calibra no KB-lancamento-funil.md.*
 </content>
 </invoke>
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/lancamento-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

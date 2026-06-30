@@ -213,3 +213,19 @@ Ofereca: revisar uma peca em detalhe, refazer uma fase, iniciar um fluxo complem
 - Se uma fase precisar ser refeita, refaca a fase — nunca desfaca o que ja foi aprovado.
 - A IA aplica os frameworks sob demanda em cada fase.
 - Os copywriters lendarios entram como metodo/referencia de escrita — voce + a IA escrevem a copy.
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/copy-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

@@ -123,3 +123,19 @@ Pra cada pedido de otimização, entregar um **plano estruturado** pra você rev
 ---
 
 *Skill cro-funil v1 — método do Alan Nicolas (Workshop de Funis + Clube 100M): KPIs por etapa, teste A/B só na headline, 1 teste por vez, mínimo 1.000 views únicos. A skill dá o método e a estrutura; você preenche com os dados do seu projeto e decide. Toda prescrição calibra no KB. Irmã da skill funil-alan (que monta o funil — esta otimiza o que já está montado).*
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/cro-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

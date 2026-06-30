@@ -40,3 +40,19 @@ Escolha a voz conforme o tema da referência e o alvo. O conteúdo é gerado na 
 
 ## Como funciona o método
 O método (autoria Alan Nicolas) é simples e replicável: você escolhe um criador grande que já viralizou no seu tema, coleta os Reels com as métricas reais, descobre os padrões de hook e estrutura que fizeram cada vídeo bombar e, em vez de copiar, recria esses padrões com o SEU tema e a SUA voz. Modelar o que já deu certo encurta o caminho — você não inventa do zero, parte de um formato comprovado e o traduz para a sua linguagem.
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/conteudo-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

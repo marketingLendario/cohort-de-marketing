@@ -174,3 +174,19 @@ PEÇA            SKILL                  O QUE ENTREGA
 ---
 
 *Skill webinario-funil — funil de webinário (níveis 4 e 3) pelo método do Alan Nicolas, com base teórica em Russell Brunson (Perfect Webinar), Jeff Walker (PLF) e Jason Fladlien (9 gatilhos). Toda montagem calibra no KB-webinario-funil.md. A copy você escreve com /copy-funil e /email-funil; a identidade visual vem do seu DESIGN.md. A skill só estrutura — você revisa e publica.*
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/webinario-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

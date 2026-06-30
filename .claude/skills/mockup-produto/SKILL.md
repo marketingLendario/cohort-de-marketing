@@ -195,3 +195,19 @@ Para cada pedido, entregar:
 ---
 
 *Skill mockup-produto v1 — skill de apoio (não é funil). Os produtos/bônus vêm do `/offerbook`; a identidade visual vem do `DESIGN.md` gerado pelo `/design-md`. A skill monta prompts de geração de imagem parametrizados pela sua marca; quem gera a imagem é você, na ferramenta de sua escolha. Zero marca de terceiros embutida.*
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/mockup-produto/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

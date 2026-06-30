@@ -54,3 +54,19 @@ Se algum elemento não estiver no DESIGN.md, gere o DESIGN.md primeiro (skill `d
 - [ ] Visual aplicado conforme o seu DESIGN.md (cores, fontes, header, footer, assinatura)
 - [ ] Texto relido inteiro (ortografia, marca)
 - [ ] Arquivo salvo e aberto para você revisar
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/email-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.

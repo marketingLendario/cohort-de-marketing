@@ -34,25 +34,31 @@ Quando você precisar montar/diagnosticar um funil ou decidir o tipo de funil/an
 
 Esta skill **parte do offerbook** (a oferta que você montou na Aula 01). Antes de diagnosticar ou prescrever qualquer funil:
 
-1. **Procure o offerbook no projeto e pergunte qual usar.** Verifique se já existe:
+1. **Encontre o offerbook que a Aula 1 gerou e use-o** — NÃO peça o nome do produto, ele já está dentro do offerbook. A skill `/offerbook` salva como `offerbook-{slug}.md`:
 
    ```
-   ls *offerbook*.md offerbook*.md OFFERBOOK*.md 2>/dev/null
+   ls offerbook-*.md 2>/dev/null   # o offerbook real; ignore briefing-offerbook.md (é só o checklist de fontes)
    ```
 
-   - Se achar **um**, confirme com o aluno: *"Encontrei o offerbook `<arquivo>`. Uso esse?"*
+   - Se achar **um** `offerbook-*.md`, confirme com o aluno: *"Encontrei o offerbook `<arquivo>`. Uso esse?"* e **leia dele** o nicho, o produto/transformação, o ticket e o público.
    - Se achar **vários**, liste-os e **pergunte qual usar**.
    - Se o aluno apontar um arquivo específico, use esse.
 
-2. **Se NÃO existir nenhum offerbook**, PARE e exiba este aviso:
+2. **Se NÃO existir nenhum `offerbook-*.md`**, PARE e exiba este aviso:
 
-   > Pra montar o funil eu preciso do seu **offerbook** — é nele que está a oferta (dor, mecanismo, entregáveis, preço-âncora, bônus, garantia). Sem ele, o funil sai genérico, sem âncora no que você realmente vende.
+   > Pra montar o funil eu preciso do seu **offerbook** — é nele que está a oferta (dor, mecanismo, entregáveis, preço-âncora, bônus, garantia), e é dele que eu leio o produto e o público (você não precisa redigitar nada).
    >
-   > Rode **`/offerbook [nome do seu produto]`** primeiro pra montar a oferta. Quando terminar, volte e rode `/metodo-funil` de novo.
+   > O offerbook é a **última etapa da Aula 1**. Se ainda não fez, rode a Aula 1 até o `/offerbook`; quando o `offerbook-{slug}.md` existir, volte e rode `/metodo-funil` de novo.
 
    **Não prossiga sem offerbook. Não invente a oferta de cabeça.**
 
-3. Com o offerbook em mãos, leia dele o nicho, o produto/transformação, o ticket e o público — e só então siga pro **Gate de diagnóstico**.
+3. Com o offerbook em mãos, leia o nicho, o produto, o mecanismo, a dor e o público. **Antes de prescrever, confira os 3 decisores do funil — e pra cada um que estiver `[A DEFINIR]` ou ausente no offerbook, PERGUNTE. Não crave o funil sem eles:**
+
+   - **Origem do público** — de onde ele vem? (frio de ads · base quente · orgânico/lista) → decide o **nível de consciência** (o Gate de diagnóstico).
+   - **Valor: ticket + formato** — quanto custa o produto principal? tem entrada mais barata? formato (cohort ao vivo · curso gravado · curso + comunidade)? → decide o **tipo de funil** (ticket baixo → venda direta tipo VSL/quiz; ticket médio-alto → webinário/aquecimento).
+   - **Prova disponível** — já tem depoimento/estudo de caso de cliente real, ou ainda vai coletar? → **molda** o funil: sem prova, ele ganha uma fase pra construí-la antes de vender (crítico pra público cético).
+
+   Faça de uma vez as perguntas que faltarem, de forma objetiva. Só com os 3 decisores em mãos (do offerbook ou da resposta) siga pro **Gate de diagnóstico**.
 
 ---
 
@@ -192,3 +198,19 @@ Execute nessa ordem. Cada skill usa o output da anterior.
 ---
 
 *Skill metodo-funil — método de elevação de consciência (autoria Alan Nicolas), com base teórica em Hormozi ($100M Offers / Money Models). Toda prescrição calibra no KB.*
+
+---
+
+## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+
+1. **`.md`** — o conteúdo (fonte de verdade).
+2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.
+3. **`.pdf`** — gerado a partir do html:
+
+   ```
+   bash .claude/skills/metodo-funil/scripts/gerar_pdf.sh <arquivo>.html
+   ```
+
+Salve os 3 e confirme ao final. Nunca entregar só o `.md`.
