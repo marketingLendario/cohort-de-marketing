@@ -13,17 +13,18 @@ version: 1.0.0
 Quando o aluno acionar a skill (`/design-md`), **primeiro pergunte como ele quer criar a marca** (não assuma que ele tem uma URL):
 
 > **Como você quer criar o seu design.md?**
-> 1. **Do zero** — eu te ajudo a montar uma identidade a partir de referências (Pinterest, sites que você curte)
+> 1. **Do zero** — eu monto a identidade a partir de **referências visuais que você cola aqui** (prints do Pinterest, moodboard, marcas/páginas que você curte)
 > 2. **Com o que eu já tenho** — me manda seus arquivos de marca (logo, cores, manual) e eu monto
 > 3. **A partir de um site** — extraio a identidade de uma URL (o seu site ou uma referência)
 > 4. **Nenhuma agora** — seguir no brand neutro padrão (dark + cinza) e criar a sua marca depois
 
 Conduza conforme a resposta. Os caminhos **1, 2 e 3** terminam igual: `DESIGN.md` na **raiz do projeto** + `.cohort-brand-choice` = `design-md`. O **caminho 4** só marca o neutro (não gera DESIGN.md). Ao final, confirme pro aluno o que ficou ativo e que as próximas skills já seguem essa escolha.
 
-### Caminho 1 — Do zero (a partir de referências)
-1. Pergunte: que negócio é, que sensação a marca deve passar (3 palavras) e referências que ele curte (links do Pinterest ou sites).
-2. Se ele der uma URL de referência forte, pode usá-la com o **Caminho 3** como ponto de partida e refinar.
-3. Proponha uma paleta (primary/secondary/accent/surface/text/text-muted) e uma dupla de fontes (título + corpo), explicando o porquê.
+### Caminho 1 — Do zero (a partir de referências visuais)
+1. Pergunte: que negócio é, que sensação a marca deve passar (3 palavras), e **peça as referências visuais — peça pro aluno COLAR imagens/prints aqui no chat** (prints do Pinterest, moodboard, fotos de marcas/páginas que ele curte). 3-5 imagens é o ideal.
+   > **Pinterest por link não funciona** (o Pinterest bloqueia leitura automática). Peça pro aluno **printar ou salvar as imagens e colar aqui** — você é multimodal: **analise as imagens coladas** e extraia as cores (hex aproximado), a tipografia e o estilo/atmosfera.
+2. Se ele der uma **URL de site** de referência forte, pode usá-la com o **Caminho 3** como ponto de partida e refinar.
+3. A partir das imagens/referências, proponha uma paleta (primary/secondary/accent/surface/text/text-muted) e uma dupla de fontes (título + corpo), **explicando de qual referência saiu cada decisão**.
 4. Com o aval dele, preencha o template `data/cohort-brand-template.md` e escreva o resultado em `./DESIGN.md` (raiz). Escreva `design-md` em `.cohort-brand-choice`.
 
 ### Caminho 2 — Com o que eu já tenho
