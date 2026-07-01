@@ -3,665 +3,1059 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roteiros Modelados — Mulheres 50+ / Autoestima</title>
+<title>Roteiros Modelados — Voltar a Ser Vista · Mulheres 50+</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  /* ============================================================
+     DESIGN SYSTEM — VOLTAR A SER VISTA
+     Público: mulheres 50+ · acessibilidade como identidade
+  ============================================================ */
   :root {
-    --background: #0A0A0A;
-    --card: #0F0F0F;
-    --raised: #262626;
-    --border: #262626;
-    --foreground: #E5E5E5;
-    --muted-foreground: #999999;
-    --primary: #BFBFBF;
-    --primary-light: #E5E5E5;
-    --primary-deep: #595959;
-    --status-success: #23E169;
-    --status-warning: #FF9D0A;
-    --status-error: #FF4438;
-    --stage-topo: #5AA9FF;
-    --stage-meio: #FF9D0A;
-    --stage-fundo: #23E169;
-    --font-body: 'Source Serif 4', Georgia, serif;
-    --font-ui: Inter, system-ui, sans-serif;
-    --font-display: Inter, system-ui, sans-serif;
-    --font-mono: ui-monospace, Menlo, monospace;
+    --surface:        #FAF6F0;
+    --surface-elev:   #FFFFFF;
+    --surface-warm:   #F3EBDF;
+    --text:           #2E2620;
+    --text-muted:     #6B5D52;
+    --primary:        #7A3B4A;
+    --primary-600:    #6A3340;
+    --primary-200:    #DBB0BA;
+    --primary-100:    #EBD6DB;
+    --primary-50:     #F6ECEE;
+    --secondary:      #B86B4B;
+    --accent:         #C9A961;
+    --accent-700:     #A9883F;
+    --border:         #E5DACF;
+    --neutral-200:    #D6C7B7;
+    --error:          #A23B2E;
+    --success:        #5C7A5A;
+    --radius:         14px;
+    --radius-lg:      22px;
+    --font-display:   "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --font-body:      "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono:      ui-monospace, Menlo, Consolas, monospace;
   }
-  * { box-sizing: border-box; }
-  html, body {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
     margin: 0; padding: 0;
-    background: var(--background);
-    color: var(--foreground);
+    background: var(--surface);
+    color: var(--text);
     font-family: var(--font-body);
-    font-size: 17px;
-    line-height: 1.6;
+    font-size: 19px;        /* 50+ : corpo GRANDE, nunca abaixo de 18px */
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 40px 80px; }
-  .hero { text-align: center; padding: 16px 0 40px; border-bottom: 1px solid var(--raised); margin-bottom: 44px; }
-  .kicker {
-    display: inline-block; font-family: var(--font-ui); font-size: 0.68rem; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
-    padding: 6px 16px; border: 1px solid var(--primary-deep); border-radius: 9999px; margin-bottom: 24px;
+
+  /* ---- Layout ---- */
+  .wrap { max-width: 900px; margin: 0 auto; padding: 56px 40px 88px; }
+
+  /* ---- Hero ---- */
+  .hero {
+    text-align: center;
+    padding: 0 0 48px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-kicker {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-700);
+    padding: 6px 18px;
+    border: 1px solid var(--accent);
+    border-radius: 9999px;
+    margin-bottom: 28px;
   }
   .hero h1 {
-    font-family: var(--font-display); font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 700;
-    line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--primary);
+    margin: 0 0 14px;
   }
-  .hero h1 em { font-family: var(--font-body); font-style: italic; font-weight: 400; color: var(--primary); }
-  .hero .sub { font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 6px 0 0; }
-  h2.stage {
-    font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--foreground); margin: 56px 0 6px; padding: 14px 0 12px 18px;
-    border-left: 4px solid var(--primary); border-bottom: 1px solid var(--raised);
+  .hero h1 em {
+    font-style: italic;
+    color: var(--text);
   }
-  h2.topo { border-left-color: var(--stage-topo); }
-  h2.meio { border-left-color: var(--stage-meio); }
-  h2.fundo { border-left-color: var(--stage-fundo); }
-  h2.plain {
-    font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--foreground); margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--raised);
+  .hero .sub {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    margin: 0 0 6px;
+    line-height: 1.6;
   }
-  .stage-sub { font-family: var(--font-ui); font-size: 0.9rem; color: var(--muted-foreground); margin: 0 0 8px; }
-  h3 { font-family: var(--font-ui); font-size: 1.15rem; font-weight: 700; color: var(--primary-light); margin: 8px 0 12px; }
-  h4 { font-family: var(--font-ui); font-size: 0.95rem; font-weight: 700; color: var(--primary); margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
-  p { margin: 0 0 14px; }
-  strong { color: #fff; font-weight: 600; }
-  em { color: var(--primary-light); }
-  ul, ol { margin: 0 0 16px; padding-left: 22px; }
-  li { margin-bottom: 6px; }
-  code { font-family: var(--font-mono); font-size: 0.82rem; background: rgba(89,89,89,0.18); padding: 2px 6px; border-radius: 4px; color: var(--primary); }
-  .hook {
-    font-family: var(--font-body); font-style: italic; font-size: 1.12rem; color: var(--primary-light);
-    background: var(--card); border-left: 3px solid var(--primary);
-    margin: 8px 0 16px; padding: 14px 20px; border-radius: 0 8px 8px 0;
+  .hero .meta-row {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-top: 18px;
   }
-  .meta { font-family: var(--font-ui); font-size: 0.82rem; color: var(--muted-foreground); margin: 4px 0 10px; }
-  .cta {
-    background: rgba(35,225,105,0.07); border: 1px solid var(--primary-deep);
-    border-left: 3px solid var(--status-success);
-    border-radius: 0 8px 8px 0; padding: 12px 18px; margin: 14px 0;
-    font-family: var(--font-ui); font-size: 0.95rem; color: var(--foreground);
-  }
-  .cta .lbl { display: block; font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--status-success); margin-bottom: 4px; }
-  .callout {
-    background: rgba(255,157,10,0.08); border: 1px solid var(--status-warning);
-    border-radius: 10px; padding: 14px 18px; margin: 18px 0;
-    font-family: var(--font-ui); font-size: 0.92rem; color: var(--foreground);
-  }
-  .callout strong { color: var(--status-warning); }
-  .callout ul { margin: 8px 0 0; }
-  .badge { display: inline-block; font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 6px; text-transform: uppercase; margin-right: 8px; vertical-align: middle; }
-  .badge.topo { background: rgba(90,169,255,0.12); color: var(--stage-topo); border: 1px solid var(--stage-topo); }
-  .badge.meio { background: rgba(255,157,10,0.12); color: var(--stage-meio); border: 1px solid var(--stage-meio); }
-  .badge.fundo { background: rgba(35,225,105,0.12); color: var(--stage-fundo); border: 1px solid var(--stage-fundo); }
-  .angle { display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 9999px; background: rgba(89,89,89,0.18); color: var(--primary); border: 1px solid var(--primary-deep); }
-  .reel { border: 1px solid var(--raised); border-radius: 12px; padding: 22px 26px; margin: 24px 0; background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent); }
-  .reel .top { margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-family: var(--font-ui); font-size: 0.9rem; }
-  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--raised); vertical-align: top; }
-  th { color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
-  .check { font-family: var(--font-ui); font-size: 0.92rem; }
-  .check li { margin-bottom: 5px; }
-  .check li::marker { content: ""; }
-  .check li .ok { color: var(--status-success); font-family: var(--font-mono); font-size: 0.8rem; margin-right: 6px; }
-  hr.div { border: none; border-top: 1px solid var(--raised); margin: 44px 0 0; }
-  .footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--raised);
-    font-family: var(--font-ui); font-size: 0.78rem; color: var(--muted-foreground); text-align: center; }
-  .footer .logo { font-family: var(--font-display); font-weight: 700; color: var(--primary); letter-spacing: 0.02em; }
 
-  /* === Elementos específicos de roteiro === */
+  /* ---- Cabeçalho de estágio ---- */
+  .stage-header {
+    margin: 64px 0 8px;
+    padding: 20px 28px 18px;
+    background: var(--surface-warm);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  .stage-label {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 9999px;
+    margin-bottom: 10px;
+  }
+  .stage-label.topo  { background: var(--primary); color: var(--surface); }
+  .stage-label.meio  { background: var(--accent);  color: var(--text);    }
+  .stage-label.fundo { background: var(--secondary); color: var(--surface); }
+
+  .stage-header h2 {
+    font-family: var(--font-display);
+    font-size: 2.1rem; font-weight: 600;
+    line-height: 1.2;
+    color: var(--primary);
+    margin: 0 0 6px;
+  }
+  .stage-header .stage-desc {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* ---- Card de roteiro ---- */
+  .reel {
+    background: var(--surface-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+    margin: 28px 0;
+    box-shadow: 0 8px 24px -12px rgba(122,59,74,.10);
+  }
+  .reel-top {
+    display: flex; align-items: flex-start; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  /* ---- Badges ---- */
+  .badge {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.67rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 9999px;
+    white-space: nowrap;
+  }
+  .badge.topo  { background: var(--primary-50); color: var(--primary); border: 1px solid var(--primary-200); }
+  .badge.meio  { background: #FBF5E7;           color: var(--accent-700); border: 1px solid var(--accent); }
+  .badge.fundo { background: #FAF0EB;           color: var(--secondary); border: 1px solid #DDA88A; }
+
+  .badge-dur {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.67rem; font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 4px 12px; border-radius: 9999px;
+    background: var(--surface-warm);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .reel h3 {
+    font-family: var(--font-display);
+    font-size: 1.65rem; font-weight: 600;
+    line-height: 1.2;
+    color: var(--primary);
+    margin: 10px 0 4px;
+  }
+
+  /* ---- Fórmula ---- */
   .formula {
-    background: rgba(89,89,89,0.06); border: 1px solid rgba(89,89,89,0.28);
-    border-radius: 8px; padding: 10px 14px; margin: 6px 0 14px;
-    font-family: var(--font-ui); font-size: 0.8rem; color: var(--muted-foreground); line-height: 1.55;
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin: 10px 0 22px;
+    font-size: 0.92rem; line-height: 1.55;
+    color: var(--text-muted);
   }
-  .formula strong { color: var(--primary); }
+  .formula strong { color: var(--primary); font-weight: 600; }
 
-  .dur { display: inline-block; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
-    padding: 2px 8px; border-radius: 9999px; background: rgba(89,89,89,0.12);
-    color: var(--muted-foreground); border: 1px solid var(--primary-deep); }
+  /* ---- Seção dentro do card ---- */
+  .sec-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent-700);
+    margin: 24px 0 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+  }
 
-  /* Roteiro cronometrado */
-  .script { background: rgba(255,255,255,0.015); border: 1px solid var(--raised); border-radius: 10px; padding: 4px 2px; margin: 10px 0; overflow: hidden; }
-  .script-line { display: flex; gap: 12px; align-items: flex-start; padding: 9px 12px; border-bottom: 1px solid rgba(38,38,38,0.7); }
+  /* ---- Hook ---- */
+  .hook {
+    background: var(--surface-warm);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 22px;
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.22rem; line-height: 1.45;
+    color: var(--text);
+  }
+
+  /* ---- Script cronometrado ---- */
+  .script {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 8px 0 20px;
+  }
+  .script-line {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--surface-warm);
+  }
   .script-line:last-child { border-bottom: none; }
-  .ts { flex: 0 0 60px; font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700;
-    color: var(--primary); background: var(--card); border: 1px solid var(--primary-deep);
-    border-radius: 6px; padding: 3px 6px; text-align: center; white-space: nowrap;
-    line-height: 1.5; margin-top: 2px; }
-  .script-line .st { font-family: var(--font-body); font-size: 0.97rem; line-height: 1.55; flex: 1; }
-  .script-line .st em { color: var(--muted-foreground); font-style: italic; }
+  .script-line:nth-child(even) { background: #FDFAF7; }
+  .ts {
+    flex: 0 0 66px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem; font-weight: 700;
+    color: var(--accent-700);
+    background: var(--surface-warm);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 4px 7px;
+    text-align: center; white-space: nowrap;
+    line-height: 1.4; margin-top: 2px;
+  }
+  .script-st {
+    flex: 1;
+    font-size: 0.98rem; line-height: 1.65;
+    color: var(--text);
+  }
+  .script-st em {
+    color: var(--text-muted);
+    font-style: italic;
+  }
 
-  /* Texto na tela */
-  .tela { background: rgba(90,169,255,0.04); border: 1px solid rgba(90,169,255,0.14);
-    border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
-  .tela-line { display: flex; gap: 8px; align-items: flex-start; padding: 4px 0;
-    font-family: var(--font-ui); font-size: 0.88rem; line-height: 1.5; }
-  .tela-lbl { flex: 0 0 auto; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
-    color: var(--stage-topo); background: rgba(90,169,255,0.1); border: 1px solid rgba(90,169,255,0.28);
-    padding: 2px 7px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.04em;
-    white-space: nowrap; line-height: 1.8; }
-  .tela-txt { flex: 1; color: var(--foreground); }
+  /* ---- Texto na tela ---- */
+  .tela {
+    background: #FDFAF7;
+    border: 1px solid var(--primary-100);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin: 8px 0 20px;
+  }
+  .tela-line {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 5px 0;
+    font-size: 0.95rem; line-height: 1.5;
+    border-bottom: 1px solid var(--primary-50);
+  }
+  .tela-line:last-child { border-bottom: none; }
+  .tela-lbl {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-50);
+    border: 1px solid var(--primary-200);
+    padding: 2px 8px; border-radius: 6px;
+    white-space: nowrap; line-height: 1.9;
+  }
+  .tela-txt { flex: 1; color: var(--text); font-style: italic; }
 
-  /* Cena (nota de direção) */
-  .cena { background: rgba(89,89,89,0.08); border-left: 3px solid var(--primary-deep);
-    border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 10px 0;
-    font-family: var(--font-ui); font-size: 0.87rem; color: var(--muted-foreground);
-    font-style: italic; line-height: 1.6; }
+  /* ---- Cena (nota de direção) ---- */
+  .cena {
+    background: var(--surface-warm);
+    border-left: 3px solid var(--neutral-200);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 18px;
+    margin: 8px 0 20px;
+    font-size: 0.94rem; line-height: 1.6;
+    color: var(--text-muted);
+    font-style: italic;
+  }
 
-  /* Legenda (caption) */
-  .legenda { background: var(--card); border: 1px solid var(--raised);
-    border-left: 3px solid var(--primary-deep); border-radius: 0 10px 10px 0;
-    padding: 12px 18px; margin: 10px 0;
-    font-family: var(--font-body); font-size: 0.94rem; color: var(--foreground); line-height: 1.65; }
-  .placeholder-note { display: block; background: rgba(255,157,10,0.07);
-    border: 1px solid rgba(255,157,10,0.25); border-radius: 6px;
-    padding: 6px 10px; font-family: var(--font-ui); font-size: 0.78rem;
-    color: var(--status-warning); margin-top: 10px; font-style: normal; }
+  /* ---- Legenda (caption) ---- */
+  .legenda {
+    background: var(--surface-elev);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px;
+    margin: 8px 0 20px;
+    font-size: 0.97rem; line-height: 1.7;
+    color: var(--text);
+  }
 
-  /* Callout de aviso para F2 */
-  .warn-block { background: rgba(255,157,10,0.06); border: 1px solid rgba(255,157,10,0.22);
-    border-radius: 10px; padding: 12px 16px; margin: 14px 0;
-    font-family: var(--font-ui); font-size: 0.85rem; color: var(--foreground); line-height: 1.6; }
-  .warn-block strong { color: var(--status-warning); }
+  /* ---- Placeholder ---- */
+  .placeholder-note {
+    display: block;
+    background: #FFF8EC;
+    border: 1px solid #E8CB7A;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.82rem; font-style: normal;
+    color: #7A5C1E;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
 
+  /* ---- CTA ---- */
+  .cta-block {
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 14px 20px;
+    margin: 8px 0;
+  }
+  .cta-block .cta-lbl {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.66rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .cta-block .cta-txt {
+    font-size: 1rem; line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* ---- Aviso / callout ---- */
+  .callout {
+    background: #FFF8EC;
+    border: 1px solid #E8CB7A;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 0.96rem; line-height: 1.6;
+    color: var(--text);
+  }
+  .callout strong { color: #7A5C1E; }
+  .callout ul { margin: 8px 0 0; padding-left: 20px; }
+  .callout li { margin-bottom: 6px; }
+
+  /* ---- Aviso crítico (F2) ---- */
+  .warn-block {
+    background: #FFF8EC;
+    border: 1px solid #E0C06A;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 0.93rem; line-height: 1.6;
+    color: var(--text);
+  }
+  .warn-block strong { color: #7A5C1E; }
+
+  /* ---- Tabela ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-family: var(--font-body);
+    font-size: 0.93rem;
+  }
+  thead { background: var(--surface-warm); }
+  th {
+    text-align: left;
+    padding: 11px 14px;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--primary);
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 10px 14px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.55;
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #FDFAF7; }
+
+  /* ---- Seção plain (distribuição / gates) ---- */
+  .section-plain {
+    margin: 56px 0 20px;
+    padding: 0 0 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-plain h2 {
+    font-family: var(--font-display);
+    font-size: 1.85rem; font-weight: 600;
+    color: var(--primary);
+    margin: 0;
+  }
+
+  /* ---- Checklist de saída ---- */
+  .checklist { list-style: none; padding: 0; margin: 16px 0; }
+  .checklist li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.97rem; line-height: 1.6;
+    color: var(--text);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .ok {
+    flex: 0 0 auto;
+    font-size: 0.78rem; font-weight: 700;
+    color: var(--success);
+    font-family: var(--font-mono);
+    background: #EDF5EC;
+    border: 1px solid var(--success);
+    border-radius: 6px;
+    padding: 2px 8px;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+
+  /* ---- Rodapé ---- */
+  .footer {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .footer strong { color: var(--primary); }
+
+  /* ---- Linha divisória ---- */
+  hr.div {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0 0;
+  }
+
+  /* ---- Responsivo ---- */
+  @media (max-width: 768px) {
+    body { font-size: 18px; }
+    .wrap { padding: 36px 20px 64px; }
+    .reel { padding: 24px 20px; }
+    .ts { flex: 0 0 56px; font-size: 0.62rem; }
+    .reel h3 { font-size: 1.4rem; }
+    .stage-header h2 { font-size: 1.7rem; }
+    .hero h1 { font-size: 2rem; }
+  }
+
+  /* ---- Impressão ---- */
   @media print {
-    html, body { font-size: 12px; background: #fff; color: #111; }
+    body { font-size: 13px; background: #fff; color: #111; }
     .wrap { padding: 0 12px; max-width: 100%; }
-    h2 { page-break-after: avoid; }
-    .reel, .hook, .cta, .callout, .script, .tela, .legenda { page-break-inside: avoid; }
+    .reel { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+    .stage-header { page-break-after: avoid; }
+    .script, .hook, .cta-block, .legenda, .tela { page-break-inside: avoid; }
+    h2, h3 { page-break-after: avoid; }
+    :root {
+      --surface: #fff;
+      --surface-elev: #fff;
+      --surface-warm: #f7f7f7;
+    }
   }
 </style>
 </head>
 <body>
-  <div class="wrap">
-
-    <!-- ============================================================ HERO -->
-    <div class="hero">
-      <span class="kicker">Roteiros de Reel Modelados · Fórmulas Virais Reais · por estágio de funil</span>
-      <h1>Mulheres 50+ / Autoestima — <em>roteiros completos</em></h1>
-      <p class="sub">4 TOPO · 3 MEIO · 2 FUNDO · voz de marca · fórmulas virais reais (Apify) · 01/07/2026</p>
-    </div>
-
-    <p class="meta">Conteúdo orgânico na voz da marca 50+, modelado nas fórmulas virais REAIS (ver <code>coleta-virais.md</code>). Organizado por estágio. Foco em Reel/vídeo — o formato que domina o nicho.</p>
-
-    <!-- ============================================================ GATES GERAIS -->
-    <div class="callout">
-      <strong>Gates aplicados em todos os roteiros — ler antes de gravar.</strong>
-      <ul>
-        <li><strong>COMPLIANCE (nicho sensível):</strong> nenhum roteiro promete "parecer 30", cura, idade reversa ou resultado garantido. Tema é presença e autoestima, nunca estética milagrosa.</li>
-        <li><strong>ANTI-CLICHÊ DE IA:</strong> proibido e ausente — "não é X, é Y", "se permita", "protagonista", "jornada", "empoderamento", "descubra", "sua melhor versão", "ressignificar". Fala de gente real.</li>
-        <li><strong>Hook nos 3 primeiros segundos</strong> · frases curtas · sem emoji no roteiro falado · cena concreta e sensorial · português acentuado.</li>
-        <li><strong>CTA de engajamento</strong> varia entre os posts (comenta / salva / marca) para não saturar a mesma palavra.</li>
-      </ul>
-    </div>
-
-    <!-- ============================================================ TOPO -->
-    <h2 class="stage topo"><span class="badge topo">Topo de funil</span>Atração — dor · identificação · alcance · SEM vender</h2>
-    <p class="stage-sub">4 roteiros modelados em fórmulas virais REAIS do nicho (dados de <code>coleta-virais.md</code>, coleta Apify 100% real). Voz calibrada no verbatim do avatar: <em>"eu sumi"</em>, <em>"virei o fundo da foto"</em>, <em>"ninguém me vê"</em>, <em>"minha vez agora"</em>, <em>"já me frustrei"</em>.</p>
-    <p class="meta"><strong>Big Idea:</strong> <strong>"Você não envelheceu, você só parou de ser vista."</strong> · <strong>Mecanismo:</strong> <strong>O Recuo Silencioso</strong>. · Slug: <code>mulheres-50-autoestima</code> · 01/07/2026</p>
-
-    <!-- ––– Roteiro 1 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge topo">Topo</span>
-        <span class="angle">Roteiro 1 · 35–45s · talking head</span>
-      </div>
-      <h3>"Três anos atrás da câmera"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Inspiracional "não desista" — Adriana Tabuti / @dricadivina (TikTok, 4M views, <em>"Não desista — conselho para a vida"</em> + #idadeesoumnumero). O viral vem da mensagem que gera identificação e compartilhamento, ancorada numa dor real, não num clichê.
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Passei três anos me escondendo das fotos da minha própria família."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–3s</span><span class="st">"Passei três anos me escondendo das fotos da minha própria família."</span></div>
-        <div class="script-line"><span class="ts">3–10s</span><span class="st">"Toda vez que apareciam com o celular, eu dava um jeito. Ia pegar água. Ficava atrás de alguém. Ou fazia a foto e já apagava."</span></div>
-        <div class="script-line"><span class="ts">10–20s</span><span class="st">"E não foi de uma vez. Foi devagar. Primeiro parei de comprar roupa pra mim. Depois comecei a falar mais baixo na mesa. Um dia me vi sempre na última fileira do retrato, meio escondida no canto."</span></div>
-        <div class="script-line"><span class="ts">20–30s</span><span class="st">"Aí eu entendi uma coisa que ninguém tinha me contado: não foi a idade que me tirou da foto. Fui eu saindo de cena, sem perceber, um passinho de cada vez."</span></div>
-        <div class="script-line"><span class="ts">30–40s</span><span class="st">"Eu não voltei a ter 30 anos. Ninguém volta. Eu só voltei a ficar na frente. A aparecer inteira. A não sumir do meu próprio domingo."</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"3 anos me escondendo das fotos"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Meio</span><span class="tela-txt">"não foi a idade — fui eu saindo de cena"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"voltei a ficar na frente"</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Rosto no hook, luz de janela, sem maquiagem pesada. Silêncio de 1 segundo depois da primeira frase. Se puder, corte rápido mostrando uma foto de família com um espaço vazio no canto. Sem música alta.</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Demorei pra admitir isso em voz alta. Por anos eu me achei "sem foto boa". Não era. Eu só tinha ido ficando pra trás, cedendo o meu lugar sem ninguém me pedir. A boa notícia é que dá pra voltar a aparecer — e não tem nada a ver com idade. Se isso é você também, deixa um "eu" aqui embaixo pra eu saber quantas somos.</div>
-
-      <div class="cta">
-        <span class="lbl">CTA topo · conversa, gera alcance</span>
-        "Se você também já se escondeu de uma foto, comenta VISÍVEL aqui embaixo. Só pra eu saber quantas somos."
-      </div>
-    </div>
-
-    <!-- ––– Roteiro 2 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge topo">Topo</span>
-        <span class="angle">Roteiro 2 · 25–35s · talking head + cortes rápidos</span>
-      </div>
-      <h3>"A mulher mais atrapalhada do condomínio"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Humor de autoironia cotidiana — Iara Sanny / @iarasanny (IG, 6,9M views, <em>"Você é muito atrapalhada?"</em> — pediu 15 cocas em vez de 3 no iFood). A maturidade é a identidade, não o tema; o tema é o riso de si mesma. Gera compartilhamento ("essa sou eu / manda pra fulana").
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Você acha que é atrapalhada? Senta que eu ganho de você."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–3s</span><span class="st">"Você acha que é atrapalhada? Senta que eu ganho de você."</span></div>
-        <div class="script-line"><span class="ts">3–9s</span><span class="st">"Ontem procurei o óculos por dez minutos. Tava na minha cabeça. Na. Minha. Cabeça."</span></div>
-        <div class="script-line"><span class="ts">9–16s</span><span class="st">"Entro num cômodo com total convicção e esqueço na hora o que eu vim fazer. Aí fico parada no meio da sala, olhando pro nada, tentando lembrar."</span></div>
-        <div class="script-line"><span class="ts">16–24s</span><span class="st">"Salvo o mesmo áudio da minha filha três vezes com medo de perder. Guardo o carregador em lugar seguro e o lugar é tão seguro que nem eu acho."</span></div>
-        <div class="script-line"><span class="ts">24–32s</span><span class="st">"Mas reparei numa coisa. No dia que eu paro de me esconder e conto essas histórias rindo, a mesa toda ri junto. E de repente eu não sou a velha esquecida da família. Eu sou a mais divertida. Engraçado como aparecer muda o assunto."</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"acha que é atrapalhada?"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Meio</span><span class="tela-txt">"o óculos tava na MINHA cabeça"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"quem aparece rindo, ninguém esquece"</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Tom leve, sorrindo, cortes rápidos em cada mini-história (óculos na cabeça, parada no meio da sala, carregador sumido). Nada de drama, nada de música triste. Energia de conversa de amiga.</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Marca aqui embaixo aquela amiga que também esconde o carregador tão bem que nem ela acha depois. A gente ri porque é real. E toda vez que eu conto essas histórias em vez de esconder, eu paro de ser "a esquecida" e viro a melhor companhia da mesa. Presença também se conquista rindo.</div>
-
-      <div class="cta">
-        <span class="lbl">CTA topo · compartilhamento, marca a amiga</span>
-        "Marca a amiga mais atrapalhada que você conhece. Ela precisa se ver aqui."
-      </div>
-    </div>
-
-    <!-- ––– Roteiro 3 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge topo">Topo</span>
-        <span class="angle">Roteiro 3 · 20–30s · trend com áudio do momento</span>
-      </div>
-      <h3>"Falaram que essa dança não era pra minha idade"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Contraste geracional + trend — Coracy Arantes / @blogdacora (TikTok, 86,9M Cleópatra / 77,2M leopardo). A mulher madura entra numa trend que "não seria pra idade dela" e surpreende. O viral acontece porque a audiência não espera — alcance máximo + etarismo quebrado na prática. <em>(Modelar o formato, não a persona.)</em>
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Minha neta apostou que eu não ia conseguir fazer essa trend. Segura o telefone."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–4s</span><span class="st">"Minha neta apostou que eu não ia conseguir fazer essa trend. Segura o telefone."</span></div>
-        <div class="script-line"><span class="ts">4–10s</span><span class="st"><em>(entra o áudio/coreografia do momento — a mulher executa a trend com atitude, cara de quem está se divertindo)</em></span></div>
-        <div class="script-line"><span class="ts">10–18s</span><span class="st">"Repara na cara de quem tava esperando eu errar. Todo mundo acha que depois dos 50 a gente só senta e assiste."</span></div>
-        <div class="script-line"><span class="ts">18–28s</span><span class="st">"Eu não fiz isso pra parecer mais nova. Fiz porque cansei de ficar de fora. Entrar na roda também é aos 50. Ninguém combinou o contrário comigo."</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Início</span><span class="tela-txt">"isso não é pra sua idade"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Durante a trend</span><span class="tela-txt">"alguém avisou que era só pra jovem?"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"entrar na roda também é aos 50"</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Começa parada, com ar de "será que eu consigo", e vira a chave executando a trend com confiança e humor. Fundo simples, luz boa. O contraste (expectativa x realidade) é o produto — deixa a surpresa acontecer no vídeo.</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Minha neta me desafiou e eu topei. Não pra "bancar a novinha" — odeio essa expressão. Foi porque me cansei de ser só plateia da vida dos outros. A trend é a desculpa; aparecer é o ponto. Salva esse pra lembrar da próxima vez que alguém disser que "não é pra sua idade".</div>
-
-      <div class="cta">
-        <span class="lbl">CTA topo · salvamento + marca</span>
-        "Salva esse vídeo e faz a sua versão. Me marca que eu quero ver você na roda."
-      </div>
-    </div>
-
-    <!-- ––– Roteiro 4 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge topo">Topo</span>
-        <span class="angle">Roteiro 4 · 35–45s · demonstração prática + fala</span>
-      </div>
-      <h3>"A raiz branca não é o problema"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Tutorial / solução real — Iara Sanny (IG, 9,1M, raiz branca em rotina corrida) + Adriana Tabuti (TikTok, 7,3M, "como aumentar os olhos com lápis preto" pra olho maduro). Resolve um problema concreto do dia a dia 50+, mas puxa pro tema da presença/autoestima — beleza é a porta, o assunto é voltar a se olhar.
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Se a raiz branca te faz cancelar o almoço de família, o problema não é o cabelo."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–4s</span><span class="st">"Se a raiz branca te faz cancelar o almoço de família, o problema não é o cabelo."</span></div>
-        <div class="script-line"><span class="ts">4–12s</span><span class="st">"Vou te mostrar o truque de dois minutos que eu uso na correria: pó certo no tom certo, pincel chapado, só na linha da risca. Some na hora, dura o dia." <em>(demonstração na câmera, passo a passo curto)</em></span></div>
-        <div class="script-line"><span class="ts">12–22s</span><span class="st">"Mas repara no que eu tô fazendo de verdade aqui. Eu não tô tampando a idade. Eu tô tirando a desculpa que me mantinha em casa."</span></div>
-        <div class="script-line"><span class="ts">22–32s</span><span class="st">"Porque não era a raiz. Era o 'assim eu não saio'. E cada 'assim eu não saio' foi me deixando um pouco mais invisível, semana após semana, sem eu perceber."</span></div>
-        <div class="script-line"><span class="ts">32–42s</span><span class="st">"Resolve a raiz em dois minutos e vai pro almoço. O truque é pequeno. O que ele destrava é enorme: você na mesa, inteira, de novo."</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"truque de raiz branca em 2 min"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Durante a demo</span><span class="tela-txt">"pó · pincel chapado · só na risca"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"o truque é pequeno. o que ele destrava, não."</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Demonstração real e clara do passo a passo (mãos, espelho, produto), depois fecha no rosto pra fala do fechamento. Prática de verdade — a solução tem que funcionar; a virada de tema vem no fim, sem forçar.</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Guarda esse truque pra próxima correria. Mas o recado é maior que o pó: quantos convites você já recusou por causa de um detalhe que se resolve em dois minutos? Comigo foram muitos. Um de cada vez, eu fui sumindo. Um de cada vez, dá pra voltar. Salva pra não esquecer.</div>
-
-      <div class="cta">
-        <span class="lbl">CTA topo · salvamento + comentário</span>
-        "Salva pra usar na próxima correria — e comenta AQUI qual foi o último convite que você recusou por um detalhe bobo."
-      </div>
-    </div>
-
-    <!-- ––– Distribuição sugerida TOPO ––– -->
-    <h2 class="plain">Distribuição sugerida (TOPO)</h2>
-    <table>
-      <thead>
-        <tr><th>Roteiro</th><th>Fórmula</th><th>Objetivo primário</th><th>CTA</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>1 — Três anos atrás da câmera</td><td>Inspiracional "não desista"</td><td>Identificação profunda + alcance</td><td>comenta VISÍVEL</td></tr>
-        <tr><td>2 — A mais atrapalhada do condomínio</td><td>Humor de autoironia</td><td>Compartilhamento (marca a amiga)</td><td>marca a amiga</td></tr>
-        <tr><td>3 — Essa dança não era pra minha idade</td><td>Contraste geracional + trend</td><td>Alcance máximo (surpresa)</td><td>salva + me marca</td></tr>
-        <tr><td>4 — A raiz branca não é o problema</td><td>Tutorial / solução real</td><td>Salvamento + entrada de tema</td><td>salva + comenta</td></tr>
-      </tbody>
-    </table>
-    <p class="meta">Poste espaçado para variar formato (confissão &rarr; humor &rarr; trend &rarr; tutorial) e CTA (comentar &rarr; marcar &rarr; salvar). Todos param no TOPO: nomeiam a dor da invisibilidade e o mecanismo do Recuo Silencioso sem empurrar oferta.</p>
-
-    <!-- ============================================================ MEIO -->
-    <h2 class="stage meio"><span class="badge meio">Meio de funil</span>Consideração — mecanismo · educa · quebra objeção</h2>
-    <p class="stage-sub">Quem já sente a dor. Aqui o vídeo apresenta o mecanismo (o Recuo Silencioso), educa e quebra a objeção n.&ordm;1 ("já me frustrei"). CTA oferece o caminho, ainda sem pressão de compra.</p>
-    <p class="meta">Nicho: mulheres 50+ / autoestima · Voz: marca (mulher 50+ falando com mulher 50+) · Gerado a partir de <code>coleta-virais.md</code> (dados reais Apify: Adriana Tabuti, Iara Sanny, Coracy Arantes) e da voz calibrada em <code>conteudo-mulheres-50-autoestima.md</code>.</p>
-
-    <!-- ––– Fórmulas virais reais ––– -->
-    <h2 class="plain">Fórmulas virais reais usadas na modelagem</h2>
-    <table>
-      <thead>
-        <tr><th>#</th><th>Fórmula viral</th><th>Fonte real (views)</th><th>Onde apliquei</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td><strong>Tutorial técnico hiper-específico</strong> — problema real + solução passo a passo em 1 linha de hook</td><td>Adriana Tabuti — "Como aumentar os olhos com lápis preto" (7,3M TikTok)</td><td><strong>M1</strong> (tutorial do mecanismo emocional)</td></tr>
-        <tr><td>2</td><td><strong>Anti-erro / mito de beleza madura</strong> — "o maior erro que contaram pra mulher madura"</td><td>Adriana (posts de beleza instrucional recentes) + reposição da objeção</td><td><strong>M2</strong></td></tr>
-        <tr><td>3</td><td><strong>Humor de autoironia cotidiana</strong> — situação banal + autoironia, a maturidade é identidade e não tema</td><td>Iara Sanny — "Você é muito atrapalhada?" (6,9M IG)</td><td><strong>M3</strong></td></tr>
-        <tr><td>4</td><td><strong>Solução de problema + convite honesto</strong> — resolve dor real do ICP sem promessa de milagre</td><td>Iara Sanny — "Retoque Mágico… solução" (9,1M IG)</td><td><strong>F1</strong></td></tr>
-        <tr><td>5</td><td><strong>História de virada / contraste</strong> — expectativa x realidade, prova pelo mecanismo</td><td>Coracy (contraste geracional 86M) + Adriana "Não desista" (4M)</td><td><strong>F2</strong></td></tr>
-      </tbody>
-    </table>
-
-    <div class="callout">
-      <strong>Gates aplicados em todos (MEIO e FUNDO):</strong> hook nos 3s · frases curtas · sem emoji no falado · cena concreta · sem "não é X, é Y" · sem "se permita / protagonista / jornada / empoderamento / descubra / melhor versão / ressignificar" · compliance (nunca "parecer 30" / cura / idade reversa / resultado garantido) · português acentuado · CTA orgânico pra página.
-      <br><br>
-      <strong>Mecânica de CTA:</strong> palavra-chave no comentário dispara a DM com o link (ex.: <em>comenta CAUSA</em>), ou <em>link na bio</em>. Varie a palavra entre os posts.
-    </div>
-
-    <!-- ––– M1 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge meio">Meio</span>
-        <span class="angle">M1 · 40–45s · tutorial do mecanismo</span>
-      </div>
-      <h3>"O passo a passo de como você foi ficando invisível"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Tutorial técnico hiper-específico (Adriana, 7,3M). Só que o "tutorial" não é de maquiagem — é do mecanismo emocional. Mesma estrutura: promessa de passo a passo no hook, numeração clara, uma dor por passo.
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Ninguém fica invisível de um dia pro outro. Acontece em 4 passos. Vou te mostrar os quatro, um por um."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–3s</span><span class="st">Ninguém fica invisível de um dia pro outro. Acontece em 4 passos. Vou te mostrar os quatro, um por um.</span></div>
-        <div class="script-line"><span class="ts">3–12s</span><span class="st">Passo um: você para de se arrumar pra você. Só quando tem ocasião. E ocasião foi ficando cada vez mais rara.</span></div>
-        <div class="script-line"><span class="ts">12–21s</span><span class="st">Passo dois: você entrega o seu tempo todo pros outros. Filho, casa, trabalho de todo mundo. O que era seu foi pro fim da fila.</span></div>
-        <div class="script-line"><span class="ts">21–30s</span><span class="st">Passo três: você começa a recusar. Recusa o convite, a foto, a roupa que ama. Vai se encolhendo em silêncio.</span></div>
-        <div class="script-line"><span class="ts">30–38s</span><span class="st">Passo quatro: um dia você olha no espelho e não acha mais a mulher que morava ali. E pensa que foi a idade. Não foi. Foi você saindo de cena, devagar, sem perceber.</span></div>
-        <div class="script-line"><span class="ts">38–45s</span><span class="st">Isso tem nome: Recuo Silencioso. E a mesma coisa que se faz em passos, se desfaz em passos.</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">COMO A MULHER 50+ FICA INVISÍVEL — em 4 passos</span></div>
-        <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">PASSO 1 · PASSO 2 · PASSO 3 · PASSO 4 numerados a cada bloco</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">RECUO SILENCIOSO</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Talking head, enquadramento firme no rosto. A cada passo, um dedo levantado (1, 2, 3, 4) como num tutorial. Luz limpa, fundo neutro. Silêncio de 1 segundo antes de "Não foi."</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Eu levei anos pra entender que não foi a idade que me apagou. Foram centenas de vezes em que eu fiquei em segundo plano — e nenhuma delas, sozinha, pareceu perda. Junta tudo e vira invisibilidade. Isso tem nome: Recuo Silencioso. E o que se faz em passos, se desfaz em passos. Salva pra reler no dia em que a vozinha disser que "não muda mais nada".</div>
-
-      <div class="cta">
-        <span class="lbl">CTA meio · oferece o caminho</span>
-        "Quer o mapa das 4 áreas onde a gente vai recuando? Comenta CAUSA aqui embaixo que eu te mando."
-      </div>
-    </div>
-
-    <!-- ––– M2 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge meio">Meio</span>
-        <span class="angle">M2 · 40–45s · quebra da objeção n.&ordm;1</span>
-      </div>
-      <h3>"O maior erro que te venderam sobre envelhecer"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Anti-erro / mito de beleza madura (Adriana: "o maior erro que contaram para a mulher madura"). Aqui reposiciona a objeção "já me frustrei" sem atacar quem vende creme, dieta ou promessa.
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Se você já comprou o creme caro, fez a dieta e mesmo assim se frustrou, o erro não foi seu. Deixa eu te contar qual foi."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–4s</span><span class="st">Se você já comprou o creme caro, fez a dieta e mesmo assim se frustrou, o erro não foi seu. Deixa eu te contar qual foi.</span></div>
-        <div class="script-line"><span class="ts">4–13s</span><span class="st">Creme bom existe. Dieta boa existe. Eu não tenho nada contra quem vende, nem contra você que comprou. Eu comprei também.</span></div>
-        <div class="script-line"><span class="ts">13–23s</span><span class="st">O problema é o que tudo isso promete resolver. Tudo mira uma coisa: fazer você parecer mais nova por fora.</span></div>
-        <div class="script-line"><span class="ts">23–33s</span><span class="st">Só que o que mais dói aos 50 não é a ruga. É acordar e sentir que ninguém te vê. É ter perdido o espaço que era seu. E isso nenhum pote alcança.</span></div>
-        <div class="script-line"><span class="ts">33–42s</span><span class="st">Por isso a frustração se repetiu. Você tratou a pele e deixou intacto o que realmente tinha te apagado: a sua presença.</span></div>
-        <div class="script-line"><span class="ts">42–45s</span><span class="st">Da próxima vez que te oferecerem um milagre de pote, você já sabe o que ele não trata.</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">O ERRO NÃO FOI SEU</span></div>
-        <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">"creme mira a pele" · "a dor mora no espaço que você cedeu"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"isso, nenhum pote alcança"</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Talking head, tom firme e honesto (não raivoso). Pode segurar um pote de creme na mão no início e largar de lado com calma no fecho — gesto, nunca deboche de quem vende.</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Eu já gastei dinheiro procurando no espelho uma coisa que não estava no espelho. A ruga eu até disfarçava por um tempo. O vazio de não me sentir mais vista, nenhum creme mexeu. Não é culpa de quem vende — é que a promessa mira o lugar errado. Quando entendi isso, parei de me frustrar. Resultados variam de mulher pra mulher, mas o começo é o mesmo pra todas: enxergar a causa certa.</div>
-
-      <div class="cta">
-        <span class="lbl">CTA meio · oferece o caminho</span>
-        "Comenta RAIZ que eu te mostro o caminho que começa pela causa, não pela pele."
-      </div>
-    </div>
-
-    <!-- ––– M3 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge meio">Meio</span>
-        <span class="angle">M3 · 38–42s · desarma crença limitante</span>
-      </div>
-      <h3>"Coisas que dizem pra mulher dos 50 (e a verdade sobre cada uma)"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Humor de autoironia cotidiana (Iara, 6,9M). Situação banal + autoironia sem drama. A maturidade é a identidade, não o tema. Aqui o formato "mito x verdade" entra leve, com humor, pra desarmar a crença que mantém a mulher recuada.
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Lista de coisas que já me disseram depois que fiz 50. E o que eu respondo hoje pra cada uma."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–4s</span><span class="st">Lista de coisas que já me disseram depois que fiz 50. E o que eu respondo hoje pra cada uma.</span></div>
-        <div class="script-line"><span class="ts">4–12s</span><span class="st">"Nessa idade tem que se aquietar." Ah, tá. Vou me aquietar agora que os filhos saíram de casa e sobrou tempo pela primeira vez na vida. Faz muito sentido.</span></div>
-        <div class="script-line"><span class="ts">12–20s</span><span class="st">"Pra que se arrumar, se não vai sair?" Eu me arrumo pra encontrar comigo no espelho. Se eu não sair, ótimo, fico linda em casa mesmo.</span></div>
-        <div class="script-line"><span class="ts">20–28s</span><span class="st">"Tá ótima pra sua idade." Esse "pra sua idade" pode tirar. Fica só o "tá ótima". Obrigada.</span></div>
-        <div class="script-line"><span class="ts">28–36s</span><span class="st">A verdade é que ninguém decide por mim que a minha vez já passou. Presença não tem prazo de validade.</span></div>
-        <div class="script-line"><span class="ts">36–42s</span><span class="st">Se você riu porque já ouviu alguma dessas, esse vídeo é meu recado e o seu também.</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">O QUE DIZEM PRA MULHER 50+ x A VERDADE</span></div>
-        <div class="tela-line"><span class="tela-lbl">Mito 1</span><span class="tela-txt">"tem que se aquietar"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Mito 2</span><span class="tela-txt">"pra que se arrumar?"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Mito 3</span><span class="tela-txt">"ótima… PRA SUA IDADE" — com "pra sua idade" riscado</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"presença não tem prazo de validade"</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Talking head, tom bem-humorado e cúmplice, sorriso, revira o olho de leve no "Ah, tá". Ritmo mais rápido que M1/M2. Corte seco entre cada frase pra dar timing de humor. Pode aparecer arrumada em casa no bloco do espelho.</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Fiz uma lista das frases que a gente ouve depois dos 50 e quase engole calada. Hoje eu respondo. Sem grosseria, com humor — porque rir junto é o primeiro passo pra parar de se encolher. Qual dessas já te disseram? Conta aqui, quero rir com você (e a gente sabe que é sério por baixo).</div>
-
-      <div class="cta">
-        <span class="lbl">CTA meio · comentário + salvamento</span>
-        "Comenta a que mais te disseram: 1, 2 ou 3. E salva pra lembrar no dia que alguém soltar de novo."
-      </div>
-    </div>
-
-    <!-- ============================================================ FUNDO -->
-    <h2 class="stage fundo"><span class="badge fundo">Fundo de funil</span>Decisão — prova/história · oferta R$88 (Fundadoras) · CTA direto</h2>
-    <p class="stage-sub">Público quente. Aqui entra <strong>prova + oferta + CTA direto</strong> pra página. Oferta real: <strong>6 aulas em vídeo, R$88, turma Fundadoras, garantia de 7 dias.</strong> Onde a oferta não está definida, usa-se [PLACEHOLDER].</p>
-
-    <!-- ––– F1 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge fundo">Fundo</span>
-        <span class="angle">F1 · 42–48s · objeção final + teaser da oferta + CTA</span>
-      </div>
-      <h3>"Existe um caminho (e não é pra você parecer mais nova)"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> Solução de problema + convite honesto (Iara, 9,1M — "a solução"). Resolve a dor real do ICP com um convite direto, sem promessa de rejuvenescimento. Fecha a última objeção e apresenta a oferta.
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Se você chegou até aqui e pensou 'entendi o problema, mas e agora?' — existe um caminho. E ele não promete te fazer parecer mais nova."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–5s</span><span class="st">Se você chegou até aqui e pensou "entendi o problema, mas e agora?" — existe um caminho. E ele não promete te fazer parecer mais nova.</span></div>
-        <div class="script-line"><span class="ts">5–14s</span><span class="st">Eu juntei tudo o que me tirou do Recuo Silencioso em seis aulas curtas, em vídeo. Uma coisa de cada vez, na ordem que funciona.</span></div>
-        <div class="script-line"><span class="ts">14–24s</span><span class="st">Primeiro você enxerga onde recuou. Depois fecha a paz com a mulher que você foi. E aí reconstrói a sua presença, área por área, no seu ritmo, à noite, no celular, sem ninguém sabendo se você não quiser.</span></div>
-        <div class="script-line"><span class="ts">24–33s</span><span class="st">Esquece bancar a novinha. Aqui você volta a ocupar o seu espaço, do jeito que você é hoje.</span></div>
-        <div class="script-line"><span class="ts">33–42s</span><span class="st">A primeira turma entra como Fundadora: são 88 reais, com sete dias de garantia. Se não for pra você, eu devolvo tudo, sem pergunta. O risco é meu.</span></div>
-        <div class="script-line"><span class="ts">42–48s</span><span class="st">Se faz tempo que você espera uma coisa que seja só sua, essa é a hora.</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">EXISTE UM CAMINHO</span></div>
-        <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">"6 AULAS EM VÍDEO · NO SEU RITMO" · "sem promessa de parecer 30"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">TURMA FUNDADORAS · R$88 · 7 DIAS DE GARANTIA</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Talking head, olhar direto na câmera, luz suave, tom de convite calmo e seguro. Texto na tela reforçando o preço e a garantia no bloco final. Sem urgência artificial — a segurança é a persuasão.</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda">Chega de pote de promessa. O que me tirou da invisibilidade não foi parecer mais nova — foi voltar a ocupar o meu espaço. Organizei isso em 6 aulas em vídeo, na ordem certa, pra você fazer no seu tempo. A primeira turma entra como Fundadora: R$88, com 7 dias de garantia incondicional. Se não for pra você, devolvo tudo. O risco é meu, não seu.
-        <span class="placeholder-note">PLACEHOLDER: confirmar bônus da turma Fundadoras, se houver, e prazo de abertura/fechamento da turma antes de publicar.</span>
-      </div>
-
-      <div class="cta">
-        <span class="lbl">CTA fundo · oferta direta</span>
-        "Comenta VISTA que eu te mando o link, ou é só clicar na bio pra entrar como Fundadora."
-      </div>
-    </div>
-
-    <!-- ––– F2 ––– -->
-    <div class="reel">
-      <div class="top">
-        <span class="badge fundo">Fundo</span>
-        <span class="angle">F2 · 45–50s · prova/história + oferta + CTA direto</span>
-      </div>
-      <h3>"A mulher de 57 anos que voltou a ser vista"</h3>
-      <div class="formula">
-        <strong>Fórmula modelada:</strong> História de virada / contraste (Coracy — expectativa x realidade; Adriana "Não desista" — 4M). Prova pelo mecanismo: mostra a virada acontecendo antes de convidar.
-      </div>
-
-      <div class="warn-block">
-        <strong>ATENCAO:</strong> Substituir por depoimento real quando houver. Enquanto não há depoimento gravado, o roteiro está escrito em 1ª pessoa (a própria virada de quem apresenta a marca). Quando existir depoimento real de aluna, substituir a história pela dela, com autorização e com a ressalva "resultados variam" visível. Nunca inventar aluna/número.
-      </div>
-
-      <h4>Hook · 0–3s</h4>
-      <p class="hook">"Uma mulher de 57 anos me disse: 'faz tempo que eu não me sentia assim, vista'. Ela não mudou a pele. Mudou o lugar que ocupa."</p>
-
-      <h4>Roteiro falado (cronometrado)</h4>
-      <div class="script">
-        <div class="script-line"><span class="ts">0–5s</span><span class="st">Uma mulher de 57 anos me disse: "faz tempo que eu não me sentia assim, vista". Ela não mudou a pele. Mudou o lugar que ocupa.</span></div>
-        <div class="script-line"><span class="ts">5–14s</span><span class="st"><em>[substituir por depoimento real quando houver]</em> Ela começou pequena. Voltou a se arrumar numa terça qualquer, sem ocasião. Tirou do papel um projeto que era só dela e vivia empurrando pra depois.</span></div>
-        <div class="script-line"><span class="ts">14–24s</span><span class="st">No começo pareceu que nada acontecia. Semanas parecendo "nada". É assim mesmo. A presença se reconstrói pela raiz, igual bambu: fica meses embaixo da terra e, de repente, cresce tudo de uma vez.</span></div>
-        <div class="script-line"><span class="ts">24–33s</span><span class="st">Um dia o marido reparou. As amigas repararam. E, antes de todos eles, ela reparou. Porque ela voltou primeiro.</span></div>
-        <div class="script-line"><span class="ts">33–42s</span><span class="st">É pra isso que existem essas seis aulas: pra você fazer a mesma volta, na ordem certa, no seu tempo.</span></div>
-        <div class="script-line"><span class="ts">42–50s</span><span class="st">A primeira turma entra como Fundadora, por 88 reais, com sete dias de garantia. Não dá pra voltar atrás nos anos que você cedeu. Mas dá pra decidir, hoje, que daqui pra frente é a sua vez.</span></div>
-      </div>
-
-      <h4>Texto na tela</h4>
-      <div class="tela">
-        <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">57 ANOS. VOLTOU A SER VISTA. <em>(trocar pela idade/nome real do depoimento quando houver)</em></span></div>
-        <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">"ela voltou primeiro" · "resultados variam de mulher pra mulher"</span></div>
-        <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">6 AULAS · FUNDADORAS · R$88 · 7 DIAS DE GARANTIA</span></div>
-      </div>
-
-      <h4>Cena</h4>
-      <p class="cena">Talking head reflexivo, luz suave e quente. Quando houver depoimento real, cortar para o vídeo da aluna (com consentimento). Manter na tela a ressalva "resultados variam" durante a parte de prova. Silêncio de 1 segundo em "Porque ela voltou primeiro."</p>
-
-      <h4>Legenda</h4>
-      <div class="legenda"><em>[substituir por depoimento real quando houver]</em> Ela tinha 57 anos e a frase que soltou pra mim foi: "faz tempo que eu não me sentia assim, vista". Não mudou a pele. Mudou o espaço que passou a ocupar — uma área de cada vez, pela raiz. Resultados variam de mulher pra mulher, isso aqui não é fórmula mágica. Mas o caminho é o mesmo pra todas: começar. A primeira turma entra como Fundadora, R$88, 7 dias de garantia. Se não for pra você, devolvo tudo.
-        <span class="placeholder-note">PLACEHOLDER: inserir crédito/autorização do depoimento e link direto da página.</span>
-      </div>
-
-      <div class="cta">
-        <span class="lbl">CTA fundo · oferta direta</span>
-        "Comenta VISTA que eu te mando o link, ou clica na bio pra entrar como Fundadora. O risco é meu: 7 dias de garantia."
-      </div>
-    </div>
-
-    <hr class="div">
-
-    <!-- ============================================================ CHECKLIST -->
-    <h2 class="plain">Checklist de saída (gates conferidos)</h2>
-    <ul class="check">
-      <li><span class="ok">&#10003;</span> 3 Reels de MEIO (mecanismo/educa/quebra objeção) + 2 Reels de FUNDO (prova/oferta/CTA direto).</li>
-      <li><span class="ok">&#10003;</span> Cada fórmula modelada em viral <strong>real</strong> da coleta (Adriana 7,3M · Iara 6,9M/9,1M · Coracy contraste geracional) — tabela de rastreamento no topo.</li>
-      <li><span class="ok">&#10003;</span> M1 = tutorial do mecanismo · M2 = quebra "já me frustrei" reposicionando (sem atacar quem vende creme) · M3 = mito x verdade com humor de identificação.</li>
-      <li><span class="ok">&#10003;</span> F1 = objeção final + teaser oferta (6 aulas, sem "parecer 30") + CTA · F2 = história/prova em 1ª pessoa MARCADA "[substituir por depoimento real quando houver]" + CTA.</li>
-      <li><span class="ok">&#10003;</span> Cada roteiro traz: título · fórmula modelada · estágio · Hook (0–3s) · roteiro falado cronometrado · texto na tela · cena · legenda · CTA.</li>
-      <li><span class="ok">&#10003;</span> 4 Reels de TOPO (confissão/humor/trend/tutorial) com CTA variado (comentar/marcar/salvar) e tabela de distribuição sugerida.</li>
-      <li><span class="ok">&#10003;</span> Oferta real só no FUNDO: 6 aulas em vídeo · R$88 · turma Fundadoras · garantia 7 dias. Nada inventado além disso; lacunas em [PLACEHOLDER].</li>
-      <li><span class="ok">&#10003;</span> Compliance: nenhuma promessa de "parecer 30"/cura/idade reversa/resultado garantido. Depoimento com ressalva "resultados variam".</li>
-      <li><span class="ok">&#10003;</span> Anti-clichê de IA: sem "não é X, é Y" mecânico; sem "se permita/protagonista/jornada/empoderamento/descubra/melhor versão/ressignificar".</li>
-      <li><span class="ok">&#10003;</span> Sem emoji no falado. Hook nos 3s em todos os roteiros. Cena concreta. Português acentuado.</li>
+<div class="wrap">
+
+  <!-- ============================
+       HERO
+  ============================= -->
+  <header class="hero">
+    <span class="hero-kicker">Conteúdo orgânico · Reel / Vídeo</span>
+    <h1><em>Voltar a Ser Vista</em><br>Roteiros Modelados</h1>
+    <p class="sub">Mulheres 50+ · Autoestima e presença · 9 roteiros em fórmulas virais reais</p>
+    <p class="meta-row">
+      Slug: <code style="font-family:var(--font-mono);font-size:0.84rem;background:var(--surface-warm);padding:2px 8px;border-radius:6px;color:var(--primary);">mulheres-50-autoestima</code>
+      &nbsp;·&nbsp; Gerado em 01/07/2026
+    </p>
+  </header>
+
+  <!-- ============================
+       CALLOUT DE GATES
+  ============================= -->
+  <div class="callout">
+    <strong>Gates aplicados em todos os roteiros (ler antes de gravar)</strong>
+    <ul>
+      <li><strong>Compliance (nicho sensível):</strong> nenhum roteiro promete "parecer 30", cura, idade reversa ou resultado garantido. Tema é presença e autoestima, nunca estética milagrosa.</li>
+      <li><strong>Anti-clichê de IA:</strong> proibido e ausente — "não é X, é Y", "se permita", "protagonista", "jornada", "empoderamento", "descubra", "sua melhor versão", "ressignificar". Fala de gente real.</li>
+      <li><strong>Hook nos 3 primeiros segundos</strong> · frases curtas · sem emoji no roteiro falado · cena concreta e sensorial · português acentuado.</li>
+      <li><strong>CTA de engajamento</strong> varia entre os posts (comenta / salva / marca) para não saturar a mesma palavra.</li>
     </ul>
+  </div>
 
-    <!-- ============================================================ FOOTER -->
-    <div class="footer">
-      <div class="logo">Roteiros Modelados</div>
-      <p>mulheres-50-autoestima · 01/07/2026 · 4 TOPO + 3 MEIO + 2 FUNDO · fórmulas virais reais (Apify) · oferta R$88 Fundadoras · voz de marca calibrada no avatar. Substituir F2 por depoimento real quando houver.</p>
+  <!-- ================================================================
+       TOPO DE FUNIL — 4 ROTEIROS
+  ================================================================ -->
+  <div class="stage-header" style="margin-top:72px;">
+    <span class="stage-label topo">Topo de Funil</span>
+    <h2>Atração · Identificação · Alcance</h2>
+    <p class="stage-desc">
+      4 roteiros de TOPO. Foco em dor de identificação e alcance orgânico. Sem vender — nomeiam a dor da invisibilidade e o mecanismo do Recuo Silencioso.
+      &nbsp;·&nbsp; Big Idea: <strong>"Você não envelheceu, você só parou de ser vista."</strong>
+      &nbsp;·&nbsp; Mecanismo: <strong>O Recuo Silencioso.</strong>
+    </p>
+  </div>
+
+  <!-- ------ Roteiro 1 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge topo">Topo</span>
+      <span class="badge-dur">35–45s · talking head</span>
+    </div>
+    <h3>Roteiro 1 — "Três anos atrás da câmera"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Inspiracional "não desista" — Adriana Tabuti / @dricadivina (TikTok, 4M views, <em>"Não desista — conselho para a vida"</em> + #idadeesoumnumero). O viral vem da mensagem que gera identificação e compartilhamento, ancorada numa dor real, não num clichê.
     </div>
 
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Passei três anos me escondendo das fotos da minha própria família."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–3s</span><span class="script-st">"Passei três anos me escondendo das fotos da minha própria família."</span></div>
+      <div class="script-line"><span class="ts">3–10s</span><span class="script-st">"Toda vez que apareciam com o celular, eu dava um jeito. Ia pegar água. Ficava atrás de alguém. Ou fazia a foto e já apagava."</span></div>
+      <div class="script-line"><span class="ts">10–20s</span><span class="script-st">"E não foi de uma vez. Foi devagar. Primeiro parei de comprar roupa pra mim. Depois comecei a falar mais baixo na mesa. Um dia me vi sempre na última fileira do retrato, meio escondida no canto."</span></div>
+      <div class="script-line"><span class="ts">20–30s</span><span class="script-st">"Aí eu entendi uma coisa que ninguém tinha me contado: não foi a idade que me tirou da foto. Fui eu saindo de cena, sem perceber, um passinho de cada vez."</span></div>
+      <div class="script-line"><span class="ts">30–40s</span><span class="script-st">"Eu não voltei a ter 30 anos. Ninguém volta. Eu só voltei a ficar na frente. A aparecer inteira. A não sumir do meu próprio domingo."</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"3 anos me escondendo das fotos"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Meio</span><span class="tela-txt">"não foi a idade — fui eu saindo de cena"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"voltei a ficar na frente"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Rosto no hook, luz de janela, sem maquiagem pesada. Silêncio de 1 segundo depois da primeira frase. Se puder, corte rápido mostrando uma foto de família com um espaço vazio no canto. Sem música alta.</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">Demorei pra admitir isso em voz alta. Por anos eu me achei "sem foto boa". Não era. Eu só tinha ido ficando pra trás, cedendo o meu lugar sem ninguém me pedir. A boa notícia é que dá pra voltar a aparecer — e não tem nada a ver com idade. Se isso é você também, deixa um "eu" aqui embaixo pra eu saber quantas somos.</div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Se você também já se escondeu de uma foto, comenta <strong>VISÍVEL</strong> aqui embaixo. Só pra eu saber quantas somos."</span>
+    </div>
+  </article>
+
+  <!-- ------ Roteiro 2 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge topo">Topo</span>
+      <span class="badge-dur">25–35s · talking head + cortes rápidos</span>
+    </div>
+    <h3>Roteiro 2 — "A mulher mais atrapalhada do condomínio"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Humor de autoironia cotidiana — Iara Sanny / @iarasanny (IG, 6,9M views, <em>"Você é muito atrapalhada?"</em> — pediu 15 cocas em vez de 3 no iFood). A maturidade é a identidade, não o tema; o tema é o riso de si mesma. Gera compartilhamento ("essa sou eu / manda pra fulana").
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Você acha que é atrapalhada? Senta que eu ganho de você."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–3s</span><span class="script-st">"Você acha que é atrapalhada? Senta que eu ganho de você."</span></div>
+      <div class="script-line"><span class="ts">3–9s</span><span class="script-st">"Ontem procurei o óculos por dez minutos. Tava na minha cabeça. Na. Minha. Cabeça."</span></div>
+      <div class="script-line"><span class="ts">9–16s</span><span class="script-st">"Entro num cômodo com total convicção e esqueço na hora o que eu vim fazer. Aí fico parada no meio da sala, olhando pro nada, tentando lembrar."</span></div>
+      <div class="script-line"><span class="ts">16–24s</span><span class="script-st">"Salvo o mesmo áudio da minha filha três vezes com medo de perder. Guardo o carregador em lugar seguro e o lugar é tão seguro que nem eu acho."</span></div>
+      <div class="script-line"><span class="ts">24–32s</span><span class="script-st">"Mas reparei numa coisa. No dia que eu paro de me esconder e conto essas histórias rindo, a mesa toda ri junto. E de repente eu não sou a velha esquecida da família. Eu sou a mais divertida. Engraçado como aparecer muda o assunto."</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"acha que é atrapalhada?"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Meio</span><span class="tela-txt">"o óculos tava na MINHA cabeça"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"quem aparece rindo, ninguém esquece"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Tom leve, sorrindo, cortes rápidos em cada mini-história (óculos na cabeça, parada no meio da sala, carregador sumido). Nada de drama, nada de música triste. Energia de conversa de amiga.</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">Marca aqui embaixo aquela amiga que também esconde o carregador tão bem que nem ela acha depois. A gente ri porque é real. E toda vez que eu conto essas histórias em vez de esconder, eu paro de ser "a esquecida" e viro a melhor companhia da mesa. Presença também se conquista rindo.</div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Marca a amiga mais atrapalhada que você conhece. Ela precisa se ver aqui."</span>
+    </div>
+  </article>
+
+  <!-- ------ Roteiro 3 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge topo">Topo</span>
+      <span class="badge-dur">20–30s · trend com áudio do momento</span>
+    </div>
+    <h3>Roteiro 3 — "Falaram que essa dança não era pra minha idade"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Contraste geracional + trend — Coracy Arantes / @blogdacora (TikTok, 86,9M Cleópatra / 77,2M leopardo). A mulher madura entra numa trend que "não seria pra idade dela" e surpreende. O viral acontece porque a audiência não espera — alcance máximo + etarismo quebrado na prática. <em>(Modelar o formato, não a persona.)</em>
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Minha neta apostou que eu não ia conseguir fazer essa trend. Segura o telefone."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–4s</span><span class="script-st">"Minha neta apostou que eu não ia conseguir fazer essa trend. Segura o telefone."</span></div>
+      <div class="script-line"><span class="ts">4–10s</span><span class="script-st"><em>(entra o áudio/coreografia do momento — a mulher executa a trend com atitude, cara de quem está se divertindo)</em></span></div>
+      <div class="script-line"><span class="ts">10–18s</span><span class="script-st">"Repara na cara de quem tava esperando eu errar. Todo mundo acha que depois dos 50 a gente só senta e assiste."</span></div>
+      <div class="script-line"><span class="ts">18–28s</span><span class="script-st">"Eu não fiz isso pra parecer mais nova. Fiz porque cansei de ficar de fora. Entrar na roda também é aos 50. Ninguém combinou o contrário comigo."</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Início</span><span class="tela-txt">"'isso não é pra sua idade'"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Trend</span><span class="tela-txt">"alguém avisou que era só pra jovem?"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"entrar na roda também é aos 50"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Começa parada, com ar de "será que eu consigo", e vira a chave executando a trend com confiança e humor. Fundo simples, luz boa. O contraste (expectativa x realidade) é o produto — deixa a surpresa acontecer no vídeo.</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">Minha neta me desafiou e eu topei. Não pra "bancar a novinha" — odeio essa expressão. Foi porque me cansei de ser só plateia da vida dos outros. A trend é a desculpa; aparecer é o ponto. Salva esse pra lembrar da próxima vez que alguém disser que "não é pra sua idade".</div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Salva esse vídeo e faz a sua versão. Me marca que eu quero ver você na roda."</span>
+    </div>
+  </article>
+
+  <!-- ------ Roteiro 4 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge topo">Topo</span>
+      <span class="badge-dur">35–45s · demonstração prática + fala</span>
+    </div>
+    <h3>Roteiro 4 — "A raiz branca não é o problema"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Tutorial / solução real — Iara Sanny (IG, 9,1M, raiz branca em rotina corrida) + Adriana Tabuti (TikTok, 7,3M, "como aumentar os olhos com lápis preto" pra olho maduro). Resolve um problema concreto do dia a dia 50+, mas puxa pro tema da presença/autoestima — beleza é a porta, o assunto é voltar a se olhar.
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Se a raiz branca te faz cancelar o almoço de família, o problema não é o cabelo."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–4s</span><span class="script-st">"Se a raiz branca te faz cancelar o almoço de família, o problema não é o cabelo."</span></div>
+      <div class="script-line"><span class="ts">4–12s</span><span class="script-st">"Vou te mostrar o truque de dois minutos que eu uso na correria: pó certo no tom certo, pincel chapado, só na linha da risca. Some na hora, dura o dia." <em>(demonstração na câmera, passo a passo curto)</em></span></div>
+      <div class="script-line"><span class="ts">12–22s</span><span class="script-st">"Mas repara no que eu tô fazendo de verdade aqui. Eu não tô tampando a idade. Eu tô tirando a desculpa que me mantinha em casa."</span></div>
+      <div class="script-line"><span class="ts">22–32s</span><span class="script-st">"Porque não era a raiz. Era o 'assim eu não saio'. E cada 'assim eu não saio' foi me deixando um pouco mais invisível, semana após semana, sem eu perceber."</span></div>
+      <div class="script-line"><span class="ts">32–42s</span><span class="script-st">"Resolve a raiz em dois minutos e vai pro almoço. O truque é pequeno. O que ele destrava é enorme: você na mesa, inteira, de novo."</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"truque de raiz branca em 2 min"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Demo</span><span class="tela-txt">"pó · pincel chapado · só na risca"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"o truque é pequeno. o que ele destrava, não."</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Demonstração real e clara do passo a passo (mãos, espelho, produto), depois fecha no rosto pra fala do fechamento. Prática de verdade — a solução tem que funcionar; a virada de tema vem no fim, sem forçar.</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">Guarda esse truque pra próxima correria. Mas o recado é maior que o pó: quantos convites você já recusou por causa de um detalhe que se resolve em dois minutos? Comigo foram muitos. Um de cada vez, eu fui sumindo. Um de cada vez, dá pra voltar. Salva pra não esquecer.</div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Salva pra usar na próxima correria — e comenta <strong>AQUI</strong> qual foi o último convite que você recusou por um detalhe bobo."</span>
+    </div>
+  </article>
+
+  <!-- ---- Distribuição TOPO ---- -->
+  <div class="section-plain">
+    <h2>Distribuição sugerida — TOPO</h2>
   </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Roteiro</th>
+        <th>Fórmula</th>
+        <th>Objetivo primário</th>
+        <th>CTA</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1 — Três anos atrás da câmera</strong></td>
+        <td>Inspiracional "não desista"</td>
+        <td>Identificação profunda + alcance</td>
+        <td>comenta VISÍVEL</td>
+      </tr>
+      <tr>
+        <td><strong>2 — A mais atrapalhada do condomínio</strong></td>
+        <td>Humor de autoironia</td>
+        <td>Compartilhamento (marca a amiga)</td>
+        <td>marca a amiga</td>
+      </tr>
+      <tr>
+        <td><strong>3 — Essa dança não era pra minha idade</strong></td>
+        <td>Contraste geracional + trend</td>
+        <td>Alcance máximo (surpresa)</td>
+        <td>salva + me marca</td>
+      </tr>
+      <tr>
+        <td><strong>4 — A raiz branca não é o problema</strong></td>
+        <td>Tutorial / solução real</td>
+        <td>Salvamento + entrada de tema</td>
+        <td>salva + comenta</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.6;">Poste espaçado para variar formato (confissão &rarr; humor &rarr; trend &rarr; tutorial) e CTA (comentar &rarr; marcar &rarr; salvar). Todos param no TOPO: nomeiam a dor da invisibilidade e o mecanismo do Recuo Silencioso sem empurrar oferta.</p>
+
+  <!-- ================================================================
+       MEIO DE FUNIL — 3 ROTEIROS
+  ================================================================ -->
+  <div class="stage-header">
+    <span class="stage-label meio">Meio de Funil</span>
+    <h2>Mecanismo · Educação · Quebra de Objeção</h2>
+    <p class="stage-desc">
+      3 roteiros de MEIO. Público que já sente a dor. Apresenta o mecanismo (Recuo Silencioso), educa e quebra a objeção n.º 1 ("já me frustrei"). CTA oferece o caminho sem pressão de compra.
+    </p>
+  </div>
+
+  <!-- ---- Fórmulas virais usadas ---- -->
+  <div class="section-plain" style="margin-top:32px;">
+    <h2 style="font-size:1.45rem;">Fórmulas virais reais usadas na modelagem</h2>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Fórmula viral</th>
+        <th>Fonte real (views)</th>
+        <th>Onde apliquei</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>Tutorial técnico hiper-específico — problema real + solução passo a passo em 1 linha de hook</td>
+        <td>Adriana Tabuti — "Como aumentar os olhos com lápis preto" (7,3M TikTok)</td>
+        <td><span class="badge meio">M1</span></td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>Anti-erro / mito de beleza madura — "o maior erro que contaram pra mulher madura"</td>
+        <td>Adriana (posts de beleza instrucional recentes) + reposição da objeção</td>
+        <td><span class="badge meio">M2</span></td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>Humor de autoironia cotidiana — situação banal + autoironia, a maturidade é identidade</td>
+        <td>Iara Sanny — "Você é muito atrapalhada?" (6,9M IG)</td>
+        <td><span class="badge meio">M3</span></td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td>Solução de problema + convite honesto — resolve dor real do ICP sem promessa de milagre</td>
+        <td>Iara Sanny — "Retoque Mágico… solução" (9,1M IG)</td>
+        <td><span class="badge fundo">F1</span></td>
+      </tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td>História de virada / contraste — expectativa x realidade, prova pelo mecanismo</td>
+        <td>Coracy (contraste geracional 86M) + Adriana "Não desista" (4M)</td>
+        <td><span class="badge fundo">F2</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.88rem;color:var(--text-muted);margin:0 0 8px;line-height:1.55;"><strong>Gates aplicados em todos:</strong> hook nos 3s · frases curtas · sem emoji no falado · cena concreta · sem "não é X, é Y" · sem "se permita / protagonista / jornada / empoderamento / descubra / melhor versão / ressignificar" · compliance (nunca "parecer 30"/cura/idade reversa/resultado garantido) · português acentuado · CTA orgânico pra página.</p>
+  <p style="font-size:0.88rem;color:var(--text-muted);margin:0 0 28px;line-height:1.55;"><strong>Mecânica de CTA:</strong> palavra-chave no comentário dispara a DM com o link (ex.: <em>comenta CAUSA</em>), ou link na bio. Varie a palavra entre os posts.</p>
+
+  <!-- ------ M1 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge meio">Meio</span>
+      <span class="badge-dur">40–45s</span>
+    </div>
+    <h3>M1 — "O passo a passo de como você foi ficando invisível"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Tutorial técnico hiper-específico (Adriana, 7,3M). Só que o "tutorial" não é de maquiagem — é do mecanismo emocional. Mesma estrutura: promessa de passo a passo no hook, numeração clara, uma dor por passo.
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Ninguém fica invisível de um dia pro outro. Acontece em 4 passos. Vou te mostrar os quatro, um por um."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–3s</span><span class="script-st">Ninguém fica invisível de um dia pro outro. Acontece em 4 passos. Vou te mostrar os quatro, um por um.</span></div>
+      <div class="script-line"><span class="ts">3–12s</span><span class="script-st">Passo um: você para de se arrumar pra você. Só quando tem ocasião. E ocasião foi ficando cada vez mais rara.</span></div>
+      <div class="script-line"><span class="ts">12–21s</span><span class="script-st">Passo dois: você entrega o seu tempo todo pros outros. Filho, casa, trabalho de todo mundo. O que era seu foi pro fim da fila.</span></div>
+      <div class="script-line"><span class="ts">21–30s</span><span class="script-st">Passo três: você começa a recusar. Recusa o convite, a foto, a roupa que ama. Vai se encolhendo em silêncio.</span></div>
+      <div class="script-line"><span class="ts">30–38s</span><span class="script-st">Passo quatro: um dia você olha no espelho e não acha mais a mulher que morava ali. E pensa que foi a idade. Não foi. Foi você saindo de cena, devagar, sem perceber.</span></div>
+      <div class="script-line"><span class="ts">38–45s</span><span class="script-st">Isso tem nome: Recuo Silencioso. E a mesma coisa que se faz em passos, se desfaz em passos.</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"COMO A MULHER 50+ FICA INVISÍVEL — em 4 passos"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">"PASSO 1", "PASSO 2", "PASSO 3", "PASSO 4" — numerados a cada bloco</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"RECUO SILENCIOSO"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Talking head, enquadramento firme no rosto. A cada passo, um dedo levantado (1, 2, 3, 4) como num tutorial. Luz limpa, fundo neutro. Silêncio de 1 segundo antes de "Não foi."</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">Eu levei anos pra entender que não foi a idade que me apagou. Foram centenas de vezes em que eu fiquei em segundo plano — e nenhuma delas, sozinha, pareceu perda. Junta tudo e vira invisibilidade. Isso tem nome: Recuo Silencioso. E o que se faz em passos, se desfaz em passos. Salva pra reler no dia em que a vozinha disser que "não muda mais nada".</div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Quer o mapa das 4 áreas onde a gente vai recuando? Comenta <strong>CAUSA</strong> aqui embaixo que eu te mando."</span>
+    </div>
+  </article>
+
+  <!-- ------ M2 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge meio">Meio</span>
+      <span class="badge-dur">40–45s · quebra de objeção n.º 1</span>
+    </div>
+    <h3>M2 — "O maior erro que te venderam sobre envelhecer"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Anti-erro / mito de beleza madura (Adriana: "o maior erro que contaram para a mulher madura"). Aqui reposiciona a objeção "já me frustrei" sem atacar quem vende creme, dieta ou promessa.
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Se você já comprou o creme caro, fez a dieta e mesmo assim se frustrou, o erro não foi seu. Deixa eu te contar qual foi."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–4s</span><span class="script-st">Se você já comprou o creme caro, fez a dieta e mesmo assim se frustrou, o erro não foi seu. Deixa eu te contar qual foi.</span></div>
+      <div class="script-line"><span class="ts">4–13s</span><span class="script-st">Creme bom existe. Dieta boa existe. Eu não tenho nada contra quem vende, nem contra você que comprou. Eu comprei também.</span></div>
+      <div class="script-line"><span class="ts">13–23s</span><span class="script-st">O problema é o que tudo isso promete resolver. Tudo mira uma coisa: fazer você parecer mais nova por fora.</span></div>
+      <div class="script-line"><span class="ts">23–33s</span><span class="script-st">Só que o que mais dói aos 50 não é a ruga. É acordar e sentir que ninguém te vê. É ter perdido o espaço que era seu. E isso nenhum pote alcança.</span></div>
+      <div class="script-line"><span class="ts">33–42s</span><span class="script-st">Por isso a frustração se repetiu. Você tratou a pele e deixou intacto o que realmente tinha te apagado: a sua presença.</span></div>
+      <div class="script-line"><span class="ts">42–45s</span><span class="script-st">Da próxima vez que te oferecerem um milagre de pote, você já sabe o que ele não trata.</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"O ERRO NÃO FOI SEU"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">"creme mira a pele" · "a dor mora no espaço que você cedeu"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"isso, nenhum pote alcança"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Talking head, tom firme e honesto (não raivoso). Pode segurar um pote de creme na mão no início e largar de lado com calma no fecho — gesto, nunca deboche de quem vende.</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">Eu já gastei dinheiro procurando no espelho uma coisa que não estava no espelho. A ruga eu até disfarçava por um tempo. O vazio de não me sentir mais vista, nenhum creme mexeu. Não é culpa de quem vende — é que a promessa mira o lugar errado. Quando entendi isso, parei de me frustrar. Resultados variam de mulher pra mulher, mas o começo é o mesmo pra todas: enxergar a causa certa.</div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Comenta <strong>RAIZ</strong> que eu te mostro o caminho que começa pela causa, não pela pele."</span>
+    </div>
+  </article>
+
+  <!-- ------ M3 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge meio">Meio</span>
+      <span class="badge-dur">38–42s · desarma crença limitante</span>
+    </div>
+    <h3>M3 — "Coisas que dizem pra mulher dos 50 (e a verdade sobre cada uma)"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Humor de autoironia cotidiana (Iara, 6,9M). Situação banal + autoironia sem drama. A maturidade é a identidade, não o tema. Aqui o formato "mito x verdade" entra leve, com humor, pra desarmar a crença que mantém a mulher recuada.
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Lista de coisas que já me disseram depois que fiz 50. E o que eu respondo hoje pra cada uma."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–4s</span><span class="script-st">Lista de coisas que já me disseram depois que fiz 50. E o que eu respondo hoje pra cada uma.</span></div>
+      <div class="script-line"><span class="ts">4–12s</span><span class="script-st">"Nessa idade tem que se aquietar." Ah, tá. Vou me aquietar agora que os filhos saíram de casa e sobrou tempo pela primeira vez na vida. Faz muito sentido.</span></div>
+      <div class="script-line"><span class="ts">12–20s</span><span class="script-st">"Pra que se arrumar, se não vai sair?" Eu me arrumo pra encontrar comigo no espelho. Se eu não sair, ótimo, fico linda em casa mesmo.</span></div>
+      <div class="script-line"><span class="ts">20–28s</span><span class="script-st">"Tá ótima pra sua idade." Esse "pra sua idade" pode tirar. Fica só o "tá ótima". Obrigada.</span></div>
+      <div class="script-line"><span class="ts">28–36s</span><span class="script-st">A verdade é que ninguém decide por mim que a minha vez já passou. Presença não tem prazo de validade.</span></div>
+      <div class="script-line"><span class="ts">36–42s</span><span class="script-st">Se você riu porque já ouviu alguma dessas, esse vídeo é meu recado e o seu também.</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"O QUE DIZEM PRA MULHER 50+ x A VERDADE"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Mito 1</span><span class="tela-txt">"MITO: tem que se aquietar"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Mito 2</span><span class="tela-txt">"MITO: pra que se arrumar?"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Mito 3</span><span class="tela-txt">"MITO: ótima… <s>pra sua idade</s>" (com o "pra sua idade" riscado)</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"presença não tem prazo de validade"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Talking head, tom bem-humorado e cúmplice, sorriso, revira o olho de leve no "Ah, tá". Ritmo mais rápido que M1/M2. Corte seco entre cada frase pra dar timing de humor. Pode aparecer arrumada em casa no bloco do espelho.</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">Fiz uma lista das frases que a gente ouve depois dos 50 e quase engole calada. Hoje eu respondo. Sem grosseria, com humor — porque rir junto é o primeiro passo pra parar de se encolher. Qual dessas já te disseram? Conta aqui, quero rir com você (e a gente sabe que é sério por baixo).</div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Comenta a que mais te disseram: <strong>1, 2 ou 3</strong>. E salva pra lembrar no dia que alguém soltar de novo."</span>
+    </div>
+  </article>
+
+  <!-- ================================================================
+       FUNDO DE FUNIL — 2 ROTEIROS
+  ================================================================ -->
+  <div class="stage-header">
+    <span class="stage-label fundo">Fundo de Funil</span>
+    <h2>Prova · Oferta · CTA Direto</h2>
+    <p class="stage-desc">
+      2 roteiros de FUNDO. Público quente. Prova + oferta + CTA direto pra página.
+      Oferta real: <strong>6 aulas em vídeo · R$88 · Turma Fundadoras · garantia de 7 dias.</strong>
+      Lacunas em [PLACEHOLDER].
+    </p>
+  </div>
+
+  <!-- ------ F1 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge fundo">Fundo</span>
+      <span class="badge-dur">42–48s · objeção final + oferta + CTA</span>
+    </div>
+    <h3>F1 — "Existe um caminho (e não é pra você parecer mais nova)"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> Solução de problema + convite honesto (Iara, 9,1M — "a solução"). Resolve a dor real do ICP com um convite direto, sem promessa de rejuvenescimento. Fecha a última objeção e apresenta a oferta.
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Se você chegou até aqui e pensou 'entendi o problema, mas e agora?' — existe um caminho. E ele não promete te fazer parecer mais nova."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–5s</span><span class="script-st">Se você chegou até aqui e pensou "entendi o problema, mas e agora?" — existe um caminho. E ele não promete te fazer parecer mais nova.</span></div>
+      <div class="script-line"><span class="ts">5–14s</span><span class="script-st">Eu juntei tudo o que me tirou do Recuo Silencioso em seis aulas curtas, em vídeo. Uma coisa de cada vez, na ordem que funciona.</span></div>
+      <div class="script-line"><span class="ts">14–24s</span><span class="script-st">Primeiro você enxerga onde recuou. Depois fecha a paz com a mulher que você foi. E aí reconstrói a sua presença, área por área, no seu ritmo, à noite, no celular, sem ninguém sabendo se você não quiser.</span></div>
+      <div class="script-line"><span class="ts">24–33s</span><span class="script-st">Esquece bancar a novinha. Aqui você volta a ocupar o seu espaço, do jeito que você é hoje.</span></div>
+      <div class="script-line"><span class="ts">33–42s</span><span class="script-st">A primeira turma entra como Fundadora: são 88 reais, com sete dias de garantia. Se não for pra você, eu devolvo tudo, sem pergunta. O risco é meu.</span></div>
+      <div class="script-line"><span class="ts">42–48s</span><span class="script-st">Se faz tempo que você espera uma coisa que seja só sua, essa é a hora.</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"EXISTE UM CAMINHO"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">"6 AULAS EM VÍDEO · NO SEU RITMO" · "sem promessa de parecer 30"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"TURMA FUNDADORAS · R$88 · 7 DIAS DE GARANTIA"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Talking head, olhar direto na câmera, luz suave, tom de convite calmo e seguro. Texto na tela reforçando o preço e a garantia no bloco final. Sem urgência artificial — a segurança é a persuasão.</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">
+      Chega de pote de promessa. O que me tirou da invisibilidade não foi parecer mais nova — foi voltar a ocupar o meu espaço. Organizei isso em 6 aulas em vídeo, na ordem certa, pra você fazer no seu tempo. A primeira turma entra como Fundadora: R$88, com 7 dias de garantia incondicional. Se não for pra você, devolvo tudo. O risco é meu, não seu.
+      <span class="placeholder-note">[PLACEHOLDER: confirmar bônus da turma Fundadoras, se houver, e prazo de abertura/fechamento da turma antes de publicar]</span>
+    </div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Comenta <strong>VISTA</strong> que eu te mando o link, ou é só clicar na bio pra entrar como Fundadora."</span>
+    </div>
+  </article>
+
+  <!-- ------ F2 ------ -->
+  <article class="reel">
+    <div class="reel-top">
+      <span class="badge fundo">Fundo</span>
+      <span class="badge-dur">45–50s · prova + oferta + CTA direto</span>
+    </div>
+    <h3>F2 — "A mulher de 57 anos que voltou a ser vista"</h3>
+    <div class="formula">
+      <strong>Fórmula modelada:</strong> História de virada / contraste (Coracy — expectativa x realidade; Adriana "Não desista" — 4M). Prova pelo mecanismo: mostra a virada acontecendo antes de convidar.
+    </div>
+
+    <div class="warn-block">
+      <strong>Atenção:</strong> Roteiro escrito em 1.ª pessoa (virada de quem apresenta a marca) enquanto não há depoimento real gravado. Quando existir depoimento real de aluna, substituir a história pela dela, com autorização e com a ressalva "resultados variam" visível na tela. Nunca inventar aluna ou número.
+    </div>
+
+    <span class="sec-label">Hook (0–3s)</span>
+    <div class="hook">"Uma mulher de 57 anos me disse: 'faz tempo que eu não me sentia assim, vista'. Ela não mudou a pele. Mudou o lugar que ocupa."</div>
+
+    <span class="sec-label">Roteiro falado (cronometrado)</span>
+    <div class="script">
+      <div class="script-line"><span class="ts">0–5s</span><span class="script-st">Uma mulher de 57 anos me disse: "faz tempo que eu não me sentia assim, vista". Ela não mudou a pele. Mudou o lugar que ocupa.</span></div>
+      <div class="script-line"><span class="ts">5–14s</span><span class="script-st"><em>[substituir por depoimento real quando houver]</em> Ela começou pequena. Voltou a se arrumar numa terça qualquer, sem ocasião. Tirou do papel um projeto que era só dela e vivia empurrando pra depois.</span></div>
+      <div class="script-line"><span class="ts">14–24s</span><span class="script-st">No começo pareceu que nada acontecia. Semanas parecendo "nada". É assim mesmo. A presença se reconstrói pela raiz, igual bambu: fica meses embaixo da terra e, de repente, cresce tudo de uma vez.</span></div>
+      <div class="script-line"><span class="ts">24–33s</span><span class="script-st">Um dia o marido reparou. As amigas repararam. E, antes de todos eles, ela reparou. Porque ela voltou primeiro.</span></div>
+      <div class="script-line"><span class="ts">33–42s</span><span class="script-st">É pra isso que existem essas seis aulas: pra você fazer a mesma volta, na ordem certa, no seu tempo.</span></div>
+      <div class="script-line"><span class="ts">42–50s</span><span class="script-st">A primeira turma entra como Fundadora, por 88 reais, com sete dias de garantia. Não dá pra voltar atrás nos anos que você cedeu. Mas dá pra decidir, hoje, que daqui pra frente é a sua vez.</span></div>
+    </div>
+
+    <span class="sec-label">Texto na tela</span>
+    <div class="tela">
+      <div class="tela-line"><span class="tela-lbl">Capa</span><span class="tela-txt">"57 ANOS. VOLTOU A SER VISTA." <em>(trocar pela idade/nome real do depoimento quando houver)</em></span></div>
+      <div class="tela-line"><span class="tela-lbl">Durante</span><span class="tela-txt">"ela voltou primeiro" · "resultados variam de mulher pra mulher"</span></div>
+      <div class="tela-line"><span class="tela-lbl">Fecho</span><span class="tela-txt">"6 AULAS · FUNDADORAS · R$88 · 7 DIAS DE GARANTIA"</span></div>
+    </div>
+
+    <span class="sec-label">Cena / direção</span>
+    <div class="cena">Talking head reflexivo, luz suave e quente. Quando houver depoimento real, cortar para o vídeo da aluna (com consentimento). Manter na tela a ressalva "resultados variam" durante a parte de prova. Silêncio de 1 segundo em "Porque ela voltou primeiro."</div>
+
+    <span class="sec-label">Legenda (caption)</span>
+    <div class="legenda">
+      <em>[substituir por depoimento real quando houver]</em> Ela tinha 57 anos e a frase que soltou pra mim foi: "faz tempo que eu não me sentia assim, vista". Não mudou a pele. Mudou o espaço que passou a ocupar — uma área de cada vez, pela raiz. Resultados variam de mulher pra mulher, isso aqui não é fórmula mágica. Mas o caminho é o mesmo pra todas: começar. A primeira turma entra como Fundadora, R$88, 7 dias de garantia. Se não for pra você, devolvo tudo.
+      <span class="placeholder-note">[PLACEHOLDER: inserir crédito/autorização do depoimento e link direto da página]</span>
+    </div>
+
+    <span class="sec-label">CTA</span>
+    <div class="cta-block">
+      <span class="cta-lbl">Call to action</span>
+      <span class="cta-txt">"Comenta <strong>VISTA</strong> que eu te mando o link, ou clica na bio pra entrar como Fundadora. O risco é meu: 7 dias de garantia."</span>
+    </div>
+  </article>
+
+  <!-- ================================================================
+       CHECKLIST DE SAÍDA
+  ================================================================ -->
+  <hr class="div">
+  <div class="section-plain" style="margin-top:48px;">
+    <h2>Checklist de saída — gates conferidos</h2>
+  </div>
+  <ul class="checklist">
+    <li><span class="ok">OK</span> 3 Reels de MEIO (mecanismo/educa/quebra objeção) + 2 Reels de FUNDO (prova/oferta/CTA direto).</li>
+    <li><span class="ok">OK</span> Cada fórmula modelada em viral <strong>real</strong> da coleta (Adriana 7,3M · Iara 6,9M/9,1M · Coracy contraste geracional) — tabela de rastreamento incluída.</li>
+    <li><span class="ok">OK</span> M1 = tutorial do mecanismo · M2 = quebra "já me frustrei" reposicionando (sem atacar quem vende creme) · M3 = mito x verdade com humor de identificação.</li>
+    <li><span class="ok">OK</span> F1 = objeção final + teaser oferta (6 aulas, sem "parecer 30") + CTA · F2 = história/prova em 1.ª pessoa MARCADA "[substituir por depoimento real quando houver]" + CTA.</li>
+    <li><span class="ok">OK</span> Cada roteiro traz: título · fórmula modelada · estágio · Hook (0–3s) · roteiro falado cronometrado · texto na tela · cena · legenda · CTA.</li>
+    <li><span class="ok">OK</span> Oferta real só no FUNDO: 6 aulas em vídeo · R$88 · Turma Fundadoras · garantia 7 dias. Nada inventado além disso; lacunas em [PLACEHOLDER].</li>
+    <li><span class="ok">OK</span> Compliance: nenhuma promessa de "parecer 30"/cura/idade reversa/resultado garantido. Depoimento com ressalva "resultados variam".</li>
+    <li><span class="ok">OK</span> Anti-clichê de IA: sem "não é X, é Y" mecânico; sem "se permita / protagonista / jornada / empoderamento / descubra / melhor versão / ressignificar".</li>
+    <li><span class="ok">OK</span> Sem emoji no falado. Hook nos 3s. Cena concreta. Português acentuado.</li>
+  </ul>
+
+  <!-- ---- Rodapé ---- -->
+  <footer class="footer">
+    <p><strong>Voltar a Ser Vista</strong> · Roteiros modelados · mulheres-50-autoestima · 01/07/2026</p>
+    <p>4 TOPO + 3 MEIO + 2 FUNDO · Fórmulas virais reais (Apify) · Oferta R$88 Fundadoras</p>
+    <p style="margin-top:8px;">Voz de marca calibrada no avatar. Substituir F2 por depoimento real quando houver.</p>
+  </footer>
+
+</div><!-- /wrap -->
 </body>
 </html>
