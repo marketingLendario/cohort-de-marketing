@@ -14,6 +14,23 @@ Skill que estrutura um **advertorial**: a página de **pré-venda editorial** qu
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls offerbook-*.md copy-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a oferta (dor, mecanismo único, produto/transformação, prova) do `offerbook-*.md` e a copy base do `copy-*.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra estruturar o advertorial eu preciso do `offerbook-*.md`, que sai da skill `/offerbook` (e da `copy-*.md` pra copy base, da skill `/copy-funil`). Rode `/offerbook` primeiro; quando `offerbook-*.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## O que é (e o que NÃO é)
 
 | É | NÃO é |

@@ -16,6 +16,23 @@ Skill que estrutura o **funil completo de um webinário** (aula ao vivo, palestr
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls offerbook-*.md copy-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a oferta (entregáveis, preço-âncora, bônus, garantia, público) do `offerbook-*.md` e a copy base do `copy-*.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra estruturar o funil de webinário eu preciso do `offerbook-*.md`, que sai da skill `/offerbook` (e da `copy-*.md` pra copy base, da skill `/copy-funil`). Rode `/offerbook` primeiro; quando `offerbook-*.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## Como usar
 
 Quando você pedir pra montar um webinário, uma aula ao vivo que vende ou o funil de uma masterclass:

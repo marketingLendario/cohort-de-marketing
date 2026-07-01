@@ -14,6 +14,23 @@ Skill que estrutura a otimização de conversão de um funil pelo método do **A
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output anterior do funil. Confira que os arquivos existem:
+
+```
+ls funil-*.md copy-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles (o `funil-*.md` te dá a estrutura do funil e as etapas a medir; o `copy-*.md`, a headline a testar).
+- Se FALTAR, PARE e aponte a skill anterior:
+
+> Pra otimizar a conversão do funil eu preciso de `funil-*.md` (da skill `/metodo-funil`) e da headline em `copy-*.md` (da skill `/copy-funil`). Rode `/metodo-funil` primeiro e volte.
+
+Não invente o que deveria vir da etapa anterior.
+
+---
+
 ## Como usar
 
 Quando você quiser otimizar conversão, montar a planilha de KPIs, ou estruturar um teste:
@@ -43,6 +60,24 @@ Preencha com os números do **seu projeto**:
 | **Compras** | compras / taxa de conversão final | `____` |
 
 > Cada etapa é uma "vitória" a ser otimizada separadamente. *"No mínimo, mil views únicos, mil pessoas diferentes que caíram na tua página"* antes de decidir qualquer coisa.
+
+---
+
+## Modo pré-lançamento (o funil ainda não rodou)
+
+Quase sempre o aluno está ANTES do primeiro lançamento — não há dados de KPI ainda. Nesse caso **não peça números que não existem**. Em vez de otimizar no vácuo, entregue o SETUP:
+
+1. **O que instrumentar, em ordem de prioridade:**
+   1. **Evento de checkout** — sem registrar compra/checkout você não mede a etapa que mais importa.
+   2. **UTM / rastreio no link da bio** — pra saber de onde vem cada visita.
+   3. **Pixel / analytics de visitas** na página de captura.
+   4. **Pixel na página de oferta** — pra medir quem chega no momento da oferta.
+
+2. **Baselines / faixas de referência por etapa** como META a bater — marcadas como **referência de mercado, NÃO promessa**. Servem de alvo inicial de cada etapa; o seu número real só aparece quando o funil rodar.
+
+3. **Quando o funil rodar e você tiver os números, volte e rode `/cro-funil` de novo** pra achar o gargalo real e priorizar o teste certo.
+
+Nesse modo, a planilha de KPIs sai **vazia / preenchível**, só com as etapas certas na ordem (visitas → cadastros → participantes → oferta → checkout → compras) — pronta pra você preencher assim que os dados existirem.
 
 ---
 

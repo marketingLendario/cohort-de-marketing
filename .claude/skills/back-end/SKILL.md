@@ -14,6 +14,23 @@ Skill que estrutura o **back-end** de um funil pelo método de **Alan Nicolas** 
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls offerbook-*.md funil-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a oferta (produto de entrada/front-end, produtos de back-end, ticket) do `offerbook-*.md` e a estrutura do funil do `funil-*.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra estruturar o back-end do funil eu preciso do `offerbook-*.md`, que sai da skill `/offerbook` (e do `funil-*.md` pra estrutura do funil, da skill `/metodo-funil`). Rode `/offerbook` primeiro; quando `offerbook-*.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## Como usar
 
 Quando você quiser montar ou diagnosticar o back-end de um funil:

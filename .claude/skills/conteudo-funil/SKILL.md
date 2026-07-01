@@ -10,6 +10,17 @@ Pega os Reels virais de um criador de referência e gera roteiros de conteúdo n
 
 > **Skill irmã:** `/criativos-funil` é para ADS pagos (Biblioteca de Anúncios). Esta é para CONTEÚDO ORGÂNICO (Reels de criador → conteúdo na sua voz).
 
+## Gate de pré-requisito (execute ANTES de tudo)
+O conteúdo puxa o nicho e a identidade das etapas anteriores. Confira:
+```
+ls DESIGN.md offerbook-*.md 2>/dev/null
+```
+- Se existir(em), leia deles o nicho, o avatar e a identidade visual (o carrossel usa o DESIGN.md).
+- Se FALTAR o DESIGN.md, PARE e avise:
+> Pra montar os carrosséis eu preciso do `DESIGN.md` da sua marca (da skill `/design-md`). Rode `/design-md` primeiro e volte. (Os roteiros de Reels em texto eu consigo sem ele, mas o carrossel visual não.)
+
+(ignore briefing-offerbook.md)
+
 ## Ativação
 1. Defina qual criador de referência (@username do Instagram) e qual a VOZ/alvo.
 2. **Se não tiver um criador definido, SUGIRA você um** — proponha 1-3 criadores GRANDES que viralizam no nicho (com o @ e o porquê de cada um). Não deixe a skill travar por falta de referência: você indica, é só confirmar ou trocar. Se já rodou o `/espiao-do-concorrente` na Aula 1, use esse dossiê como ponto de partida.
@@ -57,6 +68,14 @@ Regra: use imagem **onde ela valoriza** (capa, prova, fecho) — não force foto
 ## A SUA voz (serve para você e para a sua marca)
 Escolha a voz conforme o tema da referência e o alvo. O conteúdo é gerado na SUA voz — a voz que representa você ou a sua marca. Calibre a voz em transcrições reais suas (falas, lives, vídeos que você já gravou), nunca em uma descrição genérica. Case o TEMA da referência com a voz/posicionamento certo (ex.: referência de mentalidade → tom mais reflexivo; referência de tráfego → tom mais técnico).
 
+## Duas trilhas — escolha uma
+Você monta o conteúdo por **uma** de duas trilhas (o resultado final é o mesmo: roteiros na sua voz modelados em quem já viraliza):
+
+- **Trilha automática** (`## Execução (resumo)` abaixo) — usa scraper + whisper. Mais escala e amostra maior, mas exige rodar ferramenta.
+- **Trilha manual** (`## Trilha manual (sem scraper nem whisper)`) — zero setup, você mesmo observa os Reels. Mais lenta e amostra menor, mas destrava quem não roda ferramenta.
+
+Se você não é técnico ou a ferramenta travou, vá pela trilha manual — ela chega no mesmo lugar.
+
 ## Execução (resumo)
 1. **Coletar** — rode um scraper de Reels com a ferramenta de scraping de Instagram da sua escolha (use a sua própria conta/token; traz vídeo + views/likes/caption) para o perfil do criador de referência.
 2. **Baixar** os vídeos a partir das URLs coletadas (URLs do Instagram EXPIRAM rápido — baixe logo).
@@ -65,6 +84,20 @@ Escolha a voz conforme o tema da referência e o alvo. O conteúdo é gerado na 
 5. **Amostra** — gere 1 roteiro na SUA voz e revise ANTES de produzir o lote.
 6. **Gerar** — cada roteiro modela 1 reel (hook + estrutura), com o tema adaptado ao seu negócio e a SUA voz calibrada na transcrição bruta das suas falas reais.
 7. **Entregar** — exporte os roteiros (ex.: para documento ou para o seu drive).
+
+## Trilha manual (sem scraper nem whisper)
+Alternativa completa à trilha automática, pensada pra quem não roda ferramenta. Em vez de raspar e transcrever, você observa os Reels na mão:
+
+1. **Escolha 5–10 Reels** do criador de referência que você JÁ ASSISTE — abra o perfil dele no app do Instagram e selecione os que claramente performaram (muitos views/comentários).
+2. **Para cada Reel, anote numa lista simples:**
+   - (a) **nº de views** — o vencedor é o mais visto;
+   - (b) **os primeiros 3 segundos falados** — o hook, palavra por palavra;
+   - (c) **a estrutura em 1 linha** — como abre → como desenvolve → como fecha;
+   - (d) **o CTA** — o que ele pede no fim (comenta, salva, link na bio…).
+3. **Com os 5–10 anotados, extraia o PADRÃO** — a skill ajuda a achar o hook e a estrutura que se REPETEM nos mais vistos (não nos seus favoritos).
+4. **Gere os roteiros na SUA voz** — a partir do padrão, igual à trilha automática (modela o hook + estrutura, adapta o tema ao seu negócio, calibra na sua voz real).
+
+**Cuidado que decide a qualidade:** a amostra é menor e o processo é mais lento — então a qualidade do modelo depende de escolher Reels **realmente virais** (muitos views), não os que você gosta pessoalmente. Reel que você ama mas que ninguém viu não ensina nada sobre viralização.
 
 ## A SUA voz (NON-NEGOTIABLE)
 - Gere o conteúdo na SUA voz real, calibrada em transcrições suas (não em descrição genérica).

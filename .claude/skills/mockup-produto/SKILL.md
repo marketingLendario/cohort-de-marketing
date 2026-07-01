@@ -14,6 +14,23 @@ Skill que **gera mockups visuais dos seus produtos e bônus** — a capa do eboo
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls DESIGN.md offerbook-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a identidade visual (cores, fontes, raio de borda, tom) do `DESIGN.md` e os entregáveis/bônus a mockupar do `offerbook-*.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra gerar os mockups na cara da sua marca eu preciso do `DESIGN.md`, que sai da skill `/design-md` (e do `offerbook-*.md` pros entregáveis, da skill `/offerbook`). Rode `/design-md` primeiro; quando `DESIGN.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## De onde vêm os dois inputs
 
 | Input | Vem de | O que tira de lá |

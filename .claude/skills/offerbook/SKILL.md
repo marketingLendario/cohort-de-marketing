@@ -32,6 +32,17 @@ Se não vier o nome do produto, **pergunte qual é a oferta e PARE** até recebe
 
 ---
 
+## Gate de compliance — nicho sensível
+
+Antes de escrever a promessa, a USP ou a oferta do offerbook, verifique se o nicho é **regulado**: saúde/bem-estar/emagrecimento/estética, finanças/investimento/renda, jurídico, ou autoestima/relacionamento com promessa de resultado.
+
+- **Se for**, evite alegação que vira problema legal: "cura", "garantido", "resultado em X dias", "renda garantida", "sem esforço".
+- Use **linguagem de possibilidade**: "pode ajudar", "muitas pessoas relatam", "com dedicação". Todo depoimento entra com ressalva: *"resultados variam de pessoa pra pessoa"*.
+- Recomende ao aluno **conferir as regras e os órgãos reguladores do mercado dele** — este gate só **alerta**, não é aconselhamento jurídico, e validar é responsabilidade do aluno.
+- Isto é um **aviso, não um bloqueio**: a skill segue montando o offerbook, só com a promessa e a oferta calibradas pra não prometer o proibido.
+
+---
+
 ## Pipeline (passo a passo)
 
 1. **Gerar o `briefing-offerbook.md`** — antes de escrever o offerbook, consolidar inputs em 1 arquivo curto (1-2 páginas) que será o checklist de fontes:

@@ -14,6 +14,23 @@ Skill que estrutura a **sequência de WhatsApp / DM** de um funil: que mensagem 
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls offerbook-*.md copy-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a oferta (produto, ticket, público, momentos do funil) do `offerbook-*.md` e a copy base do `copy-*.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra estruturar a sequência de WhatsApp/DM eu preciso do `offerbook-*.md`, que sai da skill `/offerbook` (e da `copy-*.md` pra copy base, da skill `/copy-funil`). Rode `/offerbook` primeiro; quando `offerbook-*.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## Como usar
 
 Quando você precisar montar/diagnosticar a sequência de WhatsApp ou DM de um funil:

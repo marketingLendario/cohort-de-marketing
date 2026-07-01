@@ -26,6 +26,30 @@ resultado em cada fase antes de seguir.
 Nao e preciso ter nenhum squad ou agente instalado: os copywriters entram como **metodo de
 escrita**, nao como sistemas que precisam existir no seu projeto.
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output anterior — o **offerbook** que você montou na etapa da oferta. Confira que o arquivo existe:
+
+```
+ls offerbook-*.md 2>/dev/null   # o offerbook real; ignore briefing-offerbook.md (é só o checklist de fontes)
+```
+
+- Se existir, leia dele o produto, o avatar, o mecanismo, a oferta e o público — não peça de novo o que já está lá.
+- Se FALTAR, PARE e aponte a skill que gera o arquivo:
+
+> Pra escrever a copy eu preciso do `offerbook-{slug}.md` (da skill `/offerbook`). Rode `/offerbook` primeiro e volte.
+
+Não invente o que deveria vir da etapa anterior (a oferta, o avatar, o mecanismo).
+
+## Gate de compliance — nicho sensível
+
+Antes de escrever qualquer promessa, headline ou oferta, verifique se o nicho é **regulado**: saúde/bem-estar/emagrecimento/estética, finanças/investimento/renda, jurídico, ou autoestima/relacionamento com promessa de resultado.
+
+- **Se for**, evite alegação que vira problema legal: "cura", "garantido", "resultado em X dias", "renda garantida", "sem esforço".
+- Use **linguagem de possibilidade**: "pode ajudar", "muitas pessoas relatam", "com dedicação". Todo depoimento entra com ressalva: *"resultados variam de pessoa pra pessoa"*.
+- Recomende ao aluno **conferir as regras e os órgãos reguladores do mercado dele** — este gate só **alerta**, não é aconselhamento jurídico, e validar é responsabilidade do aluno.
+- Isto é um **aviso, não um bloqueio**: a skill segue normalmente, só com a copy calibrada pra não prometer o proibido.
+
 ## Visao Geral
 
 ```

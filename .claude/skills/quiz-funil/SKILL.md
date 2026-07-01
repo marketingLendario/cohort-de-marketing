@@ -16,6 +16,23 @@ Skill que estrutura um **funil de quiz/diagnóstico**: a pessoa responde pergunt
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls offerbook-*.md 2>/dev/null
+```
+
+- Se existir, leia dele a oferta (produto/transformação, ticket, mecanismo, público) pra casar a oferta ao resultado do quiz.
+- Se FALTAR, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra estruturar o funil de quiz eu preciso do `offerbook-*.md`, que sai da skill `/offerbook`. Rode `/offerbook` primeiro; quando `offerbook-*.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## Como usar
 
 Quando você pedir pra montar um quiz, um diagnóstico ou um funil de qualificação/segmentação:

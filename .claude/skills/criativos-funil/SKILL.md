@@ -10,6 +10,23 @@ Pipeline que vai de "modelar os ads de um concorrente" até "roteiros de ad pron
 
 Método baseado no **método do Alan Nicolas**: o concorrente já validou o que funciona (com o dinheiro dele). Você espiona o que está no ar há mais tempo, extrai a estrutura por trás do sucesso e remodela na sua própria voz — sem copiar, e sem reinventar a roda do zero.
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls offerbook-*.md DESIGN.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a oferta (mecanismo único, produto, vilão/inimigo) do `offerbook-*.md` e a identidade visual (cores, fontes, tom) do `DESIGN.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra gerar os criativos eu preciso do `offerbook-*.md` (da skill `/offerbook`) e do `DESIGN.md` (da skill `/design-md`). Rode `/offerbook` e `/design-md` primeiro; quando os dois existirem, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## Ativação
 
 1. Defina: qual concorrente (o `page_id` dele na Biblioteca de Anúncios do Meta) e qual a SUA oferta/campanha de destino.

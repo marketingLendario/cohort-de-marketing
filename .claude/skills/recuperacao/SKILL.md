@@ -14,6 +14,23 @@ Skill que estrutura o **funil de recuperação**: a sequência que reconquista o
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output anterior do funil. Confira que os arquivos existem:
+
+```
+ls offerbook-*.md copy-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles (o `offerbook-*.md` te dá o produto/oferta/ticket que trava no checkout; o `copy-*.md`, o argumento pra reconstruir na recuperação). Ignore `briefing-offerbook.md` — não é o entregável.
+- Se FALTAR, PARE e aponte a skill anterior:
+
+> Pra montar a sequência de recuperação eu preciso de `offerbook-*.md` (da skill `/offerbook`) e de `copy-*.md` (da skill `/copy-funil`). Rode `/offerbook` primeiro e volte.
+
+Não invente o que deveria vir da etapa anterior.
+
+---
+
 ## Como usar
 
 1. **Carregue o KB** (`KB-recuperacao.md`) pra ter o método e o verbatim na mão.
@@ -37,6 +54,26 @@ A recuperação só funciona se você **distingue os comportamentos**. Tratar to
 > *"Se ela abandonou o carrinho... ela está com objeções. Se ela chegou a colocar o cartão e recusou, percebe que ela tentou... a tua abordagem vai ser completamente diferente."*
 
 Antes de montar a sequência, confirme: **quais comportamentos seu checkout/CRM consegue identificar?** Você só pode ativar a abordagem certa pros comportamentos que consegue medir.
+
+---
+
+## Modo pré-lançamento (o funil ainda não rodou)
+
+Quase sempre o aluno está ANTES do primeiro lançamento — o checkout ainda não registrou comportamento nenhum (carrinho, cartão, boleto). Nesse caso **não monte a cascata no vácuo**. Entregue o SETUP:
+
+1. **O que o checkout precisa rastrear pra cada abordagem funcionar:**
+   - **Cartão recusado** — normalmente **nativo** do checkout (o gateway já sinaliza a falha do pagamento).
+   - **Boleto gerado** — normalmente **nativo** (o checkout sabe que o boleto foi emitido e quando vence).
+   - **Carrinho abandonado** — exige **integração** (capturar e-mail/contato antes do pagamento e disparar por um automatizador).
+
+2. **Estrutura da cascata como PLANO pronto pra ativar** assim que o rastreio existir: cartão recusado → boleto → carrinho abandonado → downsell → re-nutrição (nível 4). Deixe cada degrau desenhado, mesmo que ainda não dê pra disparar.
+
+3. **Qual integração habilita cada degrau:**
+   - cartão recusado e boleto → já vêm do próprio checkout/gateway (nativos).
+   - carrinho abandonado → integração checkout ↔ e-mail/WhatsApp (automatizador) capturando o contato antes do pagamento.
+   - downsell e re-nutrição → automação de e-mail/WhatsApp com a lista segmentada por comportamento.
+
+Assim que o checkout começar a registrar os comportamentos, volte e rode `/recuperacao` de novo pra ativar a cascata com os dados reais.
 
 ---
 

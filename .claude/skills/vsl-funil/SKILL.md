@@ -10,6 +10,25 @@ Skill que estrutura um funil de VSL (Video Sales Letter) no modelo Direct Respon
 
 > **Promessa do metodo:** estruturar um funil que escala por multiplos canais, onde o ticket de entrada e isca e o lucro real vem do upsell.
 
+---
+
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls copy-*.md offerbook-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a copy base da VSL/página do `copy-*.md` e a oferta (dor, mecanismo do problema/solução, entregáveis, preço) do `offerbook-*.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra estruturar o funil de VSL eu preciso da `copy-*.md`, que sai da skill `/copy-funil` (e do `offerbook-*.md` pra oferta, da skill `/offerbook`). Rode `/copy-funil` primeiro; quando `copy-*.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## Como usar
 
 Quando voce pedir pra montar/estruturar um funil de VSL, uma oferta Direct Response ou um plano de escala:

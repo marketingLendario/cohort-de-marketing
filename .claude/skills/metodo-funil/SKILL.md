@@ -89,6 +89,17 @@ Esta skill **parte do offerbook** (a oferta que você montou na Aula 01). Antes 
 
 ---
 
+## Gate de compliance — nicho sensível
+
+Antes de prescrever a oferta, a headline ou a página, verifique se o nicho é **regulado**: saúde/bem-estar/emagrecimento/estética, finanças/investimento/renda, jurídico, ou autoestima/relacionamento com promessa de resultado.
+
+- **Se for**, evite alegação que vira problema legal: "cura", "garantido", "resultado em X dias", "renda garantida", "sem esforço".
+- Use **linguagem de possibilidade**: "pode ajudar", "muitas pessoas relatam", "com dedicação". Todo depoimento entra com ressalva: *"resultados variam de pessoa pra pessoa"*.
+- Recomende ao aluno **conferir as regras e os órgãos reguladores do mercado dele** — este gate só **alerta**, não é aconselhamento jurídico, e validar é responsabilidade do aluno.
+- Isto é um **aviso, não um bloqueio**: a skill segue prescrevendo o funil, só com a oferta e a headline calibradas pra não prometer o proibido.
+
+---
+
 ## Sequência de montagem (11 passos)
 
 Reconstruída da aula (ordem que o Alan crava, incluindo "offer book ANTES do funil"):

@@ -7,6 +7,23 @@ description: Gera emails de funil (convite, confirmação, lembrete, recap, nurt
 
 Gera emails HTML prontos para colar na sua ferramenta de disparo, aplicando o método de email do Alan Nicolas com a identidade visual da sua própria marca.
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+
+```
+ls DESIGN.md offerbook-*.md 2>/dev/null
+```
+
+- Se existir(em), leia deles a identidade visual da sua marca (cores, fontes, header, footer, logo, assinatura) do `DESIGN.md` e o contexto da oferta (produto, transformação, tom) do `offerbook-*.md`.
+- Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
+
+> Pra gerar os emails com a cara da sua marca eu preciso do `DESIGN.md`, que sai da skill `/design-md` (e do `offerbook-*.md` pro contexto da oferta, da skill `/offerbook`). Rode `/design-md` primeiro; quando `DESIGN.md` existir, volte e rode esta skill de novo.
+
+Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
+
+---
+
 ## Fonte do visual
 - **Identidade visual:** o visual vem do SEU `DESIGN.md` (gerado pela skill `design-md`). Cores, fontes, header, footer, logo — tudo sai de lá. Esta skill não fixa nenhuma cor, fonte ou logo: ela aplica o que está no seu DESIGN.md.
 - **Regras de tom/marca:** este arquivo + o seu DESIGN.md (voz da marca, assinatura, idioma).

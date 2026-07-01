@@ -14,6 +14,30 @@ Skill que monta a **estrutura de uma página de vendas de alta conversão** pelo
 
 ---
 
+## Gate de pré-requisito (execute ANTES de tudo)
+
+Esta skill parte do output das etapas anteriores — a **copy** (skill `/copy-funil`) e o **DESIGN.md** da sua marca (skill `/design-md`). Confira que os arquivos existem:
+
+```
+ls copy-*.md DESIGN.md 2>/dev/null
+```
+
+- Se existir(em), leia deles — a copy dá o texto real da página, o DESIGN.md dá a identidade visual.
+- Se FALTAR, PARE e aponte a skill que gera cada arquivo:
+
+> Pra montar a página eu preciso da `copy-*.md` (da skill `/copy-funil`) e do `DESIGN.md` (da skill `/design-md`). Rode `/copy-funil` e `/design-md` primeiro e volte.
+
+Não invente o que deveria vir da etapa anterior (a copy, a identidade visual).
+
+## Gate de compliance — nicho sensível
+
+Antes de fechar a headline, a oferta ou a prova social da página, verifique se o nicho é **regulado**: saúde/bem-estar/emagrecimento/estética, finanças/investimento/renda, jurídico, ou autoestima/relacionamento com promessa de resultado.
+
+- **Se for**, evite alegação que vira problema legal: "cura", "garantido", "resultado em X dias", "renda garantida", "sem esforço".
+- Use **linguagem de possibilidade**: "pode ajudar", "muitas pessoas relatam", "com dedicação". Todo depoimento na prova social entra com ressalva: *"resultados variam de pessoa pra pessoa"*.
+- Recomende ao aluno **conferir as regras e os órgãos reguladores do mercado dele** — este gate só **alerta**, não é aconselhamento jurídico, e validar é responsabilidade do aluno.
+- Isto é um **aviso, não um bloqueio**: a skill segue montando a página, só com a headline/oferta calibradas pra não prometer o proibido.
+
 ## Como usar
 
 ### Passo 0 (pré-requisito) — Ter o DESIGN.md da SUA marca
