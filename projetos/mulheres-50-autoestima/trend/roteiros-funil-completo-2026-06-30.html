@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiros — Roteiros por Funil — Mulheres 50+ / Autoestima</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --card: #0F0F0F;
+    --raised: #262626;
+    --border: #262626;
+    --foreground: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #BFBFBF;
+    --primary-light: #E5E5E5;
+    --primary-deep: #595959;
+    --status-success: #23E169;
+    --status-warning: #FF9D0A;
+    --status-error: #FF4438;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, system-ui, sans-serif;
+    --font-display: Rajdhani, Inter, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--background); color: var(--foreground);
+    font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 40px 80px; }
+
+  .hero { text-align: center; padding: 16px 0 40px; border-bottom: 1px solid var(--raised); margin-bottom: 44px; }
+  .kicker {
+    display: inline-block; font-family: var(--font-ui); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    padding: 6px 16px; border: 1px solid var(--primary-deep); border-radius: 9999px; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 700;
+    line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 10px;
+  }
+  .hero .sub { font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 6px 0 0; }
+
+  h2 {
+    font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--foreground); margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--raised);
+  }
+  h3 { font-family: var(--font-ui); font-size: 1.1rem; font-weight: 700; color: var(--primary-light); margin: 28px 0 10px; }
+  p { margin: 0 0 14px; }
+  strong { color: #fff; font-weight: 600; }
+  em { color: var(--primary-light); font-style: normal; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  code { font-family: var(--font-mono); background: var(--card); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+
+  /* TIMING BADGES (emergente / em alta / saturado) */
+  .timing { display: inline-block; padding: 3px 10px; border-radius: 9999px; font-family: var(--font-ui);
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 8px; }
+  .timing.emergente { background: rgba(35, 225, 105, 0.15); color: var(--status-success); border: 1px solid var(--status-success); }
+  .timing.em-alta { background: rgba(255, 157, 10, 0.15); color: var(--status-warning); border: 1px solid var(--status-warning); }
+  .timing.saturado { background: rgba(255, 68, 56, 0.15); color: var(--status-error); border: 1px solid var(--status-error); }
+
+  blockquote, .padrao {
+    font-family: var(--font-body); color: var(--primary-light);
+    background: var(--card); border-left: 3px solid var(--primary-deep);
+    margin: 14px 0; padding: 12px 18px; border-radius: 0 8px 8px 0;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-family: var(--font-ui); font-size: 0.9rem; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--raised); }
+  th { color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
+  td.num, th.num { text-align: center; font-family: var(--font-mono); }
+
+  .callout {
+    background: rgba(255,157,10,0.08); border: 1px solid var(--status-warning);
+    border-radius: 10px; padding: 14px 18px; margin: 18px 0;
+    font-family: var(--font-ui); font-size: 0.92rem; color: var(--foreground);
+  }
+
+  .footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--raised);
+    font-family: var(--font-ui); font-size: 0.78rem; color: var(--muted-foreground); text-align: center; }
+  .footer .logo { font-family: var(--font-display); font-weight: 700; color: var(--primary); letter-spacing: 0.02em; }
+
+  @media print {
+    html, body { font-size: 12px; }
+    .wrap { padding: 0 12px; max-width: 100%; }
+    h2 { page-break-after: avoid; }
+    blockquote, .padrao, table, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <span class="kicker">Roteiros</span>
+      <h1>Roteiros por Funil — Mulheres 50+ / Autoestima</h1>
+      <p class="sub">Topo · Meio · Fundo — conteúdo orgânico pronto pra gravar</p>
+    </div>
+
+    <p><strong>Data:</strong> 30/06/2026 · Conteúdo <strong>orgânico</strong> (Reels, carrossel), escrito palavra por palavra na voz do avatar (invisibilidade: "eu sumi", "parou de ser vista", "não me reconheço", "à deriva", "minha vez agora") e ancorado nas tendências do trend report + voz verbatim da @luciane.cassorla.</p>
+<p><strong>Como usar este funil:</strong> o mesmo lead caminha <strong>Topo → Meio → Fundo</strong>. Topo atrai e faz ela se identificar; Meio ensina o mecanismo e cria confiança; Fundo quebra objeção e leva pra oferta. Publique de cima pra baixo ao longo das semanas.</p>
+<blockquote class="padrao"><strong>Escopo:</strong> aqui é só conteúdo <strong>orgânico</strong>. A <strong>VSL / carta de vendas / página</strong> NÃO estão aqui — são ativos de venda, feitos por <code>/vsl-funil</code> e <code>/copy-funil</code> com a oferta do <code>/offerbook</code>. As peças de fundo abaixo são orgânicas e <strong>levam</strong> o lead pra página/VSL. Onde a oferta entra (produto, preço, bônus, garantia, escassez), há <code>[PLACEHOLDER]</code> — preencha com o real, não invente.</blockquote>
+<p><strong>Regra de produção (todos):</strong> rosto e voz de mulher 50+ <strong>real</strong>, luz de casa (nunca estúdio), sem trilha motivacional genérica. Verdade seca converte mais que produção bonita.</p>
+<h2 style="margin-top:56px">🟢 TOPO (atrair / público frio)</h2>
+<p>Objetivo: alcance e identificação ("isso sou eu"). CTA de engajamento (comenta/salva/marca).</p>
+<h3>T1 — "Eu não desisti de mim" <code>Reels ~30s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Teve um tempo que eu sumi. E o pior: ninguém reparou. Nem eu."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-3s]</strong> "Teve um tempo que eu sumi. E o pior: ninguém reparou. Nem eu."</li>
+<li><strong>[3-9s]</strong> "Eu me arrumava só quando ia sair com o meu marido. No dia a dia era coque, camisetão e chinelo. O batom vermelho ficou uns três anos no fundo da gaveta."</li>
+<li><strong>[9-15s]</strong> "Não era preguiça, não. Eu tinha me acostumado a ser o fundo da foto. A que segura a bolsa dos outros na festa."</li>
+<li><strong>[15-22s]</strong> "Aí num dia comum, uma terça-feira, eu abri a gaveta e passei o batom. Não era pra festa. Não era pra ninguém. Era pra ir no mercado."</li>
+<li><strong>[22-27s]</strong> "Recomeçar não apaga o que ficou pra trás. Só quer dizer que eu decidi ficar comigo. Eu não desisti de mim."</li>
+<li><strong>[27-30s]</strong> "Comenta 'terça' aqui embaixo se você sabe do que eu tô falando."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>eu sumi — e ninguém viu</code> · <code>uma terça-feira qualquer</code> · <code>eu não desisti de mim</code></p>
+<p><strong>Cena:</strong> plano médio, luz de casa. Em 15-22s, corte pra mão pegando o batom na gaveta.</p>
+<p><strong>Legenda:</strong> "O batom vermelho ficou três anos no fundo da gaveta. Voltei a passar numa terça, só pra ir no mercado. Foi ali que eu voltei pra mim. 💄"</p>
+<p><code>#mulheres50mais #recomeço #autoestima #maturidadefeminina #mulheres50 #vidareal</code></p>
+<h3>T2 — "Descobri que eu tinha asa" <code>Reels ~31s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Aos 51 tiraram o meu chão. E eu fiquei parada no meio da sala sem saber quem eu era."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-5s]</strong> "Aos 51 o chão sumiu de baixo do meu pé. O casamento acabou, o filho casou, e eu fiquei parada no meio da sala sem saber quem eu era sozinha."</li>
+<li><strong>[5-12s]</strong> "Passei uns meses à deriva. Dormia de dia, não atendia o telefone. Me olhava no espelho às seis da manhã e não reconhecia aquela mulher."</li>
+<li><strong>[12-19s]</strong> "Eu achava que a minha vida inteira tinha sido a casa, o casamento, a correria dos outros. Que sem aquilo, de mim, não sobrava nada."</li>
+<li><strong>[19-26s]</strong> "Foi na falta de chão que eu descobri que eu tinha asa. Não porque eu quis ser forte. Porque não tinha mais onde me segurar."</li>
+<li><strong>[26-31s]</strong> "Se você tá caindo agora, marca uma amiga que precisa ouvir isso hoje. Cair não é o fim — eu tô do outro lado te falando."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>aos 51 tiraram meu chão</code> · <code>eu não me reconhecia</code> · <code>descobri que eu tinha asa</code></p>
+<p><strong>Cena:</strong> plano fechado, íntimo, luz baixa. Em 5-12s, corte pro reflexo no espelho de manhã cedo.</p>
+<p><strong>Legenda:</strong> "Aos 51 eu perdi o chão. Levei meses pra entender que não tinha perdido a mim — só o lugar onde eu me escondia. 🕊️"</p>
+<p><code>#mulheres50mais #recomeço #autoestimafeminina #mulheres50 #superação #vidareal</code></p>
+<h3>T3 — "'Você tá ótima pra sua idade' — o 'mas' que esse elogio esconde" <code>Reels ~32s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Quantas vezes essa semana alguém te disse que você tá 'ótima pra sua idade'?"</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-3s]</strong> "Quantas vezes essa semana alguém te disse que você tá 'ótima pra sua idade'?"</li>
+<li><strong>[3-9s]</strong> "Repara nesse 'pra sua idade'. Tira ele e sobra o quê? 'Você tá ótima.' Ponto final. Por que precisou do resto?"</li>
+<li><strong>[9-16s]</strong> "Porque não veio como elogio. Veio como susto. A pessoa esperava te ver acabada — e você não tava. Aí ela conserta o susto com um 'mas'."</li>
+<li><strong>[16-24s]</strong> "'Tá bonita, mas…' 'Tá disposta pra idade, mas…' Todo 'mas' depois dos 50 é uma licencinha que te pedem pra continuar te achando um pouco menos."</li>
+<li><strong>[24-30s]</strong> "Da próxima vez, devolve: 'ótima por quê?'. E fica calada. Deixa a pessoa se explicar. O etarismo vai aparecer sozinho na resposta dela."</li>
+<li><strong>[30-33s]</strong> "Comenta 'MAS' aqui embaixo se você ouviu essa semana. Quero ver quantas somos."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>ÓTIMA PRA SUA IDADE</code> · <code>tira o "pra sua idade"…</code> · <code>o "mas" é o susto</code> · <code>pergunta: "ótima por quê?"</code> · <code>comenta MAS 👇</code></p>
+<p><strong>Cena:</strong> rosto próximo, direto na câmera, sem música na abertura. Tom sobe no trecho dos "mas".</p>
+<p><strong>Legenda:</strong> "'Tá ótima pra sua idade' nunca foi elogio. É a pessoa se surpreendendo de você ainda estar de pé — e disfarçando com um 'mas'. Da próxima devolve: ótima por quê? E repara na cara que fica. 👇"</p>
+<p><code>#etarismo #mulheres50mais #autoestima50mais #maturidade #mulheresmaduras #elogiocommas</code></p>
+<h3>T4 — "Ninguém me avisou que aos 50 eu ia virar invisível" <code>carrossel · 7 cards</code></h3>
+<ul>
+<li><strong>Card 1 (capa):</strong> Ninguém me avisou que aos 50 eu ia virar invisível.</li>
+<li><strong>Card 2:</strong> Mandei 41 currículos em três meses. Nenhuma resposta. Aos 38 eu era "experiente". Aos 53 virei "cara demais pro cargo".</li>
+<li><strong>Card 3:</strong> Sem perceber, parei de comprar cor. Só preto, cinza, roupa larga. Roupa pra não ser vista. Eu tava me escondendo e chamando isso de "praticidade".</li>
+<li><strong>Card 4:</strong> Almoço de domingo. Comecei a contar uma coisa e me cortaram: "Deixa a mãe, ela não entende disso." E eu fiquei quieta. De novo.</li>
+<li><strong>Card 5:</strong> No domingo seguinte eu terminei a frase. Só isso. Terminei de falar. Ninguém morreu. E eu voltei a ocupar a minha cadeira naquela mesa.</li>
+<li><strong>Card 6:</strong> Usei no meio da semana a roupa que eu guardava "pra uma ocasião". Marquei um café sozinha, num sábado de manhã. Não pedi desculpa por nenhuma das duas coisas.</li>
+<li><strong>Card 7:</strong> Eu não sumi de um dia pro outro. Foi aos pouquinhos, calada, educada. Voltar também é assim: um pouquinho por dia.</li>
+</ul>
+<p><strong>Legenda:</strong> "Demorei pra entender que 'invisível' não acontece num estalo. Acontece toda vez que a gente engole a frase, escolhe a roupa que não chama atenção, aceita ser cortada no meio. Me conta: em que hora do dia você mais se sente assim? 👇"</p>
+<p><code>#mulheres50mais #etarismo #autoestima50mais #recomeçoaos50 #maturidadefeminina #invisibilidade</code></p>
+<h3>T5 — "Repete comigo: eu não sumi" <code>Reels ~29s (afirmação guiada)</code></h3>
+<p><strong>Hook (0-3s):</strong> "Para o que você tá fazendo dois minutos. Olha pra mim e repete comigo, em voz alta — mesmo que tenha gente na sala."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-4s]</strong> "Para o que você tá fazendo dois minutos. Olha pra mim e repete comigo, em voz alta — mesmo que tenha gente na sala."</li>
+<li><strong>[4-9s]</strong> "Devagar, sem pressa. Repete: eu não sumi." <em>(pausa 1s)</em> "De novo. Eu não sumi."</li>
+<li><strong>[9-14s]</strong> "Eu fui colocada no fim da fila. Por vinte, trinta anos. E a fila acabou."</li>
+<li><strong>[14-19s]</strong> "Agora solta. Solta o 'tá tarde pra isso'. Solta o 'tá ótima pra sua idade'. Solta a culpa de querer a minha vez."</li>
+<li><strong>[19-25s]</strong> "Última vez, e essa é pra você acreditar: a minha vez é agora. Não é ano que vem. É hoje."</li>
+<li><strong>[25-29s]</strong> "Se você repetiu junto, me conta qual frase travou na garganta. É essa que você mais precisa ouvir."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>REPETE COMIGO (em voz alta)</code> · <code>"EU NÃO SUMI"</code> · <code>"A FILA ACABOU"</code> · <code>SOLTA →</code> · <code>"A MINHA VEZ É AGORA"</code> · <code>Qual frase travou? 👇</code></p>
+<p><strong>Cena:</strong> plano fechado, luz baixa, fim de tarde/noite. Sem trilha nos primeiros 4s — só a voz.</p>
+<p><strong>Legenda:</strong> "Grava esse aqui e volta amanhã de manhã antes de todo mundo acordar. Repete de novo. A frase que trava na garganta na primeira vez é exatamente a que você anda engolindo há tempo demais."</p>
+<p><code>#mulheres50mais #autoestima #minhavezagora #maturidade #recomeço #mulher50</code></p>
+<h3>T6 — "5 coisas que parei de fazer depois dos 52" <code>Reels ~32s (listicle)</code></h3>
+<p><strong>Hook (0-3s):</strong> "5 coisas que eu parei de fazer depois dos 52. A número 4 eu fiz por vinte anos sem perceber."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-3s]</strong> "5 coisas que eu parei de fazer depois dos 52. A número 4 eu fiz por vinte anos sem perceber."</li>
+<li><strong>[3-8s]</strong> "Um: parei de perguntar pra minha filha se a roupa tava 'muito' antes de sair. Se eu gostei, tá bom. Ponto."</li>
+<li><strong>[8-13s]</strong> "Dois: parei de escolher roupa escura pra não chamar atenção. Comprei o vermelho. Usei numa terça-feira à toa."</li>
+<li><strong>[13-18s]</strong> "Três: parei de sorrir quando me falam 'nossa, tá ótima pra sua idade'. Agora eu só respondo: 'tô ótima, sem o resto da frase'."</li>
+<li><strong>[18-24s]</strong> "Quatro, essa doeu: parei de ser a última a sentar na mesa. Vinte anos servindo todo mundo e comendo frio. Acabou."</li>
+<li><strong>[24-29s]</strong> "Cinco: parei de explicar por que vou viajar sozinha. Não devo relatório pra ninguém desde que aprendi a dirigir."</li>
+<li><strong>[29-32s]</strong> "Qual dessas você ainda faz? Me conta o número aqui embaixo."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>5 COISAS QUE PAREI DE FAZER AOS 52</code> · <code>1. Pedir aprovação da roupa</code> · <code>2. Me vestir pra não ser vista</code> · <code>3. Aceitar "tá ótima pra sua idade"</code> · <code>4. Ser a última a sentar na mesa</code> (destaque) · <code>5. Explicar minhas escolhas</code> · <code>Qual você ainda faz? 👇</code></p>
+<p><strong>Cena:</strong> cozinha/quarto de dia, luz natural, celular na altura dos olhos. No item 4, ela fala mais devagar (beat emocional).</p>
+<p><strong>Legenda:</strong> "Levei tempo demais fazendo essas cinco. A que mais custou pra largar foi a quatro — comer frio depois que todo mundo já tava satisfeito virou rotina sem eu perceber. Hoje eu sento junto. Qual dessas ainda mora aí na sua casa?"</p>
+<p><code>#mulheres50mais #autoestima #maturidade #depoisdos50 #mulher50 #vidareal</code></p>
+<h3>T7 — "Mudar de rota depois dos 50" <code>Reels ~30s (quebra de objeção — público mais frio)</code></h3>
+<p><strong>Hook (0-3s):</strong> "'Na minha idade não muda mais nada.' Eu falei isso por dez anos. Saiu caro."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-4s]</strong> "'Na minha idade não muda mais nada.' Eu repeti isso por dez anos. E olha, me saiu caro."</li>
+<li><strong>[4-11s]</strong> "É que a gente se convence que já investiu demais na vida do jeito que ela tá. Muito tempo, muita renúncia. Mudar agora parece jogar tudo fora."</li>
+<li><strong>[11-18s]</strong> "Só que o bilhete de volta encarece a cada estação que você deixa passar. Aos 45 dá trabalho descer. Aos 55 dá mais. Aos 65 você nem lembra mais que dava pra descer."</li>
+<li><strong>[18-25s]</strong> "Eu desci numa estação chamada 'chega'. Voltei a estudar aos 52. Metade da família achou graça. Hoje é disso que eu vivo."</li>
+<li><strong>[25-30s]</strong> "Se você tá em cima desse trem lendo isso, salva o vídeo. Amanhã de manhã você vai precisar lembrar disso."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>"já é tarde pra mim"</code> · <code>o bilhete de volta só encarece</code> · <code>voltei a estudar aos 52</code></p>
+<p><strong>Cena:</strong> talking head, tom firme, sem sorriso de propaganda. Opcional: b-roll de trem/estação nos 11-18s.</p>
+<p><strong>Legenda:</strong> "Passei dez anos dizendo que era tarde. Desci do trem aos 52. A única coisa que envelhece de verdade é a desculpa. 🚂"</p>
+<p><code>#mulheres50mais #recomeçonamaturidade #autoestima50 #mulheresmaduras #vidaapos50 #recomeço</code></p>
+<h2 style="margin-top:56px">🟡 MEIO (nutrir / já te conhece)</h2>
+<p>Objetivo: autoridade, confiança, mecanismo. CTA de aprofundar (segue, série, comenta palavra, salva). Onde precisar de fato real da criadora, há <code>[PLACEHOLDER]</code> — não publicar sem preencher (evita prova falsa).</p>
+<h3>M1 — "Voltar a me reconhecer teve método — 3 passos" <code>carrossel · 7 cards</code></h3>
+<ul>
+<li><strong>Card 1 (capa):</strong> Passei três anos me achando "sumida". Voltar a me reconhecer no espelho teve método. Coube em 3 passos. Salva esse aqui.</li>
+<li><strong>Card 2 (contexto):</strong> Antes dos passos, uma coisa: invisível a gente não fica de um dia pro outro. Fica aos pouquinhos — a roupa que esconde, a frase engolida, o "deixa pra lá". Voltar também é aos pouquinhos, só que na direção contrária.</li>
+<li><strong>Card 3 — Passo 1: Parar de se apagar.</strong> Antes de "aparecer", parar de sumir. Micro-ação da semana: escolha UMA coisa que você faz pra não ser notada e corte. Ex.: a roupa cinza "pra não chamar atenção". Vista a cor. Numa terça qualquer.</li>
+<li><strong>Card 4 — Passo 2: Refazer o seu inventário.</strong> Você virou "a mãe de", "a esposa de", "a que resolve". Micro-ação: pega papel e escreve 5 coisas suas que não são função de ninguém. Não vale "boa mãe". Vale "gosto de acordar cedo e ver o silêncio da casa".</li>
+<li><strong>Card 5 — Passo 3: Ocupar espaço em público.</strong> Um gesto visível por semana, pequeno e inegociável. Micro-ação: terminar a frase no almoço mesmo se te cortarem. Marcar o café sozinha e ir. Sem pedir licença.</li>
+<li><strong>Card 6 — A ordem importa:</strong> Passo 1 tira o peso. Passo 2 te lembra quem você é. Passo 3 devolve você pro mundo. Na ordem trocada não segura — eu tentei do fim pro começo e voltei pra estaca zero.</li>
+<li><strong>Card 7 (CTA):</strong> Guarda esse carrossel e faz só o Passo 1 essa semana. Me conta nos comentários qual "jeito de sumir" você vai cortar primeiro. Semana que vem eu trago o Passo 2 em detalhe.</li>
+</ul>
+<p><strong>Legenda:</strong> "Ninguém me deu esses 3 passos prontos — fui montando na tentativa e erro. O que mais me segurou foi começar pelo fim (querendo 'aparecer' antes de parar de me apagar). Começa pelo Passo 1. Qual jeito de sumir você corta primeiro? 👇"</p>
+<p><code>#mulheres50mais #autoestima50mais #maturidadefeminina #recomeço #invisibilidade #mulheres50</code></p>
+<h3>M2 — "Mito × verdade: creme não resolve" <code>Reels ~30s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Te venderam que autoestima depois dos 50 se resolve com creme. Olha o que ninguém teve coragem de te falar."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-3s]</strong> "Te venderam que autoestima depois dos 50 se resolve com creme. Olha o que ninguém teve coragem de te falar."</li>
+<li><strong>[3-9s]</strong> "O creme promete tirar a ruga. Você compra, passa três meses, a ruga tá lá — e você se sente pior ainda, porque agora além de tudo você 'falhou'."</li>
+<li><strong>[9-16s]</strong> "Só que o problema nunca foi a ruga. Você não acorda triste por causa de uma linha no olho. Você acorda triste porque parou de ser vista — no trabalho, na mesa, dentro de casa."</li>
+<li><strong>[16-24s]</strong> "E isso creme nenhum resolve. Hormônio nenhum resolve. Porque não é a pele que sumiu. Foi o seu espaço. E espaço a gente reconquista com atitude, não com pote."</li>
+<li><strong>[24-30s]</strong> "Se isso fez sentido, segue aqui — porque essa semana eu tô destrinchando como reconquistar esse espaço, passo a passo."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>MITO: creme resolve</code> · <code>a ruga não é o problema</code> · <code>você não sumiu da pele — sumiu do espaço</code> · <code>segue pra série 👇</code></p>
+<p><strong>Cena:</strong> talking head, sem trilha nos 3s de abertura. No trecho do creme, corte pra mão largando um pote na pia.</p>
+<p><strong>Legenda:</strong> "Não é implicância com creme — use se te faz bem. Mas parar de te vender que a sua tristeza tá na ruga já é meio caminho. O que sumiu foi o seu espaço na mesa, na conversa, na sua própria agenda. Isso dá pra reconquistar. Segue que essa semana eu mostro como. 🤍"</p>
+<p><code>#autoestima50mais #mulheres50mais #menopausa #etarismo #maturidade #mulheresmaduras</code></p>
+<h3>M3 — "Antes/depois com prova de método" <code>Reels ~30s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Essa foto é de janeiro. Essa é de agora. Não foi dieta nem preenchimento — foi uma decisão que eu tomo toda manhã."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-4s]</strong> "Essa foto é de janeiro. Essa é de agora. Não foi dieta, não foi preenchimento. Foi uma decisão que eu passei a tomar toda manhã."</li>
+<li><strong>[4-11s]</strong> "Em janeiro eu me arrumava só pra sair com meu marido. No dia a dia, coque e camisetão. [PLACEHOLDER: detalhe real da autora — o que ela evitava fazer]."</li>
+<li><strong>[11-19s]</strong> "Aí eu comecei uma coisa boba: um gesto por dia que era só meu. Um dia foi o batom numa terça. Outro dia foi terminar a frase no almoço. [PLACEHOLDER: 1 exemplo real da autora]."</li>
+<li><strong>[19-26s]</strong> "Não mudou meu rosto. Mudou o jeito que eu entro num lugar. As pessoas repararam antes de eu contar pra alguém."</li>
+<li><strong>[26-30s]</strong> "Se você quer o passo a passo do que eu fiz, comenta 'ESPELHO' que eu te mando a ordem certinha."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>janeiro</code> / <code>agora</code> · <code>um gesto por dia, só meu</code> · <code>mudou como eu entro num lugar</code> · <code>comenta ESPELHO 👇</code></p>
+<p><strong>Cena:</strong> split de duas fotos reais (postura, não estética). Depois talking head. Sem tom de milagre. <strong>Não publicar sem preencher os [PLACEHOLDER] com fatos reais.</strong></p>
+<p><strong>Legenda:</strong> "A foto mudou pouco. Quem mudou foi a mulher que entra na sala. [PLACEHOLDER: 1 linha real da história da autora]. Comenta 'ESPELHO' que eu te mando a ordem dos passos que usei. 🤍"</p>
+<p><code>#mulheres50mais #autoestima50mais #recomeço #maturidadefeminina #antesedepois #mulheres50</code></p>
+<h3>M4 — "Autoridade: presença, não pele" <code>Reels ~25s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Por que mulher de 50 gasta fortuna em creme e continua se sentindo invisível? Eu levei anos pra entender isso."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-4s]</strong> "Por que mulher de 50 gasta fortuna em creme e continua se sentindo invisível? Eu levei anos pra entender."</li>
+<li><strong>[4-11s]</strong> "A indústria vende o que dá pra embalar num pote: ruga, cabelo branco, flacidez. Coisa que você olha no espelho e quer consertar."</li>
+<li><strong>[11-18s]</strong> "Só que a dor de verdade não cabe em pote. É chegar num lugar e ninguém te ver. É falar e te cortarem. E isso não tem prateleira na farmácia."</li>
+<li><strong>[18-25s]</strong> "Por isso eu parei de trabalhar a pele e comecei a trabalhar a presença. Faz [PLACEHOLDER: tempo real] que é disso que eu cuido — comigo e com outras mulheres. Segue que eu explico o porquê a semana toda."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>creme cheio, presença vazia</code> · <code>a dor não cabe num pote</code> · <code>presença, não pele</code></p>
+<p><strong>Cena:</strong> talking head, tom de conversa firme. B-roll opcional de prateleira de farmácia nos 4-11s.</p>
+<p><strong>Legenda:</strong> "Não tenho nada contra cuidar da pele. Mas assistir mulher incrível se achando invisível enquanto acumula pote na penteadeira me incomoda demais. A dor está na presença, não na ruga. É disso que eu cuido. Segue pra semana de conteúdo. 🤍"</p>
+<p><code>#autoestima50mais #mulheres50mais #etarismo #presençafeminina #maturidade #mulheresmaduras</code></p>
+<h2 style="margin-top:56px">🔴 FUNDO (converter / quase comprando)</h2>
+<p>Objetivo: quebrar objeção, gerar desejo pela oferta, levar pro link. CTA direto (link na bio / chama no direct). <strong>Oferta ainda não definida</strong> (vem do <code>/offerbook</code>) — <code>[PLACEHOLDER]</code> em tudo que depende dela. <strong>Não invente preço, garantia, depoimento ou escassez.</strong></p>
+<h3>F1 — Quebra de objeção "já tentei de tudo e me frustrei" <code>Reels ~30s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Se você já comprou creme caro achando que ia resolver e se frustrou — presta atenção, porque o problema nunca foi você."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-3s]</strong> "Se você já comprou creme caro achando que ia resolver e se frustrou — presta atenção, porque o problema nunca foi você."</li>
+<li><strong>[3-9s]</strong> "Eu também fiz isso. Gastei com sérum, com tratamento, com a promessa de 'dez anos a menos'. E na frente do espelho eu continuava não me reconhecendo."</li>
+<li><strong>[9-16s]</strong> "Porque nenhum pote resolve o que tava doendo de verdade: eu tinha parado de ser vista. No trabalho, em casa, por mim mesma."</li>
+<li><strong>[16-24s]</strong> "O [PLACEHOLDER: nome do produto] não mexe na sua ruga. Ele mexe no lugar que o creme nunca alcançou — em voltar a ocupar espaço, ter voz, ter uma coisa que é sua."</li>
+<li><strong>[24-30s]</strong> "Se cansou de tentar por fora, vem tentar por dentro dessa vez. Link aqui embaixo, dá uma olhada sem compromisso."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>o problema nunca foi você</code> · <code>nenhum pote resolve isso</code> · <code>[PLACEHOLDER: nome do produto]</code> · <code>olha o link 👇</code></p>
+<p><strong>Cena:</strong> mulher 50+ real; começa no banheiro com potes à vista, sai pra um ambiente de luz no trecho do mecanismo.</p>
+<p><strong>Legenda:</strong> "Passei anos comprando promessa em pote. O que mudou não veio de fora. Se você também se frustrou com creme, o link embaixo é pra você — sem milagre, sem 'parecer 30'. 👇"</p>
+<p><code>#mulheres50mais #autoestima50mais #etarismo #maturidadefeminina #recomeço #vidareal</code></p>
+<h3>F2 — Teaser de oferta "existe um caminho" <code>Reels ~25s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Se você já entendeu que não sumiu por causa da idade, e sim porque foi ficando por último — para tudo, isso aqui é o próximo passo."</p>
+<p><strong>Roteiro falado:</strong></p>
+<ul>
+<li><strong>[0-3s]</strong> "Se você já entendeu que não sumiu por causa da idade, e sim porque foi ficando por último — para tudo, isso aqui é o próximo passo."</li>
+<li><strong>[3-9s]</strong> "Chega de só se identificar com os vídeos e continuar na mesma. Eu juntei o caminho que me trouxe de volta pra mim num lugar só: o [PLACEHOLDER: nome do produto/oferta]."</li>
+<li><strong>[9-16s]</strong> "Lá dentro você para de ser o fundo da foto. Volta a ter voz na sua casa, presença no espelho e uma coisa que é só sua — passo a passo, com mulheres que estão na mesma que você."</li>
+<li><strong>[16-22s]</strong> "Não tem promessa de parecer 30. Tem você voltando pra dentro da própria vida, do seu jeito e no seu tempo."</li>
+<li><strong>[22-25s]</strong> "Toca no link da bio e vê se faz sentido pra você. Ou me chama no direct que eu te conto."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>você não sumiu pela idade</code> · <code>existe um caminho</code> · <code>[PLACEHOLDER: nome do produto/oferta]</code> · <code>sem parecer 30</code> · <code>link na bio 👇</code></p>
+<p><strong>Cena:</strong> mulher 50+ real, luz de casa, tom de conversa (não de venda). Começa íntima no hook; abre o enquadramento no "voltar a ter presença". Sem trilha nos 3s iniciais. Fecho sereno e firme na câmera.</p>
+<p><strong>Legenda:</strong> "Vídeo depois de vídeo você se reconhece — e continua no mesmo lugar. Reuni num só caminho o que me trouxe de volta pra mim: o [PLACEHOLDER: nome do produto/oferta]. Sem promessa de parecer jovem, sem pressa. Se quiser ver como funciona, o link tá na bio. Ou me chama no direct. 💛"</p>
+<p><code>#mulheres50mais #autoestima50mais #recomeçoaos50 #maturidadefeminina #minhavezagora #etarismo</code></p>
+<h3>F3 — Depoimento + urgência <code>Reels/carrossel ~25s</code></h3>
+<p><strong>Hook (0-3s):</strong> "Ela tem [PLACEHOLDER: idade] anos e passou a última década se achando 'tarde demais pra tudo'. Olha o que mudou."</p>
+<p><strong>Roteiro falado / cards:</strong></p>
+<ul>
+<li><strong>[0-3s]</strong> "Ela tem [PLACEHOLDER: idade] anos e passou a última década se achando 'tarde demais pra tudo'. Olha o que mudou."</li>
+<li><strong>[3-12s]</strong> "[PLACEHOLDER: depoimento real, 1ª pessoa, da própria cliente — cena concreta: o que ela voltou a fazer]."</li>
+<li><strong>[12-18s]</strong> "Não é caso isolado. [PLACEHOLDER: nome], [PLACEHOLDER: nome] e [PLACEHOLDER: nome] — todas acima dos 50, todas reais."</li>
+<li><strong>[18-25s]</strong> "Se você quer o mesmo, [PLACEHOLDER: motivo real de escassez — ex.: a turma de [mês] fecha as inscrições [data], são [nº] vagas]. Link embaixo."</li>
+</ul>
+<p><strong>Texto na tela:</strong> <code>[PLACEHOLDER: idade] anos</code> · aspas do depoimento · <code>mulheres reais 50+</code> · <code>[PLACEHOLDER: vagas/prazo]</code></p>
+<p><strong>Cena:</strong> rosto e voz da cliente <strong>real</strong> (nunca modelo/ator). Carrossel: card 1 hook, cards 2-4 depoimento com foto real, card final escassez + CTA.</p>
+<p><strong>Legenda:</strong> "Prova de pares, não de modelo. [PLACEHOLDER: nome] tem [PLACEHOLDER: idade] e voltou pra própria vida. [PLACEHOLDER: motivo real de escassez]. Se é a sua vez, o link tá aqui. 👇"</p>
+<p><code>#mulheres50mais #autoestima #depoimento #maturidade #mulheresreais #recomeço</code></p>
+<blockquote class="padrao">⚠️ <strong>Escassez e depoimento têm que ser REAIS.</strong> Só use prazo/vagas se existirem; depoimento só com cliente real e autorização.</blockquote>
+<h3>Sequência recomendada (o lead caminhando)</h3>
+<p>1. <strong>Semana 1-2 (Topo):</strong> T1, T3, T4 — atrair e fazer identificar. Meça hook rate + comentários com as palavras do avatar ("sou eu", "eu sumi").</p>
+<p>2. <strong>Semana 2-3 (Meio):</strong> M2 (mito×verdade) → M1 (mecanismo, série) → M4 (autoridade). Captura por palavra-chave (M3 "ESPELHO").</p>
+<p>3. <strong>Semana 3-4 (Fundo):</strong> F1 (quebra de objeção) → F2 (teaser) → F3 (depoimento) — só depois que a oferta existir (<code>/offerbook</code>) e a página/VSL estiver pronta (<code>/vsl-funil</code>).</p>
+<p><em>Roteiros orgânicos por funil · 30/06/2026 · Topo pronto pra gravar; Meio/Fundo com [PLACEHOLDER] onde depende de fato real e da oferta. VSL/página são de /vsl-funil e /copy-funil.</em></p>
+
+    <div class="footer">
+      <div class="logo"></div>
+      <p>Trend report · 30/06/2026 · Pegue na rampa de subida, não no pico.</p>
+    </div>
+  </div>
+</body>
+</html>
