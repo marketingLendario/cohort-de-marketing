@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRO — Mulheres 50+ / Autoestima</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --card: #0F0F0F;
+    --raised: #262626;
+    --border: #262626;
+    --foreground: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #BFBFBF;
+    --primary-light: #E5E5E5;
+    --primary-deep: #595959;
+    --status-success: #23E169;
+    --status-warning: #FF9D0A;
+    --status-error: #FF4438;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, system-ui, sans-serif;
+    --font-display: Inter, system-ui, sans-serif;
+    --font-mono: ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 40px 80px; }
+  .hero { text-align: center; padding: 16px 0 40px; border-bottom: 1px solid var(--raised); margin-bottom: 44px; }
+  .kicker {
+    display: inline-block; font-family: var(--font-ui); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    padding: 6px 16px; border: 1px solid var(--primary-deep); border-radius: 9999px; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 700;
+    line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 10px;
+  }
+  .hero h1 em { font-family: var(--font-body); font-style: italic; font-weight: 400; color: var(--primary); }
+  .hero .sub { font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 6px 0 0; }
+  h2 {
+    font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--foreground); margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--raised);
+  }
+  h3 { font-family: var(--font-ui); font-size: 1.1rem; font-weight: 700; color: var(--primary-light); margin: 28px 0 10px; }
+  h4 { font-family: var(--font-ui); font-size: 0.95rem; font-weight: 700; color: var(--primary); margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+  p { margin: 0 0 14px; }
+  strong { color: #fff; font-weight: 600; }
+  em { color: var(--primary-light); }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  blockquote, .verbatim {
+    font-family: var(--font-body); font-style: italic; color: var(--primary-light);
+    background: var(--card); border-left: 3px solid var(--primary-deep);
+    margin: 14px 0; padding: 12px 18px; border-radius: 0 8px 8px 0;
+  }
+  .callout {
+    background: rgba(255,157,10,0.08); border: 1px solid var(--status-warning);
+    border-radius: 10px; padding: 14px 18px; margin: 18px 0;
+    font-family: var(--font-ui); font-size: 0.92rem; color: var(--foreground);
+  }
+  .callout ol, .callout ul { margin: 8px 0 0; }
+  .callout.info { background: rgba(35,225,105,0.06); border-color: var(--status-success); }
+  .callout.alert { background: rgba(255,68,56,0.07); border-color: var(--status-error); }
+  .slot {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.03em; padding: 2px 9px; border-radius: 6px; vertical-align: baseline;
+    background: rgba(255,68,56,0.12); color: var(--status-error); border: 1px solid var(--status-error);
+  }
+  .def {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.03em; padding: 1px 7px; border-radius: 6px; vertical-align: baseline;
+    background: rgba(255,157,10,0.12); color: var(--status-warning); border: 1px solid var(--status-warning);
+  }
+  .copytask {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.03em; padding: 1px 7px; border-radius: 6px; vertical-align: baseline;
+    background: rgba(191,191,191,0.12); color: var(--primary-light); border: 1px solid var(--primary-deep);
+  }
+  .lead-note {
+    font-family: var(--font-ui); font-size: 0.88rem; color: var(--muted-foreground);
+    background: var(--card); border: 1px solid var(--raised); border-radius: 10px;
+    padding: 12px 18px; margin: 0 0 8px;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-family: var(--font-ui); font-size: 0.86rem; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--raised); vertical-align: top; }
+  th { color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.7rem; }
+  .yes { color: var(--status-success); font-weight: 700; }
+  .no { color: var(--status-error); font-weight: 700; }
+  .partial { color: var(--status-warning); font-weight: 700; }
+  .fill { font-family: var(--font-mono); color: var(--muted-foreground); }
+  hr.div { border: none; border-top: 1px solid var(--raised); margin: 40px 0 0; }
+  .stage-card {
+    background: var(--card); border: 1px solid var(--raised); border-radius: 12px;
+    padding: 20px 24px; margin: 18px 0;
+  }
+  .stage-card h3 { margin-top: 0; }
+  pre.ascii {
+    font-family: var(--font-mono); font-size: 0.76rem; line-height: 1.5; color: var(--primary-light);
+    background: var(--card); border: 1px solid var(--raised); border-radius: 12px;
+    padding: 18px 20px; margin: 18px 0; overflow-x: auto; white-space: pre;
+  }
+  .footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--raised);
+    font-family: var(--font-ui); font-size: 0.78rem; color: var(--muted-foreground); text-align: center; }
+  .footer .logo { font-family: var(--font-display); font-weight: 700; color: var(--primary); letter-spacing: 0.02em; }
+  code { font-family: var(--font-mono); font-size: 0.84em; color: var(--primary-light); background: var(--raised); padding: 1px 6px; border-radius: 5px; }
+  @media print {
+    html, body { font-size: 12px; background: #fff; color: #111; }
+    .wrap { padding: 0 12px; max-width: 100%; }
+    h2 { page-break-after: avoid; }
+    blockquote, .verbatim, table, .callout, .stage-card, pre.ascii { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <span class="kicker">CRO · Otimização de Conversão · Orgânico · R$88</span>
+      <h1>O último passo: <em>medir, testar e escalar</em></h1>
+      <p class="sub">Slug: mulheres-50-autoestima · Voz de marca (50+ falando com 50+) · 30/06/2026</p>
+    </div>
+
+    <p class="lead-note">Estrutura de otimização de conversão gerada pela <code>/cro-funil</code> a partir do <code>funil-mulheres-50-autoestima.md</code>, do <code>copy-mulheres-50-autoestima.md</code> e do <code>offerbook-mulheres-50-autoestima.md</code>. Método: KPIs por etapa · teste A/B só na headline · 1 teste por vez · mínimo 1.000 views únicos por variação. <strong>A skill dá o método e a estrutura; a dona preenche os números e decide.</strong> Não sobe, não roda e não altera nada no funil.</p>
+
+    <div class="callout">
+      <strong>Tese central.</strong> Uma coisa que você mexe no funil mexe no resultado inteiro. Cada etapa é uma vitória separada a otimizar, e ganhos pequenos por etapa <strong>multiplicam</strong> no fim. Por isso a ordem importa: testar primeiro o de <strong>maior alavancagem</strong> (a headline), nunca o fácil (cor de botão, rodapé).
+    </div>
+
+    <h3>Adaptação deste caso — leia antes de tudo</h3>
+    <table>
+      <thead><tr><th>Fato do funil</th><th>Consequência pro CRO</th></tr></thead>
+      <tbody>
+        <tr><td>Funil é <strong>orgânico</strong> (Reels/carrossel &rarr; link na bio &rarr; página)</td><td>As etapas NÃO são de webinário. Não existe "participantes / show-up". As etapas reais são: <strong>Alcance &rarr; Cliques na bio &rarr; Visitas &rarr; Checkout &rarr; Compras</strong>.</td></tr>
+        <tr><td><strong>Sem ads</strong> (por enquanto)</td><td>A regra "converteu bem e barato &rarr; bota mais verba em ads" <strong>não se aplica agora</strong>. O "escalar" vem DEPOIS que a turma Fundadoras gerar prova de pares. Até lá: otimizar o orgânico e coletar prova.</td></tr>
+        <tr><td><strong>Funil ainda não rodou</strong> — zero dado real</td><td>Não dá pra diagnosticar gargalo. O diagnóstico vira <strong>o que instrumentar/medir primeiro</strong> + as <strong>taxas-alvo de referência</strong> por etapa como baseline a bater.</td></tr>
+        <tr><td>Tráfego orgânico pode ser lento</td><td>Pode <strong>não bater 1.000 views únicos rápido</strong>. A decisão de A/B <strong>espera atingir a amostra</strong> — pode levar mais de uma semana.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>1. Planilha de KPIs por etapa (orgânica — preenchível)</h2>
+    <p><strong>O gate do CRO.</strong> Não dá pra otimizar o que não se mede. Como o funil é orgânico e sem webinário, as etapas são estas (topo &rarr; fundo). Preencha com os números do <strong>seu</strong> funil assim que ele rodar.</p>
+    <table>
+      <thead><tr><th>#</th><th>Etapa</th><th>KPI (o que contar)</th><th>Seu número</th><th>Taxa de passagem</th><th>Faixa de referência¹</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Alcance</strong></td><td>contas únicas alcançadas pelo Reels/carrossel</td><td class="fill">____</td><td>—</td><td>—</td></tr>
+        <tr><td>2</td><td><strong>Cliques na bio</strong></td><td>cliques únicos no link da bio (ou "comenta")</td><td class="fill">____</td><td>Cliques ÷ Alcance</td><td><strong>0,5%–2%</strong> do alcance</td></tr>
+        <tr><td>3</td><td><strong>Visitas</strong></td><td>visitantes únicos que abriram a página</td><td class="fill">____</td><td>Visitas ÷ Cliques</td><td><strong>70%–90%</strong> (clique&rarr;página)</td></tr>
+        <tr><td>4</td><td><strong>Checkout</strong></td><td>quem iniciou o checkout</td><td class="fill">____</td><td>Checkout ÷ Visitas</td><td><strong>5%–15%</strong> (página quente, ticket baixo)</td></tr>
+        <tr><td>5</td><td><strong>Compras</strong></td><td>compras aprovadas (R$88)</td><td class="fill">____</td><td>Compras ÷ Checkout</td><td><strong>30%–50%</strong> (checkout&rarr;pago)</td></tr>
+        <tr><td>—</td><td><strong>Conversão final</strong></td><td>Compras ÷ Visitas</td><td class="fill">____</td><td>Compras ÷ Visitas</td><td><strong>2%–8%</strong> (visita&rarr;compra, orgânico quente)</td></tr>
+      </tbody>
+    </table>
+    <p class="lead-note">¹ <strong>Faixa de referência = benchmark de mercado, NÃO promessa.</strong> Serve só de baseline pra você saber se uma etapa está "ok" ou "sangrando" quando os números chegarem. O seu número real manda. A leitura estatística final é sua.</p>
+    <p><strong>Como usar:</strong> a etapa cuja taxa de passagem fica <strong>abaixo da faixa</strong> é onde está a maior alavancagem de melhoria — é ali que o próximo teste ataca. <strong>Views únicos ≠ alcance:</strong> pra decidir um A/B da <strong>página</strong>, o que conta é <strong>visitas únicas</strong> (etapa 3) — é essa a "amostra de 1.000" da regra de teste.</p>
+
+    <h2>2. Diagnóstico — como não rodou, o que INSTRUMENTAR primeiro</h2>
+    <p>Não há gargalo a diagnosticar ainda (zero dado). O diagnóstico é <strong>montar a medição antes de rodar</strong>, senão o funil roda cego e você perde o aprendizado da primeira turma.</p>
+
+    <h3>2.1 O que medir/instrumentar (na ordem)</h3>
+    <table>
+      <thead><tr><th>Prioridade</th><th>Instrumentar</th><th>Por quê</th><th>Sem isso…</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 (crítico)</strong></td><td><strong>Evento de compra + de início de checkout</strong> no checkout</td><td>Sem isso não há etapas 4 e 5 — as que decidem receita</td><td>Você "acha" que vendeu, não sabe onde perdeu</td></tr>
+        <tr><td><strong>2 (crítico)</strong></td><td><strong>UTM no link da bio</strong> (<code>?utm_source=ig&amp;utm_medium=bio...</code>)</td><td>Separa quem veio de qual conteúdo; liga alcance &rarr; visita</td><td>Não sabe qual conteúdo traz visita que compra</td></tr>
+        <tr><td><strong>3 (alto)</strong></td><td><strong>Pixel/analytics na página</strong> (visitas únicas)</td><td>Fecha a etapa 3 e permite a amostra de 1.000</td><td>Não tem denominador pra calcular conversão</td></tr>
+        <tr><td><strong>4 (médio)</strong></td><td><strong>Pixel de evento na oferta</strong> (chegou no preço)</td><td>Remarketing depois (quando houver ads) + medir quem chega na oferta</td><td>Não consegue reengajar quem quase comprou</td></tr>
+        <tr><td><strong>5 (apoio)</strong></td><td>Métricas nativas do Instagram (alcance, cliques)</td><td>Fecha etapas 1 e 2 sem ferramenta extra</td><td>Não sabe o CTR do conteúdo pro link</td></tr>
+      </tbody>
+    </table>
+    <p class="lead-note"><strong>Determinismo primeiro:</strong> priorize evento de checkout e UTM — são numéricos e auditáveis, não dependem de achismo.</p>
+
+    <h3>2.2 Baselines de referência (a bater na 1ª rodada)</h3>
+    <p>Enquanto não há dado real, use as <strong>faixas de referência</strong> da planilha como meta inicial. Regra de leitura quando os números chegarem:</p>
+    <ul>
+      <li><strong>Etapa dentro/acima da faixa</strong> &rarr; saudável, não é o gargalo. Não mexer ainda.</li>
+      <li><strong>Etapa abaixo da faixa</strong> &rarr; é o elo que sangra. É ali que o próximo teste ataca.</li>
+      <li><strong>Conversão final visita&rarr;compra abaixo de ~2%</strong> com página quente &rarr; o problema quase sempre está na <strong>headline</strong> ou na <strong>oferta</strong>, não no rodapé.</li>
+    </ul>
+    <div class="callout"><strong>Suspeita estrutural desta oferta (hipótese a confirmar com dado).</strong> Como a página <strong>não tem prova de pares</strong> ainda (o <span class="slot">SLOT FUNDADORAS</span> está vazio), o ponto mais provável de vazamento é <strong>Visitas &rarr; Checkout</strong> (3&rarr;4), onde a objeção nº1 <em>"já me frustrei"</em> age sem depoimento pra derrubá-la. Não é certeza — é onde olhar primeiro quando o número aparecer.</div>
+
+    <h2>3. Teste priorizado — a HEADLINE (o "ouro")</h2>
+    <p>A headline é o item de <strong>maior alavancagem</strong> da página inteira: é o que faz a mulher continuar lendo ou fechar. É o primeiro teste, e A/B contínuo. Não se começa por cor de botão nem rodapé — isso não move conversão.</p>
+
+    <h3>3.1 Headline atual (A) passada pelos 3 componentes</h3>
+    <p>Estrutura de headline de alta conversão: <strong>[resultado específico] · [tempo] · [objeção removida]</strong>.</p>
+    <div class="stage-card">
+      <h3>A (atual)</h3>
+      <blockquote>"Você não envelheceu. Você só parou de ser vista."</blockquote>
+      <table>
+        <thead><tr><th>Componente</th><th>A entrega?</th><th>Análise</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Resultado específico</strong></td><td class="partial">Parcial</td><td>Promete "ser vista" (emocional, reframe forte pra nível 3–4), mas <strong>sem concretude</strong> — não diz o quê/quanto.</td></tr>
+          <tr><td><strong>Tempo</strong></td><td class="no">Não</td><td>Não ancora prazo nem formato (6 aulas). A pragmática ("quanto tempo?") fica sem resposta.</td></tr>
+          <tr><td><strong>Objeção removida</strong></td><td class="partial">Parcial</td><td>"Não envelheceu" toca a idade, mas <strong>não neutraliza a objeção nº1</strong> ("já me frustrei"/creme/milagre) na própria headline.</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Veredito:</strong> A é uma <strong>big-idea emocional</strong> excelente pra fisgar quem se reconhece na dor — mas deixa concretude e a objeção principal fora do primeiro impacto. Vale testar contra uma variante que carregue os 3 componentes.</p>
+    </div>
+
+    <h3>3.2 Variação B proposta (promessa concreta + objeção)</h3>
+    <div class="stage-card">
+      <h3>B (desafiante)</h3>
+      <blockquote>"O método em 6 aulas pra mulher 50+ voltar a ser vista — sem creme, sem hormônio, sem fingir ter 30."</blockquote>
+      <table>
+        <thead><tr><th>Componente</th><th>B entrega?</th><th>Como</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Resultado específico</strong></td><td class="yes">Sim</td><td>"voltar a ser vista" ancorado num entregável concreto ("método em 6 aulas")</td></tr>
+          <tr><td><strong>Tempo/formato</strong></td><td class="yes">Sim</td><td>"6 aulas" responde "quanto tempo / o que é"</td></tr>
+          <tr><td><strong>Objeção removida</strong></td><td class="yes">Sim</td><td>"sem creme, sem hormônio, sem fingir ter 30" mata de frente "já me frustrei" + "bancar a novinha" (sofisticação 4, cético)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info"><strong>Por que ESTA B, e não outra:</strong> ela troca a aposta. A = emoção/reframe (ganha quem sente a dor). B = promessa concreta + anti-milagre (ganha a cética e a pragmática, parte do avatar). É um contraste real de ângulo — que é o que um A/B bom testa. Toda variação sai da voz de marca e do verbatim do avatar, sem prometer milagre.</div>
+    <p><strong>1 teste por vez:</strong> troca-se <strong>só a headline</strong>. Sub-headline, vídeo, oferta, garantia e CTA ficam idênticos entre A e B — senão você não sabe o que moveu o número.</p>
+
+    <h2>4. Desenho do teste A/B da headline</h2>
+    <table>
+      <tbody>
+        <tr><td><strong>Variável isolada</strong></td><td>Headline principal (H1 no topo da página). Só ela muda.</td></tr>
+        <tr><td><strong>A (controle)</strong></td><td>"Você não envelheceu. Você só parou de ser vista."</td></tr>
+        <tr><td><strong>B (desafiante)</strong></td><td>"O método em 6 aulas pra mulher 50+ voltar a ser vista — sem creme, sem hormônio, sem fingir ter 30."</td></tr>
+        <tr><td><strong>Métrica primária</strong></td><td><strong>Conversão visita &rarr; checkout</strong> (etapa 3&rarr;4). É a etapa que a headline governa.</td></tr>
+        <tr><td><strong>Métrica de desempate</strong></td><td>Conversão final <strong>visita &rarr; compra</strong>. Empate no checkout &rarr; ganha quem gera mais compra paga.</td></tr>
+        <tr><td><strong>Amostra mínima</strong></td><td><strong>1.000 views únicos por variação</strong> (2.000 no total). Não decidir antes disso.</td></tr>
+        <tr><td><strong>Divisão do tráfego</strong></td><td>Split-test tool (50/50) OU, sem ferramenta, <strong>alternar por período</strong> (semana A vs semana B) — mais ruído, mas serve no orgânico.</td></tr>
+        <tr><td><strong>Duração</strong></td><td>O que for preciso pra bater a amostra — <strong>não</strong> um prazo fixo.</td></tr>
+        <tr><td><strong>Decisão</strong></td><td>Só depois de 1.000 views/variação: mantém quem converte mais. Empate &rarr; roda mais ou testa nova B.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout alert"><strong>⚠ ALERTA DO ORGÂNICO (crítico neste caso).</strong> Sem ads, o tráfego pode demorar a somar 1.000 views únicos por variação. <strong>Não decida com amostra pequena</strong> — número baixo engana. Se em uma semana não bateu a amostra, <strong>espere</strong>. Melhor um teste lento e verdadeiro do que uma decisão rápida e errada. A regra dos 1.000 views não é negociável só porque o tráfego é lento.</div>
+    <p><strong>O que NÃO testar agora (anti-padrão):</strong> cor de botão, rodapé, fonte, espaçamento. Não movem conversão. O que move é headline &rarr; depois oferta/preço &rarr; depois prova. Nesta ordem.</p>
+    <h4>Próximos testes na fila (depois da headline vencer)</h4>
+    <ol>
+      <li><strong>Oferta/preço</strong> — empilhamento de valor e ancoragem em torno do R$88 (uma variação por vez).</li>
+      <li><strong>Prova</strong> — assim que o <span class="slot">SLOT FUNDADORAS</span> for preenchido com 3–5 histórias de pares reais: testar página <strong>com prova</strong> vs <strong>sem prova</strong>. Provável maior salto de conversão desta oferta.</li>
+    </ol>
+
+    <h2>5. Critério de escala — reenquadrado pro orgânico</h2>
+    <p>A regra clássica ("converte bem e barato &rarr; bota mais dinheiro em ads") <strong>não se aplica agora</strong>, porque <strong>não há ads</strong>. Neste funil, "escalar" tem uma ordem própria:</p>
+    <pre class="ascii">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ESCALA DESTE FUNIL — orgânico primeiro, ads depois
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 1 · AGORA (orgânico, sem prova)
+  → Instrumentar (checkout + UTM + pixel na página)
+  → Rodar a turma Fundadoras a R$88
+  → Otimizar o orgânico: A/B da headline (mín. 1.000 views/variação)
+  → Meta real: COLETAR 3–5 provas de pares 50+ reais
+     (é o ativo, não o lucro — R$88 sem prova é venda; com prova é escala)
+
+FASE 2 · DEPOIS (prova coletada)
+  → Preencher o [SLOT FUNDADORAS] na página com as histórias reais
+  → Testar página COM prova vs SEM prova (deve dar o maior salto)
+
+FASE 3 · SÓ ENTÃO (agora sim, ads)
+  → Com a página convertendo bem e barato E com prova de pares,
+    aí sim testar tráfego pago
+  → Se converte bem e barato → bota mais verba (compra mais lead)
+  → Se alguma etapa sangra → conserta ANTES de escalar
+    (escalar tráfego em funil furado só amplifica o vazamento)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</pre>
+    <p><strong>Regra de decisão (quando chegar a Fase 3):</strong></p>
+    <ul>
+      <li><strong>Converte bem e barato em cada etapa</strong> &rarr; escalar verba em ads.</li>
+      <li><strong>Etapa sangrando</strong> (abaixo da faixa de referência) &rarr; otimizar o gargalo ANTES de escalar.</li>
+    </ul>
+    <div class="callout info"><strong>Gatilho explícito pra ligar ads:</strong> página com prova de pares no ar <strong>E</strong> conversão final (visita &rarr; compra) dentro/acima da faixa de referência em amostra ≥ 1.000 views. Antes disso, ads é dinheiro em funil que ainda não provou que converte.</div>
+
+    <h2>Regras de ouro (deste CRO)</h2>
+    <div class="callout info"><strong>SEMPRE:</strong> montar a planilha de KPIs por etapa antes de otimizar · testar primeiro a headline (maior alavancagem) · 1 teste A/B por vez · mín. 1.000 views únicos por variação antes de decidir · esperar a amostra mesmo que o orgânico demore · coletar a prova de pares na turma Fundadoras · só ligar ads depois de página com prova convertendo bem.</div>
+    <div class="callout alert"><strong>NUNCA:</strong> otimizar sem medir (achismo) · testar cor de botão/rodapé achando que move conversão · rodar A/B/C/D ao mesmo tempo · decidir com &lt; 1.000 views únicos · ligar ads em funil sem prova e sem dado · escalar tráfego com uma etapa furada · alterar/subir/rodar qualquer teste sem a dona aprovar.</div>
+
+    <h2>Lacunas e decisões pendentes</h2>
+    <h4>Decisão da dona (negócio)</h4>
+    <ul>
+      <li>Confirmar qual ferramenta fará o <strong>split-test da página</strong> (50/50) ou se o A/B será por período.</li>
+      <li>Aprovar a <strong>variação B</strong> da headline (ou pedir outra) antes de qualquer teste.</li>
+      <li>Definir se haverá pixel de ads já instalado agora (para remarketing futuro), mesmo sem rodar ads ainda.</li>
+    </ul>
+    <h4>Tarefa da equipe (instrumentação)</h4>
+    <ul>
+      <li>Configurar evento de compra + início de checkout no checkout.</li>
+      <li>Colocar UTM no link da bio e pixel/analytics de visitas na página.</li>
+      <li>Preencher a planilha de KPIs com os números reais assim que a 1ª turma rodar.</li>
+    </ul>
+    <div class="callout"><strong>Gate.</strong> Nada de teste sobe sem a dona aprovar esta estrutura, sem a instrumentação no ar e sem a amostra mínima atingida.</div>
+
+    <div class="footer">
+      <p class="logo">CRO de Funil</p>
+      <p>mulheres-50-autoestima · 30/06/2026 · A skill estrutura o teste; a dona preenche os números e decide. Último passo do funil.</p>
+    </div>
+  </div>
+</body>
+</html>
