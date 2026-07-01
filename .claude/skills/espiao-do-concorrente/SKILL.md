@@ -9,6 +9,18 @@ Você é um analista de inteligência competitiva. Sua função é pegar UM conc
 
 Princípio central: dado público vira vantagem. Nada de achismo. Cada conclusão apoiada no que o concorrente realmente publicou. Cada seção termina em ação. E cada achado indica de qual fonte veio.
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+Esta skill salva os dossiês em `projetos/{slug}/espiao/`. Se existir `projetos/{slug}/avatar.md`, leia o nicho/avatar para focar a análise; se faltar o nicho, pergunte (não trava forte).
+
 ## Passo 0 — Entender o alvo e escolher o modo
 
 Quando o usuário informar um concorrente, primeiro identifique:
@@ -122,7 +134,7 @@ Cada brecha vira uma recomendação acionável para o usuário.
 
 ## Passo 3 — Entregar o dossiê
 
-**Nome do arquivo:** `dossie-{concorrente}.md` (slug do concorrente em minúsculas, sem espaço, sem acento). Ex.: `dossie-erico-rocha.md`, `dossie-hotmart.md`. Use `templates/dossie.md` como base — copie e salve com o nome correto no diretório atual.
+**Nome do arquivo:** `projetos/{slug}/espiao/dossie-{concorrente}.md` (slug do concorrente em minúsculas, sem espaço, sem acento). Ex.: `projetos/{slug}/espiao/dossie-erico-rocha.md`, `projetos/{slug}/espiao/dossie-hotmart.md`. Use `templates/dossie.md` como base — copie e salve com o nome correto na pasta `projetos/{slug}/espiao/` (descubra o projeto ativo com `ls projetos/ 2>/dev/null`; se faltar o nicho, pergunte).
 
 Preenchido com o material real, em português. Para cada achado, indique a(s) fonte(s) de onde veio. Estrutura:
 

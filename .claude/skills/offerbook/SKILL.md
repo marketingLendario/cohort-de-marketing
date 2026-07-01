@@ -24,6 +24,20 @@ Se não vier o nome do produto, **pergunte qual é a oferta e PARE** até recebe
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho, ex.: `projetos/curso-de-ingles/`). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz — assim você pode tocar vários nichos ao mesmo tempo sem misturar, e as skills seguintes sabem exatamente onde achar cada peça.
+
+**Como descobrir o projeto ativo** (toda skill do funil segue isto):
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, rode `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → é o começo do funil.
+
+**Nomes dentro da pasta** (sem repetir o slug): `offerbook.md`, `avatar.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Sempre nos 3 formatos (md/html/pdf) onde a skill já gera.
+
+> **Esta skill é a primeira do funil:** ela **cria** `projetos/{slug}/` (o `{slug}` sai do nome do produto) e salva tudo dentro. As demais skills leem dessa pasta.
+
+---
+
 ## Pré-requisitos (o que você precisa ter à mão)
 
 1. **Um documento de destino** — pode ser um Google Doc, Notion, Word ou Markdown. Use a estrutura de 7 blocos abaixo. (Se tiver um template próprio, duplique-o e preencha a cópia; **nunca edite o template original**.)
@@ -150,11 +164,11 @@ Preencher TODOS os campos. Não reorganizar, não resumir, não pular campo.
 
 ## Output (3 arquivos)
 
-A skill **sempre** entrega 3 arquivos no diretório atual:
+A skill **sempre** entrega 3 arquivos dentro de **`projetos/{slug}/`** (cria a pasta se não existir):
 
-1. **`briefing-offerbook.md`** — gerado no Passo 1 do Pipeline. Consolida inputs (avatar + concorrentes + swipe-file + decisões do dono) e serve de gate: sem briefing aprovado, não escreve offerbook.
-2. **`offerbook-{slug}.md`** — fonte de verdade (Markdown com os 7 blocos completos).
-3. **`offerbook-{slug}.docx`** — gerado a partir do MD com `python scripts/gerar_docx.py offerbook-{slug}.md` usando o `Template-Offerbook.docx` oficial.
+1. **`projetos/{slug}/briefing-offerbook.md`** — gerado no Passo 1 do Pipeline. Consolida inputs (avatar + concorrentes + swipe-file + decisões do dono) e serve de gate: sem briefing aprovado, não escreve offerbook.
+2. **`projetos/{slug}/offerbook.md`** — fonte de verdade (Markdown com os 7 blocos completos). *(o `{slug}` já é a pasta; o arquivo não repete o slug no nome.)*
+3. **`projetos/{slug}/offerbook.docx`** — gerado a partir do MD com `python scripts/gerar_docx.py projetos/{slug}/offerbook.md` usando o `Template-Offerbook.docx` oficial.
 
 Regras de geração:
 - MD é a fonte de verdade. Nunca editar só o DOCX; corrigir o MD e regenerar.

@@ -12,6 +12,18 @@ Princípio central: pesquisa antes da oferta. A dor real não está na sua cabe�
 
 Regra de honestidade que vem antes de tudo: a matéria-prima é a palavra literal do cliente (verbatim). Quando você não tiver a palavra literal, diga que é leitura sua, não dado. Nunca parafraseie uma citação e apresente como se fosse do cliente. Nunca invente review, comentário, número ou persona.
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+Esta é a skill de partida do funil (Aula 1): não exige nenhuma peça anterior. Se ainda não existe `projetos/{slug}/` e você já tem o nicho, **crie a pasta** `projetos/{slug}/` e salve o avatar em `projetos/{slug}/avatar.md` (+ `.html`/`.pdf`) lá dentro.
+
 ## Passo 0 — Entender o alvo e escolher o modo
 
 Quando o usuário informar um nicho ou produto, primeiro identifique:
@@ -141,7 +153,7 @@ Cuidado com viés: se as personas dão nota alta para uma headline obviamente fr
 
 ## Passo 5 — Entregar o relatório (3 formatos: MD + HTML + PDF)
 
-Sempre entregue o relatório nos **três formatos**, salvos na mesma pasta (`pesquisa-avatar-{slug}/` por padrão, ou onde o usuário pedir). A estrutura do conteúdo é a mesma nos três:
+Sempre entregue o relatório nos **três formatos**, salvos na pasta do projeto (`projetos/{slug}/`, ou onde o usuário pedir). A estrutura do conteúdo é a mesma nos três:
 
 1. **Resumo executivo** (1 parágrafo: o nicho, a dor número 1 com a frase do cliente, e o que fazer com ela).
 2. **Fontes consultadas** (quais frentes você cobriu e o que cada uma rendeu).
@@ -155,16 +167,16 @@ Se a amostra foi pequena, veio de poucas fontes ou do modo offline, diga isso no
 
 ### Como gerar os 3 arquivos
 
-1. **Markdown** (`relatorio-avatar.md`): escreva o relatório completo no formato de `templates/relatorio.md`. É a versão de trabalho.
-2. **HTML** (`relatorio-avatar.html`): copie `templates/relatorio.html` e substitua os placeholders:
+1. **Markdown** (`projetos/{slug}/avatar.md`): escreva o relatório completo no formato de `templates/relatorio.md`. É a versão de trabalho.
+2. **HTML** (`projetos/{slug}/avatar.html`): copie `templates/relatorio.html` e substitua os placeholders:
    - `{{TITULO}}` — nicho/produto pesquisado (ex: "Escritórios de contabilidade").
    - `{{SUBTITULO}}` — fonte e tamanho da amostra (ex: "Reviews e comunidades · 246 trechos").
    - `{{DATA}}` — data de hoje.
    - `{{CONTEUDO}}` — as 7 seções renderizadas em HTML, usando `<h2>` por seção, `<h3>` por subitem, `<table>` para as dores/distribuições, `<blockquote class="verbatim">` para CADA citação literal do cliente, e `<div class="callout">` para o aviso de honestidade da fonte. Mantenha o verbatim sempre em `.verbatim` — é a matéria-prima.
    - Se você usa a skill `design-md` e tem um `DESIGN.md` do seu negócio, aplique as cores, fontes e logo dele no HTML. Sem isso, o template vem em estilo neutro (sem marca) — pode usar como está.
-3. **PDF** (`relatorio-avatar.pdf`): rode o script sobre o HTML gerado:
+3. **PDF** (`projetos/{slug}/avatar.pdf`): rode o script sobre o HTML gerado:
    ```
-   bash scripts/gerar_pdf.sh pesquisa-avatar-{slug}/relatorio-avatar.html
+   bash scripts/gerar_pdf.sh projetos/{slug}/avatar.html
    ```
    Ele usa Chrome headless (fallback wkhtmltopdf, depois instrução manual). Se o PDF não sair, avise o usuário e entregue MD + HTML mesmo assim.
 

@@ -12,6 +12,18 @@ Esta skill mantem **biblioteca viva** de criativos vencedores (anuncios, posts, 
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`, `swipe/`. Nos 3 formatos (md/html/pdf) onde a skill gera. O swipe file desta skill vive em **`projetos/{slug}/swipe/`**.
+
+---
+
 ## Quando usar
 
 - Apos rodar `/espiao-do-concorrente` ou `/trend-hunting` (output deles vira input)
@@ -121,9 +133,9 @@ Atribuir ao criativo:
 - Estrutura template no link `[link template Figma]`
 
 **Se usar Markdown:**
-- 1 arquivo por criativo: `{tipo}/{nicho}/{concorrente}-{data}.md`
+- 1 arquivo por criativo: `projetos/{slug}/swipe/{tipo}/{nicho}/{concorrente}-{data}.md`
 - Cada arquivo com screenshot embedded + metadata + padrao extraido
-- Index master em `swipe-file-index.md`
+- Index master em `projetos/{slug}/swipe/swipe-file-index.md`
 
 ### Etapa 4 — Briefing (sob demanda)
 
@@ -151,13 +163,13 @@ Retorna:
 A skill gera (depende da acao):
 
 **Para `/swipe-file capturar`:**
-1. Arquivos `.md` em `swipe-file/{tipo}/{nicho}/` (um por criativo)
-2. Atualizacao do `swipe-file-index.md` master
+1. Arquivos `.md` em `projetos/{slug}/swipe/{tipo}/{nicho}/` (um por criativo)
+2. Atualizacao do `projetos/{slug}/swipe/swipe-file-index.md` master
 3. Instrucoes Figma (link para adicionar frame manualmente, se usar Figma)
 
 **Para `/swipe-file briefing [tipo]`:**
-1. Documento `briefing-{tipo}-{data}.md` com 10-20 referencias organizadas (granular, por tipo)
-2. **`briefing-swipe-file.md`** (handoff master) — index unico que consolida TODOS os briefings gerados ate aqui, e e o arquivo que voce passa pro Copy (`/copy-funil`) e pro Media Buyer. Atualizado a cada novo briefing gerado.
+1. Documento `projetos/{slug}/swipe/briefing-{tipo}-{data}.md` com 10-20 referencias organizadas (granular, por tipo)
+2. **`projetos/{slug}/swipe/briefing-swipe-file.md`** (handoff master) — index unico que consolida TODOS os briefings gerados ate aqui, e e o arquivo que voce passa pro Copy (`/copy-funil`) e pro Media Buyer. Atualizado a cada novo briefing gerado.
 
 Estrutura do `briefing-swipe-file.md`:
 

@@ -12,6 +12,18 @@ Extract a Google-spec [`DESIGN.md`](https://github.com/google-labs-code/design.m
 
 > **Standalone skill.** Self-contained — copy the `design-md/` folder into any Claude Code project's `.claude/skills/` and run `npm install` inside it. No host-repo coupling.
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou (rode `/offerbook` primeiro).
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+> **Nota (convenção de projeto):** esta skill tem pipeline próprio e gera em `outputs/design-md/{slug-da-url}/`. Ao terminar, **copie o `DESIGN.md` gerado para `projetos/{slug}/DESIGN.md`** — é de lá que as skills seguintes (página, e-mails, conteúdo) leem a identidade visual.
+
 ## When to invoke
 
 - User asks to "extract design from <URL>", "get a DESIGN.md from <site>", "rip the DS from <url>", or similar

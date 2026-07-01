@@ -14,20 +14,34 @@ Skill que estrutura a otimização de conversão de um funil pelo método do **A
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou (rode `/offerbook` primeiro).
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+---
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output anterior do funil. Confira que os arquivos existem:
+Esta skill parte do output anterior do funil. Primeiro descubra o projeto ativo (`ls projetos/`), depois confira que os arquivos existem:
 
 ```
-ls funil-*.md copy-*.md 2>/dev/null
+ls projetos/{slug}/funil.md projetos/{slug}/copy.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles (o `funil-*.md` te dá a estrutura do funil e as etapas a medir; o `copy-*.md`, a headline a testar).
+- Se existir(em), leia deles (o `projetos/{slug}/funil.md` te dá a estrutura do funil e as etapas a medir; o `projetos/{slug}/copy.md`, a headline a testar).
 - Se FALTAR, PARE e aponte a skill anterior:
 
-> Pra otimizar a conversão do funil eu preciso de `funil-*.md` (da skill `/metodo-funil`) e da headline em `copy-*.md` (da skill `/copy-funil`). Rode `/metodo-funil` primeiro e volte.
+> Pra otimizar a conversão do funil eu preciso de `projetos/{slug}/funil.md` (da skill `/metodo-funil`) e da headline em `projetos/{slug}/copy.md` (da skill `/copy-funil`). Rode `/metodo-funil` primeiro e volte.
 
 Não invente o que deveria vir da etapa anterior.
+
+> **Onde salvar:** o resultado desta skill sai em **`projetos/{slug}/cro.md`** (+ `.html`/`.pdf` quando gerar). Mesma pasta do projeto.
 
 ---
 

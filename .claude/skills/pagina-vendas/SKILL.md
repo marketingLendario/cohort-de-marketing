@@ -14,18 +14,31 @@ Skill que monta a **estrutura de uma página de vendas de alta conversão** pelo
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output das etapas anteriores — a **copy** (skill `/copy-funil`) e o **DESIGN.md** da sua marca (skill `/design-md`). Confira que os arquivos existem:
+Esta skill parte do output das etapas anteriores — a **copy** (skill `/copy-funil`) e o **DESIGN.md** da sua marca (skill `/design-md`). Todo o trabalho de um nicho vive em **`projetos/{slug}/`** (convenção de projeto acima).
+
+1. **Descubra o projeto ativo:** `ls projetos/ 2>/dev/null` — uma pasta → use-a; várias → pergunte qual; nenhuma → o funil ainda não começou.
+2. **Confira que os arquivos existem:**
 
 ```
-ls copy-*.md DESIGN.md 2>/dev/null
+ls projetos/{slug}/copy.md projetos/{slug}/DESIGN.md 2>/dev/null
 ```
 
 - Se existir(em), leia deles — a copy dá o texto real da página, o DESIGN.md dá a identidade visual.
 - Se FALTAR, PARE e aponte a skill que gera cada arquivo:
 
-> Pra montar a página eu preciso da `copy-*.md` (da skill `/copy-funil`) e do `DESIGN.md` (da skill `/design-md`). Rode `/copy-funil` e `/design-md` primeiro e volte.
+> Pra montar a página eu preciso do `projetos/{slug}/copy.md` (da skill `/copy-funil`) e do `projetos/{slug}/DESIGN.md` (da skill `/design-md`). Rode `/copy-funil` e `/design-md` primeiro e volte.
 
 Não invente o que deveria vir da etapa anterior (a copy, a identidade visual).
 
@@ -140,6 +153,8 @@ Pra cada pedido, entregar o **mapa estruturado da página**:
 5. **Checklist visual** — onde cada cor/fonte/logo do DESIGN.md entra.
 
 > A **copy final é você** quem escreve a partir do esqueleto. A skill estrutura a página e mapeia onde a sua identidade visual entra.
+
+> **Onde salvar:** o mapa/estrutura desta skill sai em **`projetos/{slug}/pagina/index.html`** (+ o mapa em `.md` na mesma subpasta, quando gerar). Mesma pasta do projeto.
 
 ---
 

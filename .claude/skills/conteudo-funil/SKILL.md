@@ -10,21 +10,35 @@ Pega os Reels virais de um criador de referência e gera roteiros de conteúdo n
 
 > **Skill irmã:** `/criativos-funil` é para ADS pagos (Biblioteca de Anúncios). Esta é para CONTEÚDO ORGÂNICO (Reels de criador → conteúdo na sua voz).
 
-## Gate de pré-requisito (execute ANTES de tudo)
-O conteúdo puxa o nicho e a identidade das etapas anteriores. Confira:
-```
-ls DESIGN.md offerbook-*.md 2>/dev/null
-```
-- Se existir(em), leia deles o nicho, o avatar e a identidade visual (o carrossel usa o DESIGN.md).
-- Se FALTAR o DESIGN.md, PARE e avise:
-> Pra montar os carrosséis eu preciso do `DESIGN.md` da sua marca (da skill `/design-md`). Rode `/design-md` primeiro e volte. (Os roteiros de Reels em texto eu consigo sem ele, mas o carrossel visual não.)
+## Onde salvar e ler — convenção de projeto
 
-(ignore briefing-offerbook.md)
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou (rode `/offerbook` primeiro).
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+## Gate de pré-requisito (execute ANTES de tudo)
+O conteúdo puxa o nicho e a identidade das etapas anteriores. Primeiro descubra o projeto ativo (`ls projetos/`), depois confira:
+```
+ls projetos/{slug}/DESIGN.md projetos/{slug}/offerbook.md 2>/dev/null
+```
+- Se existir(em), leia deles o nicho, o avatar e a identidade visual (o carrossel usa o `projetos/{slug}/DESIGN.md`).
+- Se FALTAR o `projetos/{slug}/DESIGN.md`, PARE e avise:
+> Pra montar os carrosséis eu preciso do `projetos/{slug}/DESIGN.md` da sua marca (da skill `/design-md`). Rode `/design-md` primeiro e volte. (Os roteiros de Reels em texto eu consigo sem ele, mas o carrossel visual não.)
+
+(ignore `projetos/{slug}/briefing-offerbook.md`)
+
+> **Onde salvar:** os roteiros de Reels desta skill saem em **`projetos/{slug}/conteudo/`** e os carrosséis (HTML + PNG) em **`projetos/{slug}/carrossel/`**. Mesma pasta do projeto.
 
 ## Ativação
-1. Defina qual criador de referência (@username do Instagram) e qual a VOZ/alvo.
-2. **Se não tiver um criador definido, SUGIRA você um** — proponha 1-3 criadores GRANDES que viralizam no nicho (com o @ e o porquê de cada um). Não deixe a skill travar por falta de referência: você indica, é só confirmar ou trocar. Se já rodou o `/espiao-do-concorrente` na Aula 1, use esse dossiê como ponto de partida.
-3. Confira a afinidade: a referência deve ser um player grande que viraliza, com afinidade temática com o seu nicho.
+1. **Pergunte em qual plataforma pesquisar** (e PARE até responder): **Instagram**, **YouTube**, **TikTok** ou **X (Twitter)** — pode ser mais de uma. É onde a skill vai caçar os conteúdos **mais em alta** do tema. Se o usuário não souber, recomende pelo formato: Reels curtos → Instagram/TikTok; vídeo longo/tutorial → YouTube; thread/texto → X.
+2. Defina qual criador de referência (@username) na(s) plataforma(s) escolhida(s) e qual a VOZ/alvo.
+3. **Se não tiver um criador definido, SUGIRA você um** — proponha 1-3 criadores GRANDES que viralizam no nicho naquela plataforma (com o @ e o porquê de cada um). Não deixe a skill travar por falta de referência: você indica, é só confirmar ou trocar. Se já rodou o `/espiao-do-concorrente` na Aula 1, use esse dossiê como ponto de partida.
+4. Confira a afinidade: a referência deve ser um player grande que viraliza, com afinidade temática com o seu nicho.
+5. **Colete os conteúdos MAIS EM ALTA do tema** na(s) plataforma(s) — tanto **vídeos/Reels** quanto **carrosséis** que viralizaram (ordene por views/engajamento). **Mostre a lista pro usuário ESCOLHER** quais quer modelar (curadoria) — só depois gere os roteiros. Não gere o lote sem a escolha dele.
 
 ## Conteúdo por estágio de funil (TOPO · MEIO · FUNDO — obrigatório)
 
@@ -63,7 +77,7 @@ Regra: use imagem **onde ela valoriza** (capa, prova, fecho) — não force foto
 1. Monte o carrossel como **1 arquivo HTML** com N slides — cada um uma `<section class="slide">` de **1080x1350**, aplicando os tokens do `DESIGN.md` (cores, fontes, logo). Legibilidade em 1º lugar (fonte grande, alto contraste).
 2. Use **imagens que chamem atenção** (foto real do público, textura/elemento gráfico da marca) coerentes com o design system.
 3. Exporte cada slide como PNG com `scripts/gerar_png.sh <arquivo>.html` (Chrome headless captura cada `.slide` em 1080x1350).
-4. Saída: `slide-01.png … slide-0N.png`, numerados e prontos pra subir no Instagram.
+4. Saída: `projetos/{slug}/carrossel/slide-01.png … slide-0N.png`, numerados e prontos pra subir no Instagram.
 
 ## A SUA voz (serve para você e para a sua marca)
 Escolha a voz conforme o tema da referência e o alvo. O conteúdo é gerado na SUA voz — a voz que representa você ou a sua marca. Calibre a voz em transcrições reais suas (falas, lives, vídeos que você já gravou), nunca em uma descrição genérica. Case o TEMA da referência com a voz/posicionamento certo (ex.: referência de mentalidade → tom mais reflexivo; referência de tráfego → tom mais técnico).
@@ -83,7 +97,7 @@ Se você não é técnico ou a ferramenta travou, vá pela trilha manual — ela
 4. **Analisar** — VIEWS = vencedor; identifique famílias de hook, estrutura e mecanismos de viralização. Consolide num arquivo de análise.
 5. **Amostra** — gere 1 roteiro na SUA voz e revise ANTES de produzir o lote.
 6. **Gerar** — cada roteiro modela 1 reel (hook + estrutura), com o tema adaptado ao seu negócio e a SUA voz calibrada na transcrição bruta das suas falas reais.
-7. **Entregar** — exporte os roteiros (ex.: para documento ou para o seu drive).
+7. **Entregar** — salve os roteiros em `projetos/{slug}/conteudo/` (e, se quiser, exporte também para documento ou para o seu drive).
 
 ## Trilha manual (sem scraper nem whisper)
 Alternativa completa à trilha automática, pensada pra quem não roda ferramenta. Em vez de raspar e transcrever, você observa os Reels na mão:

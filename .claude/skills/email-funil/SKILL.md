@@ -7,18 +7,31 @@ description: Gera emails de funil (convite, confirmação, lembrete, recap, nurt
 
 Gera emails HTML prontos para colar na sua ferramenta de disparo, aplicando o método de email do Alan Nicolas com a identidade visual da sua própria marca.
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou (rode `/offerbook` primeiro).
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+Esta skill parte do output das etapas anteriores do funil. Todo o trabalho de um nicho vive em `projetos/{slug}/` (convenção de projeto). Antes de qualquer coisa:
+
+1. **Descubra o projeto ativo:** `ls projetos/ 2>/dev/null` — uma pasta → use-a; várias → pergunte qual; nenhuma → o funil ainda não começou.
+2. **Confira que os arquivos das etapas anteriores existem:**
 
 ```
-ls DESIGN.md offerbook-*.md 2>/dev/null
+ls projetos/{slug}/DESIGN.md projetos/{slug}/offerbook.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles a identidade visual da sua marca (cores, fontes, header, footer, logo, assinatura) do `DESIGN.md` e o contexto da oferta (produto, transformação, tom) do `offerbook-*.md`.
+- Se existir(em), leia deles a identidade visual da sua marca (cores, fontes, header, footer, logo, assinatura) do `projetos/{slug}/DESIGN.md` e o contexto da oferta (produto, transformação, tom) do `projetos/{slug}/offerbook.md`.
 - Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
 
-> Pra gerar os emails com a cara da sua marca eu preciso do `DESIGN.md`, que sai da skill `/design-md` (e do `offerbook-*.md` pro contexto da oferta, da skill `/offerbook`). Rode `/design-md` primeiro; quando `DESIGN.md` existir, volte e rode esta skill de novo.
+> Pra gerar os emails com a cara da sua marca eu preciso do `projetos/{slug}/DESIGN.md`, que sai da skill `/design-md` (e do `projetos/{slug}/offerbook.md` pro contexto da oferta, da skill `/offerbook`). Rode `/design-md` primeiro; quando `projetos/{slug}/DESIGN.md` existir, volte e rode esta skill de novo.
 
 Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 
@@ -31,7 +44,7 @@ Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 ## Fluxo
 1. Pegue o briefing: **tipo** de email + **assunto** + **conteúdo** (o que comunicar) + **CTA** (texto + link/destino).
 2. Leia o seu `DESIGN.md` e monte o HTML aplicando as cores, fontes, header e footer da sua marca. Preencha os blocos: preheader, eyebrow, headline, subheadline, parágrafos, cards (opcional), CTA, fecho.
-3. Salve o arquivo no seu projeto (ex.: uma pasta de campanhas do seu negócio), nomeando por tipo e tema.
+3. Salve o arquivo em `projetos/{slug}/emails/`, nomeando por tipo e tema.
 4. Rode o **checklist** (abaixo) ANTES de entregar.
 5. Abra o HTML para você revisar — nunca dispare a copy sem você revisar.
 

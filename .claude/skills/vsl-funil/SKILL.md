@@ -12,18 +12,33 @@ Skill que estrutura um funil de VSL (Video Sales Letter) no modelo Direct Respon
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+> **Onde salvar:** o entregável desta skill sai em **`projetos/{slug}/vsl.md`** (+ `.html` e `.pdf`).
+
+---
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, descubra o **projeto ativo** (ver "convenção de projeto" acima) e confira que os arquivos existem dentro dele:
 
 ```
-ls copy-*.md offerbook-*.md 2>/dev/null
+ls projetos/ 2>/dev/null                                        # descobrir o projeto ativo (slug)
+ls projetos/{slug}/copy.md projetos/{slug}/offerbook.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles a copy base da VSL/página do `copy-*.md` e a oferta (dor, mecanismo do problema/solução, entregáveis, preço) do `offerbook-*.md`.
+- Se existir(em), leia deles a copy base da VSL/página do `projetos/{slug}/copy.md` e a oferta (dor, mecanismo do problema/solução, entregáveis, preço) do `projetos/{slug}/offerbook.md`.
 - Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
 
-> Pra estruturar o funil de VSL eu preciso da `copy-*.md`, que sai da skill `/copy-funil` (e do `offerbook-*.md` pra oferta, da skill `/offerbook`). Rode `/copy-funil` primeiro; quando `copy-*.md` existir, volte e rode esta skill de novo.
+> Pra estruturar o funil de VSL eu preciso da `projetos/{slug}/copy.md`, que sai da skill `/copy-funil` (e do `projetos/{slug}/offerbook.md` pra oferta, da skill `/offerbook`). Rode `/copy-funil` primeiro; quando `projetos/{slug}/copy.md` existir, volte e rode esta skill de novo.
 
 Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 

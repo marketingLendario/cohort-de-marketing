@@ -14,18 +14,31 @@ Skill que estrutura o **back-end** de um funil pelo método de **Alan Nicolas** 
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+Esta skill parte do output das etapas anteriores do funil. Todo o trabalho de um nicho vive em **`projetos/{slug}/`** (convenção de projeto acima).
+
+1. **Descubra o projeto ativo:** `ls projetos/ 2>/dev/null` — uma pasta → use-a; várias → pergunte qual; nenhuma → o funil ainda não começou.
+2. **Confira que os arquivos existem:**
 
 ```
-ls offerbook-*.md funil-*.md 2>/dev/null
+ls projetos/{slug}/offerbook.md projetos/{slug}/funil.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles a oferta (produto de entrada/front-end, produtos de back-end, ticket) do `offerbook-*.md` e a estrutura do funil do `funil-*.md`.
+- Se existir(em), leia deles a oferta (produto de entrada/front-end, produtos de back-end, ticket) do `offerbook.md` e a estrutura do funil do `funil.md`.
 - Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
 
-> Pra estruturar o back-end do funil eu preciso do `offerbook-*.md`, que sai da skill `/offerbook` (e do `funil-*.md` pra estrutura do funil, da skill `/metodo-funil`). Rode `/offerbook` primeiro; quando `offerbook-*.md` existir, volte e rode esta skill de novo.
+> Pra estruturar o back-end do funil eu preciso do `projetos/{slug}/offerbook.md`, que sai da skill `/offerbook` (e do `projetos/{slug}/funil.md` pra estrutura do funil, da skill `/metodo-funil`). Rode `/offerbook` primeiro; quando o `offerbook.md` existir, volte e rode esta skill de novo.
 
 Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 
@@ -144,6 +157,8 @@ Pra cada pedido de back-end, entregar um **plano estruturado**:
 
 > **Lacunas conhecidas** (KB §6): o termo **order bump** não é verbatim do Alan (inferido do princípio "mesmo frete" + momento de compra); e a fonte não traz métricas de MRR/recorrência nem CAC/payback. Sinalizar quando o pedido cair nessas áreas.
 
+> **Onde salvar:** o plano desta skill sai em **`projetos/{slug}/back-end.md`** (+ `.html`/`.pdf` quando gerar). Mesma pasta do projeto.
+
 ---
 
 ## Quando NÃO estruturar
@@ -163,7 +178,7 @@ Pra cada pedido de back-end, entregar um **plano estruturado**:
 
 ## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
 
-Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base `projetos/{slug}/back-end`:
 
 1. **`.md`** — o conteúdo (fonte de verdade).
 2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.

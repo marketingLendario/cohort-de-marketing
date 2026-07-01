@@ -14,18 +14,35 @@ Skill que **gera mockups visuais dos seus produtos e bônus** — a capa do eboo
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+> **Onde salvar:** os mockups e prompts desta skill saem na subpasta **`projetos/{slug}/mockups/`**.
+
+---
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, descubra o projeto ativo e confira que os arquivos existem dentro dele:
 
 ```
-ls DESIGN.md offerbook-*.md 2>/dev/null
+# 1. Descubra o projeto ativo:
+ls projetos/ 2>/dev/null
+# 2. Confira os arquivos dentro do projeto ativo:
+ls projetos/{slug}/DESIGN.md projetos/{slug}/offerbook.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles a identidade visual (cores, fontes, raio de borda, tom) do `DESIGN.md` e os entregáveis/bônus a mockupar do `offerbook-*.md`.
+- Se existir(em), leia deles a identidade visual (cores, fontes, raio de borda, tom) do `projetos/{slug}/DESIGN.md` e os entregáveis/bônus a mockupar do `projetos/{slug}/offerbook.md`.
 - Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
 
-> Pra gerar os mockups na cara da sua marca eu preciso do `DESIGN.md`, que sai da skill `/design-md` (e do `offerbook-*.md` pros entregáveis, da skill `/offerbook`). Rode `/design-md` primeiro; quando `DESIGN.md` existir, volte e rode esta skill de novo.
+> Pra gerar os mockups na cara da sua marca eu preciso do `projetos/{slug}/DESIGN.md`, que sai da skill `/design-md` (e do `projetos/{slug}/offerbook.md` pros entregáveis, da skill `/offerbook`). Rode `/design-md` primeiro; quando `projetos/{slug}/DESIGN.md` existir, volte e rode esta skill de novo.
 
 Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 

@@ -14,18 +14,31 @@ Skill que estrutura o **funil de recuperação**: a sequência que reconquista o
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output anterior do funil. Confira que os arquivos existem:
+Esta skill parte do output anterior do funil. Todo o trabalho de um nicho vive em **`projetos/{slug}/`** (convenção de projeto acima).
+
+1. **Descubra o projeto ativo:** `ls projetos/ 2>/dev/null` — uma pasta → use-a; várias → pergunte qual; nenhuma → o funil ainda não começou.
+2. **Confira que os arquivos existem:**
 
 ```
-ls offerbook-*.md copy-*.md 2>/dev/null
+ls projetos/{slug}/offerbook.md projetos/{slug}/copy.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles (o `offerbook-*.md` te dá o produto/oferta/ticket que trava no checkout; o `copy-*.md`, o argumento pra reconstruir na recuperação). Ignore `briefing-offerbook.md` — não é o entregável.
+- Se existir(em), leia deles (o `offerbook.md` te dá o produto/oferta/ticket que trava no checkout; o `copy.md`, o argumento pra reconstruir na recuperação).
 - Se FALTAR, PARE e aponte a skill anterior:
 
-> Pra montar a sequência de recuperação eu preciso de `offerbook-*.md` (da skill `/offerbook`) e de `copy-*.md` (da skill `/copy-funil`). Rode `/offerbook` primeiro e volte.
+> Pra montar a sequência de recuperação eu preciso de `projetos/{slug}/offerbook.md` (da skill `/offerbook`) e de `projetos/{slug}/copy.md` (da skill `/copy-funil`). Rode `/offerbook` primeiro e volte.
 
 Não invente o que deveria vir da etapa anterior.
 
@@ -133,6 +146,8 @@ Assim que o checkout começar a registrar os comportamentos, volte e rode `/recu
 4. **Plano de re-elevação** (pra qual nível jogar quem não converteu e por quê).
 5. **Mapa de disparos** (canal + momento por etapa) — com o texto marcado como tarefa de copy.
 
+> **Onde salvar:** a sequência desta skill sai em **`projetos/{slug}/recuperacao.md`** (+ `.html`/`.pdf` quando gerar). Mesma pasta do projeto.
+
 ---
 
 ## Veto conditions (NÃO prescrever se…)
@@ -151,7 +166,7 @@ Assim que o checkout começar a registrar os comportamentos, volte e rode `/recu
 
 ## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
 
-Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base `projetos/{slug}/recuperacao`:
 
 1. **`.md`** — o conteúdo (fonte de verdade).
 2. **`.html`** — versão estilizada no padrão visual do cohort (paleta dark + champagne, fontes Source Serif 4 + Inter, cards). Use o `offerbook-*.html` ou `relatorio-avatar.html` como referência de estilo. CSS inline, self-contained, sem emoji, português acentuado.

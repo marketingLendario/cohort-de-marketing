@@ -14,6 +14,18 @@ Skill que estrutura funil pelo **método de elevação de consciência do Alan N
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou (rode `/offerbook` primeiro).
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+---
+
 ## Como usar
 
 Quando você precisar montar/diagnosticar um funil ou decidir o tipo de funil/anúncio:
@@ -34,21 +46,22 @@ Quando você precisar montar/diagnosticar um funil ou decidir o tipo de funil/an
 
 Esta skill **parte do offerbook** (a oferta que você montou na Aula 01). Antes de diagnosticar ou prescrever qualquer funil:
 
-1. **Encontre o offerbook que a Aula 1 gerou e use-o** — NÃO peça o nome do produto, ele já está dentro do offerbook. A skill `/offerbook` salva como `offerbook-{slug}.md`:
+1. **Descubra o projeto ativo e leia o offerbook dele** — NÃO peça o nome do produto, ele já está dentro do offerbook. Primeiro descubra o projeto (`ls projetos/ 2>/dev/null`: uma pasta → use-a; várias → pergunte qual), depois leia o offerbook em `projetos/{slug}/offerbook.md`:
 
    ```
-   ls offerbook-*.md 2>/dev/null   # o offerbook real; ignore briefing-offerbook.md (é só o checklist de fontes)
+   ls projetos/ 2>/dev/null                        # descobre o(s) projeto(s)
+   ls projetos/{slug}/offerbook.md 2>/dev/null     # o offerbook real; ignore briefing-offerbook.md (é só o checklist de fontes)
    ```
 
-   - Se achar **um** `offerbook-*.md`, confirme com o aluno: *"Encontrei o offerbook `<arquivo>`. Uso esse?"* e **leia dele** o nicho, o produto/transformação, o ticket e o público.
-   - Se achar **vários**, liste-os e **pergunte qual usar**.
-   - Se o aluno apontar um arquivo específico, use esse.
+   - Se achar **um** projeto com `projetos/{slug}/offerbook.md`, confirme com o aluno: *"Encontrei o offerbook `projetos/{slug}/offerbook.md`. Uso esse?"* e **leia dele** o nicho, o produto/transformação, o ticket e o público.
+   - Se achar **vários** projetos, liste-os e **pergunte qual usar**.
+   - Se o aluno apontar um projeto específico, use esse.
 
-2. **Se NÃO existir nenhum `offerbook-*.md`**, PARE e exiba este aviso:
+2. **Se NÃO existir nenhum `projetos/{slug}/offerbook.md`**, PARE e exiba este aviso:
 
    > Pra montar o funil eu preciso do seu **offerbook** — é nele que está a oferta (dor, mecanismo, entregáveis, preço-âncora, bônus, garantia), e é dele que eu leio o produto e o público (você não precisa redigitar nada).
    >
-   > O offerbook é a **última etapa da Aula 1**. Se ainda não fez, rode a Aula 1 até o `/offerbook`; quando o `offerbook-{slug}.md` existir, volte e rode `/metodo-funil` de novo.
+   > O offerbook é a **última etapa da Aula 1**. Se ainda não fez, rode a Aula 1 até o `/offerbook`; quando o `projetos/{slug}/offerbook.md` existir, volte e rode `/metodo-funil` de novo.
 
    **Não prossiga sem offerbook. Não invente a oferta de cabeça.**
 
@@ -213,6 +226,8 @@ Execute nessa ordem. Cada skill usa o output da anterior.
 ---
 
 ## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
+
+> **Onde salvar:** o diagnóstico + mapa de execução desta skill saem em **`projetos/{slug}/funil.md`** (+ `.html`/`.pdf`), na pasta do projeto ativo (o mesmo de onde você leu o `projetos/{slug}/offerbook.md`).
 
 Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base:
 

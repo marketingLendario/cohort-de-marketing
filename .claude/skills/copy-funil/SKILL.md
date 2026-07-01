@@ -28,18 +28,23 @@ escrita**, nao como sistemas que precisam existir no seu projeto.
 
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output anterior — o **offerbook** que você montou na etapa da oferta. Confira que o arquivo existe:
+Esta skill parte do output anterior — o **offerbook** que você montou na etapa da oferta. Todo o trabalho de um nicho vive em **`projetos/{slug}/`** (convenção de projeto — ver a skill `/offerbook`).
+
+1. **Descubra o projeto ativo:** `ls projetos/ 2>/dev/null` — uma pasta → use-a; várias → pergunte qual; nenhuma → o funil ainda não começou.
+2. **Confira o offerbook:**
 
 ```
-ls offerbook-*.md 2>/dev/null   # o offerbook real; ignore briefing-offerbook.md (é só o checklist de fontes)
+ls projetos/{slug}/offerbook.md 2>/dev/null
 ```
 
 - Se existir, leia dele o produto, o avatar, o mecanismo, a oferta e o público — não peça de novo o que já está lá.
 - Se FALTAR, PARE e aponte a skill que gera o arquivo:
 
-> Pra escrever a copy eu preciso do `offerbook-{slug}.md` (da skill `/offerbook`). Rode `/offerbook` primeiro e volte.
+> Pra escrever a copy eu preciso do `projetos/{slug}/offerbook.md` (da skill `/offerbook`). Rode `/offerbook` primeiro e volte.
 
 Não invente o que deveria vir da etapa anterior (a oferta, o avatar, o mecanismo).
+
+> **Onde salvar:** a copy desta skill sai em **`projetos/{slug}/copy.md`** (+ `.html`/`.pdf` quando gerar). Mesma pasta do projeto.
 
 ## Gate de compliance — nicho sensível
 

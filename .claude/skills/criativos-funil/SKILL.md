@@ -10,18 +10,37 @@ Pipeline que vai de "modelar os ads de um concorrente" até "roteiros de ad pron
 
 Método baseado no **método do Alan Nicolas**: o concorrente já validou o que funciona (com o dinheiro dele). Você espiona o que está no ar há mais tempo, extrai a estrutura por trás do sucesso e remodela na sua própria voz — sem copiar, e sem reinventar a roda do zero.
 
+---
+
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+> **Onde salvar:** os roteiros de criativo desta skill saem na subpasta **`projetos/{slug}/criativos/`**.
+
+---
+
 ## Gate de pré-requisito (execute ANTES de tudo)
 
-Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, confira que os arquivos existem no seu projeto:
+Esta skill parte do output das etapas anteriores do funil. Antes de qualquer coisa, descubra o projeto ativo e confira que os arquivos existem dentro dele:
 
 ```
-ls offerbook-*.md DESIGN.md 2>/dev/null
+# 1. Descubra o projeto ativo:
+ls projetos/ 2>/dev/null
+# 2. Confira os arquivos dentro do projeto ativo:
+ls projetos/{slug}/offerbook.md projetos/{slug}/DESIGN.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles a oferta (mecanismo único, produto, vilão/inimigo) do `offerbook-*.md` e a identidade visual (cores, fontes, tom) do `DESIGN.md`.
+- Se existir(em), leia deles a oferta (mecanismo único, produto, vilão/inimigo) do `projetos/{slug}/offerbook.md` e a identidade visual (cores, fontes, tom) do `projetos/{slug}/DESIGN.md`.
 - Se FALTAR algum, PARE e exiba um aviso claro apontando qual skill rodar antes:
 
-> Pra gerar os criativos eu preciso do `offerbook-*.md` (da skill `/offerbook`) e do `DESIGN.md` (da skill `/design-md`). Rode `/offerbook` e `/design-md` primeiro; quando os dois existirem, volte e rode esta skill de novo.
+> Pra gerar os criativos eu preciso do `projetos/{slug}/offerbook.md` (da skill `/offerbook`) e do `projetos/{slug}/DESIGN.md` (da skill `/design-md`). Rode `/offerbook` e `/design-md` primeiro; quando os dois existirem, volte e rode esta skill de novo.
 
 Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 
