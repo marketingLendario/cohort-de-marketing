@@ -245,7 +245,7 @@ PEÇA           SKILL              O QUE ENTREGA
 03 Copy        /copy-funil        copy dos PLCs, página de inscrição, bullets, CTA
 04 Email       /email-funil       sequências: anúncio de PLC + abertura + carrinho + fechamento
 05 Página      /design-md +       identidade visual + página de inscrição/checkout
-               /pagina-vendas
+               /pagina-vendas-funil
 ```
 
 O lançamento é a **peça 02** do nível 5 (alternativa ao advertorial+VSL): vem depois da oferta existir. A **copy** sai da `/copy-funil` e os **e-mails** da `/email-funil`.

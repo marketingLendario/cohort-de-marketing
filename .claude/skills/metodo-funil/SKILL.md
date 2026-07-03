@@ -49,7 +49,7 @@ Quando você precisar montar/diagnosticar um funil ou decidir o tipo de funil/an
 3. **Rodar o diagnóstico de consciência** (Passo 1 abaixo) — é o gate que decide tudo.
 4. **Prescrever** funil + anúncio + conteúdo + oferta + página, seguindo o método.
 5. **Revisar a estrutura antes de executar** — nunca subir/rodar nada sem revisar.
-6. **Copy você escreve** com a sua skill de copy: se precisar de copy da página/VSL/e-mails, use a sua skill de copy (não escrever de cabeça). A oferta sai da skill `/offerbook`; os e-mails, da skill `/email-funil`.
+6. **Copy em 2 camadas**: a **fundação** (Big Idea, mecanismos, banco de headlines/bullets) sai da `/copy-funil` e vira a fonte única `copy.md`; a **copy aplicada** de cada peça (página, VSL, quiz, e-mails) é gerada na skill da própria peça, lendo o `copy.md` (não escrever de cabeça). A oferta sai da skill `/offerbook`; os e-mails, da skill `/email-funil`.
 
 ---
 
@@ -109,7 +109,7 @@ Esta skill **parte do offerbook** (a oferta que você montou na Aula 01). Antes 
 | Lançamento / PLF | `/lancamento-funil` | 5 |
 | Webinário / aula | `/webinario-funil` | 4 e 3 |
 | Quiz / diagnóstico | `/quiz-funil` | 4 |
-| Página de vendas | `/pagina-vendas` | 2 e 1 |
+| Página de vendas | `/pagina-vendas-funil` | 2 e 1 |
 
 ---
 
@@ -209,15 +209,22 @@ PEÇA            SKILL             O QUE ENTREGA
    (formato)    nível 5 → /advertorial-funil ou /lancamento-funil (+ /vsl-funil)
                 nível 4 → /webinario-funil ou /quiz-funil
                 nível 3 → /webinario-funil
-                nível 2-1 → /pagina-vendas
-03 Copy         /copy-funil       hooks, headline, bullets, CTA, objeções
+                nível 2-1 → /pagina-vendas-funil
+03 Copy         /copy-funil       fundação da copy (Big Idea, mecanismos, banco de
+                                  headlines/bullets) → copy.md, a fonte única; a copy
+                                  APLICADA de cada peça é gerada na skill da própria
+                                  peça a partir do copy.md
 04 Página       /design-md        identidade visual da sua marca
-                /pagina-vendas    estrutura da página/checkout usando a copy
-                /mockup-produto   mockups dos produtos/bônus na identidade da marca
+                /pagina-vendas-funil    estrutura da página/checkout + copy aplicada (do copy.md)
+                /mockup-produto-funil   mockups dos produtos/bônus na identidade da marca
+                ← ordem é lei: a página/peça SÓ se monta com a FUNDAÇÃO da
+                  copy aprovada (copy.md, do 03); a copy aplicada da peça
+                  nasce na própria skill da peça, a partir dessa fundação.
+                  Nunca montar peça sem copy.md aprovado.
 05 Email        /email-funil      sequência nutrição → venda → recuperação
 06 Conteúdo     /conteudo-funil   Reels + carrosséis + stories por estágio
-07 Back-end     /back-end         upsell / OTO / downsell / janela 4h / LTV
-08 Recuperação  /recuperacao      carrinho / cartão recusado / boleto / re-elevação
+07 Back-end     /backend-funil         upsell / OTO / downsell / janela 4h / LTV
+08 Recuperação  /recuperacao-funil      carrinho / cartão recusado / boleto / re-elevação
 09 Teste        /cro-funil        KPIs por etapa + A/B headline + quando escalar
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Execute nessa ordem. Cada skill usa o output da anterior.
@@ -262,6 +269,12 @@ Salve os 3 e confirme ao final. Nunca entregar só o `.md`.
 
 ---
 
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+
 ## Ao terminar — SEMPRE diga o próximo passo
 
 Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
@@ -269,3 +282,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

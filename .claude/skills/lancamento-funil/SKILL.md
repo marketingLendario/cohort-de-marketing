@@ -48,6 +48,32 @@ Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 
 ---
 
+## Gate de adequação — o funil prescrito é este? (executar ANTES de montar)
+
+Leia `projetos/{slug}/funil.md` (a prescrição do /metodo-funil). Se o funil prescrito NÃO for este formato, AVISE o desalinhamento — mostre o nível de consciência e o perfil de ticket que este formato exige vs. o que foi prescrito — e PERGUNTE antes de seguir: pode ser legítimo (funil futuro, funil paralelo de escala), mas nunca montar por engano. Sem `funil.md` → rode /metodo-funil primeiro (ou pergunte o nível de consciência do público).
+
+**Este formato serve:** nível 5 COM lista/audiência própria pra aquecer.
+
+---
+
+## Copy aplicada — gerada NESTA skill a partir do copy.md
+
+> **Sem travessão (—) na copy (regra dura).** Travessão é cara de texto de IA. Em TODA copy voltada ao cliente final (headline, bullet, página, e-mail, mensagem, roteiro), reescreva com ponto, vírgula ou dois-pontos. Vale pra copy aplicada gerada por esta skill.
+
+> **Pendências do dono em UM lugar só.** Sempre que esta skill deixar um placeholder pro dono ([DONO ...], [A PREENCHER], [PLUG ...], [SEM PROVA AINDA], [N]), registre/atualize a entrada correspondente em **`projetos/{slug}/pendencias.md`** (+ `.html` com checklist clicável; crie se não existir): O QUÊ decidir, ONDE aparece (arquivos afetados) e COMO resolver. Agrupar por DECISÃO (1 decisão resolve vários arquivos), não por arquivo. Quando o dono informar um valor, atualizar TODOS os arquivos afetados de uma vez e marcar o item. O `/status-funil` lê esse arquivo.
+>
+> **Book do Funil (o hub do projeto) + fecho obrigatório:** o projeto tem um hub único em **`projetos/{slug}/index.html`, o Book do Funil**: cards clicáveis de TODAS as peças já geradas, agrupados por fase (Pesquisa · Oferta e Fundação · Peças do funil · Próximas peças), cada card com badge de status (feito / em revisão / ação do dono / fila), e a seção de **pendências + mapa NO FINAL** do Book. **Todo DOCUMENTO interno gerado** (mapas, docs de copy, índices, checklists, roteiros: tudo que é do dono, nunca as páginas do lead) leva no topo um link fixo **"← Book do Funil"** de volta pro hub — de qualquer peça se volta pro Book com 1 clique. Ao terminar a skill: (1) **atualize o card da sua peça no Book** E o status da peça no mapa (`funil.md` + `funil.html`): o "VOCÊ ESTÁ AQUI" tem que apontar SEMPRE pro ponto real do dono, nunca pra etapa já vencida (crie o Book se ainda não existir, na identidade do DESIGN.md); (2) encerre com *"Preencha as pendências"* e **abra o Book no navegador** — dele o dono chega a qualquer peça e ao `pendencias.html` (checklist com CAMPO DE RESPOSTA em cada item e o botão "Copiar respostas pro Claude"). Instrua o dono: preencher os campos, clicar em Copiar respostas e COLAR de volta no chat. **Ao receber as respostas coladas, atualize todos os arquivos afetados, marque os itens no `pendencias.md`, REGENERE o `pendencias.html` refletindo o estado novo (placar aplicadas/parciais/abertas; itens aplicados em verde com o valor; parciais em laranja com o que falta; abertos com campo de resposta) e ABRA o html atualizado — o dono precisa VER o que continua pendente, não só ler no chat.**
+
+> **Rastreamento: a página nasce PIXEL-READY; os IDs entram na Aula 3 (Tráfego).** Nenhuma página do funil nasce cega, mas esta etapa também não cria fricção: **NÃO mande o aluno pro Gerenciador de Eventos agora.** Toda página gerada já sai com os snippets de **Meta Pixel** (recomendado: é o que constrói a audiência de remarketing) e **GTM** (opcional: gerencia tags sem mexer em código; junto com o Pixel dá o melhor rastreamento) **prontos porém COMENTADOS** no `<head>` (+ `<noscript>` após `<body>`), com placeholders `[PLUG: SEU_PIXEL_ID]` / `[PLUG: GTM-XXXXXXX]` e os eventos-padrão da peça já ligados no código. Diga ao aluno em 1 linha: *"a página já nasce pronta pra rastreamento; os IDs a gente cria e pluga na Aula 3 (Tráfego): é colar 2 códigos e descomentar"*. Exceção: se o aluno JÁ tiver Pixel/GTM, pergunte os IDs e entregue plugado. Lembrete de LGPD: aviso de cookies/consentimento é responsabilidade do aluno. Os eventos alimentam a planilha de KPIs do `/cro-funil`. Eventos desta peça: PageView por PLC (1, 2, 3: segmenta remarketing por consumo) · Lead (captação) · abertura de carrinho · InitiateCheckout.
+
+> **SEM barra de revisão dentro da página (a navegação mora no Book).** A página do lead NÃO leva barra de revisão, atalhos internos nem elemento de bastidor: a navegação entre as peças (copy, mapa, quiz, e-mails, pendências) fica no **Book do Funil** (`projetos/{slug}/index.html`), fora da página. Página de venda só carrega o que o LEAD deve ver.
+
+> **Slot de vídeo nasce com roteiro (copy aplicada do vídeo).** Página com vídeo NUNCA fica só com placeholder: gere também o ROTEIRO do vídeo (gancho, espelho/narrativa, mecanismo, convite, fecho; com fala pronta, texto na tela e notas de gravação) a partir do `copy.md`, como HTML próprio na pasta `pagina/`. Nesta skill cada PLC é um vídeo: os roteiros dos 3 PLCs saem como HTML próprios em `pagina/plc-1-roteiro.html` (2, 3), e cada página de PLC inclui o botão "Ver roteiro do vídeo" DENTRO do slot do player. O dono grava a partir do roteiro e troca o slot pelo player.
+
+Se `projetos/{slug}/copy.md` existe (fundação da copy aprovada no /copy-funil: Big Idea, mecanismos, voz/léxico, banco de headlines e bullets, objeções), esta skill GERA a copy aplicada da sua peça a partir dele — os roteiros dos PLCs e a sequência de carrinho. O aluno NÃO volta pro /copy-funil pra isso. Se `copy.md` NÃO existe, aponte /copy-funil (a fundação) e PERGUNTE se o aluno quer seguir só com a estrutura. A copy aplicada obedece: Big Idea e mecanismos do copy.md · voz e léxico do avatar · regra de honestidade de prova (`[SEM PROVA AINDA]`) · compliance de nicho sensível. Depois de aplicada, a peça pode ser auditada na fase de validação do /copy-funil (nota Hopkins + checklist Sugarman).
+
+---
+
 ## O que é (e o que NÃO é)
 
 | É | NÃO é |
@@ -91,7 +117,7 @@ Quando você pedir pra montar/estruturar um lançamento, um PLF, uma sequência 
 4. **Escolher o tipo de lançamento** (semente / interno / parceria) pela tabela do KB.
 5. **Rodar as 5 fases** abaixo, preenchendo cada bloco com o caso real e montando a **régua de dias**.
 6. **Entregar a estrutura completa + a régua** pra você aprovar — NUNCA subir/disparar/agendar nada sem OK. A skill só estrutura.
-7. **A copy você escreve com a `/copy-funil` e os e-mails com a `/email-funil`** — não de cabeça. A skill estrutura o lançamento e mapeia o que entra em cada PLC e cada e-mail; a redação fina é trabalho da copy.
+7. **A copy aplicada é gerada nesta skill** a partir do `projetos/{slug}/copy.md` (fundação do /copy-funil): roteiros dos PLCs e sequência de carrinho — o aluno revisa e aprova. Os e-mails saem com a `/email-funil`; nunca de cabeça.
 
 ---
 
@@ -238,10 +264,10 @@ Entregar sempre neste formato, preenchido com o caso real:
 [quais entram em cada fase]
 
 ## Próxima peça
-- Copy de cada PLC/página → /copy-funil
+- Copy aplicada dos PLCs e da sequência de carrinho → gerada nesta skill a partir do copy.md
 - Sequência de e-mails (anúncio + carrinho) → /email-funil
 - Oferta/Launch Stack → /offerbook
-- Página de inscrição/checkout → /pagina-vendas (+ /design-md)
+- Página de inscrição/checkout → /pagina-vendas-funil (+ /design-md)
 ```
 
 ---
@@ -253,9 +279,9 @@ Entregar sempre neste formato, preenchido com o caso real:
 3. **Estrutura das 5 fases** — cada uma com esqueleto/placeholder pra preencher.
 4. **Os 3 PLCs** detalhados (esqueleto de cada).
 5. **Distribuição dos 9 gatilhos** ao longo da régua.
-6. **Encaixe no funil** — quais skills escrevem a copy e os e-mails.
+6. **Encaixe no funil** — de onde vem a copy aplicada e quem escreve os e-mails.
 
-> A **copy final é você** quem escreve, com a `/copy-funil` (PLCs/página) e a `/email-funil` (sequências). A skill estrutura o lançamento e a régua.
+> A **copy aplicada** (roteiros dos PLCs + sequência de carrinho) é gerada nesta skill a partir do `copy.md` — você revisa e aprova. Os e-mails saem da `/email-funil`. A skill também estrutura o lançamento e a régua.
 
 ---
 
@@ -272,10 +298,10 @@ Entregar sempre neste formato, preenchido com o caso real:
 | Situação | Ação |
 |----------|------|
 | Você **não tem lista/audiência** nem vai captar uma | PARAR → o caso é `/advertorial-funil` + `/vsl-funil` (tráfego frio direto), não lançamento |
-| Público não é nível 5 (já é consciente da solução/produto) | PARAR → provavelmente é `/pagina-vendas` ou `/webinario-funil`, não lançamento de aquecimento |
+| Público não é nível 5 (já é consciente da solução/produto) | PARAR → provavelmente é `/pagina-vendas-funil` ou `/webinario-funil`, não lançamento de aquecimento |
 | Oferta/offerbook não existe | PARAR → construir a oferta antes (`/offerbook`): sem Launch Stack não há o que abrir no carrinho |
 | Não há data de carrinho | PARAR → a escassez real (abre/fecha) é o motor; definir a data primeiro |
-| Pediram a copy/os e-mails prontos | Escrever com `/copy-funil` (PLCs/página) e `/email-funil` (sequências), não de cabeça |
+| Pediram a copy/os e-mails prontos | PLCs e sequência de carrinho: gerar nesta skill a partir do `copy.md` (sem `copy.md` → /copy-funil primeiro); e-mails com `/email-funil` — nunca de cabeça |
 | Vão disparar sem revisar | PARAR → revisar a estrutura e a régua primeiro |
 
 ---
@@ -288,19 +314,17 @@ Estágio 5 (frio, COM lista) → Funil: Lançamento / PLF
 PEÇA           SKILL              O QUE ENTREGA
 01 Offerbook   /offerbook         oferta, Launch Stack, mecanismo, ancoragem  ← precisa existir antes
 02 Lançamento  /lancamento-funil  ESTA SKILL — a régua do PLF (pré-pré → PLCs → carrinho → fechamento)
-03 Copy        /copy-funil        copy dos PLCs, página de inscrição, bullets, CTA
+03 Copy        /copy-funil        FUNDAÇÃO da copy (copy.md); a copy aplicada dos PLCs sai desta skill
 04 Email       /email-funil       sequências: anúncio de PLC + abertura + carrinho + fechamento
 05 Página      /design-md +       identidade visual + página de inscrição/checkout
-               /pagina-vendas
+               /pagina-vendas-funil
 ```
 
-O lançamento é a **peça 02** do nível 5 (alternativa ao advertorial+VSL): vem depois da oferta existir. A **copy** sai da `/copy-funil` e os **e-mails** da `/email-funil`.
+O lançamento é a **peça 02** do nível 5 (alternativa ao advertorial+VSL): vem depois da oferta existir. A **fundação da copy** (copy.md) sai da `/copy-funil`; a **copy aplicada** dos PLCs e da sequência de carrinho é gerada nesta skill a partir dela; os **e-mails** saem da `/email-funil`.
 
 ---
 
-*Skill lancamento-funil v1 — funil de topo do nível 5 (com lista) no método do Alan Nicolas. Modela o Product Launch Formula (Jeff Walker) e os níveis de consciência (Eugene Schwartz). Estrutura genérica; a copy sai da `/copy-funil` e os e-mails da `/email-funil`. Toda montagem calibra no KB-lancamento-funil.md.*
-</content>
-</invoke>
+*Skill lancamento-funil v1 — funil de topo do nível 5 (com lista) no método do Alan Nicolas. Modela o Product Launch Formula (Jeff Walker) e os níveis de consciência (Eugene Schwartz). Estrutura genérica; a copy aplicada dos PLCs e da sequência de carrinho é gerada nesta skill a partir do copy.md (fundação do /copy-funil); os e-mails saem da `/email-funil`. Toda montagem calibra no KB-lancamento-funil.md.*
 
 ---
 
@@ -320,6 +344,12 @@ Salve os 3 e confirme ao final. Nunca entregar só o `.md`.
 
 ---
 
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+
 ## Ao terminar — SEMPRE diga o próximo passo
 
 Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
@@ -327,3 +357,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

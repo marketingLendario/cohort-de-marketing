@@ -54,10 +54,10 @@ ls projetos/{slug}/avatar.md \
 | 3 | Diagnóstico do funil | `funil.md` | `/metodo-funil` |
 | 4 | Copy | `copy.md` | `/copy-funil` |
 | 5 | Identidade visual | `DESIGN.md` | `/design-md` |
-| 6 | Página de vendas | `pagina/` | `/pagina-vendas` |
+| 6 | Página de vendas | `pagina/` | `/pagina-vendas-funil` |
 | 7 | E-mails | `emails/` | `/email-funil` |
 | 8 | Conteúdo | `conteudo/` | `/conteudo-funil` |
-| 9 | Recuperação | `recuperacao.md` | `/recuperacao` |
+| 9 | Recuperação | `recuperacao.md` | `/recuperacao-funil` |
 | 10 | CRO / teste | `cro.md` | `/cro-funil` |
 
 > As peças de formato alternativo (`vsl.md`, `advertorial.md`, `quiz.md`, `webinario.md`, `lancamento.md`, `whatsapp.md`, `criativos/`, `mockups/`, `back-end.md`) entram conforme o `/metodo-funil` prescrever — se existirem, liste-as também.
@@ -80,7 +80,7 @@ Funil: {slug}   ({N}/10 peças)
 [ ] 9. Recuperação     recuperacao.md
 [ ] 10. CRO            cro.md
 
-Próximo passo: rode /pagina-vendas — monta a página de vendas com a copy + o DESIGN.md.
+Próximo passo: rode /pagina-vendas-funil — monta a página de vendas com a copy + o DESIGN.md.
 ```
 
 Sempre termine com a linha **"Próximo passo:"** apontando a skill da primeira peça que falta. Se estiver tudo pronto (10/10), diga que o funil está completo e sugira `/cro-funil` pra otimizar quando tiver dados.
@@ -92,3 +92,12 @@ Sempre termine com a linha **"Próximo passo:"** apontando a skill da primeira p
 **SEMPRE:** só ler (nunca criar/alterar) · marcar `[x]`/`[ ]` pela existência real do arquivo · apontar "você está aqui" na primeira lacuna · fechar com o próximo passo.
 
 **NUNCA:** inventar que uma peça existe sem checar o arquivo · alterar qualquer peça · pular a descoberta do projeto ativo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.
+
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+

@@ -24,7 +24,7 @@ Fora desses níveis o webinário é o funil errado:
 
 ## 1. As 5 peças do funil
 
-1. **Página de registro** — captura nome + e-mail + WhatsApp. Enxuta: promessa (fórmula "como [resultado] em [tempo] sem [objeção]"), data/hora, o que vai aprender, 1 prova. Estrutura via `/pagina-vendas` (versão curta), visual via `DESIGN.md`. `[ALAN+BRUNSON]`
+1. **Página de registro** — captura nome + e-mail + WhatsApp. Enxuta: promessa (fórmula "como [resultado] em [tempo] sem [objeção]"), data/hora, o que vai aprender, 1 prova. Estrutura via `/pagina-vendas-funil` (versão curta), visual via `DESIGN.md`. `[ALAN+BRUNSON]`
 2. **Sequência de aquecimento** — do registro ao "estamos ao vivo" (§5). Sobe o **show rate**, que é a alavanca de faturamento. `[HAYNES+WALKER]`
 3. **Roteiro do webinário** — Perfect Webinar em 5 fases (§3). `[BRUNSON]`
 4. **Oferta + checkout** — stack de valor, ancoragem, bônus, garantia, escassez real (§4). Sai do `offerbook`. `[HORMOZI+ALAN]`
@@ -152,7 +152,7 @@ O carrinho não fecha quando a apresentação acaba — **50% das vendas vêm de
 | Antes do deadline | "última chance — encerra hoje" + o que ele perde + link direto |
 
 - **Escassez real:** o carrinho/bônus realmente fecha. Falsa escassez destrói a confiança que o webinário construiu. `[WALKER]`
-- **Recuperação:** carrinho abandonado / cartão recusado / boleto não pago → entra no `/recuperacao` (re-elevar pro nível 4). `[ALAN]`
+- **Recuperação:** carrinho abandonado / cartão recusado / boleto não pago → entra no `/recuperacao-funil` (re-elevar pro nível 4). `[ALAN]`
 
 ---
 

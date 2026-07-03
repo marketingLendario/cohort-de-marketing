@@ -1,6 +1,6 @@
 # KB — Funil de Recuperação (método de re-elevação de consciência)
 
-> **Fonte de verdade da skill `/recuperacao`.** Base de conhecimento sobre a sequência de recuperação de um funil — o que fazer quando o lead chega no checkout e não compra.
+> **Fonte de verdade da skill `/recuperacao-funil`.** Base de conhecimento sobre a sequência de recuperação de um funil — o que fazer quando o lead chega no checkout e não compra.
 >
 > **Nada inventado.** O método e as citações entre aspas são **verbatim** do criador da aula que originou este framework (limpeza mínima de ruído de fala da transcrição). Onde a fonte não cobre, está marcado como lacuna — não preencher de cabeça.
 

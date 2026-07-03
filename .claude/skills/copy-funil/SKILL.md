@@ -1,19 +1,22 @@
 ---
 name: copy-funil
 description: |
-  Pipeline de copy de alta conversão que você roda no seu próprio projeto. Você + a IA
-  escrevem cada peça aplicando os frameworks dos copywriters lendários (Schwartz, Ogilvy,
-  Halbert, Hopkins, Kennedy, Sugarman e outros) como método e referência.
+  A FUNDAÇÃO da copy do funil — o cérebro da mensagem, não a fábrica de peças. Você + a IA
+  constroem o diagnóstico (Schwartz), a Big Idea + mecanismos (Todd Brown), o banco de
+  headlines (Halbert) e bullets (Bencivenga) e a validação (Hopkins + checklist Sugarman),
+  aplicando os copywriters lendários como método e referência.
 
-  Fluxo research-first em fases: Fundação (diagnóstico) -> Estratégia (avatar + oferta) ->
-  Criação (headlines + bullets) -> Peça principal (VSL ou carta de vendas) -> Email ->
-  Validação. Você revisa em pontos de checkpoint antes de avançar.
+  O resultado vira a fonte única de mensagem do projeto: projetos/{slug}/copy.md.
+  A copy APLICADA de cada peça (perguntas do quiz, roteiro de VSL, página, e-mails)
+  é gerada na skill da própria peça (/quiz-funil, /vsl-funil, /pagina-vendas-funil,
+  /email-funil) a partir do copy.md — não aqui.
 
   3 fluxos: Lançamento Completo, Tráfego Pago e Otimização de Funil. Escolha por
   Matriz de Decisão de 5 perguntas.
 
-  Use quando: criar copy de alta conversão, lançamentos de produto, campanhas de
-  marketing direto, sales pages, VSLs, sequências de email ou otimizar funis existentes.
+  Use quando: construir a fundação de copy de alta conversão (diagnóstico, Big Idea,
+  mecanismos, banco de headlines/bullets), validar/auditar copy existente ou otimizar
+  funis existentes.
 ---
 
 # Copy de Funil — Pipeline de Alta Conversão
@@ -25,6 +28,26 @@ resultado em cada fase antes de seguir.
 
 Não é preciso ter nenhum squad ou agente instalado: os copywriters entram como **método de
 escrita**, não como sistemas que precisam existir no seu projeto.
+
+## Escopo — o cérebro da copy, não a fábrica de peças
+
+A copy do funil tem **2 camadas**:
+
+1. **FUNDAÇÃO** (esta skill): o diagnóstico de Schwartz, a Big Idea + mecanismos, a voz/léxico do avatar, o banco de headlines e bullets, e a validação Hopkins/Sugarman. Sai daqui e vira a **fonte única** `projetos/{slug}/copy.md`.
+2. **APLICAÇÃO** (skills das peças): a copy final de cada peça — perguntas do quiz, roteiro de VSL, e-mails, página — é gerada **dentro da skill de cada peça**, lendo o `copy.md`.
+
+**O que esta skill entrega:** a fundação (Fases 1-3) em `projetos/{slug}/copy.md` + a **validação** (Fase 6) sobre as peças depois que elas existem.
+
+**O que foi movido pras skills das peças** (todas lendo o `copy.md`):
+
+| Peça | Onde a copy aplicada nasce |
+|------|----------------------------|
+| Roteiro de VSL | `/vsl-funil` |
+| E-mails | `/email-funil` |
+| Página de vendas | `/pagina-vendas-funil` |
+| Quiz (perguntas, diagnósticos, resultado) | `/quiz-funil` |
+
+Isso mata o ping-pong entre skills: o aluno constrói a fundação UMA vez aqui, e cada peça nasce já com a copy aplicada — sem voltar pra cá (só volta pra **validar** a peça pronta, Fase 6).
 
 ## Gate de pré-requisito (execute ANTES de tudo)
 
@@ -85,9 +108,13 @@ Lancamento Completo:
     | VOCE REVISA (aprovar Big Idea + Mecanismo)
   Fase 3: Criacao       Headlines (Halbert) + Bullets (Bencivenga)
     | VOCE REVISA (aprovar headlines + bullets)
-  Fase 4: Peca Principal VSL (Jon Benson) OU carta de vendas (Halbert)
+    -> fundacao aprovada = copy.md (fonte unica)
+  Fase 4: Peca Principal VSL (Jon Benson) OU carta (Halbert)
+    -> RODA NA SKILL DA PECA (/vsl-funil, /pagina-vendas-funil), lendo o copy.md
   Fase 5: Email          Sequencia (Andre Chaperon / Soap Opera)
+    -> RODA NA /email-funil, lendo o copy.md
   Fase 6: Validacao      Auditoria cientifica (Hopkins) + checklist de gatilhos (Sugarman)
+    -> volta pra ESTA skill, sobre as pecas prontas
 ```
 
 ## Coleta de Informações (obrigatória — todas as 5 perguntas)
@@ -127,6 +154,7 @@ Apresente a recomendação. Você pode trocar o fluxo se quiser.
 - **Você revisa nos checkpoints.** Antes de avançar das fases marcadas, leia a saída e aprove ou peça ajuste.
 
 ### Princípios de copy (sempre respeitar)
+- Sem travessão (—) em nenhuma peça de copy: é cara de texto de IA. Use ponto, vírgula ou dois-pontos, ou reescreva a frase.
 - Não escreva headline antes de diagnosticar o nível de consciência.
 - Não pule o diagnóstico de Schwartz em tráfego frio.
 - Sugarman é gatilho de **checklist**, não de escrita (use para auditar, não para redigir).
@@ -196,7 +224,9 @@ Apresente a recomendação. Você pode trocar o fluxo se quiser.
 
 ---
 
-### Fase 4: Peça Principal (baseada em Q5)
+### Fase 4: Peça Principal (baseada em Q5) — EXECUTADA NA SKILL DA PEÇA
+
+> **Onde roda agora:** esta fase **não roda mais aqui**. Com a fundação aprovada no `copy.md`, o roteiro de VSL nasce na `/vsl-funil` e a página na `/pagina-vendas-funil` — cada uma lendo o `copy.md`. Os métodos abaixo ficam documentados aqui como **referência** pra essas skills aplicarem.
 
 Se Q5=VSL -> método Jon Benson. Se Q5=Carta de Vendas ou padrão -> método Gary Halbert.
 
@@ -209,7 +239,9 @@ Se Q5=VSL -> método Jon Benson. Se Q5=Carta de Vendas ou padrão -> método Gar
 
 ---
 
-### Fase 5: Email (Soap Opera Sequence)
+### Fase 5: Email (Soap Opera Sequence) — EXECUTADA NA /email-funil
+
+> **Onde roda agora:** esta fase **não roda mais aqui**. Os e-mails nascem na `/email-funil`, lendo a fundação do `copy.md`. O método abaixo fica documentado como **referência** pra essa skill aplicar.
 
 **Método Andre Chaperon** (Soap Opera Sequence)
 - Partindo da peça principal + avatar + Big Idea + oferta:
@@ -251,10 +283,10 @@ Para funis EXISTENTES com dados.
 ## Finalização
 
 ### Resumo
-Apresente: fluxo usado, respostas da matriz de decisão, todas as peças criadas, nota Hopkins, contagem Sugarman, frameworks aplicados, próximos passos (revisar, implementar mudanças, montar testes A/B, lançar).
+Apresente: fluxo usado, respostas da matriz de decisão, a fundação criada (diagnóstico, Big Idea + mecanismos, banco de headlines/bullets no `copy.md`), nota Hopkins e contagem Sugarman (quando a validação rodou), frameworks aplicados.
 
 ### Próximos Passos
-Ofereça: revisar uma peça em detalhe, refazer uma fase, iniciar um fluxo complementar.
+**O próximo passo é rodar a skill da peça do funil prescrito** (ex.: `/quiz-funil`, `/pagina-vendas-funil`, `/vsl-funil`, `/email-funil`) — ela gera a peça JÁ com a copy aplicada, lendo o `copy.md`. Ofereça também: revisar a fundação em detalhe, refazer uma fase, ou voltar aqui depois pra validar as peças prontas (Fase 6).
 
 ## Notas
 - Comunicação entre fases sempre por arquivos do seu projeto (não por mensagens).
@@ -280,6 +312,12 @@ Salve os 3 e confirme ao final. Nunca entregar só o `.md`.
 
 ---
 
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+
 ## Ao terminar — SEMPRE diga o próximo passo
 
 Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
@@ -287,3 +325,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

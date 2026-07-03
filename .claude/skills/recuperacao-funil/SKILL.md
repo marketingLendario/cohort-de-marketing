@@ -1,6 +1,6 @@
 ---
 name: recuperacao
-description: "Estrutura a sequência de recuperação de um funil — o que fazer quando o lead chega no checkout e não compra. Cada comportamento tem uma abordagem diferente: carrinho abandonado, cartão recusado, boleto gerado, downsell e re-elevação de consciência (jogar o lead de volta pro nível do problema). Funciona pelo princípio de que recuperar um lead que já chegou no checkout é mais barato do que adquirir um lead novo. Use quando precisar montar/diagnosticar a recuperação de um funil, decidir como abordar cada tipo de lead que não converteu, ou estruturar a cascata de re-engajamento. A skill estrutura a sequência — o texto final de cada mensagem é trabalho de copy."
+description: "Estrutura a sequência de recuperação de um funil — o que fazer quando o lead chega no checkout e não compra. Cada comportamento tem uma abordagem diferente: carrinho abandonado, cartão recusado, boleto gerado, downsell e re-elevação de consciência (jogar o lead de volta pro nível do problema). Funciona pelo princípio de que recuperar um lead que já chegou no checkout é mais barato do que adquirir um lead novo. Use quando precisar montar/diagnosticar a recuperação de um funil, decidir como abordar cada tipo de lead que não converteu, ou estruturar a cascata de re-engajamento. A skill estrutura a sequência e gera a copy aplicada das mensagens a partir do copy.md (quando ele existe); o aluno revisa e aprova."
 user_invocable: true
 ---
 
@@ -30,6 +30,16 @@ Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). 
 - **Recomendados:** `avatar.md` (objeções reais de quem não comprou) e `espiao/dossie-*.md` (quebra de objeção com as brechas do concorrente).
 
 Se faltar o obrigatório, aponte a skill que o gera (`/offerbook`) e PERGUNTE se o aluno quer seguir mesmo assim.
+
+## Copy aplicada — gerada NESTA skill a partir do copy.md
+
+> **Sem travessão (—) na copy (regra dura).** Travessão é cara de texto de IA. Em TODA copy voltada ao cliente final (headline, bullet, página, e-mail, mensagem, roteiro), reescreva com ponto, vírgula ou dois-pontos. Vale pra copy aplicada gerada por esta skill.
+
+> **Pendências do dono em UM lugar só.** Sempre que esta skill deixar um placeholder pro dono ([DONO ...], [A PREENCHER], [PLUG ...], [SEM PROVA AINDA], [N]), registre/atualize a entrada correspondente em **`projetos/{slug}/pendencias.md`** (+ `.html` com checklist clicável; crie se não existir): O QUÊ decidir, ONDE aparece (arquivos afetados) e COMO resolver. Agrupar por DECISÃO (1 decisão resolve vários arquivos), não por arquivo. Quando o dono informar um valor, atualizar TODOS os arquivos afetados de uma vez e marcar o item. O `/status-funil` lê esse arquivo.
+>
+> **Book do Funil (o hub do projeto) + fecho obrigatório:** o projeto tem um hub único em **`projetos/{slug}/index.html`, o Book do Funil**: cards clicáveis de TODAS as peças já geradas, agrupados por fase (Pesquisa · Oferta e Fundação · Peças do funil · Próximas peças), cada card com badge de status (feito / em revisão / ação do dono / fila), e a seção de **pendências + mapa NO FINAL** do Book. **Todo DOCUMENTO interno gerado** (mapas, docs de copy, índices, checklists, roteiros: tudo que é do dono, nunca as páginas do lead) leva no topo um link fixo **"← Book do Funil"** de volta pro hub — de qualquer peça se volta pro Book com 1 clique. Ao terminar a skill: (1) **atualize o card da sua peça no Book** E o status da peça no mapa (`funil.md` + `funil.html`): o "VOCÊ ESTÁ AQUI" tem que apontar SEMPRE pro ponto real do dono, nunca pra etapa já vencida (crie o Book se ainda não existir, na identidade do DESIGN.md); (2) encerre com *"Preencha as pendências"* e **abra o Book no navegador** — dele o dono chega a qualquer peça e ao `pendencias.html` (checklist com CAMPO DE RESPOSTA em cada item e o botão "Copiar respostas pro Claude"). Instrua o dono: preencher os campos, clicar em Copiar respostas e COLAR de volta no chat. **Ao receber as respostas coladas, atualize todos os arquivos afetados, marque os itens no `pendencias.md`, REGENERE o `pendencias.html` refletindo o estado novo (placar aplicadas/parciais/abertas; itens aplicados em verde com o valor; parciais em laranja com o que falta; abertos com campo de resposta) e ABRA o html atualizado — o dono precisa VER o que continua pendente, não só ler no chat.**
+
+Se `projetos/{slug}/copy.md` existe (fundação da copy aprovada no `/copy-funil`: Big Idea, mecanismos, voz/léxico, banco de headlines e bullets, objeções), esta skill GERA a copy aplicada da sua peça a partir dele — o texto final das mensagens da cascata de recuperação. O aluno NÃO volta pro `/copy-funil` pra isso. Se o `copy.md` NÃO existe, aponte `/copy-funil` (a fundação) e PERGUNTE se o aluno quer seguir só com a estrutura. A copy aplicada obedece: Big Idea e mecanismos do `copy.md` · voz e léxico do avatar · regra de honestidade de prova (**[SEM PROVA AINDA]**) · compliance de nicho sensível. Depois de aplicada, a peça pode ser auditada na fase de validação do `/copy-funil` (nota Hopkins + checklist Sugarman).
 
 ## Gate de pré-requisito (execute ANTES de tudo)
 
@@ -63,7 +73,7 @@ Não invente o que deveria vir da etapa anterior.
 3. **Diagnostique cada comportamento** que aparece no seu funil (Passo a passo abaixo).
 4. **Monte a cascata** de recuperação, do lead mais quente ao mais frio.
 5. **Apresente a estrutura pra você revisar/aprovar** antes de implementar qualquer disparo.
-6. **Escreva (ou mande escrever) a copy** de cada mensagem depois — a skill estrutura a sequência; o texto final é trabalho de copy.
+6. **Gere a copy aplicada de cada mensagem nesta skill**, a partir do `projetos/{slug}/copy.md` (quando ele existe) — você revisa e aprova o texto final.
 
 ---
 
@@ -93,9 +103,12 @@ Quase sempre o aluno está ANTES do primeiro lançamento — o checkout ainda n�
    - carrinho abandonado → integração checkout ↔ e-mail/WhatsApp (automatizador) capturando o contato antes do pagamento.
    - downsell e re-nutrição → automação de e-mail/WhatsApp com a lista segmentada por comportamento.
 
-Assim que o checkout começar a registrar os comportamentos, volte e rode `/recuperacao` de novo pra ativar a cascata com os dados reais.
+Assim que o checkout começar a registrar os comportamentos, volte e rode `/recuperacao-funil` de novo pra ativar a cascata com os dados reais.
 
 ---
+
+
+> **Toda mensagem sai SEPARADA e com botão Copiar (regra dura).** Além do documento da peça, cada mensagem individual sai em arquivo próprio pronto pra usar: e-mail = 1 HTML por e-mail no padrão do disparador (tabela, inline, preheader, merge tags) com um botão flutuante "Copiar HTML do e-mail" que copia o código LIMPO (o botão remove a si mesmo do que é copiado); WhatsApp/DM = página com as mensagens em texto, botão "Copiar texto" em cada uma. Tudo listado num índice clicável (`emails/index.html` ou equivalente). O dono nunca precisa garimpar copy dentro de documento: é clicar, copiar, colar.
 
 ## Processo passo a passo
 
@@ -104,7 +117,7 @@ Assim que o checkout começar a registrar os comportamentos, volte e rode `/recu
 3. **Definir a abordagem** correspondente (tom, gatilho de tempo, incentivo: desconto / troca de pagamento / nada).
 4. **Encadear a cascata** do mais quente ao mais frio (KB §4): cartão recusado → boleto → carrinho abandonado → downsell → re-nutrição.
 5. **Definir a re-elevação** pra quem não converteu em nada: jogar o lead pro **nível 4 (problema)** num funil de nutrição que reativa a dor.
-6. **Mapear os disparos** (canal + momento) pra cada etapa — deixando o **texto da mensagem como tarefa de copy separada**.
+6. **Mapear os disparos** (canal + momento) pra cada etapa — e **gerar a copy aplicada de cada mensagem a partir do `copy.md`** (quando ele existe), pra você revisar.
 7. **Apresentar a estrutura pra você aprovar.**
 
 ---
@@ -141,7 +154,7 @@ Assim que o checkout começar a registrar os comportamentos, volte e rode `/recu
 
 **SEMPRE:** distinguir o comportamento antes de escolher a abordagem · tratar cartão recusado diferente de carrinho abandonado · começar pela abordagem mais quente e descer a cascata · re-elevar pro nível 4 (problema) quem não converteu · apresentar a estrutura pra revisão antes de disparar.
 
-**NUNCA:** mandar a mesma mensagem pra todo mundo que não comprou · pressionar quem está só com objeção (carrinho) como se fosse cartão recusado · esquecer o downsell pra quem não fecha no ticket cheio · escrever a copy final dentro da skill (é tarefa de copy separada) · disparar nada sem você aprovar.
+**NUNCA:** mandar a mesma mensagem pra todo mundo que não comprou · pressionar quem está só com objeção (carrinho) como se fosse cartão recusado · esquecer o downsell pra quem não fecha no ticket cheio · entregar copy aplicada sem você revisar e aprovar (a skill gera a partir do `copy.md`; a aprovação é sua) · disparar nada sem você aprovar.
 
 **Honestidade de prova:** nunca invente depoimento, número, case ou citação nas mensagens de recuperação — prova vem do `offerbook.md`/pesquisa. Sem prova → garantia/bastidor/transparência e marque **[SEM PROVA AINDA]**; nicho regulado → linguagem de possibilidade (gate de compliance do offerbook).
 
@@ -153,7 +166,7 @@ Assim que o checkout começar a registrar os comportamentos, volte e rode `/recu
 2. **Abordagem prescrita** pra cada comportamento (tom, tempo, incentivo).
 3. **Cascata de recuperação** ordenada do mais quente ao mais frio.
 4. **Plano de re-elevação** (pra qual nível jogar quem não converteu e por quê).
-5. **Mapa de disparos** (canal + momento por etapa) — com o texto marcado como tarefa de copy.
+5. **Mapa de disparos** (canal + momento por etapa) — com a copy aplicada de cada mensagem gerada nesta skill a partir do `copy.md` (quando ele existe), pra você revisar e aprovar.
 
 > **Onde salvar:** a sequência desta skill sai em **`projetos/{slug}/recuperacao.md`** (+ `.html`/`.pdf` quando gerar). Mesma pasta do projeto.
 
@@ -164,30 +177,36 @@ Assim que o checkout começar a registrar os comportamentos, volte e rode `/recu
 | Situação | Ação |
 |----------|------|
 | Você não sabe quais comportamentos seu checkout rastreia | PARAR → levantar isso primeiro (é o gate) |
-| Pediram a copy pronta das mensagens | Estruturar a sequência e deixar o texto como tarefa de copy separada |
+| Pediram a copy pronta das mensagens | Gerar a copy aplicada a partir do `copy.md`; se ele não existir, apontar `/copy-funil` e perguntar se segue só com a estrutura |
 | Vão disparar sem você aprovar | PARAR → apresentar a estrutura, esperar o OK |
 
 ---
 
-*Skill recuperacao v1 — método de funil de recuperação / re-elevação de consciência. Toda prescrição calibra no KB. A skill estrutura a sequência; o texto final de cada mensagem é trabalho de copy.*
+*Skill recuperacao v1 — método de funil de recuperação / re-elevação de consciência. Toda prescrição calibra no KB. A skill estrutura a sequência e gera a copy aplicada a partir do copy.md (quando ele existe); o aluno revisa e aprova.*
 
 ---
 
 ## Output nos 3 formatos (md + html + pdf) — igual à Aula 1
 
-Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base `projetos/{slug}/recuperacao`:
+Todo entregável desta skill sai em **3 formatos**, com o mesmo nome-base `projetos/{slug}/recuperacao` (convenção da pasta):
 
 1. **`.md`** — o conteúdo (fonte de verdade).
 2. **`.html`** — versão estilizada aplicando os **tokens do `projetos/{slug}/DESIGN.md` da marca do aluno** (cores, fontes, borda/raio, tamanho, logo). NUNCA use um tema fixo/genérico (dark, champagne, "padrão do cohort", template pronto) — a identidade é sempre a do `DESIGN.md`. Legibilidade conforme o público (nichos 50+/acessibilidade → fonte grande ≥18px, alto contraste). CSS inline, self-contained, sem emoji, português acentuado. Se não houver `DESIGN.md`, gere-o com `/design-md` antes.
 3. **`.pdf`** — gerado a partir do html:
 
    ```
-   bash .claude/skills/recuperacao/scripts/gerar_pdf.sh <arquivo>.html
+   bash .claude/skills/recuperacao-funil/scripts/gerar_pdf.sh <arquivo>.html
    ```
 
 Salve os 3 e confirme ao final. Nunca entregar só o `.md`.
 
 ---
+
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
 
 ## Ao terminar — SEMPRE diga o próximo passo
 
@@ -196,3 +215,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

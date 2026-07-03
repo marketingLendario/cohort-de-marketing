@@ -163,7 +163,7 @@ PEÇA           SKILL              O QUE ENTREGA
 02 Advertorial /advertorial-funil ESTA SKILL — pré-venda editorial que aquece o frio
 03 VSL         /vsl-funil         a oferta (pra onde o advertorial leva)
 04 Copy        /copy-funil        lead editorial, narrativa, bullets, transição, CTA
-05 Página      /pagina-vendas     a página de oferta (se o destino for página, não VSL)
+05 Página      /pagina-vendas-funil     a página de oferta (se o destino for página, não VSL)
 ```
 
 O advertorial é a **peça 02**: vem depois da oferta existir e antes (ou no lugar de topo) da VSL. A **copy** de cada fase sai da `/copy-funil`.

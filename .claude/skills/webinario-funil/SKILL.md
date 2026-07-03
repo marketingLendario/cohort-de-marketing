@@ -1,6 +1,6 @@
 ---
 name: webinario-funil
-description: "Estrutura o funil completo de um webinário/aula ao vivo (ou evergreen) que vende — do registro ao fechamento — pelo método do Alan Nicolas, com base teórica em Russell Brunson (Perfect Webinar), Jeff Walker (PLF) e Jason Fladlien (9 gatilhos). É o funil de meio prescrito pelo metodo-funil para público NÍVEL 4 (sente a dor, não sabe que há solução) e NÍVEL 3 (consciente da solução). Entrega as 5 peças: página de registro, sequência de aquecimento (e-mail + WhatsApp), roteiro do webinário (abertura/promessa → 3 segredos → transição → stack da oferta → fechamento/escassez) e pós-webinário (replay + e-mails de venda). Use quando precisar montar um webinário, aula ao vivo, palestra ou masterclass que vende, estruturar um funil de webinário, ou escrever o roteiro de uma apresentação de vendas one-to-many. A copy final você escreve com /copy-funil e /email-funil; a identidade visual da página vem do seu DESIGN.md."
+description: "Estrutura o funil completo de um webinário/aula ao vivo (ou evergreen) que vende — do registro ao fechamento — pelo método do Alan Nicolas, com base teórica em Russell Brunson (Perfect Webinar), Jeff Walker (PLF) e Jason Fladlien (9 gatilhos). É o funil de meio prescrito pelo metodo-funil para público NÍVEL 4 (sente a dor, não sabe que há solução) e NÍVEL 3 (consciente da solução). Entrega as 5 peças: página de registro, sequência de aquecimento (e-mail + WhatsApp), roteiro do webinário (abertura/promessa → 3 segredos → transição → stack da oferta → fechamento/escassez) e pós-webinário (replay + e-mails de venda). Use quando precisar montar um webinário, aula ao vivo, palestra ou masterclass que vende, estruturar um funil de webinário, ou escrever o roteiro de uma apresentação de vendas one-to-many. A copy aplicada do roteiro e das páginas é gerada nesta skill a partir do copy.md (fundação do /copy-funil); os e-mails saem do /email-funil; a identidade visual da página vem do seu DESIGN.md."
 user_invocable: true
 ---
 
@@ -46,6 +46,32 @@ Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 
 ---
 
+## Gate de adequação — o funil prescrito é este? (executar ANTES de montar)
+
+Leia `projetos/{slug}/funil.md` (a prescrição do /metodo-funil). Se o funil prescrito NÃO for este formato, AVISE o desalinhamento — mostre o nível de consciência e o perfil de ticket que este formato exige vs. o que foi prescrito — e PERGUNTE antes de seguir: pode ser legítimo (funil futuro, funil paralelo de escala), mas nunca montar por engano. Sem `funil.md` → rode /metodo-funil primeiro (ou pergunte o nível de consciência do público).
+
+**Este formato serve:** níveis 4 e 3, ticket acima de R$ 1.000, venda one-to-many.
+
+---
+
+## Copy aplicada — gerada NESTA skill a partir do copy.md
+
+> **Sem travessão (—) na copy (regra dura).** Travessão é cara de texto de IA. Em TODA copy voltada ao cliente final (headline, bullet, página, e-mail, mensagem, roteiro), reescreva com ponto, vírgula ou dois-pontos. Vale pra copy aplicada gerada por esta skill.
+
+> **Pendências do dono em UM lugar só.** Sempre que esta skill deixar um placeholder pro dono ([DONO ...], [A PREENCHER], [PLUG ...], [SEM PROVA AINDA], [N]), registre/atualize a entrada correspondente em **`projetos/{slug}/pendencias.md`** (+ `.html` com checklist clicável; crie se não existir): O QUÊ decidir, ONDE aparece (arquivos afetados) e COMO resolver. Agrupar por DECISÃO (1 decisão resolve vários arquivos), não por arquivo. Quando o dono informar um valor, atualizar TODOS os arquivos afetados de uma vez e marcar o item. O `/status-funil` lê esse arquivo.
+>
+> **Book do Funil (o hub do projeto) + fecho obrigatório:** o projeto tem um hub único em **`projetos/{slug}/index.html`, o Book do Funil**: cards clicáveis de TODAS as peças já geradas, agrupados por fase (Pesquisa · Oferta e Fundação · Peças do funil · Próximas peças), cada card com badge de status (feito / em revisão / ação do dono / fila), e a seção de **pendências + mapa NO FINAL** do Book. **Todo DOCUMENTO interno gerado** (mapas, docs de copy, índices, checklists, roteiros: tudo que é do dono, nunca as páginas do lead) leva no topo um link fixo **"← Book do Funil"** de volta pro hub — de qualquer peça se volta pro Book com 1 clique. Ao terminar a skill: (1) **atualize o card da sua peça no Book** E o status da peça no mapa (`funil.md` + `funil.html`): o "VOCÊ ESTÁ AQUI" tem que apontar SEMPRE pro ponto real do dono, nunca pra etapa já vencida (crie o Book se ainda não existir, na identidade do DESIGN.md); (2) encerre com *"Preencha as pendências"* e **abra o Book no navegador** — dele o dono chega a qualquer peça e ao `pendencias.html` (checklist com CAMPO DE RESPOSTA em cada item e o botão "Copiar respostas pro Claude"). Instrua o dono: preencher os campos, clicar em Copiar respostas e COLAR de volta no chat. **Ao receber as respostas coladas, atualize todos os arquivos afetados, marque os itens no `pendencias.md`, REGENERE o `pendencias.html` refletindo o estado novo (placar aplicadas/parciais/abertas; itens aplicados em verde com o valor; parciais em laranja com o que falta; abertos com campo de resposta) e ABRA o html atualizado — o dono precisa VER o que continua pendente, não só ler no chat.**
+
+> **Rastreamento: a página nasce PIXEL-READY; os IDs entram na Aula 3 (Tráfego).** Nenhuma página do funil nasce cega, mas esta etapa também não cria fricção: **NÃO mande o aluno pro Gerenciador de Eventos agora.** Toda página gerada já sai com os snippets de **Meta Pixel** (recomendado: é o que constrói a audiência de remarketing) e **GTM** (opcional: gerencia tags sem mexer em código; junto com o Pixel dá o melhor rastreamento) **prontos porém COMENTADOS** no `<head>` (+ `<noscript>` após `<body>`), com placeholders `[PLUG: SEU_PIXEL_ID]` / `[PLUG: GTM-XXXXXXX]` e os eventos-padrão da peça já ligados no código. Diga ao aluno em 1 linha: *"a página já nasce pronta pra rastreamento; os IDs a gente cria e pluga na Aula 3 (Tráfego): é colar 2 códigos e descomentar"*. Exceção: se o aluno JÁ tiver Pixel/GTM, pergunte os IDs e entregue plugado. Lembrete de LGPD: aviso de cookies/consentimento é responsabilidade do aluno. Os eventos alimentam a planilha de KPIs do `/cro-funil`. Eventos desta peça: PageView · CompleteRegistration (inscrição) · show-up (clique no link da sala) · **chegou_na_oferta** (minuto do pitch, pixel pra remarketing) · InitiateCheckout.
+
+> **SEM barra de revisão dentro da página (a navegação mora no Book).** A página do lead NÃO leva barra de revisão, atalhos internos nem elemento de bastidor: a navegação entre as peças (copy, mapa, quiz, e-mails, pendências) fica no **Book do Funil** (`projetos/{slug}/index.html`), fora da página. Página de venda só carrega o que o LEAD deve ver.
+
+> **Slot de vídeo nasce com roteiro (copy aplicada do vídeo).** Página com vídeo NUNCA fica só com placeholder: gere também o ROTEIRO do vídeo (gancho, espelho/narrativa, mecanismo, convite, fecho; com fala pronta, texto na tela e notas de gravação) a partir do `copy.md`, como HTML próprio na pasta `pagina/`. Nesta skill o vídeo é o próprio webinário (o script é lei): o roteiro completo sai como HTML próprio em `pagina/webinario-roteiro.html`, e toda página gerada com vídeo (registro, obrigado, replay) inclui o botão "Ver roteiro do vídeo" DENTRO do slot. O dono grava a partir do roteiro e troca o slot pelo player.
+
+Se `projetos/{slug}/copy.md` existe (fundação da copy aprovada no /copy-funil: Big Idea, mecanismos, voz/léxico, banco de headlines e bullets, objeções), esta skill GERA a copy aplicada da sua peça a partir dele — o roteiro do webinário e as páginas de registro/obrigado. O aluno NÃO volta pro /copy-funil pra isso. Se `copy.md` NÃO existe, aponte /copy-funil (a fundação) e PERGUNTE se o aluno quer seguir só com a estrutura. A copy aplicada obedece: Big Idea e mecanismos do copy.md · voz e léxico do avatar · regra de honestidade de prova (`[SEM PROVA AINDA]`) · compliance de nicho sensível. Depois de aplicada, a peça pode ser auditada na fase de validação do /copy-funil (nota Hopkins + checklist Sugarman).
+
+---
+
 ## Como usar
 
 Quando você pedir pra montar um webinário, uma aula ao vivo que vende ou o funil de uma masterclass:
@@ -62,7 +88,7 @@ Quando você pedir pra montar um webinário, uma aula ao vivo que vende ou o fun
    - **Formato:** ao vivo, evergreen ou híbrido
 4. **Montar as 5 peças do funil** (registro → aquecimento → roteiro → pós) seguindo o framework.
 5. **Entregar a estrutura pra você aprovar** — NUNCA subir/agendar/disparar nada sem OK. A skill só estrutura.
-6. **A copy você escreve depois:** o roteiro do webinário e a copy da página saem com `/copy-funil`; os e-mails de aquecimento e de venda, com `/email-funil`; a identidade visual da página de registro vem do seu `DESIGN.md` (skill `/design-md`).
+6. **A copy aplicada é gerada nesta skill** a partir do `projetos/{slug}/copy.md` (fundação do /copy-funil): o roteiro do webinário e as páginas de registro/obrigado — o aluno revisa e aprova. Os e-mails de aquecimento e de venda saem com `/email-funil`; a identidade visual da página de registro vem do seu `DESIGN.md` (skill `/design-md`).
 
 ---
 
@@ -91,11 +117,11 @@ Monte nesta ordem. Cada peça tem sua skill responsável.
 
 | # | Peça | O que entrega | Skill / fonte |
 |---|------|---------------|---------------|
-| 1 | **Página de registro** | captura nome + e-mail + WhatsApp; promessa + data/hora + o que vai aprender | `/design-md` (visual) + `/pagina-vendas` (estrutura enxuta) + `/copy-funil` (copy) |
+| 1 | **Página de registro** | captura nome + e-mail + WhatsApp; promessa + data/hora + o que vai aprender | `/design-md` (visual) + `/pagina-vendas-funil` (estrutura enxuta) + `/copy-funil` (copy) |
 | 2 | **Sequência de aquecimento** | e-mails + WhatsApp do registro até o "estamos ao vivo" — sobe show rate | `/email-funil` + `/whatsapp-funil` |
 | 3 | **Roteiro do webinário** | a apresentação fase a fase (abertura → 3 segredos → transição → stack → fechamento) | esta skill (estrutura) + `/copy-funil` (falas) |
-| 4 | **Oferta + checkout** | stack de valor, ancoragem, bônus, garantia, escassez real, CTA | `offerbook` / `/oferta-funil` + `/pagina-vendas` |
-| 5 | **Pós-webinário** | replay + sequência de e-mails de venda até o fechamento do carrinho | `/email-funil` + `/recuperacao` |
+| 4 | **Oferta + checkout** | stack de valor, ancoragem, bônus, garantia, escassez real, CTA | `offerbook` / `/oferta-funil` + `/pagina-vendas-funil` |
+| 5 | **Pós-webinário** | replay + sequência de e-mails de venda até o fechamento do carrinho | `/email-funil` + `/recuperacao-funil` |
 
 ---
 
@@ -143,7 +169,7 @@ O carrinho não fecha quando o webinário acaba. Sequência-modelo (KB §6):
 | Dia seguinte | recap do que foi ensinado + estudo de caso de quem comprou + deadline |
 | Antes do deadline | "última chance — encerra hoje" + o que ele perde + link direto |
 
-> A oferta do webinário tem **escassez real** (fecha o carrinho / bônus do ao vivo expira) — nunca falsa. Escassez fabricada destrói a confiança que o webinário construiu. Carrinho recusado / boleto / abandono → entra no `/recuperacao`.
+> A oferta do webinário tem **escassez real** (fecha o carrinho / bônus do ao vivo expira) — nunca falsa. Escassez fabricada destrói a confiança que o webinário construiu. Carrinho recusado / boleto / abandono → entra no `/recuperacao-funil`.
 
 ---
 
@@ -151,7 +177,7 @@ O carrinho não fecha quando o webinário acaba. Sequência-modelo (KB §6):
 
 **SEMPRE:** diagnosticar nível (4 ou 3) antes de montar · oferta/offerbook pronta ANTES do roteiro · definir o Big Domino antes de escrever · cada segredo quebra uma objeção (com estudo de caso) · 70-80% conteúdo no nível 4 / 60% no nível 3 · escassez **real** · sequência de aquecimento pra subir show rate · sequência de pós-webinário pra fechar (50% das vendas vêm depois/no último dia) · você revisa a estrutura antes de qualquer coisa.
 
-**NUNCA:** webinário sem oferta definida · oferta esmagando o conteúdo (morno foge) · depoimento puro como prova central (isso é nível 2) · escassez falsa · mandar nível 5/2/1 pro webinário (funil errado — ver Veto) · "ensinar tudo" a ponto da pessoa não precisar comprar · subir/agendar/disparar sem você revisar · escrever a copy de cabeça (use `/copy-funil` e `/email-funil`).
+**NUNCA:** webinário sem oferta definida · oferta esmagando o conteúdo (morno foge) · depoimento puro como prova central (isso é nível 2) · escassez falsa · mandar nível 5/2/1 pro webinário (funil errado — ver Veto) · "ensinar tudo" a ponto da pessoa não precisar comprar · subir/agendar/disparar sem você revisar · escrever a copy de cabeça (a copy aplicada sai do `copy.md`; e-mails com `/email-funil`).
 
 ---
 
@@ -162,11 +188,11 @@ Pra cada pedido, entregar:
 1. **Diagnóstico** — nível (4 ou 3) + justificativa + tipo de webinário (educativo vs solução).
 2. **Big Domino** + os **3 segredos** mapeados (qual crença cada um quebra).
 3. **Mapa das 5 peças** — registro → aquecimento → roteiro → oferta → pós, cada uma com a skill responsável e o esqueleto a preencher.
-4. **Roteiro fase a fase** (as 5 fases, com tempos e o que entra em cada bloco — placeholders pra você escrever as falas com `/copy-funil`).
+4. **Roteiro fase a fase** (as 5 fases, com tempos e o que entra em cada bloco — com as falas geradas nesta skill a partir do `copy.md`, pra você revisar).
 5. **Sequências** — aquecimento (e-mail + WhatsApp) e pós-webinário (replay + venda), como esqueleto pra `/email-funil`.
 6. **Checklist** pré / durante / pós-webinário (KB §7).
 
-> A **copy final é você** quem escreve a partir do esqueleto. A skill estrutura o funil e o roteiro; `/copy-funil` e `/email-funil` escrevem as falas e os e-mails; o `DESIGN.md` dá a identidade visual da página.
+> A **copy aplicada** (roteiro + páginas de registro/obrigado) é gerada nesta skill a partir do `copy.md` — você revisa e aprova. `/email-funil` escreve os e-mails; o `DESIGN.md` dá a identidade visual da página.
 
 > **Onde salvar:** a estrutura desta skill sai em **`projetos/{slug}/webinario.md`** (+ `.html`/`.pdf` quando gerar). Mesma pasta do projeto.
 
@@ -188,7 +214,7 @@ PEÇA            SKILL                  O QUE ENTREGA
 06 Teste        cro-funil                                show rate, conversão, A/B
 ```
 
-> O webinário se conecta ao funil amplo: a **página de registro** usa a estrutura de `/pagina-vendas` (enxuta — só promessa, data e captura), a **oferta** vem do `offerbook`, e a **recuperação** roda no `/recuperacao`. Este skill é a peça que faltava entre o diagnóstico e a venda para o público morno.
+> O webinário se conecta ao funil amplo: a **página de registro** usa a estrutura de `/pagina-vendas-funil` (enxuta — só promessa, data e captura), a **oferta** vem do `offerbook`, e a **recuperação** roda no `/recuperacao-funil`. Este skill é a peça que faltava entre o diagnóstico e a venda para o público morno.
 
 ---
 
@@ -197,15 +223,15 @@ PEÇA            SKILL                  O QUE ENTREGA
 | Situação | Ação |
 |----------|------|
 | Público é **nível 5** (inconsciente) | PARAR → webinário converte pouco no frio; usar VSL+advertorial/lançamento (`/vsl-funil`, `/metodo-funil`) |
-| Público é **nível 2 ou 1** (consciente do produto / quase comprando) | PARAR → funil errado; usar página+depoimento ou checkout direto (`/pagina-vendas`) |
+| Público é **nível 2 ou 1** (consciente do produto / quase comprando) | PARAR → funil errado; usar página+depoimento ou checkout direto (`/pagina-vendas-funil`) |
 | **Oferta/offerbook não existe** | PARAR → construir a oferta ANTES (`offerbook` / `/oferta-funil`) |
 | **Big Domino não definido** | PARAR → definir a crença central antes de escrever o roteiro |
-| Pediram a **copy pronta** das falas/e-mails | Escrever com `/copy-funil` e `/email-funil`, não de cabeça |
+| Pediram a **copy pronta** das falas/e-mails | Falas e páginas: gerar nesta skill a partir do `copy.md` (sem `copy.md` → /copy-funil primeiro); e-mails com `/email-funil` — nunca de cabeça |
 | Vão **subir/agendar/disparar** sem revisar | PARAR → você revisa a estrutura primeiro |
 
 ---
 
-*Skill webinario-funil — funil de webinário (níveis 4 e 3) pelo método do Alan Nicolas, com base teórica em Russell Brunson (Perfect Webinar), Jeff Walker (PLF) e Jason Fladlien (9 gatilhos). Toda montagem calibra no KB-webinario-funil.md. A copy você escreve com /copy-funil e /email-funil; a identidade visual vem do seu DESIGN.md. A skill só estrutura — você revisa e publica.*
+*Skill webinario-funil — funil de webinário (níveis 4 e 3) pelo método do Alan Nicolas, com base teórica em Russell Brunson (Perfect Webinar), Jeff Walker (PLF) e Jason Fladlien (9 gatilhos). Toda montagem calibra no KB-webinario-funil.md. A copy aplicada (roteiro + páginas) é gerada nesta skill a partir do copy.md (fundação do /copy-funil); os e-mails saem do /email-funil; a identidade visual vem do seu DESIGN.md. Você revisa, aprova e publica.*
 
 ---
 
@@ -225,6 +251,12 @@ Salve os 3 e confirme ao final. Nunca entregar só o `.md`.
 
 ---
 
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+
 ## Ao terminar — SEMPRE diga o próximo passo
 
 Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
@@ -232,3 +264,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

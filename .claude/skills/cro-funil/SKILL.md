@@ -28,7 +28,9 @@ Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). 
 
 ## Passo 0 — Checar insumos antes de rodar
 
-- **Obrigatório:** o funil já montado — `projetos/{slug}/funil.md` e/ou `projetos/{slug}/pagina/` existentes. CRO sem funil não tem o que otimizar. Se faltar, aponte a skill que gera (`/metodo-funil` pro funil; `/pagina-vendas` pra página) e **PERGUNTE se o usuário quer seguir mesmo assim**.
+> **Fonte dos KPIs: os eventos de Pixel + GTM das páginas.** As skills de página instalam GTM + Meta Pixel com eventos-padrão (PageView, Lead, quiz_start/complete, chegou_na_oferta, InitiateCheckout, Purchase). A planilha de KPIs desta skill lê ESSES eventos — confira se as páginas publicadas estão com os IDs reais plugados (não placeholders) antes de medir.
+
+- **Obrigatório:** o funil já montado — `projetos/{slug}/funil.md` e/ou `projetos/{slug}/pagina/` existentes. CRO sem funil não tem o que otimizar. Se faltar, aponte a skill que gera (`/metodo-funil` pro funil; `/pagina-vendas-funil` pra página) e **PERGUNTE se o usuário quer seguir mesmo assim**.
 - **Recomendados:** `offerbook.md` (contexto da oferta) e **dados reais de tráfego** — peça-os ao usuário; **NUNCA invente números de conversão**.
 
 ---
@@ -64,6 +66,18 @@ Quando você quiser otimizar conversão, montar a planilha de KPIs, ou estrutura
 6. **Apresentar a estrutura pra você revisar e aprovar** — a skill desenha o plano e o teste; não sobe, não roda nem altera nada no seu funil. A decisão e a execução são suas.
 
 ---
+
+## Quem preenche a planilha é a SKILL (não o aluno no braço)
+
+A planilha de KPIs nunca sai como tabela morta pro aluno digitar em outro lugar. Em ordem de preferência:
+
+1. **Com API disponível, a skill COLETA e preenche sozinha.** Check das credenciais no `.env`/ambiente: ActiveCampaign (`ACTIVECAMPAIGN_URL` + `ACTIVECAMPAIGN_API_KEY` → contatos novos por dia e por TAG = leads/dia e distribuição de perfis) e Calendly/TidyCal (token → agendados e no-shows). Tendo credencial, a skill consulta, preenche a planilha no `cro.md`, CALCULA as taxas etapa a etapa, aponta o gargalo e regenera o html. Sem credencial: ofereça configurar (1 linha no `.env`) e PERGUNTE.
+2. **Sem API, a planilha sai PREENCHÍVEL em HTML** (padrão do `pendencias.html`): campos de input com localStorage + botão "Copiar respostas pro Claude". O aluno digita os números no navegador (5 min), copia, cola no chat, e a skill faz o resto: preenche o `cro.md`, calcula as taxas, acha o gargalo, atualiza o html e diz qual teste atacar.
+3. **Fallback CSV:** exportar os contatos do ActiveCampaign (CSV) e apontar o arquivo; a skill lê, conta por dia/TAG e preenche.
+
+**O que sempre fica manual (dizer isso ao aluno):** eventos de página/CRM (visitas, leads, TAGs) são automatizáveis por API e viram dashboard na Aula de Dados (Bruno). Mas o RESULTADO de venda humana (veio na sessão · fechou · aceitou upsell) nenhum pixel enxerga: é registro do dono, 30 segundos pós-sessão. A skill separa na planilha o que se automatiza do que é registro humano, pra não vender automação impossível.
+
+**Honestidade preservada:** a skill só preenche com dado real (coletado por API, colado pelo aluno ou lido de export). Célula sem dado fica vazia; nunca estimar pra "completar" a planilha.
 
 ## Gate de medição (OBRIGATÓRIO antes de otimizar)
 
@@ -104,6 +118,15 @@ Nesse modo, a planilha de KPIs sai **vazia / preenchível**, só com as etapas c
 
 ---
 
+## Conexão com as próximas aulas do cohort (declarar SEMPRE no fecho)
+
+O CRO não termina em si: ele é a PONTE pras duas aulas seguintes. Toda entrega desta skill diz explicitamente o que fica pronto aqui e o que cada aula pluga:
+
+- **Aula de Tráfego (Rafa):** é onde os IDs de Pixel + GTM são criados e plugados (as páginas já saem pixel-ready daqui, com os eventos cravados), as campanhas nascem e o UTM avançado entra. O que esta skill entrega pra lá: páginas instrumentáveis em 2 colagens, o gate de escala (3 mini-cases antes de ads) e a conta reversa que diz QUANTO tráfego comprar.
+- **Aula de Dados (Bruno):** a planilha de KPIs desta skill é o EMBRIÃO do dashboard. É onde a medição manual vira automatizada (eventos do Pixel/GTM + ActiveCampaign alimentando o painel) e as taxas/gargalos passam a ser lidos de dado vivo. O que esta skill entrega pra lá: as etapas certas do funil já definidas, a planilha estruturada e a rotina semanal de leitura.
+
+Regra: o aluno chega nessas aulas COM a estrutura pronta (planilha + páginas pixel-ready + gate); as aulas plugam a tecnologia, não redesenham o funil.
+
 ## Processo passo a passo (otimização)
 
 1. **Montar a planilha de KPIs por etapa** com os números do seu funil (visitas → cadastros → participantes → oferta → checkout → compras). É o gate. Sem medição não há CRO.
@@ -129,6 +152,38 @@ Em ordem de alavancagem (detalhe + verbatim no KB):
 > **Erro clássico que o Alan ridiculariza:** testar **cor de botão / footer** achando que é isso que converte. *"Não, eu não acho que as pessoas estão comprando é porque eu devia alterar o meu footer."* O que move é a headline.
 
 ---
+
+## Como RODAR o teste A/B na prática (3 trilhas — nunca prescrever teste sem dizer COMO dividir o tráfego)
+
+1. **Split embutido na página (recomendado):** a página nasce A/B-READY — a variante B da headline vive no código, com sorteio 50/50 e localStorage (o mesmo visitante sempre vê a mesma variante) + evento por variante no dataLayer. Fica DESLIGADO (`AB_ATIVO=false`); quando o teste começar, o aluno liga com 1 linha. A skill instala a mecânica; o aluno só liga e desliga.
+2. **Duas URLs alternadas** (`?v=a` / `?v=b` no link da bio) — pra quando o split JS não der.
+3. **Sequencial** (semana inteira com A, depois semana com B) — último recurso: comparar períodos diferentes tem viés (sazonalidade, ritmo de conteúdo); rotular o resultado como INDICATIVO, não veredito.
+
+A regra de decisão não muda: mínimo 1.000 views únicos POR variante.
+
+## Árvore de diagnóstico (usar quando o aluno voltar com os números)
+
+O gargalo aponta a causa provável e a peça a mexer — 1 gargalo por vez, o pior primeiro:
+
+| Gargalo (taxa baixa em...) | Causa provável | Peça a mexer | Skill que regenera |
+|---------------------------|----------------|--------------|--------------------|
+| Visita → início do quiz | Promessa/headline da capa do quiz | Capa do quiz | `/quiz-funil` + banco do `copy.md` |
+| Início → conclusão do quiz | Uma pergunta derruba (ver drop-off por pergunta) | A pergunta com maior queda | `/quiz-funil` (recalibrar) |
+| Conclusão → lead (gate) | Atrito do formulário ou promessa fraca do resultado | Gate de captura | `/quiz-funil` |
+| Lead → agendamento | Assunto/CTA dos e-mails ou fricção do calendário | E-mails · link de agenda | `/email-funil` |
+| Agendou → show-up | Lembrete fraco ou intervalo longo demais | Sequência de lembrete | `/recuperacao-funil` (C2) · `/whatsapp-funil` |
+| Sessão → fechamento | Roteiro da sessão ou oferta | Roteiro/oferta | `/backend-funil` + `offerbook.md` |
+| Fechou → upsell | Fala do SIM ou preço da continuidade | Fala do upsell | `/backend-funil` |
+
+## A/Bs baratos que JÁ existem nas ferramentas do aluno (usar antes de inventar)
+
+- **ActiveCampaign: teste A/B de ASSUNTO é nativo** — todo e-mail de trilha pode rodar com 2 assuntos sem nenhum setup. Começar pelo e-mail 1 de cada trilha (maior volume).
+- **Drop-off do quiz:** evento por pergunta (`quiz_pergunta` N) instrumentado nas páginas geradas — o funil de perguntas mostra ONDE o lead desiste.
+- **Microsoft Clarity (grátis):** heatmap + gravação de sessão mostram ONDE a página perde antes de qualquer A/B. 1 script (ver Ferramentas); casa com a Aula de Dados (Bruno).
+
+## Registro de testes (test log — obrigatório)
+
+Todo teste entra num log no `cro.md`: data início/fim · elemento · A vs B · amostra por variante · resultado (taxa A vs B) · decisão (mantém/troca) · aprendizado em 1 linha. Sem log, o aluno re-testa o que já perdeu e esquece o que aprendeu. A skill atualiza o log a cada decisão.
 
 ## Regras do teste A/B
 
@@ -200,6 +255,21 @@ Salve os 3 e confirme ao final. Nunca entregar só o `.md`.
 
 ---
 
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+- **Microsoft Clarity (grátis)** — heatmap + gravação de sessão (o qualitativo do CRO). Setup: criar projeto em clarity.microsoft.com e colar o script no `<head>` (as páginas geradas saem com o snippet COMENTADO + `[PLUG: CLARITY_ID]`; é descomentar na Aula de Dados). **Fallback:** seguir só com o quantitativo (planilha); o teste A/B não depende dele.
+
+## Fecho da Aula 2 (esta é a última peça — o fecho é especial)
+
+O `/cro-funil` fecha o mapa de execução. Quando ele termina, NÃO aponte outra skill: aponte a LIÇÃO DE CASA. Encerre SEMPRE com:
+
+1. A declaração: **"Aula 2 completa: as 9 peças do funil estão construídas."**
+2. A ordem clara: **"Agora, antes da Aula de Tráfego (Rafa): zere as pendências."** Abra o `pendencias.html` no navegador e liste o que está aberto — são essas respostas que deixam o funil PUBLICÁVEL (link de agendamento, integrações, decisões de oferta). Aluno que chega na Aula de Tráfego com pendência aberta compra tráfego pra funil que não fecha.
+3. O que fazer enquanto isso: gravar os conteúdos (os roteiros produzem a prova) e rodar o funil no orgânico pra chegar na Aula de Dados (Bruno) com números na planilha.
+
 ## Ao terminar — SEMPRE diga o próximo passo
 
 Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
@@ -207,3 +277,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

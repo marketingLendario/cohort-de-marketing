@@ -43,7 +43,38 @@ Ao ser invocada sem um caminho já definido, a skill **começa perguntando qual 
 4. **A partir de referências (mood board / Pinterest / imagens)** — o usuário tem inspiração visual, não código. Ele **cola as imagens** aqui (prints do Pinterest, paleta, fotos de referência), ou manda o link do board (se o Pinterest bloquear o fetch, pedir os prints). O Claude usa **visão** pra extrair paleta, tipografia e vibe das imagens e **autora** o `DESIGN.md` no mesmo schema. (O `run.cjs` NÃO enxerga imagem — este modo é autoria direta do Claude, fora do pipeline estático.)
 5. **Neutro** — sem marca definida ainda. Gerar um `DESIGN.md` neutro (tons neutros, tipografia system-ui, espaçamento padrão) pra usar como está e ajustar depois.
 
-Regras dos modos de autoria (3, 4, 5): o `DESIGN.md` gerado segue **o mesmo schema Google-spec** dos modos de extração (frontmatter YAML com `colors`, `typography`, `spacing`, `radius`, etc.), pra as skills seguintes (página, e-mails, mockups, carrossel) lerem igual. Salvar direto em `projetos/{slug}/DESIGN.md`. Opcionalmente, rodar o lint `npx @google/design.md@0.1.0` e gerar um `preview.html` pra o usuário conferir. Se o usuário já veio com URL ou modo explícito no comando, pular o menu e ir direto.
+Regras dos modos de autoria (3, 4, 5): o `DESIGN.md` gerado segue **o mesmo schema Google-spec** dos modos de extração (frontmatter YAML com `colors`, `typography`, `spacing`, `radius`, etc.), pra as skills seguintes (página, e-mails, mockups, carrossel) lerem igual. Salvar direto em `projetos/{slug}/DESIGN.md`. Se o usuário já veio com URL ou modo explícito no comando, pular o menu e ir direto.
+
+## Schema enriquecido — padrão desta skill (spec oficial Google + melhores exemplos do catálogo)
+
+Pesquisado em 01/07/2026 no `google-labs-code/design.md` (spec) e `VoltAgent/awesome-design-md` (Linear, Vercel, Stripe, PostHog, Coinbase). Todo DESIGN.md gerado por esta skill (qualquer modo) segue este padrão:
+
+**Frontmatter (tokens machine-readable):**
+- `name` (OBRIGATÓRIO no spec) + `description` — a description é "o sistema em um parágrafo": canvas, cor-acento única e onde pode aparecer, fontes com pesos e o porquê, filosofia de profundidade. É o que o agente lê primeiro.
+- `colors` — `primary` é obrigatório (lint oficial). Incluir pares `on-*` (`on-primary`) e estados (`primary-hover`) quando a marca pedir.
+- `typography` (9-15 níveis), `spacing`, **`rounded`** (nome oficial do spec — não `radius`).
+- **`components` (machine-readable):** botão/card/input/badge como tokens, com as 8 propriedades válidas do spec (`backgroundColor`, `textColor`, `typography`, `rounded`, `padding`, `size`, `height`, `width`) e **variantes como entradas separadas** (`button-primary`, `button-primary-hover`). Usar **token references** `{path.to.token}` em vez de repetir hex — é o que impede o sistema de driftar.
+- `shadow`/`motion` são extensão desta skill (tolerados pelo parser; documentar como extensão).
+
+**Corpo markdown (ordem canônica do spec — se a seção existe, tem que estar nesta ordem; duplicata = arquivo inválido):**
+`Overview` → `Colors` → `Typography` → `Layout` → `Elevation & Depth` → `Shapes` → `Components` → `Do's and Don'ts` — e as seções custom sancionadas:
+- **`## Iconography` (SEMPRE incluir):** biblioteca open-source com licença (Lucide ISC, Heroicons MIT, Phosphor MIT — via CDN `unpkg.com/lucide@latest` ou SVG inline copiado do site da lib); espessura do traço casada com as bordas do sistema (ex.: stroke 1.5-1.75 pra hairline de 1px); escala de tamanhos (16 inline · 20 botão · 24 standalone · 32 destaque); cor (`currentColor`/`{colors.text}`, acento só no CTA); don'ts (nunca misturar bibliotecas, nunca filled com outline).
+- **`## Responsive Behavior`:** tabela de breakpoints com "o que muda", touch targets ≥44px, estratégia de colapso.
+- **`## Iteration Guide`:** instruções pro agente que for editar (um componente por vez, referenciar pelo nome do token, rodar o lint após editar, variante nova = entrada nova).
+- **`## Known Gaps`:** o que não foi documentado/extraído e por quê (honestidade de proveniência; incluir "Note on Font Substitutes" quando a fonte real for paga).
+- `Do's and Don'ts` sempre **citando valores e tokens** ("nunca `#000000` puro como canvas"), não princípios vagos.
+
+Validar com `npx @google/design.md lint` quando disponível.
+
+## Ciclo de aprovação — mostrar, autocriticar, iterar (OBRIGATÓRIO em todos os modos)
+
+O DESIGN.md nunca é entregue como fato consumado. Depois de gerar (por qualquer modo), rode SEMPRE este ciclo:
+
+1. **Mostrar o que gerou:** gere um `preview.html` (paleta com os hex, tipografia com specimen real, componentes de exemplo — de preferência usando a headline REAL da oferta do usuário, pra ele ver a marca vestindo o produto), abra no navegador e envie renderizado na conversa.
+2. **Autocriticar com sugestões:** aponte você mesmo 2-4 fraquezas honestas do resultado ANTES de o usuário pedir — genérico demais pro nicho? parecido com o concorrente (compare com o dossiê do `/espiao-do-concorrente` se existir)? legibilidade vs. o público do `avatar.md` (idade, contexto de leitura)? coerente com a promessa da marca (um visual de hype numa marca anti-hype é erro de mensagem, não de estética)? consistência entre canais (se precisa de "exceção pra e-mail", a base provavelmente está errada)?
+3. **Sugerir 2-3 direções de melhoria** concretas (ex: "claro premium com o mesmo acento", "mais sóbrio, sem glow", "editorial minimalista") e perguntar qual seguir — ou se o usuário prefere colar novas referências.
+4. **Iterar até o usuário aprovar.** Cada rodada regenera o `DESIGN.md` + o `preview.html` e repete o ciclo. Registrar no topo do DESIGN.md que é uma revisão e o porquê da mudança (vira memória de design da marca).
+5. **Só considerar o DESIGN.md fechado com aprovação explícita** — é ele que veste TODAS as peças seguintes do funil; erro aqui propaga pra tudo.
 
 ## Install
 
@@ -224,6 +255,14 @@ Alan Nicolas — [@oalanicolas](https://github.com/oalanicolas) — [github.com/
 
 ---
 
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Node.js** — roda o `run.cjs` de extração de tokens. Check: `node --version`. **Fallback:** extrair os tokens manualmente (WebFetch da URL + leitura do CSS) e montar o DESIGN.md na mão.
+- **WebSearch / WebFetch** — pesquisa aberta na internet. Já vem no Claude Code, sem instalação. Se um site bloquear (login wall/Cloudflare), diga QUAL fonte falhou e o que veio de snippet.
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+
 ## Ao terminar — SEMPRE diga o próximo passo
 
 Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
@@ -231,3 +270,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

@@ -1,12 +1,12 @@
 ---
 name: pagina-vendas
-description: "Monta a estrutura de uma página de vendas de alta conversão pelo método do Alan Nicolas, aplicando a identidade visual da marca DO PRÓPRIO usuário — extraída via um DESIGN.md gerado pela skill design-md (passo anterior). Entrega o mapa completo da página de cima pra baixo: headline (fórmula 'como [resultado] em [tempo] sem [objeção]'), sub-headline, vídeo/VSL, mecanismo único, oferta/stack de valor, ancoragem de preço, prova social casada ao estágio de consciência, benefícios/bullets, bônus, garantia, escassez/urgência, FAQ, CTA repetido e footer — sem nenhuma marca, cor, fonte ou logo embutidos. Use quando quiser estruturar a sua página de vendas no método do Alan. A identidade visual vem do seu DESIGN.md; a copy final é você quem escreve a partir do esqueleto."
+description: "Monta a estrutura de uma página de vendas de alta conversão pelo método do Alan Nicolas, aplicando a identidade visual da marca DO PRÓPRIO usuário — extraída via um DESIGN.md gerado pela skill design-md (passo anterior). Entrega o mapa completo da página de cima pra baixo: headline (fórmula 'como [resultado] em [tempo] sem [objeção]'), sub-headline, vídeo/VSL, mecanismo único, oferta/stack de valor, ancoragem de preço, prova social casada ao estágio de consciência, benefícios/bullets, bônus, garantia, escassez/urgência, FAQ, CTA repetido e footer — sem nenhuma marca, cor, fonte ou logo embutidos. Use quando quiser estruturar a sua página de vendas no método do Alan. A identidade visual vem do seu DESIGN.md; a copy aplicada da página (headline, sub, bullets, oferta, FAQ) é gerada nesta skill a partir da fundação do copy.md (da skill copy-funil) — você revisa e aprova."
 user_invocable: true
 ---
 
 # Página de Vendas — Método do Alan Nicolas (genérica, pra usar no seu projeto)
 
-Skill que monta a **estrutura de uma página de vendas de alta conversão** pelo método do **Alan Nicolas**, e aplica a **identidade visual da sua própria marca** — nada de cor, fonte, logo ou marca de terceiros embutidos aqui. A skill estrutura; **a copy final é você quem escreve**.
+Skill que monta a **estrutura de uma página de vendas de alta conversão** pelo método do **Alan Nicolas**, e aplica a **identidade visual da sua própria marca** — nada de cor, fonte, logo ou marca de terceiros embutidos aqui. A skill estrutura E **gera a copy aplicada da página a partir da fundação do `copy.md`** (da `/copy-funil`); **você revisa e aprova**.
 
 > **KB (fonte de verdade):** `KB-pagina-vendas.md` (nesta pasta). Traz os elementos da página com **verbatim real do Alan** e o método dos 3 testes. **Carregue o KB antes de montar a página** — não responda de cabeça.
 
@@ -44,12 +44,35 @@ Esta skill parte do output das etapas anteriores — a **copy** (skill `/copy-fu
 ls projetos/{slug}/copy.md projetos/{slug}/DESIGN.md 2>/dev/null
 ```
 
-- Se existir(em), leia deles — a copy dá o texto real da página, o DESIGN.md dá a identidade visual.
+- Se existir(em), leia deles — o `copy.md` dá a **fundação da copy** (Big Idea, mecanismos, banco de headlines/bullets), o DESIGN.md dá a identidade visual.
 - Se FALTAR, PARE e aponte a skill que gera cada arquivo:
 
 > Pra montar a página eu preciso do `projetos/{slug}/copy.md` (da skill `/copy-funil`) e do `projetos/{slug}/DESIGN.md` (da skill `/design-md`). Rode `/copy-funil` e `/design-md` primeiro e volte.
 
-Não invente o que deveria vir da etapa anterior (a copy, a identidade visual).
+Não invente o que deveria vir da etapa anterior (a fundação da copy, a identidade visual).
+
+## Copy aplicada — gerada NESTA skill a partir do copy.md
+
+> **Sem travessão (—) na copy (regra dura).** Travessão é cara de texto de IA. Em TODA copy voltada ao cliente final (headline, bullet, página, e-mail, mensagem, roteiro), reescreva com ponto, vírgula ou dois-pontos. Vale pra copy aplicada gerada por esta skill.
+
+> **Pendências do dono em UM lugar só.** Sempre que esta skill deixar um placeholder pro dono ([DONO ...], [A PREENCHER], [PLUG ...], [SEM PROVA AINDA], [N]), registre/atualize a entrada correspondente em **`projetos/{slug}/pendencias.md`** (+ `.html` com checklist clicável; crie se não existir): O QUÊ decidir, ONDE aparece (arquivos afetados) e COMO resolver. Agrupar por DECISÃO (1 decisão resolve vários arquivos), não por arquivo. Quando o dono informar um valor, atualizar TODOS os arquivos afetados de uma vez e marcar o item. O `/status-funil` lê esse arquivo.
+>
+> **Book do Funil (o hub do projeto) + fecho obrigatório:** o projeto tem um hub único em **`projetos/{slug}/index.html`, o Book do Funil**: cards clicáveis de TODAS as peças já geradas, agrupados por fase (Pesquisa · Oferta e Fundação · Peças do funil · Próximas peças), cada card com badge de status (feito / em revisão / ação do dono / fila), e a seção de **pendências + mapa NO FINAL** do Book. **Todo DOCUMENTO interno gerado** (mapas, docs de copy, índices, checklists, roteiros: tudo que é do dono, nunca as páginas do lead) leva no topo um link fixo **"← Book do Funil"** de volta pro hub — de qualquer peça se volta pro Book com 1 clique. Ao terminar a skill: (1) **atualize o card da sua peça no Book** E o status da peça no mapa (`funil.md` + `funil.html`): o "VOCÊ ESTÁ AQUI" tem que apontar SEMPRE pro ponto real do dono, nunca pra etapa já vencida (crie o Book se ainda não existir, na identidade do DESIGN.md); (2) encerre com *"Preencha as pendências"* e **abra o Book no navegador** — dele o dono chega a qualquer peça e ao `pendencias.html` (checklist com CAMPO DE RESPOSTA em cada item e o botão "Copiar respostas pro Claude"). Instrua o dono: preencher os campos, clicar em Copiar respostas e COLAR de volta no chat. **Ao receber as respostas coladas, atualize todos os arquivos afetados, marque os itens no `pendencias.md`, REGENERE o `pendencias.html` refletindo o estado novo (placar aplicadas/parciais/abertas; itens aplicados em verde com o valor; parciais em laranja com o que falta; abertos com campo de resposta) e ABRA o html atualizado — o dono precisa VER o que continua pendente, não só ler no chat.**
+
+> **Rastreamento: a página nasce PIXEL-READY; os IDs entram na Aula 3 (Tráfego).** Nenhuma página do funil nasce cega, mas esta etapa também não cria fricção: **NÃO mande o aluno pro Gerenciador de Eventos agora.** Toda página gerada já sai com os snippets de **Meta Pixel** (recomendado: é o que constrói a audiência de remarketing) e **GTM** (opcional: gerencia tags sem mexer em código; junto com o Pixel dá o melhor rastreamento) **prontos porém COMENTADOS** no `<head>` (+ `<noscript>` após `<body>`), com placeholders `[PLUG: SEU_PIXEL_ID]` / `[PLUG: GTM-XXXXXXX]` e os eventos-padrão da peça já ligados no código. Diga ao aluno em 1 linha: *"a página já nasce pronta pra rastreamento; os IDs a gente cria e pluga na Aula 3 (Tráfego): é colar 2 códigos e descomentar"*. Exceção: se o aluno JÁ tiver Pixel/GTM, pergunte os IDs e entregue plugado. Lembrete de LGPD: aviso de cookies/consentimento é responsabilidade do aluno. Os eventos alimentam a planilha de KPIs do `/cro-funil`. Eventos desta peça: PageView · ViewContent · clique no CTA principal · Lead (envio do formulário) · **chegou_na_oferta** (IntersectionObserver no bloco de oferta/preço: é o 'pixel na oferta' do método, a audiência de remarketing mais quente).
+
+> **SEM barra de revisão dentro da página (a navegação mora no Book).** A página do lead NÃO leva barra de revisão, atalhos internos nem elemento de bastidor: a navegação entre as peças (copy, mapa, quiz, e-mails, pendências) fica no **Book do Funil** (`projetos/{slug}/index.html`), fora da página. Página de venda só carrega o que o LEAD deve ver.
+
+> **O slot de vídeo nasce com roteiro (copy aplicada do vídeo).** O elemento 3 (vídeo/VSL) NUNCA fica só com placeholder: esta skill gera também o **roteiro do vídeo** (2-3 min: gancho, espelho, mecanismo do problema, inversão, convite, fecho; com fala pronta, texto na tela e notas de gravação) a partir do `copy.md`, salvo em `pagina/video-roteiro.html`. E o slot de vídeo na página inclui um botão **"Ver roteiro do vídeo"** DENTRO do próprio slot, apontando pro roteiro. O dono grava a partir dele e troca o slot pelo player.
+
+> **Seção "Quem será seu mentor" (obrigatória quando a oferta é pessoa: mentoria, consultoria, serviço 1-a-1).** Nessas ofertas, quem conduz é metade da decisão de compra e a página NÃO pode pular isso. Gerar a seção (posição: depois da jornada/benefícios, antes do investimento) com: foto real (placeholder `[DONO: FOTO]` com a direção "ambiente de trabalho, sem palco"), nome e credencial em 1 linha (`[DONO PREENCHE, sem inflar]`), bio curta na voz da marca gerada do `copy.md` (por que o método existe, o que faz diferente) e o bloco "o que você pode verificar sobre mim" (só fatos verificáveis). **Nunca inventar credencial, número ou história do mentor**: a estrutura e o ângulo saem da skill; os fatos, só do dono (regra de honestidade de prova).
+
+A copy do funil tem 2 camadas: a **fundação** (Big Idea, mecanismos, voz/léxico, banco de headlines/bullets) vive no `projetos/{slug}/copy.md`, gerado pela `/copy-funil`; a **copy aplicada da página** nasce **aqui**.
+
+- **Se `projetos/{slug}/copy.md` existe** (fundação aprovada): esta skill gera a copy final da página — **headline, sub-headline, bullets, oferta/stack, ancoragem, FAQ e CTAs** — A PARTIR do banco do `copy.md` (a headline sai das aprovadas na Fase 3 da `/copy-funil`, os bullets do banco Bencivenga) — o aluno **não volta pro `/copy-funil`** pra escrever a copy da página.
+- **Se não existe:** aponte a `/copy-funil` (é ela que constrói a fundação) e **PERGUNTE** se o aluno quer seguir só com a estrutura (esqueleto com placeholders) ou rodar a fundação antes.
+- **A copy aplicada obedece:** a Big Idea e os mecanismos do `copy.md` · a voz/léxico do avatar (palavras reais, não as suas) · a honestidade de prova (sem prova real → `[SEM PROVA AINDA]`) · o gate de compliance de nicho regulado.
+- **Depois de aplicada**, a página pode ser auditada na fase de validação do `/copy-funil` (nota Hopkins + checklist Sugarman). O aluno revisa e aprova antes de qualquer protótipo/publicação.
 
 ## Gate de compliance — nicho sensível
 
@@ -89,8 +112,8 @@ Isso produz `DESIGN.md` + `tokens.json` (cores, fontes, espaçamento, raio de bo
    - **Produto / transformação** + **ticket** — `{{produto}}`, `{{ticket}}`
    - **Público + estágio de consciência (1-5)** — `{{publico}}`, `{{estagio}}` (de onde ele vem: frio de ads? base quente? orgânico? — isso decide a prova social que entra na página)
    - **Oferta** — `{{oferta}}` (entregáveis, preço-âncora, bônus, garantia)
-4. **Montar a página** seguindo a tabela de elementos (topo → fundo), aplicando a identidade do DESIGN.md em cada bloco.
-5. **Você [aluno] revisa e aprova** a estrutura. NUNCA subir/publicar/executar nada — a skill só estrutura.
+4. **Montar a página** seguindo a tabela de elementos (topo → fundo), gerando a copy aplicada de cada bloco a partir do `copy.md` e aplicando a identidade do DESIGN.md.
+5. **Você [aluno] revisa e aprova** a estrutura e a copy aplicada. NUNCA subir/publicar/executar nada — quem publica é você.
 
 ---
 
@@ -114,7 +137,7 @@ O **estágio de consciência do seu público (1-5)** muda principalmente **qual 
 
 Monte nesta ordem. Cada elemento recebe a identidade visual do **seu DESIGN.md** (cores, fontes, logo). Detalhe e verbatim no KB §Elementos.
 
-| # | Elemento | O que entra (você escreve a copy) | Identidade visual (do seu DESIGN.md) |
+| # | Elemento | O que entra (copy aplicada, gerada do `copy.md`) | Identidade visual (do seu DESIGN.md) |
 |---|----------|-----------------------------------|--------------------------------------|
 | 1 | **Headline** | Fórmula: *"Como [resultado] em [tempo] sem [objeção]"*. Item de maior alavancagem. | fonte de título + cor primária |
 | 2 | **Sub-headline** | 1-2 linhas que nomeiam o mecanismo/promessa | fonte secundária |
@@ -162,12 +185,12 @@ A fórmula *"Como [resultado] em [tempo] sem [objeção]"* só está completa qu
 
 Pra cada pedido, entregar o **mapa estruturado da página**:
 1. **Estágio de consciência** do público (1-5) + qual prova social entra.
-2. **Mapa da página** — os 15 elementos topo→fundo, cada um com: o que vai na copy (esqueleto/placeholder pra você preencher) + qual token visual do seu DESIGN.md aplicar.
+2. **Mapa da página** — os 15 elementos topo→fundo, cada um com: a copy aplicada gerada a partir do `copy.md` (ou placeholder marcado, se a fundação ainda não existir) + qual token visual do seu DESIGN.md aplicar.
 3. **Headline** passada nos 3 testes (resultado · tempo · objeção).
 4. **Plano de teste** — headline primeiro, KPIs por etapa.
 5. **Checklist visual** — onde cada cor/fonte/logo do DESIGN.md entra.
 
-> A **copy final é você** quem escreve a partir do esqueleto. A skill estrutura a página e mapeia onde a sua identidade visual entra.
+> A skill estrutura a página, **gera a copy aplicada a partir da fundação do `copy.md`** e mapeia onde a sua identidade visual entra. **Você revisa e aprova** — a copy aplicada só é final com o seu OK.
 
 > **Onde salvar:** o mapa/estrutura desta skill sai em **`projetos/{slug}/pagina/index.html`** (+ o mapa em `.md` na mesma subpasta, quando gerar). Mesma pasta do projeto.
 
@@ -196,6 +219,12 @@ Pra cada pedido, entregar o **mapa estruturado da página**:
 
 ---
 
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+
 ## Ao terminar — SEMPRE diga o próximo passo
 
 Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
@@ -203,3 +232,5 @@ Toda execução desta skill **termina apontando o próximo passo** — pra o alu
 > Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
 
 Nunca encerre sem o próximo passo.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com `open <arquivo>.html` (macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.
