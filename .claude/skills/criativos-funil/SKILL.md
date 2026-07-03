@@ -1,6 +1,6 @@
 ---
 name: criativos-funil
-description: "Espiona a Biblioteca de Anúncios de um concorrente e transforma os ads vencedores em roteiros de criativo prontos, na SUA voz (ou na voz da sua equipe). Pipeline: coletar ads ativos -> baixar vídeos -> transcrever -> analisar (vencedores/hooks/mecanismo) -> gerar roteiros modelados -> calibrar voz -> entregar. Use quando quiser modelar/espionar ads de um concorrente ou gerar criativos em massa para uma campanha."
+description: "Espiona a Biblioteca de Anúncios de um concorrente e transforma os ads vencedores em criativos prontos na SUA voz: roteiros de vídeo E banners estáticos (HTML -> PNG na identidade do DESIGN.md, por rede e formato: feed 4:5, stories 9:16, quadrado 1:1). Pipeline: perguntar rede/tipo/formato/escopo -> coletar ads ativos -> baixar vídeos -> transcrever -> analisar (vencedores/hooks/mecanismo) -> gerar roteiros e banners modelados -> calibrar voz -> entregar com galeria no Book. Use quando quiser modelar/espionar ads de um concorrente, gerar criativos em massa para uma campanha, ou criar banners de anúncio na identidade da marca."
 user_invocable: true
 ---
 
@@ -70,6 +70,13 @@ Se `projetos/{slug}/copy.md` existe (fundação da copy aprovada no `/copy-funil
 
 1. Defina: qual concorrente (o `page_id` dele na Biblioteca de Anúncios do Meta) e qual a SUA oferta/campanha de destino.
 2. **Passo 0 obrigatório:** olhe a página/fonte REAL da sua oferta antes de escrever qualquer roteiro. Nunca invente papéis, datas ou CTA de memória — confira no destino real.
+3. **Perguntas obrigatórias ANTES de gerar qualquer peça (e PARE até responder — igual à Ativação da `/conteudo-funil`):**
+   - **Rede/canal:** Meta (Instagram + Facebook), LinkedIn, Google Display, TikTok Ads? (pode ser mais de uma; cada rede muda formato, compliance e CTA)
+   - **Tipo de peça:** só roteiros de vídeo, só banners estáticos, ou ambos?
+   - **Formatos/posicionamentos:** feed 4:5 (1080x1350) · stories/reels 9:16 (1080x1920) · quadrado 1:1 (1080x1080) · kit Display (se Google)?
+   - **Escopo:** quantas peças / quais estruturas do mapa viram criativo?
+
+   Nunca gerar peça visual sem essas respostas. Depois delas, continua valendo o gate de **1 amostra antes do lote**.
 
 ## Execução
 
@@ -83,6 +90,17 @@ Se `projetos/{slug}/copy.md` existe (fundação da copy aprovada no `/copy-funil
 8. **Entregar** — exporte os roteiros (ex.: Markdown → documento) e suba na sua pasta de entrega.
 
 **Material visual usa o `DESIGN.md` da marca.** Se você renderizar os roteiros/criativos como material visual (HTML, PDF, PNG, slides), gere-o JÁ com os tokens do `projetos/{slug}/DESIGN.md` — cores, fontes, borda/raio, tamanho, logo. NUNCA use um tema fixo/genérico (dark, champagne, "padrão do cohort", template pronto). Legibilidade conforme o público (nichos 50+/acessibilidade → fonte grande ≥18px, alto contraste). CSS inline, self-contained, sem emoji, português acentuado. Se não houver `DESIGN.md`, gere-o com `/design-md` antes.
+
+## Banners estáticos (HTML → PNG, na identidade da marca)
+
+Além dos roteiros de vídeo, a skill produz **banners estáticos de ad** — pelo mesmo pipeline do carrossel da `/conteudo-funil`: HTML com os tokens do `DESIGN.md` → PNG via Chrome headless. Regras:
+
+1. **Só depois das perguntas da Ativação** (rede, tipo, formatos, escopo) e com **1 amostra aprovada antes do lote**.
+2. **Um HTML por banner**, com a dimensão exata do posicionamento fixada no `html,body` (`width/height` + `overflow:hidden`): feed 4:5 = 1080x1350 · stories/reels 9:16 = 1080x1920 · quadrado 1:1 = 1080x1080. Nomeie por formato (`feed-01.html`, `story-01.html`…) — o prefixo permite renderizar cada formato no tamanho certo.
+3. **Anatomia que funciona em estático:** kicker curto · hook do banco do `copy.md` como texto dominante (a headline É o criativo) · sub de 1-2 linhas · CTA em pílula ("Saiba mais", "Fazer o teste") · marca no rodapé. Nos stories, deixar a base da tela mais livre (o CTA nativo do Meta cobre o rodapé).
+4. **Compliance por rede:** as mesmas regras Meta-safe dos roteiros (sem cifra de renda, linguagem de possibilidade, CTA de clique, sem citar o concorrente).
+5. **Exportar** com `scripts/gerar_png.sh <pasta> [largura] [altura] [prefixo]` — um passe por formato (ex.: `gerar_png.sh projetos/{slug}/criativos/banners 1080 1350 feed` e depois `... 1080 1920 story`).
+6. **Galeria no Book (obrigatório — PNG nunca fica invisível):** todo lote ganha **`projetos/{slug}/criativos/banners/index.html`** (identidade do `DESIGN.md`, link fixo "← Book do Funil" no topo) mostrando TODOS os PNGs agrupados por formato, com o papel de cada um e as notas de uso; o card no Book do Funil aponta pra essa galeria, nunca pra pasta nem pra arquivo solto. Lotes novos entram na MESMA galeria, em seções.
 
 ## Gates de qualidade (NÃO pular)
 
@@ -117,6 +135,7 @@ Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se falta
 - **Transcrição de áudio (whisper)** — a IA NÃO escuta áudio sozinha. Check: `which whisper-cli` ou `pip3 show mlx-whisper` (+ `which ffmpeg` pra converter). Tendo, transcreva pelo terminal (`whisper-cli -m <modelo> -l pt -f audio.wav -otxt` ou `mlx_whisper audio.wav --language pt`). Faltando: ofereça `brew install whisper-cpp ffmpeg` e PERGUNTE antes de instalar. **Fallback sem instalar nada:** o WhatsApp transcreve áudio (segurar a mensagem > transcrever > colar aqui), ditado do celular, ou colar transcrição de qualquer ferramenta. O que importa é a fala real chegar em texto.
 - **WebSearch / WebFetch** — pesquisa aberta na internet. Já vem no Claude Code, sem instalação. Se um site bloquear (login wall/Cloudflare), diga QUAL fonte falhou e o que veio de snippet.
 - **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check: `ls "/Applications/Google Chrome.app" 2>/dev/null`. **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P > Salvar como PDF).
+- **Chrome (headless)** via `scripts/gerar_png.sh <pasta> [largura] [altura] [prefixo]` — exporta os banners em PNG no tamanho exato do posicionamento (um passe por formato; o tamanho da janela tem que bater com o width/height fixado no HTML, senão corta). **Fallback:** abrir cada HTML no navegador e capturar screenshot no tamanho do formato.
 
 ## Ao terminar — SEMPRE diga o próximo passo
 

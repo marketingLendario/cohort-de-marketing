@@ -122,6 +122,7 @@ Regra: use imagem **onde ela valoriza** (capa, prova, fecho) — não force foto
 2. Use **imagens que chamem atenção** (foto real do público, textura/elemento gráfico da marca) coerentes com o design system.
 3. Exporte cada slide como PNG com `scripts/gerar_png.sh <arquivo>.html` (Chrome headless captura cada `.slide` em 1080x1350).
 4. Saída: `projetos/{slug}/carrossel/slide-01.png … slide-0N.png`, numerados e prontos pra subir no Instagram.
+5. **Galeria no Book (obrigatório — PNG nunca fica invisível):** todo lote de PNGs gerado GANHA uma galeria **`projetos/{slug}/carrossel/index.html`** (identidade do `DESIGN.md`, link fixo "← Book do Funil" no topo) mostrando TODOS os PNGs lado a lado, com o papel de cada slide (capa · itens · espelho · CTA) e a legenda sugerida do post. O card do carrossel no **Book do Funil aponta pra essa galeria**, nunca pra um slide HTML solto nem pra pasta — o dono precisa VER os PNGs com 1 clique a partir do Book. Novos carrosséis (C2, C3…) entram na MESMA galeria, em seções, em vez de criar galerias paralelas.
 
 ## A SUA voz (serve para você e para a sua marca)
 Escolha a voz conforme o tema da referência e o alvo. O conteúdo é gerado na SUA voz — a voz que representa você ou a sua marca. Calibre a voz em transcrições reais suas (falas, lives, vídeos que você já gravou), nunca em uma descrição genérica. Case o TEMA da referência com a voz/posicionamento certo (ex.: referência de mentalidade → tom mais reflexivo; referência de tráfego → tom mais técnico).
