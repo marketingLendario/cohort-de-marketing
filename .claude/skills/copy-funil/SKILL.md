@@ -155,6 +155,7 @@ Apresente a recomendação. Você pode trocar o fluxo se quiser.
 
 ### Princípios de copy (sempre respeitar)
 - Sem travessão (—) em nenhuma peça de copy: é cara de texto de IA. Use ponto, vírgula ou dois-pontos, ou reescreva a frase.
+- Sem a construção "não é sobre X, é sobre Y" (nem "não é X, é Y", "não se trata de X, e sim de Y"): contraste vazio é assinatura de texto de IA. Afirme direto o que É, ou mostre o contraste com fato concreto do avatar.
 - Não escreva headline antes de diagnosticar o nível de consciência.
 - Não pule o diagnóstico de Schwartz em tráfego frio.
 - Sugarman é gatilho de **checklist**, não de escrita (use para auditar, não para redigir).

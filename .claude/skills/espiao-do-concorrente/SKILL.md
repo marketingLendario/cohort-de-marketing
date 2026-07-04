@@ -169,7 +169,7 @@ Se a amostra foi pequena, veio de poucas fontes ou do modo offline, diga isso no
 ## Estilo de escrita (obrigatório)
 
 - Português do Brasil, claro e direto.
-- Sem emoji. Sem travessão (—). Sem tom de guru. Sem hype vazio.
+- Sem emoji. Sem travessão (—). Sem "não é sobre X, é sobre Y". Sem tom de guru. Sem hype vazio.
 - Dado antes de opinião. Se não dá pra medir, diga que é leitura, não número.
 - Indique a fonte de cada achado relevante.
 - Toda seção termina em ação. Dossiê sem ação é arquivo morto.

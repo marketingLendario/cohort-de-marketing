@@ -246,7 +246,7 @@ Não pule esse anúncio — é o que orienta o aluno a seguir o trilho da Aula 0
 ## Estilo de escrita (obrigatório)
 
 - Português do Brasil, claro e direto.
-- Sem emoji. Sem travessão (—). Sem tom de guru. Sem hype vazio.
+- Sem emoji. Sem travessão (—). Sem "não é sobre X, é sobre Y". Sem tom de guru. Sem hype vazio.
 - Verbatim antes de paráfrase. Citação do cliente entra como ele escreveu.
 - Dado antes de opinião. Se não dá pra medir, diga que é leitura, não número.
 - Indique a fonte de cada dor relevante.
