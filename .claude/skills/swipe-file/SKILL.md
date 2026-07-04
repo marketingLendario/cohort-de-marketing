@@ -43,6 +43,18 @@ Esta skill mantem **biblioteca viva** de criativos vencedores (anuncios, posts, 
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`, `swipe/`. Nos 3 formatos (md/html/pdf) onde a skill gera. O swipe file desta skill vive em **`projetos/{slug}/swipe/`**.
+
+---
+
 ## Quando usar
 
 - Apos rodar `/espiao-do-concorrente` ou `/trend-hunting` (output deles vira input)
@@ -68,7 +80,7 @@ Se nao vier acao, mostrar o menu.
 
 1. **Output do `/espiao-do-concorrente`** OU **`/trend-hunting`** (lista de criativos para capturar)
 2. **Figma** (opcional, recomendado para visual) ou Notion/Google Drive
-3. **ICP definido** (`/pesquisa-de-avatar`) — filtro de relevancia
+3. **ICP definido** (`/avatar-funil`) — filtro de relevancia
 
 ---
 
@@ -152,9 +164,9 @@ Atribuir ao criativo:
 - Estrutura template no link `[link template Figma]`
 
 **Se usar Markdown:**
-- 1 arquivo por criativo: `{tipo}/{nicho}/{concorrente}-{data}.md`
+- 1 arquivo por criativo: `projetos/{slug}/swipe/{tipo}/{nicho}/{concorrente}-{data}.md`
 - Cada arquivo com screenshot embedded + metadata + padrao extraido
-- Index master em `swipe-file-index.md`
+- Index master em `projetos/{slug}/swipe/swipe-file-index.md`
 
 ### Etapa 4 — Briefing (sob demanda)
 
@@ -182,11 +194,13 @@ Retorna:
 A skill gera (depende da acao):
 
 **Para `/swipe-file capturar`:**
-1. **2 arquivos por criativo** em `swipe-file/{tipo}/{nicho}/`:
+1. **2 arquivos por criativo** em `projetos/{slug}/swipe/{tipo}/{nicho}/`:
    - `{slug}.md` — markdown editavel (template em `## Template de captura` abaixo)
    - `{slug}.html` — versao visual (template em `templates/criativo.html`)
-2. Atualizacao do `swipe-file-index.md` master
+2. Atualizacao do `projetos/{slug}/swipe/swipe-file-index.md` master
 3. Instrucoes Figma (link para adicionar frame manualmente, se usar Figma)
+
+**Material visual usa o `DESIGN.md` da marca.** Se você renderizar a biblioteca ou o briefing como HTML/PDF (relatório visual), gere-o JÁ com os tokens do `projetos/{slug}/DESIGN.md` — cores, fontes, borda/raio, tamanho, logo. NUNCA use um tema fixo/genérico (dark, champagne, "padrão do cohort", template pronto). Legibilidade conforme o público (nichos 50+/acessibilidade → fonte grande ≥18px, alto contraste). CSS inline, self-contained, sem emoji, português acentuado. Se não houver `DESIGN.md`, gere-o com `/design-md` antes. (Os screenshots dos criativos winners entram como estão — o design da marca aplica só ao documento, não às peças capturadas.)
 
 ### Como gerar HTML por criativo
 
@@ -212,11 +226,11 @@ Apos gerar cada `{slug}.md`, gerar tambem `{slug}.html` copiando `templates/cria
 - `{{MARCA}}` — vazio se brand-choice = `neutro`, ou nome do `DESIGN.md`
 - `{{DATA}}` — data de captura
 
-**Importante:** ambos arquivos (`.md` e `.html`) vivem na MESMA pasta (`swipe-file/{tipo}/{nicho}/`). O index master mostra os 2 links lado a lado.
+**Importante:** ambos arquivos (`.md` e `.html`) vivem na MESMA pasta (`projetos/{slug}/swipe/{tipo}/{nicho}/`). O index master mostra os 2 links lado a lado.
 
 **Para `/swipe-file briefing [tipo]`:**
-1. Documento `briefing-{tipo}-{data}.md` com 10-20 referencias organizadas (granular, por tipo)
-2. **`briefing-swipe-file.md`** (handoff master) — index unico que consolida TODOS os briefings gerados ate aqui, e e o arquivo que voce passa pro Copy (`/copy-funil`) e pro Media Buyer. Atualizado a cada novo briefing gerado.
+1. Documento `projetos/{slug}/swipe/briefing-{tipo}-{data}.md` com 10-20 referencias organizadas (granular, por tipo)
+2. **`projetos/{slug}/swipe/briefing-swipe-file.md`** (handoff master) — index unico que consolida TODOS os briefings gerados ate aqui, e e o arquivo que voce passa pro Copy (`/copy-funil`) e pro Media Buyer. Atualizado a cada novo briefing gerado.
 
 Estrutura do `briefing-swipe-file.md`:
 
@@ -524,3 +538,21 @@ Apos gerar os 2 arquivos (`swipe-file-index.md` + `briefing-swipe-file.md`), **s
 > Offerbook consolida TUDO (avatar + dossies + swipe-file) num Livro da Oferta de 7 blocos. E o brief mestre que vai alimentar LP, e-mails e ads nas proximas aulas.
 
 Nao pule esse anuncio — e o que orienta o aluno a seguir o trilho da Aula 01.
+---
+
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **WebSearch / WebFetch** — pesquisa aberta na internet. Já vem no Claude Code, sem instalação. Se um site bloquear (login wall/Cloudflare), diga QUAL fonte falhou e o que veio de snippet.
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check — macOS: `ls "/Applications/Google Chrome.app"` · Windows (Git Bash): `ls "/c/Program Files/Google/Chrome/Application/chrome.exe"`; no Windows o script também usa o Edge como fallback (já vem instalado). **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P no Mac, Ctrl+P no Windows > Salvar como PDF).
+
+## Ao terminar — SEMPRE diga o próximo passo
+
+Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
+
+> Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
+
+Nunca encerre sem o próximo passo. E aponte **UM comando só**: NADA de "alternativas paralelas", menu de opções ou lista de skills pra escolher — isso enche o aluno de dúvida e quebra o fluxo. Se existir mais de um caminho possível, escolha você (pela ordem do mapa) e aponte só ele; as outras peças continuam no mapa/Book e chegam na vez delas.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com o comando do sistema do aluno — macOS: `open <arquivo>.html` · Windows: `start "" <arquivo>.html` · Linux: `xdg-open <arquivo>.html` (detecte o SO antes; NUNCA assuma macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

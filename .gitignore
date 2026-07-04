@@ -34,3 +34,7 @@ yarn-error.log*
 .env
 .env.local
 secrets.json
+
+# interno da equipe — não vai pro repo do aluno
+CHANGELOG.md
+projetos/

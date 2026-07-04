@@ -6,11 +6,11 @@
 # Uso: ./gerar_pdf.sh relatorio-avatar.html
 # Saida: relatorio-avatar.pdf no mesmo diretorio
 #
-# Tenta na ordem:
+# Funciona em macOS, Windows (Git Bash) e Linux. Tenta na ordem:
 # 1. Chrome headless (mais bonito, mantem fontes web)
-# 2. Safari -> Print to PDF via AppleScript (Mac)
+# 2. Edge headless (fallback Windows - ja vem instalado)
 # 3. wkhtmltopdf (fallback Linux/CI)
-# 4. Se nada funcionar, instrui o usuario a fazer Cmd+P manualmente
+# 4. Se nada funcionar, instrui o usuario a imprimir manualmente
 #
 # ===================================================================
 
@@ -35,9 +35,9 @@ echo "Gerando PDF a partir de: $HTML_FILE"
 echo "Saida: $PDF_FILE"
 echo ""
 
-# ---------- Tentativa 1: Chrome headless ----------
+# ---------- Tentativa 1: Chrome/Edge headless ----------
 CHROME=""
-for cmd in google-chrome google-chrome-stable chromium chromium-browser "Google Chrome"; do
+for cmd in google-chrome google-chrome-stable chromium chromium-browser "Google Chrome" chrome msedge; do
   if command -v "$cmd" &> /dev/null; then
     CHROME="$cmd"
     break
@@ -49,8 +49,23 @@ if [ -z "$CHROME" ] && [ -f "/Applications/Google Chrome.app/Contents/MacOS/Goog
   CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 fi
 
+# Windows (Git Bash): caminhos padrao do Chrome e do Edge (o Edge ja vem no Windows)
+if [ -z "$CHROME" ]; then
+  for p in \
+    "/c/Program Files/Google/Chrome/Application/chrome.exe" \
+    "/c/Program Files (x86)/Google/Chrome/Application/chrome.exe" \
+    "$LOCALAPPDATA/Google/Chrome/Application/chrome.exe" \
+    "/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe" \
+    "/c/Program Files/Microsoft/Edge/Application/msedge.exe"; do
+    if [ -f "$p" ]; then
+      CHROME="$p"
+      break
+    fi
+  done
+fi
+
 if [ -n "$CHROME" ]; then
-  echo "[1/3] Usando Chrome headless..."
+  echo "[1/3] Usando Chrome/Edge headless..."
   "$CHROME" \
     --headless \
     --disable-gpu \
@@ -82,19 +97,22 @@ echo "[3/3] Nenhuma ferramenta de PDF disponivel automaticamente."
 echo ""
 echo "Para gerar o PDF manualmente:"
 echo "  1. Abra o arquivo: $HTML_FILE no navegador"
-echo "  2. Pressione Cmd+P (Mac) ou Ctrl+P (Win)"
+echo "  2. Pressione Cmd+P (Mac) ou Ctrl+P (Windows/Linux)"
 echo "  3. Em 'Destino', escolha 'Salvar como PDF'"
 echo "  4. Salve como: $PDF_FILE"
 echo ""
 echo "Ou instale o Chrome (recomendado) ou wkhtmltopdf:"
-echo "  brew install --cask google-chrome"
-echo "  brew install wkhtmltopdf"
+echo "  macOS:   brew install --cask google-chrome"
+echo "  Windows: winget install Google.Chrome"
+echo "  Linux:   apt/dnf install chromium (ou wkhtmltopdf)"
 
 # Abre o HTML no navegador padrao pra facilitar
 if [ "$(uname)" = "Darwin" ]; then
   open "$HTML_FILE"
 elif command -v xdg-open &> /dev/null; then
   xdg-open "$HTML_FILE"
+elif command -v cmd.exe &> /dev/null; then
+  cmd.exe /c start "" "$(cygpath -w "$HTML_FILE" 2>/dev/null || echo "$HTML_FILE")"
 fi
 
 exit 1

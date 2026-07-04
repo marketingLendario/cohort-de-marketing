@@ -70,11 +70,36 @@ Se não vier o nome do produto, **pergunte qual é a oferta e PARE** até recebe
 
 ---
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho, ex.: `projetos/curso-de-ingles/`). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz — assim você pode tocar vários nichos ao mesmo tempo sem misturar, e as skills seguintes sabem exatamente onde achar cada peça.
+
+**Como descobrir o projeto ativo** (toda skill do funil segue isto):
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, rode `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → é o começo do funil.
+
+**Nomes dentro da pasta** (sem repetir o slug): `offerbook.md`, `avatar.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Sempre nos 3 formatos (md/html/pdf) onde a skill já gera.
+
+> **Esta skill é a primeira do funil:** ela **cria** `projetos/{slug}/` (o `{slug}` sai do nome do produto) e salva tudo dentro. As demais skills leem dessa pasta.
+
+---
+
 ## Pré-requisitos (o que você precisa ter à mão)
 
 1. **Um documento de destino** — pode ser um Google Doc, Notion, Word ou Markdown. Use a estrutura de 7 blocos abaixo. (Se tiver um template próprio, duplique-o e preencha a cópia; **nunca edite o template original**.)
 2. **Uma fonte de pesquisa de avatar REAL** — formulários, pesquisas, respostas de leads, entrevistas, comentários, depoimentos. O Avatar e a Análise de Cliente saem **daqui**, com número (N), porcentagem e citações literais. Onde não houver dado: escreva **"SEM DADO NA PESQUISA"**.
 3. **Materiais já existentes da oferta** — qualquer transcrição, depoimento, grade do produto, hooks, e-mails aprovados, guia de voz da marca. Regra: **não recriar o que já existe, não inventar dado.**
+
+---
+
+## Gate de compliance — nicho sensível
+
+Antes de escrever a promessa, a USP ou a oferta do offerbook, verifique se o nicho é **regulado**: saúde/bem-estar/emagrecimento/estética, finanças/investimento/renda, jurídico, ou autoestima/relacionamento com promessa de resultado.
+
+- **Se for**, evite alegação que vira problema legal: "cura", "garantido", "resultado em X dias", "renda garantida", "sem esforço".
+- Use **linguagem de possibilidade**: "pode ajudar", "muitas pessoas relatam", "com dedicação". Todo depoimento entra com ressalva: *"resultados variam de pessoa pra pessoa"*.
+- Recomende ao aluno **conferir as regras e os órgãos reguladores do mercado dele** — este gate só **alerta**, não é aconselhamento jurídico, e validar é responsabilidade do aluno.
+- Isto é um **aviso, não um bloqueio**: a skill segue montando o offerbook, só com a promessa e a oferta calibradas pra não prometer o proibido.
 
 ---
 
@@ -185,12 +210,12 @@ Preencher TODOS os campos. Não reorganizar, não resumir, não pular campo.
 
 ## Output (4 arquivos)
 
-A skill **sempre** entrega 4 arquivos no diretório atual:
+A skill **sempre** entrega 4 arquivos dentro de **`projetos/{slug}/`** (cria a pasta se não existir):
 
-1. **`briefing-offerbook.md`** — gerado no Passo 1 do Pipeline. Consolida inputs (avatar + concorrentes + swipe-file + decisões do dono) e serve de gate: sem briefing aprovado, não escreve offerbook.
-2. **`offerbook-{slug}.md`** — fonte de verdade (Markdown com os 7 blocos completos).
-3. **`offerbook-{slug}.docx`** — gerado a partir do MD com `python scripts/gerar_docx.py offerbook-{slug}.md` usando o `Template-Offerbook.docx` oficial.
-4. **`offerbook-{slug}.html`** — versão visual com TOC sticky lateral, gerado com `python scripts/gerar_html.py offerbook-{slug}.md`. Útil pra navegar rápido pelos 7 blocos no browser.
+1. **`projetos/{slug}/briefing-offerbook.md`** — gerado no Passo 1 do Pipeline. Consolida inputs (avatar + concorrentes + swipe-file + decisões do dono) e serve de gate: sem briefing aprovado, não escreve offerbook.
+2. **`projetos/{slug}/offerbook.md`** — fonte de verdade (Markdown com os 7 blocos completos). *(o `{slug}` já é a pasta; o arquivo não repete o slug no nome.)*
+3. **`projetos/{slug}/offerbook.docx`** — gerado a partir do MD com `python scripts/gerar_docx.py projetos/{slug}/offerbook.md` usando o `Template-Offerbook.docx` oficial.
+4. **`projetos/{slug}/offerbook.html`** — versão visual com TOC sticky lateral, gerado com `python scripts/gerar_html.py projetos/{slug}/offerbook.md`. Útil pra navegar rápido pelos 7 blocos no browser.
 
 Regras de geração:
 - MD é a fonte de verdade. Nunca editar só o DOCX/HTML; corrigir o MD e regenerar ambos.
@@ -199,14 +224,15 @@ Regras de geração:
 - Pré-requisito DOCX: `pip install python-docx` (uma vez).
 - HTML não tem dependência externa (script puro Python 3).
 - HTML respeita o `.cohort-brand-choice` do projeto (neutro padrão ou DESIGN.md).
+- **Material visual usa o `DESIGN.md` da marca:** qualquer versão visual (HTML/PDF) do offerbook é renderizada JÁ com os tokens do `projetos/{slug}/DESIGN.md` — cores, fontes, borda/raio, tamanho, logo. NUNCA use um tema fixo/genérico (dark, champagne, "padrão do cohort", template pronto). Legibilidade conforme o público (nichos 50+/acessibilidade → fonte grande ≥18px, alto contraste). O `Template-Offerbook.docx` (estrutura do documento) permanece intacto. Se não houver `DESIGN.md`, gere-o com `/design-md` antes.
 
 ### Comandos completos pra gerar os 4 arquivos
 
-Depois de salvar o `offerbook-{slug}.md`:
+Depois de salvar o `projetos/{slug}/offerbook.md`:
 
 ```
-python scripts/gerar_docx.py offerbook-{slug}.md
-python scripts/gerar_html.py offerbook-{slug}.md
+python scripts/gerar_docx.py projetos/{slug}/offerbook.md
+python scripts/gerar_html.py projetos/{slug}/offerbook.md
 ```
 
 ### Abrir DOCX e HTML automaticamente (entrega visual ao aluno)
@@ -214,8 +240,8 @@ python scripts/gerar_html.py offerbook-{slug}.md
 Logo após gerar, **rode automaticamente** os comandos para abrir:
 
 ```
-open offerbook-{slug}.docx
-open offerbook-{slug}.html
+open projetos/{slug}/offerbook.docx
+open projetos/{slug}/offerbook.html
 ```
 
 (No Windows: `start ...`. No Linux: `xdg-open ...`.)
@@ -293,3 +319,27 @@ Nao pule esse anúncio — fecha o trilho completo da Aula 01.
 ## Limitação conhecida
 
 Se for usar um conector de Google Docs: alguns conectores só aplicam formatação (heading/negrito) na guia padrão; nas guias novas o texto entra limpo, sem hierarquia visual. Se a formatação idêntica ao template for prioridade, usar um documento único formatado (perde a separação em guias).
+
+---
+
+> **Pendências do dono em UM lugar só.** Sempre que esta skill deixar um placeholder pro dono ([DONO ...], [A PREENCHER], [PLUG ...], [SEM PROVA AINDA], [N]), registre/atualize a entrada correspondente em **`projetos/{slug}/pendencias.md`** (+ `.html` com checklist clicável; crie se não existir): O QUÊ decidir, ONDE aparece (arquivos afetados) e COMO resolver. Agrupar por DECISÃO (1 decisão resolve vários arquivos), não por arquivo. Quando o dono informar um valor, atualizar TODOS os arquivos afetados de uma vez e marcar o item. O `/status-funil` lê esse arquivo.
+>
+> **Book do Funil (o hub do projeto) + fecho obrigatório:** o projeto tem um hub único em **`projetos/{slug}/index.html`, o Book do Funil**: cards clicáveis de TODAS as peças já geradas, agrupados por fase (Pesquisa · Oferta e Fundação · Peças do funil · Próximas peças), cada card com badge de status (feito / em revisão / ação do dono / fila), e a seção de **pendências + mapa NO FINAL** do Book. **Todo DOCUMENTO interno gerado** (mapas, docs de copy, índices, checklists, roteiros: tudo que é do dono, nunca as páginas do lead) leva no topo um link fixo **"← Book do Funil"** de volta pro hub — de qualquer peça se volta pro Book com 1 clique. Ao terminar a skill: (1) **atualize o card da sua peça no Book** E o status da peça no mapa (`funil.md` + `funil.html`): o "VOCÊ ESTÁ AQUI" tem que apontar SEMPRE pro ponto real do dono, nunca pra etapa já vencida (crie o Book se ainda não existir, na identidade do DESIGN.md); (2) encerre com *"Preencha as pendências"* e **abra o Book no navegador** — dele o dono chega a qualquer peça e ao `pendencias.html` (checklist com CAMPO DE RESPOSTA em cada item e o botão "Copiar respostas pro Claude"). Instrua o dono: preencher os campos, clicar em Copiar respostas e COLAR de volta no chat. **Ao receber as respostas coladas, atualize todos os arquivos afetados, marque os itens no `pendencias.md`, REGENERE o `pendencias.html` refletindo o estado novo (placar aplicadas/parciais/abertas; itens aplicados em verde com o valor; parciais em laranja com o que falta; abertos com campo de resposta) e ABRA o html atualizado — o dono precisa VER o que continua pendente, não só ler no chat.**
+
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **python-docx** — gera o `.docx` do template oficial. Check: `pip3 show python-docx`. Instalar: `pip3 install python-docx`. **Fallback:** entregar o `.md` (fonte de verdade) e gerar o docx quando a lib existir.
+- **Transcrição de áudio (whisper)** — a IA NÃO escuta áudio sozinha. Check: `which whisper-cli` ou `pip3 show mlx-whisper` (+ `which ffmpeg` pra converter). Tendo, transcreva pelo terminal (`whisper-cli -m <modelo> -l pt -f audio.wav -otxt` ou `mlx_whisper audio.wav --language pt`). Faltando: ofereça `brew install whisper-cpp ffmpeg` e PERGUNTE antes de instalar. **Fallback sem instalar nada:** o WhatsApp transcreve áudio (segurar a mensagem > transcrever > colar aqui), ditado do celular, ou colar transcrição de qualquer ferramenta. O que importa é a fala real chegar em texto.
+- **WebSearch / WebFetch** — pesquisa aberta na internet. Já vem no Claude Code, sem instalação. Se um site bloquear (login wall/Cloudflare), diga QUAL fonte falhou e o que veio de snippet.
+
+## Ao terminar — SEMPRE diga o próximo passo
+
+Toda execução desta skill **termina apontando o próximo passo** — pra o aluno nunca ficar sem saber o que fazer depois. Consulte o **Mapa de Execução do `/metodo-funil`** (ou a sequência da aula) pra saber qual skill vem a seguir, e aponte-a explicitamente:
+
+> Pronto. **Próximo passo:** rode `/{proxima-skill}` — [o que ela entrega].
+
+Nunca encerre sem o próximo passo. E aponte **UM comando só**: NADA de "alternativas paralelas", menu de opções ou lista de skills pra escolher — isso enche o aluno de dúvida e quebra o fluxo. Se existir mais de um caminho possível, escolha você (pela ordem do mapa) e aponte só ele; as outras peças continuam no mapa/Book e chegam na vez delas.
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com o comando do sistema do aluno — macOS: `open <arquivo>.html` · Windows: `start "" <arquivo>.html` · Linux: `xdg-open <arquivo>.html` (detecte o SO antes; NUNCA assuma macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

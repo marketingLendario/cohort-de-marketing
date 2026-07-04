@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia — Crie o design.md da sua marca · Cohort de Marketing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #070709;
+    --card: #111115;
+    --raised: rgba(255, 255, 255, 0.07);
+    --border: rgba(255, 255, 255, 0.07);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --foreground: #edebe6;
+    --muted-foreground: rgba(237, 235, 230, 0.68);
+    --primary: #c9b298;
+    --primary-light: #e4d8ca;
+    --primary-deep: #8d7556;
+    --primary-foreground: #1a1712;
+    --status-success: #22c55e;
+    --glow: rgba(201, 178, 152, 0.251);
+    --glow-strong: rgba(201, 178, 152, 0.4);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --font-body: 'Inter Tight', -apple-system, sans-serif;
+    --font-ui: 'Inter Tight', -apple-system, sans-serif;
+    --font-display: 'Inter Tight', -apple-system, sans-serif;
+    --font-editorial: 'Instrument Serif', 'Times New Roman', serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0;
+    background: var(--primary);
+    box-shadow: 0 0 15px rgba(201, 178, 152, 0.6);
+    z-index: 100;
+  }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 64px 32px 96px; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 32px 0 0;
+    margin-bottom: 64px;
+  }
+  .hero::after {
+    content: "";
+    display: block;
+    width: 72px;
+    height: 1px;
+    background: linear-gradient(135deg, #c9b298 0%, #8d7556 100%);
+    margin: 48px auto 0;
+  }
+  .hero .kicker {
+    display: inline-block;
+    font-family: var(--font-ui); font-size: 0.84rem; font-weight: 500;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--primary);
+    padding: 6px 14px;
+    border-radius: 999px;
+    box-shadow: 0 0 10px rgba(201, 178, 152, 0.45);
+    margin-bottom: 32px;
+  }
+  .hero h1 {
+    font-family: var(--font-editorial);
+    font-size: clamp(2.8rem, 7vw, 4.4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--primary);
+  }
+  .hero .subtitle {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    color: var(--muted-foreground);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 24px;
+  }
+  .hero .lead {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: 1.3rem;
+    color: var(--foreground);
+    max-width: 65ch;
+    margin: 0 auto;
+  }
+
+  /* Sumario */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin: 48px auto;
+    max-width: 720px;
+  }
+  .toc-label {
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    margin-bottom: 12px;
+  }
+  .toc ol { margin: 0; padding-left: 20px; font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.8; }
+  .toc ol li { color: var(--muted-foreground); }
+  .toc ol li a { color: var(--foreground); text-decoration: none; transition: color 0.15s ease; }
+  .toc ol li a:hover { color: var(--primary); }
+
+  /* Section */
+  section { margin: 80px 0; scroll-margin-top: 32px; }
+  .section-num {
+    font-family: var(--font-ui);
+    font-size: 0.84rem; font-weight: 500;
+    color: var(--primary);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 600; line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px;
+  }
+  section h2 em { font-family: var(--font-editorial); font-style: italic; font-weight: 400; color: var(--primary); }
+  section h3 { font-family: var(--font-ui); font-size: 1.25rem; font-weight: 600; margin: 32px 0 12px; }
+  section p { margin: 16px 0; color: rgba(237, 235, 230, 0.78); }
+  section strong { color: var(--primary-light); font-weight: 600; }
+  section code {
+    font-family: var(--font-mono);
+    background: var(--raised);
+    color: var(--primary-light);
+    padding: 2px 8px; border-radius: 0.25rem; font-size: 0.92em;
+  }
+
+  /* Steps */
+  .step {
+    display: grid; grid-template-columns: 64px 1fr; gap: 24px;
+    margin: 32px 0; padding: 32px;
+    background: var(--card); border: 1px solid var(--raised); border-radius: 20px;
+    transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .step:hover { border-color: rgba(201, 178, 152, 0.2); box-shadow: 0 20px 60px -20px rgba(201, 178, 152, 0.18); }
+  .step-num { font-family: var(--font-editorial); font-style: italic; font-size: 2.6rem; font-weight: 400; color: var(--primary); line-height: 1; }
+  .step-content h3 { margin-top: 0; margin-bottom: 8px; }
+  .step-content p { margin: 8px 0; font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); }
+  .step-content code { font-family: var(--font-mono); background: var(--raised); color: var(--primary-light); padding: 2px 8px; border-radius: 0.25rem; font-size: 0.92em; }
+
+  /* Bloco command */
+  .command-block {
+    background: var(--card); border: 1px solid var(--raised); border-radius: 0.75rem;
+    padding: 20px 24px; margin: 16px 0;
+    font-family: var(--font-mono); font-size: 0.95rem; color: var(--foreground);
+    overflow-x: auto; position: relative;
+  }
+  .command-block::before { content: "$"; color: var(--primary); margin-right: 12px; font-weight: 700; }
+  .command-block.slash::before { content: "/"; }
+  .command-block.plain::before { content: ""; margin-right: 0; }
+
+  /* Cards */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 32px 0; }
+  .skill-card {
+    background: var(--card); border: 1px solid var(--raised); border-left: 2px solid var(--primary);
+    border-radius: 16px; padding: 24px; transition: transform 0.3s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .skill-card:hover { transform: translateY(-2px); border-color: rgba(201, 178, 152, 0.3); box-shadow: 0 20px 60px -20px rgba(201, 178, 152, 0.18); }
+  .skill-card .skill-name { font-family: var(--font-display); font-size: 1.1rem; color: var(--primary); font-weight: 700; margin-bottom: 12px; letter-spacing: 0.02em; }
+  .skill-card .skill-what { font-family: var(--font-ui); font-size: 0.95rem; color: var(--foreground); margin: 0 0 12px; line-height: 1.5; }
+  .skill-card .skill-out { font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); padding-top: 12px; border-top: 1px solid var(--raised); margin: 0; }
+  .skill-card .skill-out strong { color: var(--primary); font-weight: 600; }
+  .skill-card.destaque { border-left-color: var(--status-success); }
+  .skill-card.destaque .skill-name { color: var(--primary-light); }
+
+  /* Blocos */
+  .bloco { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin: 24px 0; }
+  .bloco h3 { margin: 0 0 16px; font-size: 1.4rem; }
+  .bloco .bloco-result { font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 12px 0 0; }
+  .bloco .bloco-result strong { color: var(--primary); }
+
+  /* Quote do Alan */
+  .quote {
+    border-left: 3px solid var(--primary);
+    padding: 8px 0 8px 28px;
+    margin: 32px 0;
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: 1.6rem;
+    line-height: 1.35;
+    color: var(--primary-light);
+  }
+  .quote cite {
+    display: block;
+    margin-top: 12px;
+    font-family: var(--font-ui);
+    font-style: normal;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* Callout */
+  .callout {
+    background: rgba(201, 178, 152, 0.06);
+    border: 1px solid var(--primary-deep);
+    border-radius: 0.75rem;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .callout .callout-label { font-family: var(--font-ui); font-size: 0.84rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+  .callout p { font-family: var(--font-ui); font-size: 0.95rem; margin: 6px 0; }
+  .callout code { font-family: var(--font-mono); background: var(--raised); color: var(--primary-light); padding: 2px 8px; border-radius: 0.25rem; font-size: 0.92em; }
+
+  /* Aulas do Alan (vídeos) */
+  .video { background: var(--card); border: 1px solid var(--raised); border-radius: 20px; padding: 32px; margin: 28px 0; transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease); }
+  .video:hover { border-color: rgba(201, 178, 152, 0.2); box-shadow: 0 20px 60px -20px rgba(201, 178, 152, 0.18); }
+  .video-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; }
+  .video-order { font-family: var(--font-editorial); font-style: italic; font-size: 2.5rem; font-weight: 400; color: var(--primary); line-height: 1; }
+  .video-meta { font-family: var(--font-ui); font-size: 0.88rem; color: var(--muted-foreground); letter-spacing: 0.06em; text-transform: uppercase; }
+  .video h3.video-title { font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; line-height: 1.1; margin: 4px 0 6px; }
+  .video .role { font-family: var(--font-ui); font-size: 0.92rem; color: var(--primary-light); font-weight: 600; margin: 0 0 20px; }
+  .video h4 { font-family: var(--font-ui); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); margin: 24px 0 10px; }
+  .video ul { font-family: var(--font-ui); font-size: 0.95rem; line-height: 1.7; margin: 0; padding-left: 22px; }
+  .video ul li { margin: 4px 0; }
+  .video ul li strong { color: var(--primary-light); }
+  .video .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .video .tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--primary); background: var(--raised); border-radius: 9999px; padding: 4px 12px; }
+  .video .video-quote { border-left: 3px solid var(--primary); padding: 6px 0 6px 20px; margin: 22px 0 4px; font-family: var(--font-editorial); font-style: italic; font-size: 1.35rem; line-height: 1.35; color: var(--primary-light); }
+  .video .connect { background: rgba(201, 178, 152, 0.06); border: 1px solid var(--primary-deep); border-radius: 0.6rem; padding: 14px 18px; margin: 22px 0 0; font-family: var(--font-ui); font-size: 0.88rem; color: var(--foreground); }
+  .video .connect strong { color: var(--primary); }
+  .embed { position: relative; display: block; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; margin: 24px 0 4px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07), 0 20px 60px -20px rgba(0, 0, 0, 0.6); background: #000; text-decoration: none; }
+  .embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .embed img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85; transition: opacity 0.3s var(--ease), transform 0.4s var(--ease); }
+  .embed:hover img { opacity: 1; transform: scale(1.02); }
+  .embed .play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 72px; height: 72px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(7, 7, 9, 0.55); backdrop-filter: blur(12px);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.149), 0 10px 40px var(--glow);
+    color: var(--foreground); font-size: 1.3rem;
+    transition: all 0.3s var(--ease);
+  }
+  .embed:hover .play { color: var(--primary-light); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 50px var(--glow-strong); transform: translate(-50%, -50%) scale(1.06); }
+  .watch { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-family: var(--font-ui); font-size: 0.85rem; font-weight: 500; color: var(--primary); background: transparent; text-decoration: none; padding: 6px 0; transition: color 0.2s var(--ease); }
+  .watch:hover { color: var(--primary-light); }
+  .watch .yt { font-weight: 500; }
+
+  /* Regras */
+  .rule {
+    display: grid; grid-template-columns: 32px 1fr; gap: 16px; align-items: flex-start;
+    padding: 20px; background: var(--card); border-left: 2px solid var(--primary);
+    border-radius: 0.5rem; margin: 16px 0;
+  }
+  .rule-icon { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
+  .rule h3 { margin: 0 0 4px; font-family: var(--font-ui); font-size: 1rem; font-weight: 700; }
+  .rule p { margin: 4px 0 0; font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); line-height: 1.5; }
+
+  /* Cohort map */
+  .cohort-map { background: var(--card); border: 1px solid var(--raised); border-radius: 20px; padding: 32px; margin: 32px 0; }
+  .cohort-map .aula { display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 0.5rem; margin: 6px 0; font-family: var(--font-ui); font-size: 0.95rem; transition: background 0.2s ease; }
+  .cohort-map .aula.atual { background: rgba(201, 178, 152, 0.08); border: 1px solid var(--primary-deep); }
+  .cohort-map .aula-num { font-family: var(--font-display); font-weight: 700; color: var(--primary); min-width: 60px; }
+  .cohort-map .aula-name { flex: 1; color: var(--foreground); font-weight: 600; }
+  .cohort-map .aula-status { font-size: 0.82rem; color: var(--muted-foreground); letter-spacing: 0.06em; text-transform: uppercase; }
+  .cohort-map .aula.atual .aula-status { color: var(--primary); font-weight: 700; }
+  .cohort-map .aula.feita .aula-name { color: var(--muted-foreground); }
+
+  /* CTA final */
+  .cta-final { text-align: center; margin: 100px 0 32px; padding: 48px 32px; background: var(--card); border: 1px solid rgba(201, 178, 152, 0.25); border-radius: 20px; box-shadow: 0 20px 60px -20px rgba(201, 178, 152, 0.18); }
+  .cta-final h2 { font-family: var(--font-display); font-size: 2.2rem; margin: 0 0 16px; }
+  .cta-final h2 em { font-family: var(--font-body); font-style: normal; color: var(--primary); font-weight: 400; }
+  .cta-final p { font-family: var(--font-body); font-style: normal; color: var(--muted-foreground); max-width: 50ch; margin: 16px auto 24px; }
+  .cta-final .command-block { max-width: 480px; margin: 0 auto; text-align: left; }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker">Cohort de Marketing · Aula Bônus</span>
+    <h1>Crie o design.md da <em>sua marca</em></h1>
+    <p class="subtitle">Academia Lendária · Squad Marketing</p>
+    <p class="lead">O arquivo que faz toda página, criativo e relatório que a IA criar sair com a <strong>sua</strong> cara — e não com cara de IA. É o pré-requisito da Aula 02 (Arquiteto de Funil): sem ele, suas páginas saem genéricas.</p>
+  </header>
+
+  <nav class="toc">
+    <div class="toc-label">Você vai ler aqui</div>
+    <ol>
+      <li><a href="#secao-1">Por que isso importa (o tal "AI slop")</a></li>
+      <li><a href="#secao-2">O que é o design.md, afinal</a></li>
+      <li><a href="#secao-3">Onde você está no cohort</a></li>
+      <li><a href="#secao-4">Antes de gerar: junte referências</a></li>
+      <li><a href="#secao-5">Os 5 caminhos de brand (e qual fazer hoje)</a></li>
+      <li><a href="#secao-6">Mão na massa: gere o seu design.md</a></li>
+      <li><a href="#secao-7">Plugue a sua brand nas skills</a></li>
+      <li><a href="#secao-8">Nível 2: Claude Design (design mais personalizado) + aulas do Alan</a></li>
+      <li><a href="#secao-9">Os cuidados do Alan</a></li>
+      <li><a href="#secao-10">Sua tarefa antes de sábado</a></li>
+    </ol>
+  </nav>
+
+  <section id="secao-1">
+    <div class="section-num">Parte 1</div>
+    <h2>Por que isso <em>importa</em></h2>
+    <p>Toda ferramenta de IA, no automático, gera o mesmo visual genérico: botão roxo, gradiente sem sentido, ícone padrão, travessão no texto o tempo todo. Esse visual tem nome: <strong>AI slop</strong>. Bate o olho e a pessoa sente que foi IA — e isso derruba a confiança na sua marca.</p>
+    <p>Tem outro problema, mais silencioso: <strong>consistência</strong>. Como a IA é probabilística, ela muda coisas que você não pediu. Você cria a primeira página, gosta. Na terceira, o footer mudou, a cor do botão mudou, o cabeçalho ficou diferente. Sem uma regra que trave o estilo, cada tela parece de uma marca diferente.</p>
+    <div class="quote">
+      Como é que a gente faz com que ele não produza AI slop? Consistência gera confiança.
+      <cite>Alan Nicolas</cite>
+    </div>
+    <p>O <code>design.md</code> é exatamente essa regra. Ele é o <em>guard rail</em> que prende o estilo e faz a IA criar sempre dentro do padrão da sua marca — e ainda acelera tudo, porque você para de corrigir cor e fonte a cada página.</p>
+  </section>
+
+  <section id="secao-2">
+    <div class="section-num">Parte 2</div>
+    <h2>O que é o <em>design.md</em></h2>
+    <p>Um <strong>design system</strong> é o conjunto de regras visuais da sua marca: cores, tipografia, espaçamentos, componentes (botões, menus), sombras, motion. É o que garante que tudo pareça da mesma marca.</p>
+    <p>O <code>design.md</code> é esse design system escrito como um arquivo de texto que a IA lê no começo de <strong>toda</strong> sessão. Não é um prompt que você dá uma vez e se perde — é carregado sempre, então a IA cria seguindo aquele padrão automaticamente.</p>
+    <div class="quote">
+      O design system é a fonte da verdade de como você se apresenta ao mundo.
+      <cite>Alan Nicolas</cite>
+    </div>
+    <h3>O que ele guarda</h3>
+    <p>Paleta de cores, tipografia (as fontes da sua marca), espaçamentos ("ritmo e gravidade" da página), componentes e os <strong>design tokens</strong> — os valores nomeados que a IA reusa em tudo que cria.</p>
+    <div class="callout">
+      <div class="callout-label">Ponto importante</div>
+      <p>O design.md é um <strong>ponto de partida</strong>, não um molde pra clonar um site igual. Você se inspira no que já funciona e edita pra ficar a sua cara. O formato nasceu no Google e o Alan estendeu pra cobrir designs mais completos.</p>
+    </div>
+  </section>
+
+  <section id="secao-3">
+    <div class="section-num">Parte 3</div>
+    <h2>Onde você está <em>no cohort</em></h2>
+    <p>Esta é uma aula-ponte, curta e gravada. Ela fica entre a Aula 01 (as 5 skills de pesquisa que você já rodou) e a Aula 02 (Arquiteto de Funil), porque a próxima aula vai <strong>criar páginas de vendas e uma bateria de criativos</strong> — e os dois precisam da sua brand pra não saírem genéricos.</p>
+
+    <div class="cohort-map">
+      <div class="aula feita">
+        <span class="aula-num">01</span>
+        <span class="aula-name">Research Analyst (5 skills)</span>
+        <span class="aula-status">Concluída</span>
+      </div>
+      <div class="aula atual">
+        <span class="aula-num">★</span>
+        <span class="aula-name">design.md — a sua brand</span>
+        <span class="aula-status">Você está aqui</span>
+      </div>
+      <div class="aula">
+        <span class="aula-num">02</span>
+        <span class="aula-name">Arquiteto de Funil</span>
+        <span class="aula-status">Próxima</span>
+      </div>
+      <div class="aula">
+        <span class="aula-num">03</span>
+        <span class="aula-name">Tráfego Pago · Media Buyer</span>
+        <span class="aula-status">Depois</span>
+      </div>
+      <div class="aula">
+        <span class="aula-num">04</span>
+        <span class="aula-name">Análise de Dados</span>
+        <span class="aula-status">Final</span>
+      </div>
+    </div>
+
+    <p>Na Aula 01, as skills geraram seus relatórios no <strong>brand neutro</strong> (dark + cinza). Faz sentido: você ainda não tinha a sua marca configurada. É isso que a gente resolve agora, de uma vez.</p>
+  </section>
+
+  <section id="secao-4">
+    <div class="section-num">Parte 4</div>
+    <h2>Antes de gerar: junte <em>referências</em></h2>
+    <p>A qualidade do seu design depende das referências que você dá. Antes de qualquer coisa, monte um <strong>moodboard</strong>: pelo menos 3 marcas, sites ou páginas que têm o clima que você quer transmitir. O Alan usa muito o <strong>Pinterest</strong> pra isso (ele sugere imagens parecidas conforme você salva).</p>
+    <div class="quote">
+      A forma mais inteligente de começar algo não é criando do zero — é pegar algo que já funciona.
+      <cite>Alan Nicolas</cite>
+    </div>
+    <p>Não é vergonha: <strong>nada nasce do zero, todo design é inspirado em alguma coisa</strong>. E você está pegando algo validado — empresas gastaram muito dinheiro em teste pra achar a tipografia e as cores certas. Não reinvente a roda.</p>
+  </section>
+
+  <section id="secao-5">
+    <div class="section-num">Parte 5</div>
+    <h2>Os 5 caminhos pra <em>criar a sua marca</em></h2>
+    <p>Quando você chama a <code>/design-md</code>, a primeira coisa que ela faz é perguntar <strong>como você quer criar</strong>. Escolhe o que combina com o seu momento — não tem caminho errado:</p>
+
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-name">1 · Do zero</div>
+        <p class="skill-what">Não tem identidade ainda? A skill <strong>propõe uma direção</strong> pelo seu nicho e avatar (paleta, fontes, clima) — você aprova ou pede outra.</p>
+        <p class="skill-out"><strong>Pra quem:</strong> está começando a marca agora</p>
+      </div>
+      <div class="skill-card destaque">
+        <div class="skill-name">2 · Com o que eu tenho</div>
+        <p class="skill-what">Já tem logo, cores, manual de marca? Manda os arquivos pra skill. Ela analisa, <strong>fala o que falta</strong> ("e a fonte?") e monta o seu design.md com você.</p>
+        <p class="skill-out"><strong>Pra quem:</strong> já tem identidade visual</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-name">3 · A partir de um site</div>
+        <p class="skill-what">Tem um site no ar, ou uma referência que você ama? A skill extrai as cores, fontes e componentes da URL automaticamente.</p>
+        <p class="skill-out"><strong>Pra quem:</strong> tem site ou referência forte</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-name">4 · A partir de referências</div>
+        <p class="skill-what">Montou o moodboard da Parte 4? É aqui que ele entra: <strong>cola os prints</strong> (Pinterest, paleta, fotos) na conversa e o Claude <strong>lê as imagens</strong> e autora paleta, tipografia e vibe a partir delas.</p>
+        <p class="skill-out"><strong>Pra quem:</strong> tem inspiração visual, não código</p>
+      </div>
+      <div class="skill-card">
+        <div class="skill-name">5 · Nenhuma agora</div>
+        <p class="skill-what">Sem tempo ou ainda em dúvida? Segue no <strong>brand neutro</strong> (dark + cinza) e cria a sua marca depois — é só rodar a skill de novo quando quiser.</p>
+        <p class="skill-out"><strong>Pra quem:</strong> quer começar sem travar</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Não tem caminho errado</div>
+      <p>Escolhe o que combina com o seu momento. Mas se der pra criar a sua marca hoje (1 a 4), faz — sua página de sábado sai com a sua cara, não com cara de template.</p>
+    </div>
+  </section>
+
+  <section id="secao-6">
+    <div class="section-num">Parte 6</div>
+    <h2>Mão na massa: gere o <em>seu design.md</em></h2>
+    <p>Tudo acontece no <strong>Claude Code</strong>, na pasta do seu projeto — o mesmo ambiente da Aula 01. Você dá um comando e a skill te conduz pelo caminho que você escolher.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Chame a skill</h3>
+        <div class="command-block slash">design-md</div>
+        <p>Ela vai te perguntar como você quer criar: <strong>do zero</strong>, <strong>com o que você já tem</strong>, <strong>a partir de um site</strong>, <strong>a partir de referências</strong> (cola os prints do moodboard) ou <strong>neutro por enquanto</strong>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Escolha o seu caminho e responda</h3>
+        <p><strong>Do zero?</strong> Conta o que é o seu negócio e ela propõe a direção. <strong>Com o que tem?</strong> Manda seu logo e suas cores — ela pede o que faltar. <strong>De um site?</strong> Passa a URL. <strong>De referências?</strong> Cola os prints do seu moodboard direto na conversa — o Claude lê as imagens.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Pronto — o DESIGN.md já está na raiz</h3>
+        <p>A skill monta o <code>DESIGN.md</code> (o RG visual da marca) e <strong>já coloca ele na raiz do seu projeto</strong>, ao lado da pasta <code>.claude</code>. Você não move nada nem roda mais nada. E em <strong>qualquer caminho</strong> ela roda o <strong>ciclo de aprovação</strong>: abre o <code>preview.html</code> renderizado, se autocritica, sugere melhorias e itera até VOCÊ aprovar — o design.md nunca chega como fato consumado.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Isto é o Nível 1 — e já basta</div>
+      <p>Esses 5 caminhos da <code>/design-md</code> resolvem pra você chegar pronto na Aula 02. Quer um design ainda mais caprichado, desenhado num editor visual? Tem o <strong>Nível 2</strong> (Parte 8) — mas só depois que o conteúdo estiver de pé.</p>
+    </div>
+
+    <h3>Quer ver por baixo do capô? A aula do Alan</h3>
+    <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">Tudo o que a <code>/design-md</code> automatiza, o Alan ensina na mão nesta aula aberta. Assista pra entender o que acontece por trás do comando.</p>
+
+    <article class="video">
+      <div class="video-head">
+        <span class="video-order">01</span>
+        <span class="video-meta">1h27 · abril/2026</span>
+      </div>
+      <h3 class="video-title">Como clonar o design system de qualquer site (sem código)</h3>
+      <p class="role">A base da skill /design-md — comece por aqui</p>
+
+      <a class="embed" data-yt="Q9fiGl8DT_Q" href="https://www.youtube.com/watch?v=Q9fiGl8DT_Q" target="_blank" rel="noopener" aria-label="Assistir: Como clonar o design system de qualquer site">
+        <img src="https://i.ytimg.com/vi/Q9fiGl8DT_Q/maxresdefault.jpg" onerror="this.src='https://i.ytimg.com/vi/Q9fiGl8DT_Q/hqdefault.jpg'" alt="Capa do vídeo: Como clonar o design system de qualquer site">
+        <span class="play">▶</span>
+      </a>
+
+      <h4>O que você vai aprender</h4>
+      <ul>
+        <li>O que é um <strong>design system</strong> e o que é o <strong>design.md</strong> (e por que ele é um system prompt, não um prompt comum)</li>
+        <li>Como <strong>extrair</strong> o design de qualquer site: cores, tipografia, componentes, tokens</li>
+        <li>Como juntar referências num moodboard (Pinterest) antes de gerar</li>
+        <li>Como <strong>mesclar vários sites</strong> que você gosta (tipografia de um, paleta de outro)</li>
+        <li>Como carregar o design.md como base em qualquer ferramenta de IA</li>
+      </ul>
+
+      <div class="tags">
+        <span class="tag">design.md</span>
+        <span class="tag">extração de URL</span>
+        <span class="tag">moodboard</span>
+        <span class="tag">tokens</span>
+        <span class="tag">WCAG</span>
+      </div>
+
+      <div class="video-quote">"Nada é criado do zero. Todo design é inspirado em alguma coisa."</div>
+
+      <div class="connect"><strong>Conexão com a sua aula:</strong> é exatamente o que a skill <code>/design-md</code> automatiza. Assista pra entender o que acontece por baixo do comando.</div>
+
+      <a class="watch" href="https://www.youtube.com/watch?v=Q9fiGl8DT_Q" target="_blank" rel="noopener">Abrir no YouTube <span class="yt">↗</span></a>
+    </article>
+  </section>
+
+  <section id="secao-7">
+    <div class="section-num">Parte 7</div>
+    <h2>E as outras skills? <em>Já é automático</em></h2>
+    <p>Boa notícia: você não configura mais nada. Quando a <code>/design-md</code> gera o seu <code>DESIGN.md</code>, ela já avisa as outras skills que a sua marca está ativa. Então o <code>/avatar-funil</code>, o <code>/offerbook</code> e todos os outros já saem com a sua cara — o mesmo relatório que antes vinha no cinza neutro agora vem na sua marca, sem você escolher nada.</p>
+    <div class="bloco">
+      <h3>Quer trocar de brand depois?</h3>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 0 0 12px;">A escolha fica salva por projeto num arquivinho. Pra escolher de novo, é só apagá-lo:</p>
+      <div class="command-block">rm .cohort-brand-choice</div>
+      <p class="bloco-result"><strong>Resultado:</strong> na próxima skill, a pergunta dos 5 caminhos aparece de novo.</p>
+    </div>
+  </section>
+
+  <section id="secao-8">
+    <div class="section-num">Parte 8 · Nível 2</div>
+    <h2>O plus: <em>Claude Design</em></h2>
+    <p>O Nível 1 (a <code>/design-md</code>, por qualquer dos 5 caminhos) te dá um design.md rápido e funcional. O <strong>Nível 2</strong> é pra quem quer ir além: um design <strong>mais bonito e personalizado</strong>, criado do zero. O lugar disso é o <strong>Claude Design</strong> (claude.ai/design) — uma ferramenta à parte, com conta própria, separada do Claude Code.</p>
+    <p>Lá você joga logo, cores e fotos e ele monta os tokens e componentes, aprovando peça por peça. Você <strong>edita na mão</strong> (clica no elemento e ajusta sem gastar token) e, numa conta de time, <strong>compartilha o design system</strong> — qualquer mudança se propaga pra todo mundo, no mesmo padrão.</p>
+    <div class="quote">
+      Eu quero vir aqui, conversar com a IA, e ela resolver pra mim.
+      <cite>Alan Nicolas · Claude Design 2.0</cite>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Quando subir pro Nível 2</div>
+      <p>Não precisa hoje. O Nível 1 já te leva pronto pra Aula 02. Suba pro Claude Design quando quiser elevar o acabamento da marca — as duas aulas do Alan abaixo te levam do zero ao domínio da ferramenta.</p>
+    </div>
+
+    <h3>As aulas do Alan pra dominar o Claude Design</h3>
+
+    <article class="video">
+      <div class="video-head">
+        <span class="video-order">02</span>
+        <span class="video-meta">1h19 · junho/2026</span>
+      </div>
+      <h3 class="video-title">Como eu hackeei o Claude pra ser melhor que o Figma no design</h3>
+      <p class="role">O porquê da consistência — e o harness do Claude Design</p>
+
+      <a class="embed" data-yt="n0Xsy4OzlQU" href="https://www.youtube.com/watch?v=n0Xsy4OzlQU" target="_blank" rel="noopener" aria-label="Assistir: Como eu hackeei o Claude pra ser melhor que o Figma no design">
+        <img src="https://i.ytimg.com/vi/n0Xsy4OzlQU/maxresdefault.jpg" onerror="this.src='https://i.ytimg.com/vi/n0Xsy4OzlQU/hqdefault.jpg'" alt="Capa do vídeo: Como eu hackeei o Claude pra ser melhor que o Figma no design">
+        <span class="play">▶</span>
+      </a>
+
+      <h4>O que você vai aprender</h4>
+      <ul>
+        <li>O que é <strong>AI slop</strong> (o design com cara de IA) e como fazer a IA NÃO produzir</li>
+        <li>Por que <strong>consistência gera confiança</strong> — e como a IA quebra isso sozinha</li>
+        <li>O <strong>harness</strong>: o sistema de regras que prende a IA no seu padrão</li>
+        <li>Como <strong>modularizar</strong> componentes (menu, footer) pra mudar num lugar só</li>
+        <li>Como auditar o resultado (mobile, acessibilidade, remoção de slop)</li>
+      </ul>
+
+      <div class="tags">
+        <span class="tag">AI slop</span>
+        <span class="tag">harness</span>
+        <span class="tag">fonte da verdade</span>
+        <span class="tag">modularização</span>
+        <span class="tag">consistência</span>
+      </div>
+
+      <div class="video-quote">"Não é pra você duplicar o design system. Senão você tá criando várias fontes da verdade."</div>
+
+      <div class="connect"><strong>Onde isso entra:</strong> aprofunda os "cuidados do Alan" (Parte 9) e mostra o harness — por que a brand precisa ser uma fonte única da verdade. Vale mesmo se você ficar no Nível 1.</div>
+
+      <a class="watch" href="https://www.youtube.com/watch?v=n0Xsy4OzlQU" target="_blank" rel="noopener">Abrir no YouTube <span class="yt">↗</span></a>
+    </article>
+
+    <article class="video">
+      <div class="video-head">
+        <span class="video-order">03</span>
+        <span class="video-meta">20 min · junho/2026 · mais recente</span>
+      </div>
+      <h3 class="video-title">Claude Design 2.0: O fim do problema de Tokens</h3>
+      <p class="role">Criar do zero, sem queimar token — o topo do Nível 2</p>
+
+      <a class="embed" data-yt="L0f4OjduSrE" href="https://www.youtube.com/watch?v=L0f4OjduSrE" target="_blank" rel="noopener" aria-label="Assistir: Claude Design 2.0 — O fim do problema de Tokens">
+        <img src="https://i.ytimg.com/vi/L0f4OjduSrE/maxresdefault.jpg" onerror="this.src='https://i.ytimg.com/vi/L0f4OjduSrE/hqdefault.jpg'" alt="Capa do vídeo: Claude Design 2.0 — O fim do problema de Tokens">
+        <span class="play">▶</span>
+      </a>
+
+      <h4>O que você vai aprender</h4>
+      <ul>
+        <li>Como <strong>editar na mão</strong> (clicar e ajustar) sem gastar token</li>
+        <li>Por que ter o <strong>seu design system dentro da ferramenta</strong> muda o jogo (vs Canva/PowerPoint/Gamma)</li>
+        <li>Como uma mudança no design system <strong>se propaga</strong> pra todos os artefatos e pro time</li>
+        <li>Criar slides, páginas, protótipos e até vídeo no seu padrão</li>
+        <li>Integrações (Canva, Figma, Notion, Google Slides) puxando assets na criação</li>
+      </ul>
+
+      <div class="tags">
+        <span class="tag">Claude Design 2.0</span>
+        <span class="tag">design tokens</span>
+        <span class="tag">edição visual</span>
+        <span class="tag">propagação</span>
+        <span class="tag">MCPs</span>
+      </div>
+
+      <div class="video-quote">"Qualquer alteração no design system é distribuída automaticamente. Tudo segue um padrão."</div>
+
+      <div class="connect"><strong>Onde isso entra:</strong> é o Nível 2 na prática — criar uma marca do zero, de forma visual e personalizada, quando você quer ir além do clone de um site.</div>
+
+      <a class="watch" href="https://www.youtube.com/watch?v=L0f4OjduSrE" target="_blank" rel="noopener">Abrir no YouTube <span class="yt">↗</span></a>
+    </article>
+  </section>
+
+  <section id="secao-9">
+    <div class="section-num">Parte 9</div>
+    <h2>Os cuidados <em>do Alan</em></h2>
+    <p>Regras curtas que separam um design que vende de um que tem só cara de bonito.</p>
+
+    <div class="rule">
+      <span class="rule-icon">1</span>
+      <div>
+        <h3>Nunca duplique o design system</h3>
+        <p>Linke, não copie. Se você duplica, cria várias "fontes da verdade" e perde o controle da marca. Um arquivo só, referenciado por tudo.</p>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">2</span>
+      <div>
+        <h3>Não troque o que você não entende</h3>
+        <p>Trocar uma fonte serifada por uma sans-serif qualquer cansa a leitura — e você perde leitores sem saber por quê. Cada decisão visual tem motivo.</p>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">3</span>
+      <div>
+        <h3>Referência é inspiração, não cópia</h3>
+        <p>Use o site dos outros como ponto de partida e adapte. Copyright protege nome e logo — não o layout —, mas o objetivo é a sua marca, não um clone.</p>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">4</span>
+      <div>
+        <h3>Acessibilidade conta</h3>
+        <p>Não é só mobile. Pense em contraste (baixa visão) e em evitar animações rápidas demais. A skill já te entrega um relatório de contraste — olhe.</p>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">5</span>
+      <div>
+        <h3>Funcionalidade antes do bonito</h3>
+        <p>Design lindo e inútil não vende. Publique mesmo imperfeito e ajuste depois — <em>ship fast, iterate faster</em>.</p>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-icon">6</span>
+      <div>
+        <h3>Escreva o design.md em inglês</h3>
+        <p>Gasta menos token e evita que acento e cedilha quebrem CSS e banco de dados. O conteúdo da sua marca pode ser em português; o arquivo de regras, em inglês.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="secao-10">
+    <div class="section-num">Parte 10</div>
+    <h2>Sua tarefa <em>antes de sábado</em></h2>
+    <p>Chegue na Aula 02 com o seu <code>DESIGN.md</code> na raiz do projeto. É ele que vai fazer sua página de vendas e seus criativos saírem com a sua cara, e não com cara de template.</p>
+    <ul style="font-family: var(--font-ui); font-size: 0.98rem; line-height: 1.9;">
+      <li><strong>Tem marca/site?</strong> Rode a <code>/design-md</code> na URL e mova o arquivo pra raiz.</li>
+      <li><strong>Não tem?</strong> Escolha uma referência que você ama e rode nela.</li>
+      <li><strong>Sem tempo?</strong> Fica no neutro hoje e refina depois — mas chegue com algo.</li>
+    </ul>
+  </section>
+
+  <div class="cta-final">
+    <h2>Bora gerar a <em>sua brand</em></h2>
+    <p>Um comando, no Claude Code, dentro da pasta do seu projeto. Troque a URL pela do seu site ou pela da sua referência.</p>
+    <div class="command-block slash">design-md https://a-sua-url.com</div>
+  </div>
+</div>
+
+<script>
+  // Vídeos: player embutido só funciona em http/https (o YouTube bloqueia em file://).
+  // Hospedado → vira iframe de verdade. Aberto do disco → capa clicável abre o YouTube.
+  if (location.protocol === 'http:' || location.protocol === 'https:') {
+    document.querySelectorAll('.embed[data-yt]').forEach(function (a) {
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + a.dataset.yt;
+      iframe.title = a.getAttribute('aria-label') || 'Vídeo da aula';
+      iframe.loading = 'lazy';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      var div = document.createElement('div');
+      div.className = 'embed';
+      div.appendChild(iframe);
+      a.replaceWith(div);
+    });
+  }
+
+  // barra de progresso de leitura
+  var bar = document.getElementById('progress');
+  function updateProgress() {
+    var h = document.documentElement;
+    var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+    bar.style.width = (scrolled * 100) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+</script>
+<script>
+document.querySelectorAll('a.embed[data-yt]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    if (location.protocol === 'file:') { return; } /* aberto do disco: o YouTube bloqueia embed sem referer (erro 153); deixa abrir em nova aba */
+    e.preventDefault();
+    var id = a.dataset.yt;
+    var box = document.createElement('div');
+    box.style.cssText = 'position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;';
+    box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="Vídeo da aula" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+    a.replaceWith(box);
+  });
+});
+</script>
+</body>
+</html>

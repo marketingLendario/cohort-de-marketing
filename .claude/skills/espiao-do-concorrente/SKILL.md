@@ -37,6 +37,18 @@ Você é um analista de inteligência competitiva. Sua função é pegar UM conc
 
 Princípio central: dado público vira vantagem. Nada de achismo. Cada conclusão apoiada no que o concorrente realmente publicou. Cada seção termina em ação. E cada achado indica de qual fonte veio.
 
+## Onde salvar e ler — convenção de projeto
+
+Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). Um projeto = uma pasta, com todas as peças do funil dentro. Nada solto na raiz.
+
+**Como descobrir o projeto ativo:**
+1. Se o usuário passou o slug/nicho no comando, use-o.
+2. Senão, `ls projetos/ 2>/dev/null`: **uma** pasta → use-a; **várias** → pergunte qual; **nenhuma** → o funil ainda não começou.
+
+**Nomes dentro da pasta** (sem repetir o slug): `avatar.md`, `offerbook.md`, `copy.md`, `funil.md`, `DESIGN.md`, `recuperacao.md`, `cro.md`; subpastas `pagina/`, `emails/`, `conteudo/`, `carrossel/`, `mockups/`. Nos 3 formatos (md/html/pdf) onde a skill gera.
+
+Esta skill salva os dossiês em `projetos/{slug}/espiao/`. Se existir `projetos/{slug}/avatar.md`, leia o nicho/avatar para focar a análise; se faltar o nicho, pergunte (não trava forte).
+
 ## Passo 0 — Entender o alvo e escolher o modo
 
 Quando o usuário informar um concorrente, primeiro identifique:
@@ -150,7 +162,7 @@ Cada brecha vira uma recomendação acionável para o usuário.
 
 ## Passo 3 — Entregar o dossiê
 
-**Nome do arquivo:** `dossie-{concorrente}.md` (slug do concorrente em minúsculas, sem espaço, sem acento). Ex.: `dossie-erico-rocha.md`, `dossie-hotmart.md`. Use `templates/dossie.md` como base — copie e salve com o nome correto no diretório atual.
+**Nome do arquivo:** `projetos/{slug}/espiao/dossie-{concorrente}.md` (slug do concorrente em minúsculas, sem espaço, sem acento). Ex.: `projetos/{slug}/espiao/dossie-erico-rocha.md`, `projetos/{slug}/espiao/dossie-hotmart.md`. Use `templates/dossie.md` como base — copie e salve com o nome correto na pasta `projetos/{slug}/espiao/` (descubra o projeto ativo com `ls projetos/ 2>/dev/null`; se faltar o nicho, pergunte).
 
 Preenchido com o material real, em português. Para cada achado, indique a(s) fonte(s) de onde veio. Estrutura:
 
@@ -165,6 +177,8 @@ Preenchido com o material real, em português. Para cada achado, indique a(s) fo
 9. **3 jogadas recomendadas** (o que o usuário faz amanhã pra explorar as brechas).
 
 Se a amostra foi pequena, veio de poucas fontes ou do modo offline, diga isso no topo, com honestidade.
+
+**Material visual usa o `DESIGN.md` da marca.** Se você renderizar o dossiê como HTML/PDF (relatório visual), gere-o JÁ com os tokens do `projetos/{slug}/DESIGN.md` — cores, fontes, borda/raio, tamanho, logo. NUNCA use um tema fixo/genérico (dark, champagne, "padrão do cohort", template pronto). Legibilidade conforme o público (nichos 50+/acessibilidade → fonte grande ≥18px, alto contraste). CSS inline, self-contained, sem emoji, português acentuado. Se não houver `DESIGN.md`, gere-o com `/design-md` antes. (Os screenshots dos criativos do concorrente entram como estão — o design da marca aplica só ao documento, não às peças capturadas.)
 
 ## Estilo de escrita (obrigatório)
 
@@ -252,3 +266,25 @@ Após entregar os 3 formatos, **sempre** diga ao usuário em texto separado:
 > Trend hunting identifica tendências emergentes que ainda não saturaram. Vai te dar variações de hook prontas pra teste.
 
 Não pule esse anúncio — é o que orienta o aluno a seguir o trilho da Aula 01.
+---
+
+## Processo carregando — narrar o andamento (obrigatório em coleta longa)
+
+Coletas e pesquisas desta skill rodam em segundo plano e podem levar vários minutos. O usuário NUNCA pode ficar no escuro sem saber o que está acontecendo. Ao disparar qualquer coleta/pesquisa:
+
+1. **Anuncie o que foi disparado**, em linguagem de progresso: quantos coletores, o que CADA um está fazendo (ex.: "coletor 1/2: conteúdos do @fulano no Instagram · coletor 2/2: top criadores do nicho").
+2. **Dê a estimativa honesta de tempo** (ex.: "isso leva de 5 a 10 minutos; te aviso a cada retorno").
+3. **Avise a cada retorno parcial**: "coletor 1 de 2 voltou: N itens" — nunca silêncio até o fim.
+4. **Estourou a estimativa?** Atualize o usuário proativamente ("o coletor X está demorando por [motivo]; opções: esperar ou seguir com o parcial").
+5. **Sempre ofereça o atalho**: seguir com o material parcial já disponível enquanto o resto roda — entregar algo revisável cedo vale mais que esperar o completo.
+
+
+## Ferramentas desta skill — check antes de rodar (o aluno nunca trava)
+
+Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se faltar: ofereça a instalação em 1 linha (e PERGUNTE antes de instalar) e SEMPRE dê um fallback sem instalação. Skill nunca trava nem falha em silêncio por ferramenta ausente — ela avisa o que falta e segue pelo fallback.
+
+- **Apify (API REST, com o SEU token)** — coleta com métrica real (Instagram, TikTok, X etc.). NÃO é MCP: a chamada é direto na `api.apify.com`, via o script `scripts/apify_scraper.py` da skill `/conteudo-funil` (só stdlib do Python). Check: `APIFY_API_TOKEN` no `.env` ou no ambiente (`echo $APIFY_API_TOKEN`). Sem token: conta gratuita em apify.com > Settings > API tokens. Se vier "Monthly usage hard limit exceeded", AVISE na hora (cota mensal da conta) e caia pros fallbacks: YouTube raspado da página pública (views reais), Threads via fetch, trilha manual, e "métrica não obtida" no que faltar. Nunca invente número.
+- **WebSearch / WebFetch** — pesquisa aberta na internet. Já vem no Claude Code, sem instalação. Se um site bloquear (login wall/Cloudflare), diga QUAL fonte falhou e o que veio de snippet.
+- **Chrome (headless)** via `scripts/gerar_pdf.sh` — gera os PDF dos entregáveis. Check — macOS: `ls "/Applications/Google Chrome.app"` · Windows (Git Bash): `ls "/c/Program Files/Google/Chrome/Application/chrome.exe"`; no Windows o script também usa o Edge como fallback (já vem instalado). **Fallback sem Chrome:** entregue md+html, abra o `.html` no navegador e oriente imprimir em PDF (Cmd+P no Mac, Ctrl+P no Windows > Salvar como PDF).
+
+> **Abra o HTML ao terminar E em todo checkpoint (obrigatório):** toda entrega ao usuário — o resultado final OU um checkpoint de revisão/aprovação no meio da skill — gera um `.html` da peça e termina SEMPRE mostrando: envie o HTML renderizado na conversa (ferramenta de envio de arquivo) E abra no navegador com o comando do sistema do aluno — macOS: `open <arquivo>.html` · Windows: `start "" <arquivo>.html` · Linux: `xdg-open <arquivo>.html` (detecte o SO antes; NUNCA assuma macOS). NUNCA peça aprovação de algo que o usuário não consegue ver renderizado. Nunca encerre entregando só o caminho do arquivo.

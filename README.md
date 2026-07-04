@@ -35,7 +35,7 @@ Mapear mercado, ler concorrentes e desenhar uma oferta que sai da gaveta. Skills
 
 **Status:** em breve (publicada na semana da aula)
 
-Estruturar o funil, gerar a página de venda e produzir uma bateria de criativos prontos para rodar.
+Estruturar o funil, gerar a página de venda e produzir uma bateria de criativos prontos para rodar. Skills usadas: `/metodo-funil`, `/pagina-vendas-funil`, `/vsl-funil`, `/copy-funil`, `/criativos-funil`, `/email-funil`, `/whatsapp-funil`, `/recuperacao-funil`, `/cro-funil`, `/backend-funil`, `/conteudo-funil`, `/design-md`.
 
 ### Aula 3 · Tráfego e Criativos
 
@@ -65,9 +65,18 @@ Instaladas em `.claude/skills/` na raiz. Carregam automaticamente.
 
 | Skill | O que faz |
 |---|---|
-| `/design-md` | Gera DESIGN.md com a sua brand (logo + cores + fontes). `/avatar-funil` e `/offerbook` usam pra renderizar HTML com a sua identidade. Opcional — se não rodar, sai com brand Academia Lendária. |
-
-As skills da Aula 02 serão publicadas na semana da aula.
+| `/metodo-funil` | Método de construção de funil (Alan Nicolas) |
+| `/pagina-vendas-funil` | Página de vendas estruturada |
+| `/vsl-funil` | Video Sales Letter |
+| `/copy-funil` | Copy específica para funil |
+| `/criativos-funil` | Criativos para anúncios |
+| `/email-funil` | Email marketing do funil |
+| `/whatsapp-funil` | WhatsApp marketing do funil |
+| `/recuperacao-funil` | Recuperação de carrinho abandonado |
+| `/cro-funil` | Otimização de conversão |
+| `/backend-funil` | Backend e integrações |
+| `/conteudo-funil` | Conteúdo para LP e VSL |
+| `/design-md` | Design system markdown que renderiza HTML com brand |
 
 ---
 
