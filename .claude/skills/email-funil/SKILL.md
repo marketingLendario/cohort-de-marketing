@@ -59,7 +59,7 @@ Não invente de cabeça o conteúdo que deveria vir da etapa anterior.
 Aplique sempre o que está definido no seu DESIGN.md. A estrutura típica de um email é:
 - **Header:** cor de fundo, eyebrow (uppercase, com letter-spacing), headline e subheadline — todos nas cores e fontes da sua marca.
 - **Corpo:** fundo e cor de texto da sua marca, 16px, line-height 1.6.
-- **CTA:** botão na cor de destaque da sua marca, com bom contraste de texto, cantos arredondados, padding confortável.
+- **CTA:** botão na cor de destaque da sua marca, com bom contraste de texto, cantos arredondados, padding confortável. **Sempre centralizado** no e-mail (nunca alinhado à esquerda): em HTML de e-mail, centralize do jeito compatível com os clientes — `<td align="center">` na tabela envolvendo o botão (não confie só em `margin: 0 auto`).
 - **Cards (foto + texto):** foto redonda com borda na cor de destaque; eyebrow em tom de apoio.
 - **Footer:** com a assinatura, logo e links da sua marca, conforme o DESIGN.md.
 - **Preheader oculto** (preview da caixa de entrada) sempre no topo, seguido de um spacer.
@@ -96,7 +96,7 @@ Se `projetos/{slug}/copy.md` existe (fundação da copy aprovada no `/copy-funil
 1. **1 HTML por e-mail, pronto pra colar** (`emails/trilha-{perfil}-email-{n}.html`): HTML de e-mail REAL (layout em tabela, CSS inline, preheader oculto, merge tags da ferramenta) na versão de e-mail do DESIGN.md. Nunca entregar só o documento de copy.
 2. **Índice geral clicável** (`emails/index.html`): página com cards por trilha (nº, assunto, dia de envio); cada card abre o e-mail individual. Atalhos no topo pro documento de copy, template base, pendências e mapa do funil.
 3. **Documento de revisão** (`emails/trilhas.md` + `.html` + `.pdf`): a copy completa das trilhas pra leitura.
-4. **Sem numeração de esteira no topo do e-mail:** o eyebrow nunca mostra "e-mail 2 de 4" (o lead não precisa saber que está numa sequência).
+4. **Sem numeração nem notação de cadência visível pro lead:** o eyebrow, o assunto e o corpo NUNCA mostram "e-mail 2 de 4", "D+1", "D+2", "D-1", "dia 3" ou qualquer marcação de régua/agenda — isso é metadado do dono e vive só no índice (`emails/index.html`, no campo "dia de envio" do card) e no documento de revisão. O lead não pode perceber que está numa esteira.
 
 
 > **Toda mensagem sai SEPARADA e com botão Copiar (regra dura).** Além do documento da peça, cada mensagem individual sai em arquivo próprio pronto pra usar: e-mail = 1 HTML por e-mail no padrão do disparador (tabela, inline, preheader, merge tags) com um botão flutuante "Copiar HTML do e-mail" que copia o código LIMPO (o botão remove a si mesmo do que é copiado); WhatsApp/DM = página com as mensagens em texto, botão "Copiar texto" em cada uma. Tudo listado num índice clicável (`emails/index.html` ou equivalente). O dono nunca precisa garimpar copy dentro de documento: é clicar, copiar, colar.
@@ -113,6 +113,8 @@ Se `projetos/{slug}/copy.md` existe (fundação da copy aprovada no `/copy-funil
 - [ ] Preheader preenchido (preview da caixa de entrada)
 - [ ] Variável de primeiro nome onde personalizar
 - [ ] CTA com texto e destino certos (lembrete = link do evento; convite = endpoint/página de obrigado)
+- [ ] Botão de CTA centralizado (`<td align="center">` na tabela do botão)
+- [ ] Nenhuma notação de cadência visível pro lead (nada de "D+1", "D+2", "e-mail 2 de 4", "dia 3" no eyebrow, assunto ou corpo)
 - [ ] Sem emoji · acentuação ok · nomes de marca corretos
 - [ ] Visual aplicado conforme o seu DESIGN.md (cores, fontes, header, footer, assinatura)
 - [ ] Texto relido inteiro (ortografia, marca)
