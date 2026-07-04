@@ -264,11 +264,17 @@ Antes de usar qualquer ferramenta, VERIFIQUE se ela existe na máquina. Se falta
 
 ## Fecho da Aula 2 (esta é a última peça — o fecho é especial)
 
-O `/cro-funil` fecha o mapa de execução. Quando ele termina, NÃO aponte outra skill: aponte a LIÇÃO DE CASA. Encerre SEMPRE com:
+O `/cro-funil` fecha o mapa de execução. Quando ele termina, NÃO aponte outra skill: aponte a LIÇÃO DE CASA. Após confirmar a entrega, **sempre** diga ao aluno em texto separado (mesmo padrão do fecho da Aula 01):
 
-1. A declaração: **"Aula 2 completa: as 9 peças do funil estão construídas."**
-2. A ordem clara: **"Agora, antes da Aula de Tráfego (Rafa): zere as pendências."** Abra o `pendencias.html` no navegador e liste o que está aberto — são essas respostas que deixam o funil PUBLICÁVEL (link de agendamento, integrações, decisões de oferta). Aluno que chega na Aula de Tráfego com pendência aberta compra tráfego pra funil que não fecha.
-3. O que fazer enquanto isso: gravar os conteúdos (os roteiros produzem a prova) e rodar o funil no orgânico pra chegar na Aula de Dados (Bruno) com números na planilha.
+> 🎉 **Aula 02 concluída.** Você completou as 9 peças do funil.
+>
+> Seu projeto `projetos/{slug}/` agora tem o funil completo: oferta (offerbook), fundação de copy (copy.md), identidade (DESIGN.md), página, e-mails, conteúdo, back-end, recuperação e o plano de testes (cro.md). Tudo reunido no **Book do Funil** (`projetos/{slug}/index.html`) — abri ele pra você.
+>
+> **Agora, antes da Aula de Tráfego (Rafa): zere as pendências.** Abra o `pendencias.html` e responda o que está aberto — são essas respostas que deixam o funil PUBLICÁVEL (link de agendamento, integrações, decisões de oferta). Quem chega na Aula de Tráfego com pendência aberta compra tráfego pra funil que não fecha.
+>
+> **Enquanto isso:** grave os conteúdos (os roteiros produzem a prova) e rode o funil no orgânico pra chegar na Aula de Dados (Bruno) com números na planilha.
+
+Não pule esse anúncio — fecha o trilho completo da Aula 02.
 
 ## Ao terminar — SEMPRE diga o próximo passo
 

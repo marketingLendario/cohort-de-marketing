@@ -238,8 +238,10 @@ Após confirmar entrega, **sempre** diga ao usuário em texto separado:
 > **Próximo passo manual:** crie o `lacunas-aula-01.md` (copie de `aula-01/docs/template-lacunas-aula-01.md` pra raiz do projeto). É o único artefato que não tem skill — você preenche o que ficou pendente em até 30 minutos.
 >
 > Esse pacote inteiro é o que vai alimentar a Aula 02 (Funil e Páginas). Sem ele aprovado pelo dono da oferta, NÃO se escreve copy. Essa é a regra-mãe do cohort.
+>
+> **Pronto pra continuar? A Aula 02 começa agora:** rode `/metodo-funil` — ele diagnostica o nível de consciência do seu público e monta o mapa de execução do seu funil, peça por peça.
 
-Nao pule esse anúncio — fecha o trilho completo da Aula 01.
+Nao pule esse anúncio — fecha o trilho completo da Aula 01 e já abre a porta da Aula 02.
 
 ---
 
