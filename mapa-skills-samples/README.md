@@ -11,10 +11,12 @@ bash scripts/run-nucleo-cohort.sh
 # 2. Sincronizar para amostras + regenerar PDFs
 bash sync-mapa-samples.sh
 
-# 3. Validar contratos + mapa (Playwright para tour/PDF)
+# 3. Validar (wiring + preview pdf.js canvas)
+node scripts/lib/nucleo-from-coleta.test.mjs
 node scripts/verify-skill-contracts.mjs
 cd scripts && npm install && cd ..
-node scripts/validate-mapa-skills.mjs --playwright
+node scripts/validate-mapa-wiring.mjs
+node scripts/validate-mapa-preview.mjs
 
 # 4. Abrir mapa (HTTP obrigatório para PDF em iframe)
 python3 -m http.server 8765

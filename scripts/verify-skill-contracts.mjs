@@ -3,6 +3,7 @@
  * Valida contratos das skills N12: SKILL.md + scripts executados + conteúdo mínimo.
  */
 import { readFileSync, existsSync } from 'fs';
+import { parseColetaEntries } from './lib/coleta-utils.mjs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { spawnSync } from 'child_process';
@@ -62,6 +63,15 @@ const log = (ok, msg) => { console.log(`${ok ? '✓' : '✗'} ${msg}`); if (!ok)
 
 log(existsSync(join(ROOT, '.env')), '.env criado pelo /comecar');
 log(existsSync(MANIFEST), '.cohort-run.json presente');
+
+const coletaAvatar = join(PROJ, 'pesquisa-avatar-2026-07/coleta-roteiro.txt');
+const relAvatar = join(PROJ, 'relatorio-avatar.md');
+if (existsSync(coletaAvatar) && existsSync(relAvatar)) {
+  const entries = parseColetaEntries(readFileSync(coletaAvatar, 'utf8'));
+  const anchor = entries[0]?.url;
+  log(!!anchor && readFileSync(relAvatar, 'utf8').includes(anchor),
+    'coleta→relatorio: URL do coletor presente no md');
+}
 
 let manifest = { steps: [] };
 if (existsSync(MANIFEST)) {

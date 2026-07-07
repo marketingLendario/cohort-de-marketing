@@ -38,3 +38,4 @@ secrets.json
 # interno da equipe — não vai pro repo do aluno
 CHANGELOG.md
 projetos/
+scripts/lib/.test-out/
