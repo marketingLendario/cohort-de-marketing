@@ -1227,7 +1227,7 @@ function stopTour(showDone) {
   if (tourState.timer) { clearTimeout(tourState.timer); tourState.timer = null; }
   document.querySelectorAll('.flow-node.tour-active').forEach(n => n.classList.remove('tour-active'));
   const progress = document.getElementById('tour-progress');
-  if (showDone && progress) progress.textContent = 'Tour N12 concluído — 22 passos';
+  if (showDone && progress) progress.textContent = `Tour N12 concluído — ${N12_TOUR.length} passos`;
   updateTourUI();
 }
 

@@ -5,8 +5,8 @@ Espelho de `projetos/academia-fit/` para previews reais no `mapa-skills.html`.
 ## Comandos
 
 ```bash
-# 1. Criar/atualizar projeto canônico (núcleo N12)
-bash scripts/bootstrap-academia-fit.sh
+# 1. Criar/atualizar projeto canônico (fluxo cohort real)
+bash scripts/run-nucleo-cohort.sh
 
 # 2. Sincronizar para amostras + regenerar PDFs
 bash sync-mapa-samples.sh

@@ -9,7 +9,7 @@ DST="$ROOT/mapa-skills-samples/academia-fit"
 PDF_SH="$ROOT/.claude/skills/avatar-funil/scripts/gerar_pdf.sh"
 
 if [ ! -d "$SRC" ]; then
-  echo "ERRO: $SRC não existe. Rode: bash scripts/bootstrap-academia-fit.sh"
+  echo "ERRO: $SRC não existe. Rode: bash scripts/run-nucleo-cohort.sh"
   exit 1
 fi
 
