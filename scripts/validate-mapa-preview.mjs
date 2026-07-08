@@ -42,7 +42,12 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 page.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); });
 page.on('pageerror', e => pageErrors.push(e.message));
 
-await page.goto(`${base}/mapa-skills.html`, { waitUntil: 'networkidle' });
+await page.goto(`${base}/mapa-skills.html`, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+await page.waitForFunction(
+  () => window.pdfjsLib && typeof selectSkill === 'function' && typeof openArtifactById === 'function'
+    && document.querySelector('.flow-node[data-id="avatar-funil"]'),
+  { timeout: 30_000 },
+);
 
 await page.evaluate(() => {
   const el = document.querySelector('.flow-node[data-id="avatar-funil"]');
