@@ -19,6 +19,7 @@ Bem-vinda ao repositório oficial do **Cohort de Marketing**. Este repo contém 
 ```bash
 git clone https://github.com/marketingLendario/cohort-de-marketing.git
 cd cohort-de-marketing
+node scripts/validate-al-fonts.mjs # confere woff2; se falhar: node scripts/vendor-al-fonts.mjs
 claude
 ```
 

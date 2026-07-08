@@ -20,7 +20,7 @@
 ## Gaps aceitáveis
 
 - **Densidade:** o mapa é canvas de exploração (25 nós, tour); o Ads Studio é painel operacional — não exigir paridade de layout.
-- **Fontes:** hub usa Google Fonts CDN; DS mock pode self-host — backlog vendorar woff2.
+- **Fontes:** hub usa `fonts-local.css` + woff2 em `assets/al/fonts/` (rodar `vendor-al-fonts.mjs` no clone).
 
 ## Como reproduzir
 

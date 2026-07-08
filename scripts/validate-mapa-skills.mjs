@@ -10,7 +10,8 @@ const run = (script, extra = []) => {
   return r.status ?? 1;
 };
 
-let code = run('validate-mapa-wiring.mjs');
+let code = run('validate-al-fonts.mjs');
+if (code === 0) code = run('validate-mapa-wiring.mjs');
 if (code === 0 && (process.argv.includes('--playwright') || process.argv.includes('--ui'))) {
   code = run('validate-mapa-preview.mjs');
 }

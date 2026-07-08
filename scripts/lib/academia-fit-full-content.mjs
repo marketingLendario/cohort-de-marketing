@@ -59,7 +59,7 @@ function finish(){
 function bannerHtml(w, h, title, hook, cta) {
   const fs = w > 1080 ? 56 : w === 1080 && h === 1080 ? 44 : 52;
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${title}</title>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Hanken+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/al/fonts-local.css">
 <style>*{box-sizing:border-box;margin:0;padding:0}html,body{width:${w}px;height:${h}px;overflow:hidden}
 body{font-family:'Hanken Grotesk',sans-serif;background:#0A0A0A;color:#EDEDED;display:flex;flex-direction:column;justify-content:center;padding:56px;position:relative;border:1px solid hsl(32 27% 69% / 0.16)}
 .kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#C9B298;margin-bottom:20px;font-weight:600}

@@ -11,14 +11,16 @@ bash scripts/run-nucleo-cohort.sh
 # 2. Sincronizar para amostras + regenerar PDFs
 bash sync-mapa-samples.sh
 
-# 3. Validar (wiring + preview pdf.js canvas)
+# 3. Fontes AL (woff2 versionados em assets/al/fonts/; refresh: vendor-al-fonts.mjs)
+node scripts/validate-al-fonts.mjs
+
+# 4. Validar (wiring + preview pdf.js canvas)
 node scripts/lib/nucleo-from-coleta.test.mjs
 node scripts/verify-skill-contracts.mjs
 cd scripts && npm install && cd ..
-node scripts/validate-mapa-wiring.mjs
-node scripts/validate-mapa-preview.mjs
+node scripts/validate-mapa-skills.mjs --playwright
 
-# 4. Abrir mapa (HTTP obrigatório para PDF em iframe)
+# 5. Abrir mapa (HTTP obrigatório para PDF em iframe)
 python3 -m http.server 8765
 # → http://127.0.0.1:8765/mapa-skills.html
 ```

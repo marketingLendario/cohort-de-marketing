@@ -73,7 +73,7 @@ ATUAL (pós f9e6508)                    PRÓXIMO (P3 backlog)
 ✓ Newsreader/Hanken via CDN           □ Vendorar Newsreader/Hanken woff2
 ✓ Validators OK                       □ Side-by-side formal vs ads-studio.dc.html
 ✓ Push remoto (operador)              □ Commit PDFs se sync terminou depois
-✓ P3 guia CSS + Mermaid + fonts       □ Self-host Newsreader/Hanken (offline)
+✓ P3 guia CSS + Mermaid + fonts       ✓ Self-host Newsreader/Hanken (vendor-al-fonts)
 ```
 
 ---
