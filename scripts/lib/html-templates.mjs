@@ -15,26 +15,10 @@ export const BRAND = {
 const FONT_BASE = '../../assets/al/fonts';
 
 const FONTS = `
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@font-face {
-  font-family: "Inter";
-  src: url("${FONT_BASE}/inter.woff2") format("woff2");
-  font-weight: 100 900;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Source Serif 4";
-  src: url("${FONT_BASE}/source-serif-4.woff2") format("woff2");
-  font-weight: 200 900;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Source Serif 4";
-  src: url("${FONT_BASE}/source-serif-4-italic.woff2") format("woff2");
-  font-style: italic;
-  font-weight: 200 900;
-  font-display: swap;
-}
 @font-face {
   font-family: "JetBrains Mono";
   src: url("${FONT_BASE}/jetbrains-mono.woff2") format("woff2");
@@ -53,18 +37,23 @@ const BASE_CSS = `
   --text: ${BRAND.text};
   --muted: ${BRAND.muted};
   --warm: ${BRAND.warm};
-  --gold-soft: #c9b2981a;
-  --gold-border: #c9b29840;
-  --glow-gold: 0 0 15px rgba(201, 178, 152, 0.35);
-  --font-ui: Inter, system-ui, sans-serif;
-  --font-reading: "Source Serif 4", Georgia, serif;
+  --hairline: hsl(32 27% 69% / 0.16);
+  --hairline-strong: hsl(32 27% 69% / 0.45);
+  --gold-soft: hsl(32 27% 69% / 0.1);
+  --gold-border: hsl(32 27% 69% / 0.45);
+  --radius-sm: 2px;
+  --radius-base: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --font-ui: "Hanken Grotesk", system-ui, sans-serif;
+  --font-reading: "Newsreader", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: linear-gradient(180deg, #0A0A0C 0%, #0D0D0F 44%, #0A0A0C 100%);
+  background: ${BRAND.surface};
   color: var(--text);
   font-family: var(--font-ui);
   font-size: 16px;
@@ -81,7 +70,7 @@ body {
   color: var(--primary);
   border: 1px solid var(--gold-border);
   padding: 5px 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   margin-bottom: 16px;
   background: var(--gold-soft);
 }
@@ -97,11 +86,10 @@ p { margin: 0 0 14px; color: var(--text); }
 .lead { font-size: 1.1rem; color: var(--muted); margin-bottom: 24px; font-family: var(--font-reading); }
 .card {
   background: var(--elevated);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-base);
   padding: 18px 20px;
   margin: 14px 0;
-  box-shadow: inset 0 0 0 1px #ffffff08;
 }
 .card-accent { border-color: var(--gold-border); }
 blockquote {
@@ -109,7 +97,7 @@ blockquote {
   padding: 14px 18px;
   border-left: 3px solid var(--primary);
   background: var(--elevated);
-  border-radius: 0 12px 12px 0;
+  border-radius: 0 var(--radius-base) var(--radius-base) 0;
   color: #DCCBB6;
   font-style: italic;
   font-family: var(--font-reading);
@@ -141,21 +129,22 @@ code {
   font-size: 0.88em;
   background: var(--elevated);
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 a { color: var(--secondary); }
 .btn {
   display: inline-block;
   background: var(--primary);
   color: ${BRAND.inkOnGold};
-  border: none;
-  padding: 14px 28px;
-  border-radius: 12px;
-  font: 600 1rem/1 var(--font-ui);
+  border: 1px solid var(--primary);
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  font: 700 0.75rem/1 var(--font-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   margin: 8px 0;
-  box-shadow: var(--glow-gold);
 }
 .btn-block { display: block; text-align: center; width: 100%; }
 .btn-ghost {
@@ -170,7 +159,7 @@ a { color: var(--secondary); }
   background: color-mix(in srgb, var(--warm) 18%, transparent);
   color: var(--warm);
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -192,13 +181,13 @@ a { color: var(--secondary); }
   border-bottom: 1px solid var(--border);
 }
 .stack-row:last-child { border-bottom: none; font-weight: 700; }
-.email-shell { max-width: 560px; margin: 0 auto; background: var(--elevated); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+.email-shell { max-width: 560px; margin: 0 auto; background: var(--elevated); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--hairline); }
 .email-head { background: var(--primary); color: ${BRAND.inkOnGold}; padding: 22px; text-align: center; font-weight: 700; }
 .email-body { padding: 28px 32px 36px; }
 .input {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: #0d0d12;
   color: var(--text);
@@ -209,7 +198,7 @@ a { color: var(--secondary); }
   aspect-ratio: 16/9;
   background: linear-gradient(145deg, #0d0d12, #1a1035);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-base);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -489,6 +478,6 @@ export function previewHtml() {
   </div>
   <button class="btn">CTA primário</button>
   <button class="btn btn-ghost">CTA secundário</button>
-  <div class="card"><strong>Source Serif 4</strong> títulos · <strong>Inter</strong> UI</div>
+  <div class="card"><strong>Newsreader</strong> títulos · <strong>Hanken Grotesk</strong> UI</div>
 </div>`);
 }

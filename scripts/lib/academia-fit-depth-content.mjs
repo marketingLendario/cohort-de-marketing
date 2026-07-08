@@ -699,7 +699,7 @@ O que mantenho? O que ajusto? Próximo passo: Fase 2 Reprogramar.
 
     mockupsPromptsMd: `# Prompts de mockup — Academia Fit
 
-Identidade: primary #C9B298 · secondary #30B0C7 · surface #0A0A0C · display Source Serif 4
+Identidade: primary #C9B298 · secondary #30B0C7 · surface #0A0A0A · display Newsreader · UI Hanken Grotesk
 
 ## Capa E-book Anti-Sanfona
 
@@ -811,8 +811,8 @@ colors:
   text-muted: "#A3A3A3"
   accent-warm: "#FF9500"
 typography:
-  display: Source Serif 4
-  body: Inter
+  display: Newsreader
+  body: Hanken Grotesk
   scale:
     h1: 2.5rem
     h2: 1.5rem
@@ -823,12 +823,12 @@ spacing:
   card-padding: 16px
   section-gap: 32px
 radius:
-  card: 12px
-  button: 12px
-  pill: 999px
+  control: 2px
+  card: 4px
+  panel: 6px
 components:
-  button-primary: "bg primary, text on-deep, padding 12px 24px, radius 12px, font-weight 600"
-  card: "bg surface-elevated, border 1px #27272A, radius 12px"
+  button-primary: "bg primary, text on-deep, padding 10px 20px, radius 2px, caps tracked"
+  card: "bg surface-elevated, border 1px hairline gold, radius 4px"
 ---
 
 # Design System — Academia Fit

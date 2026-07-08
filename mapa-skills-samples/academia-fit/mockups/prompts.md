@@ -1,6 +1,6 @@
 # Prompts de mockup — Academia Fit
 
-Identidade: primary #C9B298 · secondary #30B0C7 · surface #0A0A0C · display Source Serif 4
+Identidade: primary #C9B298 · secondary #30B0C7 · surface #0A0A0A · display Newsreader · UI Hanken Grotesk
 
 ## Capa E-book Anti-Sanfona
 
