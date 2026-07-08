@@ -960,7 +960,28 @@ function renderMermaid() {
   div.removeAttribute('data-processed');
   div.innerHTML = src;
   if (typeof mermaid !== 'undefined') {
-    mermaid.initialize({ startOnLoad: false, theme: 'dark', flowchart: { curve: 'basis' } });
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: '#0a0a0a',
+        mainBkg: '#121212',
+        primaryColor: '#141414',
+        primaryTextColor: '#ededed',
+        primaryBorderColor: 'rgba(201, 178, 152, 0.45)',
+        lineColor: 'rgba(201, 178, 152, 0.35)',
+        secondaryColor: '#1a1a1a',
+        tertiaryColor: '#0f0f0f',
+        clusterBkg: '#121212',
+        clusterBorder: 'rgba(201, 178, 152, 0.25)',
+        titleColor: '#c9b298',
+        edgeLabelBackground: '#121212',
+        fontFamily: '"Hanken Grotesk", system-ui, sans-serif',
+        fontSize: '13px',
+      },
+      flowchart: { curve: 'linear', padding: 14, htmlLabels: true },
+    });
     setTimeout(() => { try { mermaid.run({ nodes: [div] }); } catch(e) { console.warn(e); } }, 60);
   }
 }

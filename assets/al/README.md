@@ -8,6 +8,7 @@ SOT visual: **Ads Studio DS v2** (editorial flat, cantos quase retos, hairlines,
 - `logo/silhueta-al.svg` — marca AL para lockup do header
 - `tokens.css` — variáveis Noite + hairlines + escala de radius 2/4/6/8/12px
 - `hub-brand.css` — tipografia, header, controles, painéis, modais
-- `mapa-skills.css` — canvas de fluxo, tour N12, grid, previews
+- `guia-aluno.css` — layout editorial do `GUIA-DO-ALUNO.html` (hairlines, sem barras laterais coloridas)
+- `mapa-skills.css` — canvas de fluxo, tour N12, grid, previews, container Mermaid
 
 Ícones: [Iconoir](https://iconoir.com/) via CDN no HTML do hub.

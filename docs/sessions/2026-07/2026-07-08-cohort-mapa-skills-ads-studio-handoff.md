@@ -22,7 +22,7 @@ artifact:
 
 ## CRITICAL CONTEXT
 
-O repositório **`cohort-de-marketing`** (repo separado do Sinkra Hub) hospeda o hub do aluno do Cohort de Marketing — principalmente `mapa-skills.html` (25 skills, tour N12, previews de amostras). Nesta sessão aplicamos identidade **Lendár[IA]** em duas ondas: onda 1 trocou cores/fontes/Iconoir; onda 2 alinhou **forma visual** ao **Ads Studio DS v2** (cantos quase retos, hairlines, sem glow). Commits locais existem; **push remoto ainda não foi feito** (bloqueado pela política do agente neste ambiente).
+O repositório **`cohort-de-marketing`** (repo separado do Sinkra Hub) hospeda o hub do aluno do Cohort de Marketing — principalmente `mapa-skills.html` (25 skills, tour N12, previews de amostras). Identidade **Lendár[IA]** em ondas 1–2 (brand + Ads Studio DS v2 flat). **Onda 3 (P3):** `guia-aluno.css`, tema Mermaid AL, remoção de fontes legado. Branch sincronizada com `origin` após push do operador.
 
 ---
 
@@ -72,8 +72,8 @@ ATUAL (pós f9e6508)                    PRÓXIMO (P3 backlog)
 ✓ Hub/mapa flat, sem glow              □ Tema Mermaid AL
 ✓ Newsreader/Hanken via CDN           □ Vendorar Newsreader/Hanken woff2
 ✓ Validators OK                       □ Side-by-side formal vs ads-studio.dc.html
-✗ Push remoto                         □ Commit PDFs se sync terminou depois
-✗ P3 polish                           □ Remover fonts legado Inter/Source Serif
+✓ Push remoto (operador)              □ Commit PDFs se sync terminou depois
+✓ P3 guia CSS + Mermaid + fonts       □ Self-host Newsreader/Hanken (offline)
 ```
 
 ---
