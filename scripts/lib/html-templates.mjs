@@ -1,20 +1,47 @@
-/** Templates HTML/PDF — Academia Fit (DESIGN.md) */
+/** Templates HTML/PDF — Lendár[IA] (Academia Lendária DS) */
 
 export const BRAND = {
-  primary: '#7C3AED',
-  secondary: '#22C7B1',
-  surface: '#0A0A0F',
-  elevated: '#121218',
-  border: '#27272A',
-  text: '#F5F0FF',
-  muted: '#A1A1AA',
-  warm: '#F59E0B',
+  primary: '#C9B298',
+  secondary: '#30B0C7',
+  surface: '#0A0A0C',
+  elevated: '#131316',
+  border: '#292929',
+  text: '#FAFAFA',
+  muted: '#A3A3A3',
+  warm: '#FF9500',
+  inkOnGold: '#1E170F',
 };
 
-const FONTS =
-  '<link rel="preconnect" href="https://fonts.googleapis.com">' +
-  '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
-  '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">';
+const FONT_BASE = '../../assets/al/fonts';
+
+const FONTS = `
+<style>
+@font-face {
+  font-family: "Inter";
+  src: url("${FONT_BASE}/inter.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("${FONT_BASE}/source-serif-4.woff2") format("woff2");
+  font-weight: 200 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("${FONT_BASE}/source-serif-4-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 200 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("${FONT_BASE}/jetbrains-mono.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+</style>`;
 
 const BASE_CSS = `
 :root {
@@ -26,14 +53,20 @@ const BASE_CSS = `
   --text: ${BRAND.text};
   --muted: ${BRAND.muted};
   --warm: ${BRAND.warm};
+  --gold-soft: #c9b2981a;
+  --gold-border: #c9b29840;
+  --glow-gold: 0 0 15px rgba(201, 178, 152, 0.35);
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-reading: "Source Serif 4", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--surface);
+  background: linear-gradient(180deg, #0A0A0C 0%, #0D0D0F 44%, #0A0A0C 100%);
   color: var(--text);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--font-ui);
   font-size: 16px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -42,41 +75,44 @@ body {
 .wrap-wide { max-width: 960px; margin: 0 auto; padding: 48px 32px 64px; }
 .kicker {
   display: inline-block;
-  font: 600 0.68rem/1 Inter, sans-serif;
+  font: 600 0.68rem/1 var(--font-ui);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--secondary);
-  border: 1px solid color-mix(in srgb, var(--secondary) 35%, transparent);
+  color: var(--primary);
+  border: 1px solid var(--gold-border);
   padding: 5px 14px;
   border-radius: 999px;
   margin-bottom: 16px;
+  background: var(--gold-soft);
 }
 h1, h2, h3 {
-  font-family: 'Space Grotesk', Inter, sans-serif;
+  font-family: var(--font-reading);
   line-height: 1.2;
   margin: 0 0 12px;
 }
 h1 { font-size: 2rem; color: var(--text); }
-h2 { font-size: 1.25rem; color: var(--secondary); margin-top: 32px; }
-h3 { font-size: 1.05rem; color: var(--primary); margin-top: 24px; }
+h2 { font-size: 1.25rem; color: var(--primary); margin-top: 32px; }
+h3 { font-size: 1.05rem; color: var(--secondary); margin-top: 24px; }
 p { margin: 0 0 14px; color: var(--text); }
-.lead { font-size: 1.1rem; color: var(--muted); margin-bottom: 24px; }
+.lead { font-size: 1.1rem; color: var(--muted); margin-bottom: 24px; font-family: var(--font-reading); }
 .card {
   background: var(--elevated);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 18px 20px;
   margin: 14px 0;
+  box-shadow: inset 0 0 0 1px #ffffff08;
 }
-.card-accent { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+.card-accent { border-color: var(--gold-border); }
 blockquote {
   margin: 18px 0;
   padding: 14px 18px;
   border-left: 3px solid var(--primary);
   background: var(--elevated);
   border-radius: 0 12px 12px 0;
-  color: #d4d4d8;
+  color: #DCCBB6;
   font-style: italic;
+  font-family: var(--font-reading);
 }
 table {
   width: 100%;
@@ -91,19 +127,19 @@ th, td {
   vertical-align: top;
 }
 th {
-  background: #1a1a22;
-  color: var(--secondary);
+  background: var(--elevated);
+  color: var(--primary);
   font-weight: 600;
 }
 tr:nth-child(even) td { background: color-mix(in srgb, var(--elevated) 80%, transparent); }
 ul, ol { margin: 0 0 16px; padding-left: 1.4rem; }
 li { margin: 6px 0; }
 li.check { list-style: none; position: relative; padding-left: 4px; }
-li.check::before { content: '☐'; color: var(--secondary); margin-right: 8px; }
+li.check::before { content: '☐'; color: var(--primary); margin-right: 8px; }
 code {
-  font-family: ui-monospace, Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 0.88em;
-  background: #1a1a22;
+  background: var(--elevated);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -111,14 +147,15 @@ a { color: var(--secondary); }
 .btn {
   display: inline-block;
   background: var(--primary);
-  color: var(--text);
+  color: ${BRAND.inkOnGold};
   border: none;
   padding: 14px 28px;
   border-radius: 12px;
-  font: 600 1rem/1 Inter, sans-serif;
+  font: 600 1rem/1 var(--font-ui);
   text-decoration: none;
   cursor: pointer;
   margin: 8px 0;
+  box-shadow: var(--glow-gold);
 }
 .btn-block { display: block; text-align: center; width: 100%; }
 .btn-ghost {
@@ -156,7 +193,7 @@ a { color: var(--secondary); }
 }
 .stack-row:last-child { border-bottom: none; font-weight: 700; }
 .email-shell { max-width: 560px; margin: 0 auto; background: var(--elevated); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
-.email-head { background: var(--primary); padding: 22px; text-align: center; font-weight: 700; }
+.email-head { background: var(--primary); color: ${BRAND.inkOnGold}; padding: 22px; text-align: center; font-weight: 700; }
 .email-body { padding: 28px 32px 36px; }
 .input {
   width: 100%;
@@ -337,16 +374,16 @@ ${body}
 
 /** Documento longo (relatórios, offerbook, funil) — MD renderizado */
 export function documentHtml(title, kicker, md, { accent, wide = false } = {}) {
-  const accentColor = accent || BRAND.secondary;
+  const accentColor = accent || BRAND.primary;
   const content = mdToHtml(md);
   const body = `
 <div class="${wide ? 'wrap-wide' : 'wrap'}">
   <header class="hero">
-    <span class="kicker" style="color:${accentColor};border-color:color-mix(in srgb, ${accentColor} 35%, transparent)">${esc(kicker)}</span>
-    <p class="lead">Academia Fit · Método Consistência 90</p>
+    <span class="kicker" style="color:${accentColor};border-color:${accentColor}59">${esc(kicker)}</span>
+    <p class="lead">Lendár<em style="font-style:italic;color:var(--primary)">[IA]</em> · Academia Fit (exemplo do cohort)</p>
   </header>
   <main>${content}</main>
-  <p class="foot">Academia Fit · Cohort de Marketing · Gerado para mapa de skills</p>
+  <p class="foot">Academia Lendária · Cohort de Marketing · Gerado para mapa de skills</p>
 </div>`;
   return pageShell({ title, body });
 }
@@ -361,7 +398,7 @@ export function emailHtml(subject, inner) {
   const body = `
 <div style="background:var(--surface);padding:32px 16px;min-height:100vh">
   <div class="email-shell">
-    <div class="email-head">Academia Fit</div>
+    <div class="email-head">Lendár[IA]</div>
     <div class="email-body">
       <h1 style="font-size:1.35rem;margin-bottom:16px">${esc(subject)}</h1>
       ${inner}
@@ -441,17 +478,17 @@ export function quizPageHtml(quizJs) {
 }
 
 export function previewHtml() {
-  return landingHtml('Preview — Academia Fit', `
+  return landingHtml('Preview — Lendár[IA]', `
 <div class="wrap">
   <span class="kicker">Design System</span>
-  <h1>Academia Fit</h1>
-  <p class="lead">Dark premium · violeta + teal</p>
+  <h1>Lendár<em style="font-style:italic;color:var(--primary)">[IA]</em></h1>
+  <p class="lead">Livraria de luxo à noite · ouro como sinal escasso</p>
   <div class="grid-2">
-    <div class="card"><p style="color:var(--muted);margin:0 0 8px">Primary</p><span class="badge-warm" style="background:color-mix(in srgb,var(--primary) 25%,transparent);color:var(--primary)">#7C3AED</span></div>
-    <div class="card"><p style="color:var(--muted);margin:0 0 8px">Secondary</p><span class="badge-warm" style="background:color-mix(in srgb,var(--secondary) 20%,transparent);color:var(--secondary)">#22C7B1</span></div>
+    <div class="card"><p style="color:var(--muted);margin:0 0 8px">Primary (ouro)</p><span class="badge-warm" style="background:var(--gold-soft);color:var(--primary)">#C9B298</span></div>
+    <div class="card"><p style="color:var(--muted);margin:0 0 8px">Secondary (água)</p><span class="badge-warm" style="background:color-mix(in srgb,var(--secondary) 20%,transparent);color:var(--secondary)">#30B0C7</span></div>
   </div>
   <button class="btn">CTA primário</button>
   <button class="btn btn-ghost">CTA secundário</button>
-  <div class="card"><strong>Space Grotesk</strong> títulos · <strong>Inter</strong> corpo</div>
+  <div class="card"><strong>Source Serif 4</strong> títulos · <strong>Inter</strong> UI</div>
 </div>`);
 }

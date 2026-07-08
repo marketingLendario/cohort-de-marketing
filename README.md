@@ -12,6 +12,8 @@ Bem-vinda ao repositório oficial do **Cohort de Marketing**. Este repo contém 
 
 **1. Leia o [Guia do Aluno](./GUIA-DO-ALUNO.html)** — as Aulas 1 e 2 num documento só, na ordem, do zero absoluto ao funil completo. Abra o arquivo `GUIA-DO-ALUNO.html` no navegador.
 
+**1b. Explore o [Mapa de Skills](./mapa-skills.html)** — hub visual com as 25 skills, tour N12, previews de artefatos e identidade Lendár[IA]. Sirva via HTTP local (`python3 -m http.server 8765`) e abra `http://127.0.0.1:8765/mapa-skills.html`.
+
 **2. Prepare o ambiente:**
 
 ```bash

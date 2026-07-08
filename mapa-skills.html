@@ -1,485 +1,119 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mapa de Skills • Cohort de Marketing</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <title>Mapa de Skills • Lendár[IA] · Cohort de Marketing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/iconoir@7.11.0/css/iconoir.css">
+  <link rel="stylesheet" href="assets/al/hub-brand.css">
+  <link rel="stylesheet" href="assets/al/mapa-skills.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script src="mapa-skills-artifacts.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
-
-    body { font-family: 'Inter', system-ui, sans-serif; }
-
-    .font-display {
-      font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-      font-weight: 600;
-    }
-
-    .section-title {
-      font-size: 0.75rem;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .layer-active, .view-active {
-      background-color: #a78bfa;
-      color: #0a0a0f;
-      font-weight: 600;
-    }
-
-    /* ── Flow canvas (estilo n8n) ── */
-    #flow-viewport {
-      position: relative;
-      height: min(72vh, 680px);
-      min-height: 420px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(167,139,250,0.05) 0%, transparent 45%),
-        #0a0a0f;
-      border: 1px solid #27272a;
-      border-radius: 1.25rem;
-      overflow: hidden;
-      cursor: grab;
-      user-select: none;
-    }
-    #flow-viewport.panning { cursor: grabbing; }
-
-    #flow-canvas {
-      position: absolute;
-      top: 0; left: 0;
-      transform-origin: 0 0;
-      will-change: transform;
-    }
-
-    #flow-svg {
-      position: absolute;
-      top: 0; left: 0;
-      overflow: visible;
-      pointer-events: none;
-    }
-
-    .flow-edge {
-      fill: none;
-      stroke: #4b4b5c;
-      stroke-width: 2;
-      opacity: 0.55;
-      transition: opacity 0.2s, stroke 0.2s;
-    }
-    .flow-edge.active {
-      stroke-width: 2.5;
-      opacity: 1;
-      stroke-dasharray: 10 7;
-      animation: edge-flow 0.75s linear infinite;
-    }
-    .flow-edge.active.outbound {
-      stroke: #a78bfa;
-      filter: drop-shadow(0 0 5px rgba(167,139,250,0.45));
-    }
-    .flow-edge.active.inbound {
-      stroke: #22c7b1;
-      filter: drop-shadow(0 0 5px rgba(34,199,178,0.4));
-    }
-    .flow-edge.branch { stroke-dasharray: 6 4; opacity: 0.45; }
-    .flow-edge.utility { stroke-dasharray: 4 6; stroke: #64748b; opacity: 0.35; }
-
-    @keyframes edge-flow {
-      to { stroke-dashoffset: -34; }
-    }
-
-    .flow-particle {
-      fill: #a78bfa;
-      filter: drop-shadow(0 0 4px rgba(167,139,250,0.8));
-    }
-    .flow-particle.inbound-p {
-      fill: #22c7b1;
-      filter: drop-shadow(0 0 4px rgba(34,199,178,0.8));
-    }
-
-    .flow-node {
-      position: absolute;
-      width: 196px;
-      min-height: 76px;
-      background: linear-gradient(145deg, #1a1a22, #121218);
-      border: 1.5px solid #2a2a35;
-      border-radius: 14px;
-      padding: 10px 12px 10px 14px;
-      cursor: pointer;
-      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
-      z-index: 2;
-    }
-    .flow-node::before, .flow-node::after {
-      content: '';
-      position: absolute;
-      width: 10px; height: 10px;
-      background: #1a1a22;
-      border: 2px solid #4b4b5c;
-      border-radius: 50%;
-      top: 50%;
-      transform: translateY(-50%);
-      transition: border-color 0.15s, background 0.15s;
-    }
-    .flow-node::before { left: -6px; }
-    .flow-node::after  { right: -6px; }
-    .flow-node:hover {
-      border-color: rgba(167,139,250,0.6);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-    }
-    .flow-node:hover::before, .flow-node:hover::after {
-      border-color: #a78bfa;
-    }
-    .flow-node.selected {
-      border-color: #a78bfa;
-      box-shadow: 0 0 0 3px rgba(167,139,250,0.25), 0 12px 28px rgba(0,0,0,0.4);
-    }
-    .flow-node.selected::before, .flow-node.selected::after {
-      background: #a78bfa;
-      border-color: #a78bfa;
-    }
-    .flow-node.dimmed { opacity: 0.25; pointer-events: none; }
-    .flow-node.unrelated { opacity: 0.3; }
-    .flow-node.connected-upstream {
-      border-color: rgba(34,199,178,0.55);
-      box-shadow: 0 0 0 2px rgba(34,199,178,0.12);
-    }
-    .flow-node.connected-upstream::before {
-      background: #22c7b1;
-      border-color: #22c7b1;
-    }
-    .flow-node.connected-downstream {
-      border-color: rgba(167,139,250,0.55);
-      box-shadow: 0 0 0 2px rgba(167,139,250,0.12);
-    }
-    .flow-node.connected-downstream::after {
-      background: #a78bfa;
-      border-color: #a78bfa;
-    }
-
-    .flow-node .fn-order {
-      font-size: 9px;
-      font-family: ui-monospace, monospace;
-      padding: 1px 5px;
-      border-radius: 4px;
-      background: #27272a;
-      color: #71717a;
-    }
-    .flow-node .fn-name {
-      font-size: 12px;
-      font-weight: 600;
-      line-height: 1.2;
-      color: #f4f4f5;
-    }
-    .flow-node .fn-type {
-      font-size: 9px;
-      padding: 1px 6px;
-      border-radius: 6px;
-      margin-top: 4px;
-      display: inline-block;
-    }
-    .flow-node .fn-phase-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .flow-toolbar {
-      position: absolute;
-      bottom: 12px;
-      left: 12px;
-      display: flex;
-      gap: 4px;
-      z-index: 10;
-      background: rgba(18,18,24,0.92);
-      border: 1px solid #27272a;
-      border-radius: 12px;
-      padding: 4px;
-      backdrop-filter: blur(8px);
-    }
-    .flow-toolbar button {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      border: none;
-      background: transparent;
-      color: #a1a1aa;
-      cursor: pointer;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .flow-toolbar button:hover { background: #27272a; color: #fff; }
-
-    .flow-hint {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 10px;
-      color: #52525b;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    /* ── Minimap ── */
-    #flow-minimap {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      width: 200px;
-      height: 120px;
-      z-index: 10;
-      background: rgba(18,18,24,0.94);
-      border: 1px solid #27272a;
-      border-radius: 10px;
-      overflow: hidden;
-      cursor: crosshair;
-      backdrop-filter: blur(8px);
-    }
-    #flow-minimap canvas { display: block; width: 100%; height: 100%; }
-    #minimap-viewport {
-      position: absolute;
-      border: 1.5px solid rgba(167,139,250,0.7);
-      background: rgba(167,139,250,0.08);
-      border-radius: 2px;
-      pointer-events: none;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
-    }
-    #minimap-label {
-      position: absolute;
-      top: 4px;
-      left: 6px;
-      font-size: 8px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #52525b;
-      pointer-events: none;
-    }
-
-    /* ── Tour N12 ── */
-    .flow-node.tour-active {
-      border-color: #f59e0b !important;
-      box-shadow: 0 0 0 3px rgba(245,158,11,0.35), 0 0 24px rgba(245,158,11,0.2) !important;
-      animation: tour-pulse 1.2s ease-in-out infinite;
-    }
-    @keyframes tour-pulse {
-      0%, 100% { box-shadow: 0 0 0 3px rgba(245,158,11,0.35), 0 0 16px rgba(245,158,11,0.15); }
-      50% { box-shadow: 0 0 0 5px rgba(245,158,11,0.45), 0 0 28px rgba(245,158,11,0.3); }
-    }
-    #tour-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      padding: 8px 12px;
-      background: #121218;
-      border: 1px solid #27272a;
-      border-radius: 12px;
-      font-size: 12px;
-    }
-    #tour-bar.playing { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05); }
-    .skill-chip {
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-    }
-    .skill-chip:hover { filter: brightness(1.15); }
-    .skill-chip-static { cursor: default; opacity: 0.85; }
-
-    .swimlane-label {
-      position: absolute;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #3f3f46;
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      pointer-events: none;
-    }
-
-    /* ── Grid view (legado) ── */
-    .node { transition: all 0.2s; cursor: pointer; }
-    .node:hover { transform: translateY(-2px) scale(1.02); }
-    .node.selected { box-shadow: 0 0 0 3px #a78bfa; transform: scale(1.03); }
-    .skill-bubble {
-      background: linear-gradient(145deg, #1a1a22, #121218);
-      border: 1px solid #2a2a35;
-    }
-    .skill-bubble:hover { border-color: #a78bfa; }
-    .satellite {
-      font-size: 10px;
-      padding: 1px 6px;
-      background: rgba(167,139,250,0.1);
-      border: 1px solid rgba(167,139,250,0.3);
-    }
-
-    /* ── Detail panel ── */
-    .artifact-btn {
-      font-size: 0.75rem;
-      background: #1a1a22;
-      border: 1px solid #2a2a35;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-align: left;
-      width: 100%;
-    }
-    .artifact-btn:hover {
-      border-color: #a78bfa;
-      background: #1f1f2a;
-    }
-    .artifact-btn .ab-icon { color: #71717a; }
-    .artifact-btn:hover .ab-icon { color: #a78bfa; }
-
-    /* ── Artifact preview modal ── */
-    #artifact-modal {
-      backdrop-filter: blur(4px);
-    }
-    #artifact-preview-frame {
-      background: #fff;
-      border: none;
-      width: 100%;
-      min-height: 400px;
-      border-radius: 8px;
-    }
-    .preview-tab.active {
-      background: #a78bfa;
-      color: #0a0a0f;
-      font-weight: 600;
-    }
-    .md-preview {
-      font-family: Georgia, serif;
-      line-height: 1.65;
-    }
-    .md-preview h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 12px; color: #f4f4f5; }
-    .md-preview h2 { font-size: 1.15rem; font-weight: 600; margin: 24px 0 8px; color: #e4e4e7; border-bottom: 1px solid #27272a; padding-bottom: 6px; }
-    .md-preview blockquote { border-left: 3px solid #a78bfa; padding: 8px 16px; margin: 12px 0; color: #c4b5fd; background: #18181b; border-radius: 0 8px 8px 0; }
-    .md-preview table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 12px 0; }
-    .md-preview th, .md-preview td { border: 1px solid #27272a; padding: 8px; text-align: left; }
-    .md-preview th { background: #1a1a22; color: #a78bfa; }
-    .md-preview code { background: #1a1a22; padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: ui-monospace, monospace; }
-    .md-preview pre { background: #18181b; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.8rem; }
-  </style>
 </head>
-<body class="bg-[#0a0a0f] text-zinc-200">
+<body>
 
-  <!-- Header -->
-  <div class="border-b border-zinc-800 bg-[#0a0a0f]/95 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-[1500px] mx-auto px-6 py-4">
-      <div class="flex items-center justify-between flex-wrap gap-3">
-        <div class="flex items-center gap-x-4">
-          <div class="flex items-center gap-x-3">
-            <div class="w-9 h-9 rounded-2xl bg-violet-500 flex items-center justify-center">
-              <i class="fa-solid fa-diagram-project text-white text-lg"></i>
-            </div>
-            <div>
-              <span class="font-display text-2xl tracking-tighter">Cohort</span>
-              <span class="font-display text-2xl tracking-tighter text-violet-400">Skills</span>
-            </div>
-          </div>
-          <div class="px-3 py-1 rounded-full bg-zinc-900 text-xs font-medium border border-zinc-800 flex items-center gap-x-1.5">
-            <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-            <span class="text-zinc-400">25 skills · exemplos em todas · N12</span>
+  <header class="hub-header">
+    <div class="hub-header__inner">
+      <div class="hub-brand">
+        <div class="hub-lockup">
+          <img class="hub-lockup__mark" src="assets/al/logo/silhueta-al.svg" alt="Academia Lendária" width="42" height="42">
+          <div>
+            <div class="hub-lockup__wordmark">Lendár<em>[IA]</em></div>
+            <div class="hub-lockup__subtitle">Mapa de Skills · Cohort de Marketing</div>
           </div>
         </div>
+        <div class="hub-status-pill">
+          <span class="hub-status-pill__dot"></span>
+          <span>25 skills · exemplos em todas · N12</span>
+        </div>
+      </div>
 
-        <div class="flex items-center gap-2 text-sm flex-wrap">
-          <!-- View mode -->
-          <div class="flex items-center bg-zinc-900 border border-zinc-800 rounded-2xl p-1">
-            <button onclick="setViewMode('flow')" id="view-flow"
-                    class="view-btn px-4 py-1.5 text-xs font-medium rounded-[14px] hover:bg-zinc-800 flex items-center gap-x-2 view-active">
-              <i class="fa-solid fa-diagram-project"></i>
-              <span class="hidden sm:inline">Fluxo</span>
-            </button>
-            <button onclick="setViewMode('grid')" id="view-grid"
-                    class="view-btn px-4 py-1.5 text-xs font-medium rounded-[14px] hover:bg-zinc-800 flex items-center gap-x-2">
-              <i class="fa-solid fa-grip"></i>
-              <span class="hidden sm:inline">Grid</span>
-            </button>
-            <button onclick="setViewMode('mermaid')" id="view-mermaid"
-                    class="view-btn px-4 py-1.5 text-xs font-medium rounded-[14px] hover:bg-zinc-800 flex items-center gap-x-2">
-              <i class="fa-solid fa-sitemap"></i>
-              <span class="hidden sm:inline">Mermaid</span>
-            </button>
-          </div>
-
-          <button onclick="resetFilters()"
-                  class="px-3 py-2 text-xs font-medium rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 flex items-center gap-x-2">
-            <i class="fa-solid fa-undo text-xs"></i>
-            <span class="hidden md:inline">Reset</span>
+      <div class="hub-toolbar">
+        <div class="hub-segment">
+          <button type="button" onclick="setViewMode('flow')" id="view-flow" class="hub-segment__btn view-btn view-active">
+            <i class="iconoir-network-right"></i>
+            <span class="label-sm">Fluxo</span>
+          </button>
+          <button type="button" onclick="setViewMode('grid')" id="view-grid" class="hub-segment__btn view-btn">
+            <i class="iconoir-view-grid"></i>
+            <span class="label-sm">Grid</span>
+          </button>
+          <button type="button" onclick="setViewMode('mermaid')" id="view-mermaid" class="hub-segment__btn view-btn">
+            <i class="iconoir-network"></i>
+            <span class="label-sm">Mermaid</span>
           </button>
         </div>
+        <button type="button" onclick="resetFilters()" class="hub-btn">
+          <i class="iconoir-undo"></i>
+          <span class="label-sm">Reset</span>
+        </button>
       </div>
     </div>
-  </div>
+  </header>
 
-  <div class="max-w-[1500px] mx-auto px-6 pt-6">
-
-    <!-- Controls -->
-    <div class="flex flex-wrap items-center gap-3 mb-4">
-      <div class="relative flex-1 max-w-md">
-        <input id="search-input" onkeyup="filterNodes()" type="text"
+  <main class="hub-shell">
+    <div class="hub-filters">
+      <div class="hub-search">
+        <input id="search-input" onkeyup="filterNodes()" type="search"
                placeholder="Buscar skill, artefato ou fase..."
-               class="w-full bg-zinc-900 border border-zinc-800 focus:border-violet-500/70 pl-10 py-2.5 text-sm rounded-2xl outline-none">
-        <i class="fa-solid fa-search absolute left-4 top-3 text-zinc-500"></i>
+               class="hub-search__input" autocomplete="off">
+        <i class="iconoir-search hub-search__icon"></i>
       </div>
 
-      <div class="flex items-center gap-1 bg-zinc-900 border border-zinc-800 rounded-2xl p-1 text-xs">
-        <div class="px-2 text-zinc-500 font-medium">Camadas:</div>
-        <label class="flex items-center gap-x-1.5 px-3 py-1 rounded-xl hover:bg-zinc-800 cursor-pointer">
-          <input type="checkbox" id="toggle-connections" checked onchange="applyFilters()" class="accent-violet-400">
+      <div class="hub-chip-group">
+        <span class="hub-chip-group__label">Camadas:</span>
+        <label class="hub-chip">
+          <input type="checkbox" id="toggle-connections" checked onchange="applyFilters()">
           <span>Conexões</span>
         </label>
-        <label class="flex items-center gap-x-1.5 px-3 py-1 rounded-xl hover:bg-zinc-800 cursor-pointer">
-          <input type="checkbox" id="toggle-guards" checked onchange="applyFilters()" class="accent-violet-400">
+        <label class="hub-chip">
+          <input type="checkbox" id="toggle-guards" checked onchange="applyFilters()">
           <span>Guards</span>
         </label>
-        <label class="flex items-center gap-x-1.5 px-3 py-1 rounded-xl hover:bg-zinc-800 cursor-pointer">
-          <input type="checkbox" id="toggle-hubs" checked onchange="applyFilters()" class="accent-violet-400">
+        <label class="hub-chip">
+          <input type="checkbox" id="toggle-hubs" checked onchange="applyFilters()">
           <span>Hubs</span>
         </label>
       </div>
 
-      <button onclick="showLegend()" class="text-xs text-zinc-500 hover:text-zinc-300 flex items-center gap-x-1">
-        <i class="fa-solid fa-info-circle"></i> Legenda
+      <button type="button" onclick="showLegend()" class="hub-link-btn">
+        <i class="iconoir-info-circle"></i> Legenda
       </button>
     </div>
 
     <!-- FLOW CANVAS (principal) -->
     <div id="flow-container">
       <div id="tour-bar">
-        <button onclick="toggleTour()" id="tour-btn"
-                class="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 text-xs font-medium flex items-center gap-1.5">
-          <i class="fa-solid fa-play" id="tour-icon"></i>
+        <button type="button" onclick="toggleTour()" id="tour-btn" class="hub-btn hub-btn--ghost">
+          <i class="iconoir-play" id="tour-icon"></i>
           <span id="tour-label">Tour N12</span>
         </button>
-        <button onclick="tourPrev()" class="px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 text-xs" title="Anterior">
-          <i class="fa-solid fa-chevron-left"></i>
+        <button type="button" onclick="tourPrev()" class="hub-btn hub-btn--ghost" title="Anterior">
+          <i class="iconoir-nav-arrow-left"></i>
         </button>
-        <button onclick="tourNext()" class="px-2 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 text-xs" title="Próximo">
-          <i class="fa-solid fa-chevron-right"></i>
+        <button type="button" onclick="tourNext()" class="hub-btn hub-btn--ghost" title="Próximo">
+          <i class="iconoir-nav-arrow-right"></i>
         </button>
         <div class="flex-1 min-w-0">
-          <div id="tour-progress" class="text-zinc-500 text-xs truncate">Percorra a sequência canônica N12 nó a nó</div>
+          <div id="tour-progress">Percorra a sequência canônica N12 nó a nó</div>
         </div>
-        <div id="tour-step" class="text-[10px] font-mono text-zinc-600">—</div>
+        <div id="tour-step">—</div>
       </div>
       <div id="flow-viewport">
         <div class="flow-hint">
-          <i class="fa-solid fa-hand mr-1"></i> Arraste · Scroll zoom · Minimap · Tour N12
+          <i class="iconoir-hand-drag mr-1"></i> Arraste · Scroll zoom · Minimap · Tour N12
         </div>
         <div id="flow-canvas">
           <svg id="flow-svg"></svg>
           <div id="flow-nodes"></div>
         </div>
         <div class="flow-toolbar">
-          <button onclick="flowZoom(0.15)" title="Zoom in"><i class="fa-solid fa-plus"></i></button>
-          <button onclick="flowZoom(-0.15)" title="Zoom out"><i class="fa-solid fa-minus"></i></button>
-          <button onclick="flowFit()" title="Ajustar à tela"><i class="fa-solid fa-expand"></i></button>
-          <button onclick="flowReset()" title="Reset"><i class="fa-solid fa-rotate-left"></i></button>
+          <button onclick="flowZoom(0.15)" title="Zoom in"><i class="iconoir-plus"></i></button>
+          <button onclick="flowZoom(-0.15)" title="Zoom out"><i class="iconoir-minus"></i></button>
+          <button onclick="flowFit()" title="Ajustar à tela"><i class="iconoir-expand"></i></button>
+          <button onclick="flowReset()" title="Reset"><i class="iconoir-refresh"></i></button>
         </div>
         <div id="flow-minimap" title="Clique para navegar">
           <span id="minimap-label">Minimap</span>
@@ -495,7 +129,7 @@
     </div>
 
     <!-- MERMAID VIEW -->
-    <div id="mermaid-container" class="hidden mb-8 p-5 bg-zinc-900/70 border border-zinc-800 rounded-3xl">
+    <div id="mermaid-container" class="hidden">
       <div class="mermaid" id="mermaid-flow"></div>
       <script type="text/plain" id="mermaid-source">flowchart LR
     A[comecar] --> B[avatar-funil]
@@ -517,64 +151,60 @@
     </div>
 
     <!-- Detail Panel -->
-    <div id="detail-panel" class="hidden fixed right-6 top-24 bottom-6 w-[400px] bg-[#121218] border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden z-50 flex flex-col">
-      <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between bg-[#1a1a22]">
+    <div id="detail-panel" class="hub-panel hidden">
+      <div class="hub-panel__head">
         <div class="flex items-center gap-x-3 min-w-0">
-          <div id="detail-icon" class="w-9 h-9 rounded-2xl flex items-center justify-center text-xl flex-shrink-0"></div>
+          <div id="detail-icon" class="hub-panel__icon"></div>
           <div class="min-w-0">
-            <div id="detail-name" class="font-semibold text-lg truncate"></div>
-            <div id="detail-phase" class="text-xs text-zinc-400"></div>
+            <div id="detail-name" class="truncate" style="font-weight:650;font-size:18px"></div>
+            <div id="detail-phase" class="muted" style="font-size:12px"></div>
           </div>
         </div>
-        <button onclick="closeDetail()" class="text-zinc-400 hover:text-white p-2 flex-shrink-0">
-          <i class="fa-solid fa-times text-xl"></i>
+        <button type="button" onclick="closeDetail()" class="hub-icon-btn" aria-label="Fechar">
+          <i class="iconoir-xmark"></i>
         </button>
       </div>
-      <div class="flex-1 overflow-auto p-5 space-y-5 text-sm" id="detail-content"></div>
-      <div class="p-4 border-t border-zinc-800 bg-[#0f0f15] text-xs">
-        <div class="flex items-center gap-2">
-          <button onclick="highlightInMap()"
-                  class="flex-1 bg-violet-600 hover:bg-violet-500 transition py-2 rounded-2xl text-sm font-medium">
-            <i class="fa-solid fa-crosshairs mr-1"></i> Destacar
+      <div class="hub-panel__body" id="detail-content"></div>
+      <div class="hub-panel__foot">
+        <div class="hub-panel__actions">
+          <button type="button" onclick="highlightInMap()" class="hub-btn hub-btn--primary">
+            <i class="iconoir-target"></i> Destacar
           </button>
-          <button onclick="copySkillCommand()"
-                  class="flex-1 border border-zinc-700 hover:bg-zinc-900 py-2 rounded-2xl text-sm font-medium">
-            <i class="fa-solid fa-copy mr-1"></i> /comando
+          <button type="button" onclick="copySkillCommand()" class="hub-btn">
+            <i class="iconoir-copy"></i> /comando
           </button>
         </div>
       </div>
     </div>
 
     <!-- Artifact Preview Modal -->
-    <div id="artifact-modal" class="hidden fixed inset-0 bg-black/75 flex items-center justify-center z-[200] p-4">
-      <div class="bg-[#121218] border border-zinc-800 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl">
-        <div class="px-5 py-4 border-b border-zinc-800 flex items-center justify-between gap-3">
+    <div id="artifact-modal" class="hub-modal-backdrop hidden">
+      <div class="hub-modal">
+        <div class="hub-modal__head">
           <div class="min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
-              <span id="am-label" class="font-semibold text-base font-mono truncate"></span>
-              <span id="am-badge" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800">exemplo ilustrativo</span>
+              <span id="am-label" class="font-mono truncate" style="font-weight:650"></span>
+              <span id="am-badge" class="hub-badge">exemplo ilustrativo</span>
             </div>
-            <div id="am-path" class="text-xs text-zinc-500 font-mono mt-0.5 truncate"></div>
+            <div id="am-path" class="muted font-mono truncate" style="font-size:12px;margin-top:4px"></div>
           </div>
-          <div class="flex items-center gap-2 flex-shrink-0">
-            <button onclick="copyArtifactPath()" class="text-xs px-3 py-1.5 border border-zinc-700 rounded-xl hover:bg-zinc-900">
-              <i class="fa-solid fa-copy mr-1"></i> Caminho
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="copyArtifactPath()" class="hub-btn hub-btn--ghost">
+              <i class="iconoir-copy"></i> Caminho
             </button>
-            <button onclick="closeArtifactModal()" class="text-zinc-400 hover:text-white p-2">
-              <i class="fa-solid fa-times text-xl"></i>
+            <button type="button" onclick="closeArtifactModal()" class="hub-icon-btn" aria-label="Fechar">
+              <i class="iconoir-xmark"></i>
             </button>
           </div>
         </div>
-
-        <div class="flex border-b border-zinc-800 px-5 gap-1 pt-2" id="am-tabs"></div>
-
-        <div class="flex-1 overflow-auto p-5" id="am-body">
-          <div id="am-preview-md" class="md-preview prose-invert hidden"></div>
-          <iframe id="am-preview-html" class="hidden w-full rounded-lg" style="min-height:480px;border:1px solid #27272a;background:#fff"></iframe>
+        <div class="hub-modal__tabs" id="am-tabs"></div>
+        <div class="hub-modal__body" id="am-body">
+          <div id="am-preview-md" class="md-preview hidden"></div>
+          <iframe id="am-preview-html" class="hidden preview-frame preview-frame--md" title="Preview HTML"></iframe>
           <div id="am-preview-pdf-wrap" class="hidden">
-            <div id="am-pdf-banner" class="text-xs text-zinc-400 mb-3 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-xl"></div>
-            <canvas id="am-preview-pdf-canvas" class="hidden w-full rounded-lg" style="max-width:100%;border:1px solid #27272a;background:#fff"></canvas>
-            <iframe id="am-preview-pdf" class="w-full rounded-lg hidden" style="min-height:520px;border:1px solid #27272a;background:#fff" title="PDF fallback"></iframe>
+            <div id="am-pdf-banner" class="pdf-banner"></div>
+            <canvas id="am-preview-pdf-canvas" class="hidden preview-frame" style="max-width:100%"></canvas>
+            <iframe id="am-preview-pdf" class="preview-frame preview-frame--tall hidden" title="PDF fallback"></iframe>
             <div id="am-preview-pdf-fallback" class="hidden"></div>
           </div>
         </div>
@@ -582,26 +212,25 @@
     </div>
 
     <!-- Stats -->
-    <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-        <div class="text-xs text-zinc-400">Skills totais</div>
-        <div class="text-3xl font-semibold">25</div>
+    <div class="hub-stat-grid">
+      <div class="hub-stat">
+        <div class="hub-stat__label">Skills totais</div>
+        <div class="hub-stat__value">25</div>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-        <div class="text-xs text-zinc-400">Ordem canônica</div>
-        <div class="text-3xl font-semibold">N12</div>
+      <div class="hub-stat">
+        <div class="hub-stat__label">Ordem canônica</div>
+        <div class="hub-stat__value">N12</div>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-        <div class="text-xs text-zinc-400">Entrega padrão</div>
-        <div class="text-lg font-semibold">.md + .html + .pdf</div>
+      <div class="hub-stat">
+        <div class="hub-stat__label">Entrega padrão</div>
+        <div class="hub-stat__value hub-stat__value--sm">.md + .html + .pdf</div>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
-        <div class="text-xs text-zinc-400">Fonte da verdade</div>
-        <div class="text-sm font-medium">/status-funil + funil.md</div>
+      <div class="hub-stat">
+        <div class="hub-stat__label">Fonte da verdade</div>
+        <div class="hub-stat__value hub-stat__value--sm">/status-funil + funil.md</div>
       </div>
     </div>
-    <div class="h-10"></div>
-  </div>
+  </main>
 
 <script>
 // ═══════════════════════════════════════════════════════════
@@ -611,19 +240,19 @@ const SKILLS = [
   { id:"comecar", name:"comecar", phase:"Setup", phaseColor:"#64748b", order:0, type:"utility",
     description:"Primeiro comando. Prepara ambiente (git, Apify, Node, skills), detecta SO e aponta o próximo passo único.",
     prerequisites:[], outputs:[], feeds:["avatar-funil"], guards:"Sempre o primeiro passo. Nunca pule.", level:"Setup", artifacts:"Nenhum (configuração)" },
-  { id:"avatar-funil", name:"avatar-funil", phase:"Pesquisa (Aula 1)", phaseColor:"#22c7b1", order:1, type:"research",
+  { id:"avatar-funil", name:"avatar-funil", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:1, type:"research",
     description:"Mineração de dor real (verbatims) + avatar em 7 dimensões + focus group sintético.",
     prerequisites:["comecar"], outputs:["avatar.md","relatorio-avatar.html","relatorio-avatar.pdf","pesquisa-avatar-*/"],
     feeds:["espiao-do-concorrente","offerbook"], guards:"Sem avatar, offerbook vira ficção.", level:"Aula 1", artifacts:"3 formatos (md/html/pdf)" },
-  { id:"espiao-do-concorrente", name:"espiao-do-concorrente", phase:"Pesquisa (Aula 1)", phaseColor:"#22c7b1", order:2, type:"research",
+  { id:"espiao-do-concorrente", name:"espiao-do-concorrente", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:2, type:"research",
     description:"Dossiê completo de concorrente (ads + orgânico + site + reputação + brechas).",
     prerequisites:["avatar-funil (recomendado)"], outputs:["espiao/dossie-{concorrente}.md","espiao/dossie-{concorrente}.html","espiao/dossie-{concorrente}.pdf"],
     feeds:["swipe-file","offerbook"], guards:"Leia Perfil antes (B2B/local/regulado muda frentes).", level:"Aula 1", artifacts:"3 formatos por concorrente" },
-  { id:"trend-hunting", name:"trend-hunting", phase:"Pesquisa (Aula 1)", phaseColor:"#22c7b1", order:3, type:"research",
+  { id:"trend-hunting", name:"trend-hunting", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:3, type:"research",
     description:"Identifica tendências emergentes + variações de hook virais antes da saturação.",
     prerequisites:["espiao-do-concorrente"], outputs:["trends-{data}.md","trends-{data}.html","variacoes-{data}.md"],
     feeds:["swipe-file","offerbook"], guards:"", level:"Aula 1", artifacts:"2+ conjuntos" },
-  { id:"swipe-file", name:"swipe-file", phase:"Pesquisa (Aula 1)", phaseColor:"#22c7b1", order:4, type:"research",
+  { id:"swipe-file", name:"swipe-file", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:4, type:"research",
     description:"Organiza winners de espião + trends em biblioteca categorizada. Gera briefing para Copy.",
     prerequisites:["espiao-do-concorrente","trend-hunting"], outputs:["swipe/briefing-swipe-file.md","swipe/briefing-swipe-file.html","swipe-file-index.html"],
     feeds:["offerbook","copy-funil"], guards:"Nunca copie literalmente. Extraia padrão + adapte ao ICP.", level:"Aula 1", artifacts:"Index + briefings" },
@@ -814,7 +443,7 @@ function renderFlowCanvas() {
   // Swimlane backgrounds
   const lanes = [
     { row: 0, label: 'Nível 5', color: 'rgba(244,63,94,0.04)' },
-    { row: 2, label: 'Núcleo N12', color: 'rgba(167,139,250,0.05)' },
+    { row: 2, label: 'Núcleo N12', color: 'rgba(201,178,152,0.05)' },
     { row: 5, label: 'Suporte', color: 'rgba(100,116,139,0.04)' }
   ];
   let swimHTML = '';
@@ -1068,7 +697,7 @@ function renderMinimap() {
     ctx.fillStyle = skill.phaseColor + '99';
     ctx.fillRect(x, y, w, h);
     if (currentSelected?.id === skill.id) {
-      ctx.strokeStyle = '#a78bfa';
+      ctx.strokeStyle = '#C9B298';
       ctx.lineWidth = 1.5;
       ctx.strokeRect(x - 0.5, y - 0.5, w + 1, h + 1);
     }
@@ -1175,11 +804,11 @@ function updateTourUI() {
   const skill = SKILLS.find(s => s.id === N12_TOUR[tourState.index]);
 
   bar?.classList.toggle('playing', tourState.active);
-  if (icon) icon.className = tourState.active ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+  if (icon) icon.className = tourState.active ? 'iconoir-pause' : 'iconoir-play';
   if (label) label.textContent = tourState.active ? 'Pausar tour' : 'Tour N12';
   if (progress && skill) {
     progress.innerHTML = tourState.active
-      ? `<span class="text-amber-400">${skill.name}</span> — ${skill.phase}`
+      ? `<span class="amber">${skill.name}</span> — ${skill.phase}`
       : 'Percorra a sequência canônica N12 nó a nó';
   }
   if (step) step.textContent = skill ? `${tourState.index + 1}/${N12_TOUR.length}` : '—';
@@ -1281,15 +910,13 @@ function resolveSkillRef(ref) {
 
 function renderSkillChip(label, variant) {
   const targetId = resolveSkillRef(label);
-  const base = 'text-xs px-2.5 py-1 rounded-xl border skill-chip';
+  const base = 'skill-chip';
   if (!targetId) {
-    return `<span class="${base} skill-chip-static bg-zinc-900 border-zinc-700 text-zinc-400">${label}</span>`;
+    return `<span class="${base} skill-chip-static">${label}</span>`;
   }
-  const colors = variant === 'prereq'
-    ? 'bg-teal-950/80 border-teal-700/50 text-teal-100 hover:bg-teal-900'
-    : 'bg-violet-950 border-violet-700/40 text-violet-100 hover:bg-violet-900';
-  return `<span onclick="navigateToSkill('${targetId}')" class="${base} ${colors}" title="Ir para ${targetId}">
-    <i class="fa-solid fa-arrow-right-to-bracket text-[9px] mr-1 opacity-60"></i>${label}
+  const variantClass = variant === 'prereq' ? 'skill-chip--prereq' : 'skill-chip--feed';
+  return `<span onclick="navigateToSkill('${targetId}')" class="${base} ${variantClass}" title="Ir para ${targetId}">
+    <i class="iconoir-arrow-right" style="font-size:9px;opacity:0.6"></i>${label}
   </span>`;
 }
 
@@ -1352,11 +979,11 @@ function renderClusters() {
     section.className = 'mb-8 cluster';
     section.dataset.phase = phaseName;
     const color = grouped[phaseName][0].phaseColor;
-    let html = `<div class="flex items-center gap-x-3 mb-3"><div class="w-3 h-3 rounded-full" style="background:${color}"></div><div class="font-semibold text-lg">${phaseName}</div></div><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">`;
+    let html = `<div class="cluster__head"><div class="cluster__dot" style="background:${color}"></div><div class="cluster__title">${phaseName}</div></div><div class="cluster__grid">`;
     grouped[phaseName].forEach(skill => {
-      html += `<div onclick="selectSkill('${skill.id}', this)" class="node skill-bubble rounded-2xl p-3.5 border border-zinc-800" data-id="${skill.id}" data-name="${skill.name}">
-        <div class="font-semibold text-sm">${skill.name}</div>
-        <div class="text-xs text-zinc-400 mt-1 line-clamp-2">${skill.description}</div>
+      html += `<div onclick="selectSkill('${skill.id}', this)" class="node skill-bubble" data-id="${skill.id}" data-name="${skill.name}">
+        <div style="font-weight:650;font-size:14px">${skill.name}</div>
+        <div class="cluster__card-desc">${skill.description}</div>
       </div>`;
     });
     html += '</div>';
@@ -1377,8 +1004,8 @@ function getArtifactsForSkill(skill) {
 }
 
 function getFormatIcon(format) {
-  const m = { md:'fa-file-lines', html:'fa-code', pdf:'fa-file-pdf', docx:'fa-file-word', folder:'fa-folder' };
-  return m[format] || 'fa-file';
+  const m = { md:'iconoir-page', html:'iconoir-code', pdf:'iconoir-page', docx:'iconoir-page', folder:'iconoir-folder' };
+  return m[format] || 'iconoir-page';
 }
 
 function registerArtifacts(skill, artifacts) {
@@ -1401,7 +1028,7 @@ async function setPdfPreview(sampleUrl) {
 
   if (!window.pdfjsLib) {
     fallback.classList.remove('hidden');
-    fallback.innerHTML = '<p class="text-zinc-400 text-sm">pdf.js não carregou. Abra via servidor HTTP.</p>';
+    fallback.innerHTML = '<p class="muted" style="font-size:14px">pdf.js não carregou. Abra via servidor HTTP.</p>';
     return;
   }
   pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -1505,7 +1132,7 @@ async function openArtifactPreview(artifact) {
   pdfIframe.classList.add('hidden');
   pdfFallback.classList.add('hidden');
   tabs.innerHTML = '';
-  mdEl.innerHTML = '<p class="text-zinc-500 text-sm">Carregando...</p>';
+  mdEl.innerHTML = '<p class="muted" style="font-size:14px">Carregando...</p>';
 
   const fmt = artifact.format;
   const fetched = await fetchArtifactContent(artifact);
@@ -1535,8 +1162,8 @@ async function openArtifactPreview(artifact) {
     }
 
     pdfBanner.innerHTML = isDocx
-      ? `<i class="fa-solid fa-file-word text-blue-400 mr-1"></i> DOCX gerado no projeto real. Preview visual = HTML estilizado equivalente.`
-      : `<i class="fa-solid fa-file-pdf text-red-400 mr-1"></i> Amostra real de <code class="bg-zinc-800 px-1 rounded">mapa-skills-samples/</code> · Projeto: <span class="font-mono text-zinc-500">${artifact.path}</span>`;
+      ? `<i class="iconoir-page" style="color:var(--mint);margin-right:4px"></i> DOCX gerado no projeto real. Preview visual = HTML estilizado equivalente.`
+      : `<i class="iconoir-page" style="color:var(--red);margin-right:4px"></i> Amostra real de <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px">mapa-skills-samples/</code> · Projeto: <span class="font-mono muted">${artifact.path}</span>`;
 
     if (sampleUrl && !isDocx) {
       showArtifactTab('pdf');
@@ -1550,7 +1177,7 @@ async function openArtifactPreview(artifact) {
     } else {
       showArtifactTab('pdf');
       pdfFallback.classList.remove('hidden');
-      pdfFallback.innerHTML = `<p class="text-zinc-400 text-sm">Amostra PDF ainda não gerada. Rode <code>bash sync-mapa-samples.sh</code>.</p>`;
+      pdfFallback.innerHTML = `<p class="muted" style="font-size:14px">Amostra PDF ainda não gerada. Rode <code>bash sync-mapa-samples.sh</code>.</p>`;
     }
     return;
   }
@@ -1567,7 +1194,7 @@ async function openArtifactPreview(artifact) {
     mdEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(body) : `<pre>${body}</pre>`;
   } else {
     mdEl.classList.remove('hidden');
-    mdEl.innerHTML = `<p class="text-zinc-400">Sem preview disponível para este formato.</p><p class="font-mono text-xs mt-2 text-zinc-500">${artifact.path}</p>`;
+    mdEl.innerHTML = `<p class="muted">Sem preview disponível para este formato.</p><p class="font-mono muted" style="font-size:12px;margin-top:8px">${artifact.path}</p>`;
   }
 }
 
@@ -1623,7 +1250,6 @@ function selectSkill(skillId, element, fromTour = false) {
 
   const panel = document.getElementById('detail-panel');
   panel.classList.remove('hidden');
-  panel.classList.add('flex');
 
   document.getElementById('detail-name').textContent = skill.name;
   document.getElementById('detail-phase').innerHTML = `<span style="color:${skill.phaseColor}">${skill.phase}</span> · ${skill.level}`;
@@ -1631,54 +1257,58 @@ function selectSkill(skillId, element, fromTour = false) {
   const iconEl = document.getElementById('detail-icon');
   iconEl.style.background = `${skill.phaseColor}20`;
   iconEl.style.color = skill.phaseColor;
-  iconEl.innerHTML = `<i class="fa-solid fa-${getIconForSkill(skill)}"></i>`;
+  iconEl.innerHTML = `<i class="${getIconForSkill(skill)}"></i>`;
 
-  let content = `<div><div class="section-title mb-1 text-zinc-400">Descrição</div><p class="leading-snug">${skill.description}</p></div>`;
+  let content = `<div><div class="section-title">Descrição</div><p style="line-height:1.45;margin-top:4px">${skill.description}</p></div>`;
 
   if (skill.prerequisites?.length) {
-    content += `<div><div class="section-title mb-1 text-teal-300"><i class="fa-solid fa-link mr-1"></i> Pré-requisitos <span class="text-zinc-500 font-normal normal-case">(clique para ir)</span></div><div class="flex flex-wrap gap-1.5">${skill.prerequisites.map(p => renderSkillChip(p, 'prereq')).join('')}</div></div>`;
+    content += `<div><div class="section-title section-title--mint"><i class="iconoir-link"></i> Pré-requisitos <span class="muted" style="text-transform:none;font-weight:400">(clique para ir)</span></div><div class="chip-row" style="margin-top:6px">${skill.prerequisites.map(p => renderSkillChip(p, 'prereq')).join('')}</div></div>`;
   }
 
   const artifacts = getArtifactsForSkill(skill);
   registerArtifacts(skill, artifacts);
   if (artifacts.length) {
-    content += `<div><div class="section-title mb-2 text-emerald-300"><i class="fa-solid fa-folder-open mr-1"></i> Artefatos gerados <span class="text-zinc-500 font-normal normal-case">(clique para ver)</span></div><div class="space-y-1.5">`;
+    content += `<div><div class="section-title section-title--green"><i class="iconoir-folder"></i> Artefatos gerados <span class="muted" style="text-transform:none;font-weight:400">(clique para ver)</span></div><div class="artifact-list" style="margin-top:8px">`;
     artifacts.forEach(art => {
       const icon = getFormatIcon(art.format);
       const hasPreview = art.content || art.format === 'pdf' || art.format === 'docx' || art.sampleUrl || art.htmlId;
-      content += `<button onclick="openArtifactById('${art.id}')" class="artifact-btn flex items-center gap-2.5 px-3 py-2 rounded-xl ${hasPreview ? '' : 'opacity-70'}">
-        <i class="fa-solid ${icon} ab-icon text-sm w-4"></i>
+      content += `<button type="button" onclick="openArtifactById('${art.id}')" class="artifact-btn" style="${hasPreview ? '' : 'opacity:0.7'}">
+        <i class="${icon} ab-icon"></i>
         <div class="flex-1 min-w-0">
           <div class="font-mono truncate">${art.label}</div>
-          <div class="text-[10px] text-zinc-500 truncate">${art.path}</div>
+          <div class="muted truncate" style="font-size:10px">${art.path}</div>
         </div>
-        <i class="fa-solid fa-${hasPreview ? 'eye' : 'arrow-up-right-from-square'} text-[10px] text-zinc-600"></i>
+        <i class="${hasPreview ? 'iconoir-eye' : 'iconoir-open-new-window'}" style="font-size:10px;opacity:0.5"></i>
       </button>`;
     });
     content += `</div></div>`;
   } else if (skill.outputs?.length) {
-    content += `<div><div class="section-title mb-1 text-emerald-300">Artefatos gerados</div><div class="space-y-1">${skill.outputs.map(o => `<div class="text-xs font-mono px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-xl">${o}</div>`).join('')}</div></div>`;
+    content += `<div><div class="section-title section-title--green">Artefatos gerados</div><div class="artifact-list" style="margin-top:6px">${skill.outputs.map(o => `<div class="output-line">${o}</div>`).join('')}</div></div>`;
   }
 
   if (skill.feeds?.length) {
-    content += `<div><div class="section-title mb-1 text-violet-300"><i class="fa-solid fa-share-nodes mr-1"></i> Alimenta <span class="text-zinc-500 font-normal normal-case">(clique para ir)</span></div><div class="flex flex-wrap gap-1.5">${skill.feeds.map(f => renderSkillChip(f, 'feed')).join('')}</div></div>`;
+    content += `<div><div class="section-title section-title--gold"><i class="iconoir-share-android"></i> Alimenta <span class="muted" style="text-transform:none;font-weight:400">(clique para ir)</span></div><div class="chip-row" style="margin-top:6px">${skill.feeds.map(f => renderSkillChip(f, 'feed')).join('')}</div></div>`;
   }
 
   if (skill.guards) {
-    content += `<div class="p-3 bg-amber-950/30 border border-amber-900/50 rounded-2xl"><div class="section-title text-amber-400 mb-1"><i class="fa-solid fa-shield-halved mr-1"></i> Guards</div><p class="text-xs text-amber-200">${skill.guards}</p></div>`;
+    content += `<div class="guards-box"><div class="section-title"><i class="iconoir-shield"></i> Guards</div><p>${skill.guards}</p></div>`;
   }
 
-  content += `<div class="text-[10px] text-zinc-500 pt-2 border-t border-zinc-800">Ordem N12: <span class="font-mono">${skill.order}</span> · Tipo: ${skill.type}</div>`;
+  content += `<div class="detail-meta">Ordem N12: <span class="font-mono">${skill.order}</span> · Tipo: ${skill.type}</div>`;
   document.getElementById('detail-content').innerHTML = content;
 }
 
 function getIconForSkill(skill) {
-  const map = { utility:'cog', research:'search', strategy:'lightbulb', foundation:'layer-group', funnel:'funnel-dollar', acquisition:'bullseye', communication:'envelope', backend:'cogs', optimization:'chart-line', support:'image' };
-  return map[skill.type] || 'star';
+  const map = {
+    utility:'iconoir-settings', research:'iconoir-search', strategy:'iconoir-bright-star',
+    foundation:'iconoir-layers', funnel:'iconoir-funnel', acquisition:'iconoir-target',
+    communication:'iconoir-mail', backend:'iconoir-settings', optimization:'iconoir-stats-up-square',
+    support:'iconoir-media-image'
+  };
+  return map[skill.type] || 'iconoir-star';
 }
 
 function closeDetail() {
-  document.getElementById('detail-panel').classList.remove('flex');
   document.getElementById('detail-panel').classList.add('hidden');
   document.querySelectorAll('.flow-node.selected, .node.selected').forEach(el => el.classList.remove('selected'));
   clearFlowHighlight();
@@ -1737,17 +1367,21 @@ function resetFilters() {
 
 function showLegend() {
   const legend = document.createElement('div');
-  legend.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-[100]';
-  legend.innerHTML = `<div class="bg-[#121218] border border-zinc-800 rounded-3xl max-w-md w-full mx-4 p-6">
-    <div class="flex justify-between items-center mb-5"><div class="font-semibold text-lg">Legenda</div><button class="text-xl" onclick="this.closest('.fixed').remove()">×</button></div>
-    <div class="space-y-3 text-sm">
-      <div><strong class="text-violet-300">Fluxo</strong> — Canvas estilo n8n. Ao clicar num nó, conexões animam e nós vizinhos destacam.</div>
-      <div><strong class="text-emerald-300">Verde</strong> = entradas (upstream) · <strong class="text-violet-300">Roxo</strong> = saídas (downstream)</div>
-      <div><strong class="text-teal-300">Pré-requisitos</strong> — Clique para ir ao nó (como em Alimenta).</div>
-      <div><strong class="text-amber-300">Tour N12</strong> — Percorre a sequência canônica automaticamente.</div>
-      <div><strong class="text-violet-300">Minimap</strong> — Canto inferior direito; clique para saltar no canvas.</div>
-      <div class="text-xs text-zinc-400 pt-2 border-t border-zinc-700">Teclas: / buscar · Esc fechar · setas no tour (anterior/próximo)</div>
-    </div></div>`;
+  legend.className = 'legend-backdrop';
+  legend.innerHTML = `<div class="legend-card">
+    <div class="flex justify-between items-center">
+      <h3>Legenda</h3>
+      <button type="button" class="hub-icon-btn" onclick="this.closest('.legend-backdrop').remove()" aria-label="Fechar">×</button>
+    </div>
+    <div class="legend-card__body">
+      <div><strong class="gold">Fluxo</strong> — Canvas estilo n8n. Ao clicar num nó, conexões animam e nós vizinhos destacam.</div>
+      <div><strong class="mint">Verde-água</strong> = entradas (upstream) · <strong class="gold">Ouro</strong> = saídas (downstream)</div>
+      <div><strong class="mint">Pré-requisitos</strong> — Clique para ir ao nó (como em Alimenta).</div>
+      <div><strong class="amber">Tour N12</strong> — Percorre a sequência canônica automaticamente.</div>
+      <div><strong class="gold">Minimap</strong> — Canto inferior direito; clique para saltar no canvas.</div>
+      <div class="legend-card__foot">Teclas: / buscar · Esc fechar · setas no tour (anterior/próximo)</div>
+    </div>
+  </div>`;
   document.body.appendChild(legend);
 }
 

@@ -176,8 +176,8 @@ Pesquisa base: ${anchor}
 export function buildDesign({ }) {
   return {
     files: {
-      'DESIGN.md': `---\nname: "Academia Fit"\ncolors:\n  primary: "#7C3AED"\n  surface: "#0A0A0F"\n---\n# Design System\n`,
-      'tokens.json': JSON.stringify({ colors: { primary: '#7C3AED', surface: '#0A0A0F' } }, null, 2),
+      'DESIGN.md': `---\nname: "Academia Fit"\ncolors:\n  primary: "#C9B298"\n  surface: "#0A0A0C"\n---\n# Design System\n`,
+      'tokens.json': JSON.stringify({ colors: { primary: '#C9B298', surface: '#0A0A0C' } }, null, 2),
       'preview.html': brandHtml('Preview', '<h1>Academia Fit</h1><div class="card"><button>CTA</button></div>'),
     },
   };

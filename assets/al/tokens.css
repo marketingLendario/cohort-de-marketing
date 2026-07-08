@@ -1,0 +1,65 @@
+/* Lendár[IA] hub tokens — dark shell (approval-panel parity) */
+:root {
+  color-scheme: dark;
+
+  --al-bg: #0A0A0C;
+  --al-card: #131316;
+  --al-card-raised: #18181B;
+  --al-muted-surface: #262626;
+  --al-fg: #FAFAFA;
+  --al-fg-soft: #EDEBE6;
+  --al-fg-muted: #A3A3A3;
+  --al-border: #292929;
+  --al-border-glass: #ffffff12;
+  --al-border-strong: #ffffff24;
+
+  --al-gold-50: #FEF5EC;
+  --al-gold-100: #F4E9DD;
+  --al-gold-300: #DCCBB6;
+  --al-gold-500: #C9B298;
+  --al-gold-600: #AA967F;
+  --al-gold-800: #615445;
+  --al-gold-950: #1E170F;
+
+  --bg: var(--al-bg);
+  --surface: var(--al-card);
+  --surface-2: var(--al-card-raised);
+  --surface-3: var(--al-muted-surface);
+  --surface-header: #0D0D0F;
+  --text: var(--al-fg);
+  --muted: var(--al-fg-muted);
+  --border: var(--al-border);
+  --border-soft: var(--al-border-glass);
+  --gold: var(--al-gold-500);
+  --gold-soft: #c9b2981a;
+  --gold-wash-6: #c9b2980f;
+  --gold-wash-8: #c9b29814;
+  --gold-border-soft: #c9b29826;
+  --gold-border: #c9b29840;
+  --gold-ring: #c9b29824;
+  --surface-wash-3: #ffffff08;
+
+  --green: #34C759;
+  --green-soft: #34c7591a;
+  --green-border: #34c75940;
+  --mint: #30B0C7;
+  --mint-soft: #30b0c71a;
+  --mint-border: #30b0c740;
+  --amber: #FF9500;
+  --amber-soft: #ff95001a;
+  --red: #FF3B30;
+
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  --glow-gold: 0 0 15px rgba(201, 178, 152, 0.35);
+  --glow-gold-lg: 0 0 25px rgba(201, 178, 152, 0.55);
+  --shadow-panel: inset 0 0 0 1px var(--border-soft), 0 18px 55px #00000042;
+
+  --font-ui: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-reading: "Source Serif 4", Georgia, serif;
+  --font-display: Inter, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}

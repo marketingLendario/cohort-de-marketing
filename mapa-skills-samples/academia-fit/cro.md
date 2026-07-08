@@ -21,7 +21,7 @@ Funil: quiz → resultado → checkout · Nível 4
 
 ## Prioridade de testes (após headline)
 
-1. CTA cor (violeta vs teal)
+1. CTA cor (ouro vs água)
 2. Vídeo vs sem vídeo na página
 3. Ordem dos bônus no stack
 

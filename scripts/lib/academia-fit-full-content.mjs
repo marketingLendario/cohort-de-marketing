@@ -59,17 +59,18 @@ function finish(){
 function bannerHtml(w, h, title, hook, cta) {
   const fs = w > 1080 ? 56 : w === 1080 && h === 1080 ? 44 : 52;
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${title}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>@font-face{font-family:"Inter";src:url("../../assets/al/fonts/inter.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Source Serif 4";src:url("../../assets/al/fonts/source-serif-4.woff2") format("woff2");font-weight:200 900;font-display:swap}</style>
 <style>*{box-sizing:border-box;margin:0;padding:0}html,body{width:${w}px;height:${h}px;overflow:hidden}
-body{font-family:Inter,sans-serif;background:radial-gradient(120% 80% at 20% 0%,#1a1035 0%,#0A0A0F 55%);color:#F5F0FF;display:flex;flex-direction:column;justify-content:center;padding:56px;position:relative}
-body::after{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:radial-gradient(circle,#7C3AED33,transparent 70%);pointer-events:none}
-.kicker{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#22C7B1;margin-bottom:20px;font-weight:600}
-h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:${fs}px;line-height:1.08;color:#F5F0FF;max-width:92%}
-.sub{margin-top:22px;font-size:19px;color:#A1A1AA;max-width:88%}
-.cta{margin-top:36px;display:inline-block;background:#7C3AED;color:#F5F0FF;padding:18px 30px;border-radius:14px;font-weight:700;font-size:18px;box-shadow:0 8px 32px #7C3AED44}
-.logo{position:absolute;bottom:44px;left:56px;font-size:14px;color:#7C3AED;font-weight:700;letter-spacing:.04em}
+body{font-family:Inter,sans-serif;background:radial-gradient(120% 80% at 20% 0%,#131316 0%,#0A0A0C 55%);color:#FAFAFA;display:flex;flex-direction:column;justify-content:center;padding:56px;position:relative}
+body::after{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:radial-gradient(circle,#c9b29833,transparent 70%);pointer-events:none}
+.kicker{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#C9B298;margin-bottom:20px;font-weight:600}
+h1{font-family:'Source Serif 4',Georgia,serif;font-size:${fs}px;line-height:1.08;color:#FAFAFA;max-width:92%}
+.sub{margin-top:22px;font-size:19px;color:#A3A3A3;max-width:88%}
+.cta{margin-top:36px;display:inline-block;background:#C9B298;color:#1E170F;padding:18px 30px;border-radius:14px;font-weight:700;font-size:18px;box-shadow:0 0 25px rgba(201,178,152,0.55)}
+.logo{position:absolute;bottom:44px;left:56px;font-size:14px;color:#C9B298;font-weight:700;letter-spacing:.04em}
 </style></head><body>
-<p class="kicker">Academia Fit</p>
+<p class="kicker">Lendár[IA] · Academia Fit</p>
 <h1>${hook}</h1>
 <p class="sub">Método Consistência 90 · mulheres 35+</p>
 <span class="cta">${cta}</span>
@@ -355,7 +356,7 @@ Tráfego no quiz + teste A/B headline (ver cro.md).
     'swipe/briefing-swipe-file.md': swipeMd,
     'offerbook.md': offerbookMd,
     'DESIGN.md': depth.designMd,
-    'tokens.json': JSON.stringify({ colors: { primary: '#7C3AED', secondary: '#22C7B1', surface: '#0A0A0F', text: '#F5F0FF' } }, null, 2),
+    'tokens.json': JSON.stringify({ colors: { primary: '#C9B298', secondary: '#30B0C7', surface: '#0A0A0C', text: '#FAFAFA' } }, null, 2),
     'funil.md': depth.funilMd,
     'copy.md': copyMd,
     'quiz.md': depth.quizMd,
@@ -391,7 +392,7 @@ Tráfego no quiz + teste A/B headline (ver cro.md).
     'cro.md': depth.croMd,
     'status.md': depth.statusMd,
     'relatorio-avatar.html': documentHtml('Pesquisa de Avatar', 'avatar-funil', relatorioMd, { accent: '#A78BFA' }),
-    'espiao/dossie-fitflow.html': documentHtml('Dossiê FitFlow', 'espiao-do-concorrente', dossieMd, { accent: '#22C7B1' }),
+    'espiao/dossie-fitflow.html': documentHtml('Dossiê FitFlow', 'espiao-do-concorrente', dossieMd, { accent: '#30B0C7' }),
     'trends-2026-07.html': documentHtml('Trend Hunting', 'trend-hunting', trendsMd),
     'variacoes-hooks.html': documentHtml('Variações de Hook', 'trend-hunting', variacoesMd),
     'swipe/briefing-swipe-file.html': documentHtml('Briefing Swipe', 'swipe-file', swipeMd),
@@ -458,7 +459,7 @@ Tráfego no quiz + teste A/B headline (ver cro.md).
     'pagina/upsell.html': landingHtml(
       'Upsell',
       `<div class="wrap" style="text-align:center">
-  <span class="kicker" style="color:#22C7B1">Compra confirmada</span>
+  <span class="kicker" style="color:#30B0C7">Compra confirmada</span>
   <h1>Espere — oferta exclusiva</h1>
   <p class="lead">One-click · não precisa preencher de novo</p>
   <div class="card card-accent"><strong>Programa Avançado Fase 4</strong><p>De R$ 497 por <span class="price-now">R$ 197</span></p></div>

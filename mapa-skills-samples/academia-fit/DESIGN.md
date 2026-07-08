@@ -2,15 +2,15 @@
 name: Academia Fit
 version: 1.0
 colors:
-  primary: "#7C3AED"
-  secondary: "#22C7B1"
-  surface: "#0A0A0F"
-  surface-elevated: "#121218"
-  text: "#F5F0FF"
-  text-muted: "#A1A1AA"
-  accent-warm: "#F59E0B"
+  primary: "#C9B298"
+  secondary: "#30B0C7"
+  surface: "#0A0A0C"
+  surface-elevated: "#131316"
+  text: "#FAFAFA"
+  text-muted: "#A3A3A3"
+  accent-warm: "#FF9500"
 typography:
-  display: Space Grotesk
+  display: Source Serif 4
   body: Inter
   scale:
     h1: 2.5rem
@@ -34,9 +34,9 @@ components:
 
 ## Princípios
 
-- Dark premium: fundo #0A0A0F, texto #F5F0FF
-- Violeta como cor de ação (#7C3AED)
-- Teal para destaques de confiança (#22C7B1)
+- Dark premium: fundo #0A0A0C, texto #FAFAFA
+- Ouro como sinal de ação (#C9B298) — regra dos 8%
+- Água para destaques de confiança (#30B0C7)
 - Sem gradientes exagerados em CTAs
 
 ## Tokens
