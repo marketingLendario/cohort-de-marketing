@@ -1,0 +1,47 @@
+handoff:
+  from: "Agent:Grok-session-2026-07-08"
+  to: "Agent:next-session"
+  date: "2026-07-08"
+  scope: self_continuation
+  story: null
+  branch: "feat/mapa-skills-preview-validation"
+context:
+  what_was_done:
+    - "Onda 1 (c5bfd60): brand Lendár[IA] em mapa, guia, templates, samples — assets/al/"
+    - "Onda 2 (f9e6508): alinhamento Ads Studio DS v2 — radius 2/4/6px, hairlines, sem glow, Newsreader/Hanken"
+    - "Validators wiring + preview OK"
+  what_remains:
+    - "URGENT: git push origin feat/mapa-skills-preview-validation"
+    - "NEXT: revisão visual vs ads-studio.dc.html"
+    - "NEXT: commit PDFs se sync-mapa-samples terminou após f9e6508"
+    - "BACKLOG P3: guia inline CSS, Mermaid theme, vendor fonts, cleanup Inter/Source Serif"
+  files_modified:
+    - "assets/al/tokens.css"
+    - "assets/al/hub-brand.css"
+    - "assets/al/mapa-skills.css"
+    - "mapa-skills.html"
+    - "GUIA-DO-ALUNO.html"
+    - "scripts/lib/html-templates.mjs"
+    - "scripts/lib/academia-fit-full-content.mjs"
+    - "scripts/lib/academia-fit-depth-content.mjs"
+    - "mapa-skills-samples/academia-fit/**"
+  decisions_made:
+    - "SOT visual = Ads Studio DS v2 (não approval-panel)"
+    - "Tipografia hub = Newsreader + Hanken Grotesk"
+    - "Ouro downstream, mint upstream no mapa"
+  blockers:
+    - "git push bloqueado no ambiente do agente — operador/@devops"
+    - "sync PDFs possivelmente incompleto em background"
+artifacts:
+  - id: "2026-07-08-cohort-mapa-skills-ads-studio-handoff"
+    path: "docs/sessions/2026-07/2026-07-08-cohort-mapa-skills-ads-studio-handoff.md"
+    status: approved
+    score: 6
+repo:
+  path: "/Users/rafaelcosta/Projects/cohort-de-marketing"
+  commits:
+    - "f9e6508"
+    - "c5bfd60"
+ds_reference:
+  path: "/Users/rafaelcosta/Projects/AIOX/sinkra-hub/docs/design/mocks/academia-lendaria-ads-studio/"
+  mock: "ads-studio.dc.html"
