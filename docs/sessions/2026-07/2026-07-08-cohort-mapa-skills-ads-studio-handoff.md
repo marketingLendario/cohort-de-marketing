@@ -80,11 +80,9 @@ ATUAL (pós f9e6508)                    PRÓXIMO (P3 backlog)
 
 ## O QUE FALTA (priorizado)
 
-- **[URGENT]** Push da branch para origin (só `@devops` / operador):
-  ```bash
-  cd /Users/rafaelcosta/Projects/cohort-de-marketing
-  AIOX_ACTIVE_AGENT=devops git push origin feat/mapa-skills-preview-validation
-  ```
+- **PR:** base **`rafaelscosta`** (não `main`). Compare:
+  `https://github.com/marketingLendario/cohort-de-marketing/compare/rafaelscosta...feat/mapa-skills-preview-validation`
+  Se `rafaelscosta` não existir no remoto: `AIOX_ACTIVE_AGENT=devops git push origin rafaelscosta` antes do PR.
 - **[NEXT]** Revisão visual lado a lado:
   - Abrir `cohort-de-marketing/mapa-skills.html` (servidor HTTP)
   - Comparar com `sinkra-hub/docs/design/mocks/academia-lendaria-ads-studio/ads-studio.dc.html`
