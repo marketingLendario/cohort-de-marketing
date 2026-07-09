@@ -1,5 +1,5 @@
 ---
-status: Ready
+status: InReview
 story_id: "8.W1.3"
 title: "Materializador atômico de artefatos"
 epic: 8
@@ -19,7 +19,7 @@ file_scope: exclusive
 touched_paths:
   - "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
   - "apps/academia-lendaria-ads-studio/server/__tests__/artifact-materializer.test.ts"
-  - "data/contracts/artifact-write.v1.schema.json"
+  - "apps/academia-lendaria-ads-studio/data/contracts/artifact-write.v1.schema.json"
 ---
 
 # STORY-8.W1.3 - Materializador atômico de artefatos
@@ -41,15 +41,46 @@ touched_paths:
 
 ## Tasks
 
-- [ ] Definir e validar `artifact-write.v1`.
-- [ ] Implementar resolução segura de path.
-- [ ] Implementar escrita atômica, hash e idempotência.
-- [ ] Implementar rollback e evento de auditoria.
-- [ ] Cobrir ameaças e formatos com testes.
+- [x] Definir e validar `artifact-write.v1`.
+- [x] Implementar resolução segura de path.
+- [x] Implementar escrita atômica, hash e idempotência.
+- [x] Implementar rollback e evento de auditoria.
+- [x] Cobrir ameaças e formatos com testes.
 
 ## File List
 
-- `apps/academia-lendaria-ads-studio/server/artifact-materializer.ts`
-- `apps/academia-lendaria-ads-studio/server/__tests__/artifact-materializer.test.ts`
-- `data/contracts/artifact-write.v1.schema.json`
+- `apps/academia-lendaria-ads-studio/server/artifact-materializer.ts` (ADD)
+- `apps/academia-lendaria-ads-studio/server/__tests__/artifact-materializer.test.ts` (ADD)
+- `apps/academia-lendaria-ads-studio/data/contracts/artifact-write.v1.schema.json` (ADD)
+- `docs/stories/epic-8/STORY-8.W1.3-artifact-materializer.md` (MODIFY)
+
+## Dev Agent Record
+
+### Acceptance Criteria — verificação
+
+1. **Contrato `artifact-write.v1`** — `artifact-write.v1.schema.json` descreve `projectSlug`, `relativePath`, `format`, `content`, `expectedHash` (hash esperado), `runId` (run) e `onConflict`. `schemaVersion: "1.0.0"`. ✅
+2. **Resolução só dentro de `projetos/{slug}/`** — `assertValidSlug` (regex `^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$`), `assertValidRelativePath` (rejeita absoluto, `..`, byte nulo) e `resolveSafeTarget` (containment sob `realpath` da raiz + recusa de symlink em ancestral e no alvo). Testes cobrem slug inválido, traversal, caminho absoluto e ambos os vetores de symlink escape. ✅
+3. **Escrita atômica + sem parcial** — temp `.{basename}.{uuid}.tmp` no mesmo diretório com `flag: 'wx'` + `rename`; em falha faz `rm` do temp e o canônico permanece intacto. Teste de rollback (dir read-only) confirma canônico intacto e zero temporários remanescentes. ✅
+4. **SHA-256 + before/after + auditoria serializável** — `sha256()`; resultado retorna `hashBefore`/`hashAfter` e `ArtifactAuditEvent` (`event`, `outcome`, hashes, `bytesWritten`, `timestamp`). Teste faz roundtrip `JSON.parse(JSON.stringify(audit))`. ✅
+5. **Idempotência + conflito explícito** — mesmo hash → `outcome: 'unchanged'` (no-op); divergente com `onConflict: 'reject'` (default) → `outcome: 'conflict'` sem tocar o canônico; `onConflict: 'overwrite'` (revisão explícita) substitui atomicamente. ✅
+6. **Cobertura de formatos e ameaças** — 20 testes: markdown, JSON/YAML (válido e inválido), idempotência, conflito, traversal, absoluto, symlink (ancestral e alvo), rollback, expectedHash (match/mismatch), slug inválido, schemaVersion. ✅
+
+### Notas de decisão
+
+- **Caminho do contrato (divergência resolvida):** a File List original apontava para o repo-root `data/contracts/`, onde vivem os contratos irmãos (`campaign-plan.v1`, `weekly-panel.v1`). O ownership exclusivo deste fan-out escopou a escrita para `apps/academia-lendaria-ads-studio/data/contracts/` (isolamento de paralelismo na wave). Honrei o boundary do fan-out e alinhei `touched_paths`/File List ao caminho app-local. O estilo do schema (draft 2020-12, `$id`, `additionalProperties: false`) segue a convenção dos contratos existentes.
+- Módulo standalone (padrão de `local-skill-runner.ts`), sem wiring de servidor — as ACs cobrem apenas o comportamento do materializador. `now` é injetável para timestamp determinístico nos testes.
+
+### Evidências (local)
+
+- `vitest run` (arquivo): **20/20 passed**.
+- `vitest run --project server` (regressão): **35/35 passed**, 15 suites.
+- `tsc -p tsconfig.server.json --noEmit`: **No errors found**.
+- `eslint` (módulo + teste): **No issues found**.
+- Contrato: `JSON.parse` OK.
+
+## Change Log
+
+| Data | Autor | Mudança |
+|------|-------|---------|
+| 2026-07-09 | @dev | Implementação completa (contrato + materializador + 20 testes). Status Ready → InReview. Contrato materializado em `apps/.../data/contracts/` conforme ownership do fan-out; File List/`touched_paths` alinhados. |
 
