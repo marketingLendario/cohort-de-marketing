@@ -566,6 +566,17 @@
   background: #fff;
 }
 
+#am-preview-pdf-canvas {
+  display: block;
+  margin: 0 auto;
+  background: var(--background);
+}
+
+#am-preview-pdf-canvas[data-cropped="1"] {
+  border-color: var(--hairline);
+  background: var(--background);
+}
+
 .hub-modal__body .preview-frame {
   height: 100%;
   min-height: 0;

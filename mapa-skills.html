@@ -1098,6 +1098,61 @@ function registerArtifacts(skill, artifacts) {
   });
 }
 
+function cropWhitePdfMargins(canvas) {
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx || !canvas.width || !canvas.height) return false;
+
+  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = image.data;
+  let darkSample = 0, totalSample = 0;
+  for (let y = 0; y < canvas.height; y += 8) {
+    for (let x = 0; x < canvas.width; x += 8) {
+      const i = (y * canvas.width + x) * 4;
+      const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+      if (a < 20) continue;
+      totalSample++;
+      if (r + g + b < 420) darkSample++;
+    }
+  }
+  const darkRatio = totalSample ? darkSample / totalSample : 0;
+  if (darkRatio < 0.35) return false;
+
+  let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+  const isWhite = (r, g, b, a) => a < 20 || (r > 235 && g > 235 && b > 235);
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      const i = (y * canvas.width + x) * 4;
+      if (isWhite(data[i], data[i + 1], data[i + 2], data[i + 3])) continue;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  }
+
+  if (minX >= maxX || minY >= maxY) return false;
+  const pad = 2;
+  minX = Math.max(0, minX - pad);
+  minY = Math.max(0, minY - pad);
+  maxX = Math.min(canvas.width - 1, maxX + pad);
+  maxY = Math.min(canvas.height - 1, maxY + pad);
+
+  const cropW = maxX - minX + 1;
+  const cropH = maxY - minY + 1;
+  const removedX = canvas.width - cropW;
+  const removedY = canvas.height - cropH;
+  if (removedX < 20 && removedY < 20) return false;
+
+  const cropped = ctx.getImageData(minX, minY, cropW, cropH);
+  const outerPad = 18;
+  canvas.width = cropW + outerPad * 2;
+  canvas.height = cropH + outerPad * 2;
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.putImageData(cropped, outerPad, outerPad);
+  return true;
+}
+
 async function setPdfPreview(sampleUrl) {
   const wrap = document.getElementById('am-preview-pdf-wrap');
   const canvas = document.getElementById('am-preview-pdf-canvas');
@@ -1129,6 +1184,7 @@ async function setPdfPreview(sampleUrl) {
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   await page.render({ canvasContext: ctx, viewport }).promise;
+  canvas.dataset.cropped = cropWhitePdfMargins(canvas) ? '1' : '0';
   canvas.dataset.rendered = '1';
   canvas.dataset.sampleUrl = sampleUrl;
 }
