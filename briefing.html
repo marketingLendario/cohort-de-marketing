@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Briefing Único • Cohort de Marketing</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+    :root {
+      color-scheme: dark;
+      --bg: #0a0a0f;
+      --panel: #121218;
+      --panel-2: #1a1a22;
+      --line: #292933;
+      --muted: #a1a1aa;
+      --text: #f4f4f5;
+      --violet: #a78bfa;
+      --amber: #d8c3a5;
+      --teal: #22c7b1;
+      --rose: #fb7185;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(167,139,250,0.08), transparent 34rem),
+        radial-gradient(circle at 90% 10%, rgba(34,199,177,0.06), transparent 30rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .font-display { font-family: "Space Grotesk", Inter, system-ui, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 380px;
+      gap: 18px;
+      width: min(1840px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    .panel {
+      background: rgba(18,18,24,0.86);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.28);
+    }
+
+    .step-btn {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 28px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 9px;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--muted);
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .step-btn:hover { background: #181820; color: var(--text); }
+    .step-btn.active {
+      background: rgba(167,139,250,0.12);
+      border-color: rgba(167,139,250,0.45);
+      color: var(--text);
+    }
+
+    .step-index {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: #22222c;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .step-btn.active .step-index { background: var(--violet); color: #0a0a0f; }
+
+    .field-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(15,15,21,0.72);
+      padding: 14px;
+    }
+
+    .field-card:focus-within {
+      border-color: rgba(167,139,250,0.62);
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.08);
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #e4e4e7;
+      margin-bottom: 8px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #34343f;
+      border-radius: 8px;
+      background: #0c0c12;
+      color: var(--text);
+      padding: 10px 11px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    textarea { min-height: 86px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--violet); }
+    input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--violet); }
+
+    .field-path {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 7px;
+      border: 1px solid #31313b;
+      padding: 2px 6px;
+      color: #71717a;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 36px;
+      border: 1px solid #33333f;
+      border-radius: 8px;
+      padding: 0 12px;
+      color: #d4d4d8;
+      background: #121218;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .btn:hover { background: #1d1d27; color: #fff; border-color: #444454; }
+    .btn-primary { background: var(--amber); color: #111; border-color: var(--amber); }
+    .btn-primary:hover { background: #efe0c8; color: #111; }
+    .btn-ghost { background: transparent; }
+
+    .skill-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #101016;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .skill-row:hover { border-color: #3f3f4b; background: #15151d; }
+    .state-dot { width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0; }
+    .state-done { background: var(--teal); }
+    .state-available { background: var(--violet); }
+    .state-recommended { background: #f59e0b; }
+    .state-almost { background: #38bdf8; }
+    .state-blocked { background: #52525b; }
+    .state-not_applicable { background: var(--rose); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid #33333f;
+      border-radius: 8px;
+      padding: 4px 7px;
+      color: #a1a1aa;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .artifact-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #101016;
+      color: #d4d4d8;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .artifact-toggle.on {
+      border-color: rgba(34,199,177,0.48);
+      background: rgba(34,199,177,0.08);
+    }
+
+    .progress-track {
+      height: 8px;
+      border-radius: 999px;
+      background: #24242d;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--violet));
+      width: 0;
+      transition: width 0.2s;
+    }
+
+    .detail-pop {
+      border: 1px solid #3a3a46;
+      background: #0d0d13;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    @media (max-width: 1180px) {
+      .main-grid { grid-template-columns: 210px minmax(0, 1fr); }
+      .right-panel { grid-column: 1 / -1; position: static !important; }
+    }
+
+    @media (max-width: 760px) {
+      .main-grid {
+        width: min(100vw - 20px, 680px);
+        grid-template-columns: 1fr;
+        padding-top: 10px;
+      }
+      .left-panel { position: static !important; }
+      .topbar-inner { flex-direction: column; align-items: flex-start !important; gap: 12px; }
+      .form-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner flex items-center justify-between gap-4 w-[min(1840px,calc(100vw-32px))] mx-auto py-3">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 border border-zinc-700 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-diagram-project text-[#d8c3a5]"></i>
+          </div>
+          <div>
+            <div class="font-display text-lg leading-tight">Briefing Único</div>
+            <div class="mono text-[10px] tracking-[0.22em] text-zinc-500 uppercase">Cohort de Marketing</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="save-state" class="badge"><i class="fa-solid fa-circle text-[7px]"></i> carregando</span>
+          <a href="mapa-skills.html" class="btn btn-ghost"><i class="fa-solid fa-route"></i> Mapa</a>
+          <button id="export-btn" class="btn"><i class="fa-solid fa-download"></i> Exportar</button>
+          <button id="reset-btn" class="btn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <aside class="left-panel panel p-3 sticky top-[72px] self-start">
+        <div class="px-2 pb-3 border-b border-zinc-800">
+          <div class="mono text-[10px] tracking-[0.18em] uppercase text-zinc-500">Etapas</div>
+          <div class="mt-2 progress-track"><div id="global-progress" class="progress-fill"></div></div>
+        </div>
+        <nav id="step-nav" class="mt-3 grid gap-1"></nav>
+      </aside>
+
+      <section class="panel min-w-0">
+        <div class="border-b border-zinc-800 p-5 flex items-start justify-between gap-4">
+          <div>
+            <div id="step-kicker" class="mono text-[10px] tracking-[0.18em] uppercase text-zinc-500"></div>
+            <h1 id="step-title" class="font-display text-2xl mt-1"></h1>
+            <p id="step-description" class="text-sm text-zinc-400 mt-1 max-w-2xl"></p>
+          </div>
+          <div id="step-progress-label" class="badge"></div>
+        </div>
+        <div id="form-body" class="p-5"></div>
+        <div class="border-t border-zinc-800 p-4 flex items-center justify-between gap-3">
+          <button id="prev-step" class="btn"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+          <div class="flex items-center gap-2">
+            <button id="copy-summary" class="btn"><i class="fa-solid fa-copy"></i> Resumo</button>
+            <button id="next-step" class="btn btn-primary">Próxima <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="right-panel panel sticky top-[72px] self-start max-h-[calc(100vh-92px)] flex flex-col">
+        <div class="p-4 border-b border-zinc-800">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <div class="mono text-[10px] tracking-[0.18em] uppercase text-zinc-500">Skills</div>
+              <div id="skill-summary" class="font-display text-xl mt-1">0 liberadas</div>
+            </div>
+            <span id="next-skill-pill" class="badge"></span>
+          </div>
+          <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div class="panel p-2"><div id="count-ready" class="font-display text-lg">0</div><div class="text-[10px] text-zinc-500">prontas</div></div>
+            <div class="panel p-2"><div id="count-almost" class="font-display text-lg">0</div><div class="text-[10px] text-zinc-500">quase</div></div>
+            <div class="panel p-2"><div id="count-blocked" class="font-display text-lg">0</div><div class="text-[10px] text-zinc-500">bloq.</div></div>
+          </div>
+        </div>
+        <div id="skills-list" class="p-3 overflow-auto grid gap-2"></div>
+        <div id="skill-detail" class="p-3 border-t border-zinc-800 hidden"></div>
+      </aside>
+    </main>
+  </div>
+
+  <template id="field-template">
+    <div class="field-card" data-field-card>
+      <label></label>
+      <div data-control></div>
+    </div>
+  </template>
+
+  <script>
+    const STORAGE_KEY = 'cohort.projectBrief.current';
+    const SAVE_IDLE_MS = 650;
+    const GROUPS = ['project', 'market', 'offer', 'brand', 'funnel', 'channels', 'data', 'integrations'];
+    const STATE_LABELS = {
+      done: 'gerada',
+      available: 'liberada',
+      recommended: 'liberada',
+      almost: 'quase',
+      blocked: 'bloqueada',
+      not_applicable: 'não aplica'
+    };
+
+    let schema;
+    let rules;
+    let steps = [];
+    let fields = [];
+    let activeStep = 'project';
+    let selectedSkill = null;
+    let saveTimer = null;
+    let state = {
+      schemaVersion: '0.1.0',
+      meta: {},
+      project: {},
+      market: {},
+      offer: {},
+      brand: {},
+      funnel: {},
+      channels: {},
+      data: {},
+      integrations: {},
+      artifacts: {},
+      fieldMeta: {}
+    };
+
+    function byId(id) { return document.getElementById(id); }
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[char]));
+    }
+
+    function toTitle(value) {
+      return String(value || '')
+        .replace(/[-_]/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function getValue(path, source = state) {
+      return path.split('.').reduce((acc, part) => acc == null ? undefined : acc[part], source);
+    }
+
+    function setValue(path, value) {
+      const parts = path.split('.');
+      let cursor = state;
+      for (let i = 0; i < parts.length - 1; i++) {
+        const key = parts[i];
+        if (!cursor[key] || typeof cursor[key] !== 'object') cursor[key] = {};
+        cursor = cursor[key];
+      }
+      cursor[parts.at(-1)] = value;
+      state.fieldMeta[path] = { source: 'user', updatedAt: new Date().toISOString() };
+      scheduleSave();
+      refreshAll();
+    }
+
+    function isFilled(value) {
+      if (value === true) return true;
+      if (value === false || value == null) return false;
+      if (typeof value === 'number') return Number.isFinite(value) && value > 0;
+      if (typeof value === 'string') return value.trim().length > 0;
+      if (Array.isArray(value)) return value.length > 0 && value.some(isFilled);
+      if (typeof value === 'object') return Object.values(value).some(isFilled);
+      return false;
+    }
+
+    function fieldLabel(path) {
+      const field = fields.find((item) => item.path === path);
+      return field?.schema?.title || path;
+    }
+
+    function emptyForSchema(def) {
+      if (def.type === 'array') return [];
+      if (def.type === 'object') {
+        return Object.fromEntries(Object.entries(def.properties || {}).map(([key, child]) => [key, emptyForSchema(child)]));
+      }
+      if (def.type === 'boolean') return false;
+      if (def.type === 'number' || def.type === 'integer') return 0;
+      return '';
+    }
+
+    function flattenSchemaFields() {
+      const output = [];
+      function walk(prefix, def, rootStep) {
+        for (const [key, child] of Object.entries(def.properties || {})) {
+          const path = prefix ? `${prefix}.${key}` : key;
+          const step = child['x-step'] || rootStep;
+          if (GROUPS.includes(path)) continue;
+          if (child.type === 'object') {
+            output.push({ path, schema: child, step, kind: 'object' });
+          } else {
+            output.push({ path, schema: child, step, kind: 'field' });
+          }
+        }
+      }
+      for (const group of GROUPS) {
+        const def = schema.properties[group];
+        if (def?.properties) walk(group, def, group);
+      }
+      return output;
+    }
+
+    function loadDraft() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        state = {
+          ...state,
+          ...parsed,
+          artifacts: parsed.artifacts || {},
+          fieldMeta: parsed.fieldMeta || {}
+        };
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    function scheduleSave() {
+      byId('save-state').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-[10px]"></i> salvando';
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveNow, SAVE_IDLE_MS);
+    }
+
+    function saveNow() {
+      state.meta = {
+        ...(state.meta || {}),
+        updatedAt: new Date().toISOString(),
+        lastSavedAt: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      byId('save-state').innerHTML = '<i class="fa-solid fa-circle text-[7px] text-emerald-400"></i> salvo';
+    }
+
+    function renderStepNav() {
+      byId('step-nav').innerHTML = steps.map((step, index) => {
+        const stepFields = fields.filter((field) => field.step === step.id);
+        const filled = step.id === 'review'
+          ? Object.values(state.artifacts || {}).filter(Boolean).length
+          : stepFields.filter((field) => isFilled(getValue(field.path))).length;
+        const total = step.id === 'review' ? Object.keys(rules.artifactGlobs || {}).length : Math.max(stepFields.length, 1);
+        const pct = Math.round((filled / total) * 100);
+        return `
+          <button class="step-btn ${step.id === activeStep ? 'active' : ''}" data-step="${step.id}">
+            <span class="step-index">${index + 1}</span>
+            <span class="min-w-0">
+              <span class="block text-sm font-semibold truncate">${escapeHtml(step.title)}</span>
+              <span class="block text-[11px] text-zinc-500">${pct}%</span>
+            </span>
+            <i class="fa-solid fa-chevron-right text-[10px] opacity-50"></i>
+          </button>
+        `;
+      }).join('');
+      byId('step-nav').querySelectorAll('[data-step]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activeStep = btn.dataset.step;
+          render();
+        });
+      });
+    }
+
+    function renderControl(path, def) {
+      const value = getValue(path);
+      if (def.type === 'boolean') {
+        return `<label class="!mb-0 !font-medium !text-sm"><input type="checkbox" data-path="${path}" ${value ? 'checked' : ''}> Sim</label>`;
+      }
+      if (def.enum) {
+        return `
+          <select data-path="${path}">
+            <option value="">Selecione</option>
+            ${def.enum.map((option) => `<option value="${escapeHtml(option)}" ${value === option ? 'selected' : ''}>${escapeHtml(toTitle(option))}</option>`).join('')}
+          </select>
+        `;
+      }
+      if (def.type === 'number' || def.type === 'integer') {
+        return `<input data-path="${path}" type="number" min="${def.minimum ?? ''}" max="${def.maximum ?? ''}" step="${def.type === 'integer' ? '1' : 'any'}" value="${escapeHtml(value ?? '')}">`;
+      }
+      if (def.type === 'array') {
+        if (def.items?.type === 'object') return renderObjectArray(path, def);
+        const text = Array.isArray(value) ? value.join('\n') : '';
+        return `<textarea data-path="${path}" data-array="string" placeholder="Um item por linha">${escapeHtml(text)}</textarea>`;
+      }
+      if (def.type === 'object') return renderObject(path, def);
+      if (def['x-control'] === 'textarea') {
+        return `<textarea data-path="${path}">${escapeHtml(value ?? '')}</textarea>`;
+      }
+      return `<input data-path="${path}" type="text" value="${escapeHtml(value ?? '')}">`;
+    }
+
+    function renderObject(path, def) {
+      const props = Object.entries(def.properties || {});
+      return `
+        <div class="grid gap-3 sm:grid-cols-2">
+          ${props.map(([key, child]) => {
+            const childPath = `${path}.${key}`;
+            return `
+              <div>
+                <label>${escapeHtml(child.title || toTitle(key))}</label>
+                ${renderControl(childPath, child)}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderObjectArray(path, def) {
+      const value = Array.isArray(getValue(path)) ? getValue(path) : [];
+      const props = Object.entries(def.items.properties || {});
+      return `
+        <div class="grid gap-3">
+          ${value.map((item, index) => `
+            <div class="border border-zinc-800 rounded-lg p-3 bg-[#0b0b11]">
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <span class="mono text-[10px] text-zinc-500 uppercase">Item ${index + 1}</span>
+                <button class="btn btn-ghost !min-h-7 !px-2" data-remove-array="${path}" data-index="${index}" type="button">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              <div class="grid gap-3 sm:grid-cols-2">
+                ${props.map(([key, child]) => {
+                  const childValue = item?.[key] ?? emptyForSchema(child);
+                  return `
+                    <div>
+                      <label>${escapeHtml(child.title || toTitle(key))}</label>
+                      ${renderInlineArrayControl(path, index, key, child, childValue)}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `).join('')}
+          <button class="btn" data-add-array="${path}" type="button"><i class="fa-solid fa-plus"></i> Adicionar</button>
+        </div>
+      `;
+    }
+
+    function renderInlineArrayControl(path, index, key, def, value) {
+      const data = `data-array-path="${path}" data-array-index="${index}" data-array-key="${key}"`;
+      if (def.type === 'boolean') return `<input type="checkbox" ${data} ${value ? 'checked' : ''}>`;
+      if (def.enum) {
+        return `<select ${data}><option value="">Selecione</option>${def.enum.map((option) => `<option value="${escapeHtml(option)}" ${value === option ? 'selected' : ''}>${escapeHtml(toTitle(option))}</option>`).join('')}</select>`;
+      }
+      if (def.type === 'number' || def.type === 'integer') return `<input type="number" ${data} value="${escapeHtml(value ?? '')}">`;
+      return `<input type="text" ${data} value="${escapeHtml(value ?? '')}">`;
+    }
+
+    function renderFormStep(step) {
+      const stepFields = fields.filter((field) => field.step === step.id && !field.path.startsWith('meta.') && !field.path.startsWith('fieldMeta.'));
+      if (step.id === 'review') return renderReviewStep();
+      if (!stepFields.length) return '<div class="text-zinc-500 text-sm">Sem campos nesta etapa.</div>';
+      return `
+        <div class="form-grid grid gap-4 grid-cols-2">
+          ${stepFields.map((field) => `
+            <div class="field-card ${field.schema.type === 'object' || field.schema.type === 'array' ? 'col-span-full' : ''}" id="field-${field.path.replaceAll('.', '-')}">
+              <label>
+                <span>${escapeHtml(field.schema.title || fieldLabel(field.path))}</span>
+                <span class="field-path">${escapeHtml(field.path)}</span>
+              </label>
+              ${renderControl(field.path, field.schema)}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderReviewStep() {
+      const artifactKeys = Object.keys(rules.artifactGlobs || {});
+      return `
+        <div class="grid gap-5">
+          <section class="field-card">
+            <div class="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <h2 class="font-display text-lg">Artefatos gerados</h2>
+                <p class="text-sm text-zinc-500 mt-1">Marque o que já existe em projetos/{slug}/.</p>
+              </div>
+              <span class="badge">${artifactKeys.filter((key) => state.artifacts?.[key]).length}/${artifactKeys.length}</span>
+            </div>
+            <div class="artifact-grid">
+              ${artifactKeys.map((key) => `
+                <button class="artifact-toggle ${state.artifacts?.[key] ? 'on' : ''}" data-artifact="${key}" type="button">
+                  <input type="checkbox" ${state.artifacts?.[key] ? 'checked' : ''} tabindex="-1">
+                  <span class="truncate">${escapeHtml(key)}</span>
+                </button>
+              `).join('')}
+            </div>
+          </section>
+          <section class="field-card">
+            <h2 class="font-display text-lg mb-3">JSON atual</h2>
+            <textarea readonly class="mono text-xs min-h-[260px]">${escapeHtml(JSON.stringify(state, null, 2))}</textarea>
+          </section>
+        </div>
+      `;
+    }
+
+    function bindFormEvents() {
+      document.querySelectorAll('[data-path]').forEach((input) => {
+        input.addEventListener('input', handleInput);
+        input.addEventListener('change', handleInput);
+      });
+      document.querySelectorAll('[data-array-path]').forEach((input) => {
+        input.addEventListener('input', handleArrayObjectInput);
+        input.addEventListener('change', handleArrayObjectInput);
+      });
+      document.querySelectorAll('[data-add-array]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const path = btn.dataset.addArray;
+          const field = fields.find((item) => item.path === path);
+          const current = Array.isArray(getValue(path)) ? getValue(path) : [];
+          setValue(path, [...current, emptyForSchema(field.schema.items)]);
+          render();
+        });
+      });
+      document.querySelectorAll('[data-remove-array]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const path = btn.dataset.removeArray;
+          const index = Number(btn.dataset.index);
+          const current = Array.isArray(getValue(path)) ? [...getValue(path)] : [];
+          current.splice(index, 1);
+          setValue(path, current);
+          render();
+        });
+      });
+      document.querySelectorAll('[data-artifact]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.artifacts[btn.dataset.artifact] = !state.artifacts[btn.dataset.artifact];
+          scheduleSave();
+          render();
+        });
+      });
+    }
+
+    function handleInput(event) {
+      const input = event.currentTarget;
+      const path = input.dataset.path;
+      let value;
+      if (input.type === 'checkbox') value = input.checked;
+      else if (input.type === 'number') value = input.value === '' ? 0 : Number(input.value);
+      else if (input.dataset.array === 'string') value = input.value.split('\n').map((item) => item.trim()).filter(Boolean);
+      else value = input.value;
+      setValue(path, value);
+    }
+
+    function handleArrayObjectInput(event) {
+      const input = event.currentTarget;
+      const path = input.dataset.arrayPath;
+      const index = Number(input.dataset.arrayIndex);
+      const key = input.dataset.arrayKey;
+      const current = Array.isArray(getValue(path)) ? [...getValue(path)] : [];
+      const item = { ...(current[index] || {}) };
+      if (input.type === 'checkbox') item[key] = input.checked;
+      else if (input.type === 'number') item[key] = input.value === '' ? 0 : Number(input.value);
+      else item[key] = input.value;
+      current[index] = item;
+      setValue(path, current);
+    }
+
+    function conditionMatches(condition) {
+      const value = getValue(condition.field);
+      if ('equals' in condition) return value === condition.equals;
+      if ('in' in condition) return condition.in.includes(value);
+      return false;
+    }
+
+    function matchGroup(group) {
+      if (group.matches) {
+        for (const [field, expected] of Object.entries(group.matches)) {
+          if (getValue(field) !== expected) return false;
+        }
+      }
+      const fieldOk = (group.fields || []).every((field) => isFilled(getValue(field)));
+      const artifactOk = (group.artifacts || []).every((artifact) => Boolean(state.artifacts?.[artifact]));
+      if ((group.fields || []).length && (group.artifacts || []).length) return fieldOk && artifactOk;
+      if ((group.fields || []).length) return fieldOk;
+      if ((group.artifacts || []).length) return artifactOk;
+      return true;
+    }
+
+    function evaluateSkill(skillId, rule) {
+      const primaryDone = (rule.primaryArtifacts || []).length > 0 && rule.primaryArtifacts.every((artifact) => state.artifacts?.[artifact]);
+      const notApplicable = (rule.notApplicableWhen || []).find(conditionMatches);
+      if (notApplicable) return { skillId, rule, state: 'not_applicable', missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [], reason: notApplicable.reason };
+      if (primaryDone) return { skillId, rule, state: 'done', missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [] };
+
+      const missingFields = (rule.requiredFields || []).filter((field) => !isFilled(getValue(field)));
+      const missingArtifacts = (rule.requiredArtifacts || []).filter((artifact) => !state.artifacts?.[artifact]);
+      const anyGroups = rule.anyOf || [];
+      const anyOk = anyGroups.length === 0 || anyGroups.some(matchGroup);
+      const missingAnyOf = anyOk ? [] : anyGroups.map((group) => group.label || 'Caminho alternativo');
+      const recommendedMissing = [
+        ...(rule.recommendedFields || []).filter((field) => !isFilled(getValue(field))),
+        ...(rule.recommendedArtifacts || []).filter((artifact) => !state.artifacts?.[artifact])
+      ];
+      const hardMissing = missingFields.length + missingArtifacts.length + missingAnyOf.length;
+      let stateName = 'available';
+      if (hardMissing > 0) stateName = hardMissing <= 2 ? 'almost' : 'blocked';
+      else if (recommendedMissing.length > 0) stateName = 'recommended';
+      return { skillId, rule, state: stateName, missingFields, missingArtifacts, missingAnyOf, recommendedMissing };
+    }
+
+    function evaluateSkills() {
+      return Object.entries(rules.skills).map(([skillId, rule]) => evaluateSkill(skillId, rule));
+    }
+
+    function renderSkillsPanel() {
+      const evaluated = evaluateSkills();
+      const ready = evaluated.filter((item) => ['done', 'available', 'recommended'].includes(item.state));
+      const almost = evaluated.filter((item) => item.state === 'almost');
+      const blocked = evaluated.filter((item) => item.state === 'blocked');
+      const next = evaluated.find((item) => ['available', 'recommended', 'almost'].includes(item.state));
+
+      byId('skill-summary').textContent = `${ready.length} liberadas`;
+      byId('next-skill-pill').textContent = next ? next.skillId : 'sem próxima';
+      byId('count-ready').textContent = ready.length;
+      byId('count-almost').textContent = almost.length;
+      byId('count-blocked').textContent = blocked.length;
+
+      const order = { done: 0, available: 1, recommended: 2, almost: 3, blocked: 4, not_applicable: 5 };
+      byId('skills-list').innerHTML = evaluated
+        .sort((a, b) => order[a.state] - order[b.state] || a.skillId.localeCompare(b.skillId))
+        .map((item) => `
+          <button class="skill-row text-left ${selectedSkill === item.skillId ? 'border-violet-400/70' : ''}" data-skill="${item.skillId}">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="state-dot state-${item.state}"></span>
+                <span class="font-semibold text-sm truncate">${escapeHtml(item.skillId)}</span>
+              </div>
+              <span class="mono text-[10px] text-zinc-500">${escapeHtml(STATE_LABELS[item.state])}</span>
+            </div>
+            <div class="mt-2 text-[11px] text-zinc-500 line-clamp-2">${escapeHtml(item.rule.panelHint || item.rule.command)}</div>
+          </button>
+        `).join('');
+
+      byId('skills-list').querySelectorAll('[data-skill]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedSkill = btn.dataset.skill;
+          renderSkillsPanel();
+        });
+      });
+
+      renderSkillDetail(evaluated.find((item) => item.skillId === selectedSkill) || next);
+    }
+
+    function renderSkillDetail(item) {
+      const detail = byId('skill-detail');
+      if (!item) {
+        detail.classList.add('hidden');
+        detail.innerHTML = '';
+        return;
+      }
+      detail.classList.remove('hidden');
+      const missing = [
+        ...item.missingFields.map((field) => ({ type: 'field', key: field, label: fieldLabel(field) })),
+        ...item.missingArtifacts.map((artifact) => ({ type: 'artifact', key: artifact, label: artifact })),
+        ...item.missingAnyOf.map((label) => ({ type: 'path', key: label, label }))
+      ];
+      detail.innerHTML = `
+        <div class="detail-pop">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="font-display text-base">${escapeHtml(item.skillId)}</div>
+              <div class="mono text-[10px] text-zinc-500 mt-1">${escapeHtml(item.rule.command || '')}</div>
+            </div>
+            <span class="badge">${escapeHtml(STATE_LABELS[item.state])}</span>
+          </div>
+          ${item.reason ? `<p class="text-xs text-rose-300 mt-3">${escapeHtml(item.reason)}</p>` : ''}
+          <div class="mt-3 grid gap-2">
+            ${missing.length ? missing.slice(0, 8).map((miss) => `
+              <button class="btn btn-ghost !justify-start !min-h-8" data-jump="${miss.type === 'field' ? miss.key : ''}" type="button">
+                <i class="fa-solid fa-${miss.type === 'artifact' ? 'file-circle-question' : 'circle-exclamation'}"></i>
+                <span class="truncate">${escapeHtml(miss.label)}</span>
+              </button>
+            `).join('') : '<div class="text-xs text-zinc-500">Requisitos duros atendidos.</div>'}
+          </div>
+          ${item.recommendedMissing.length ? `<div class="mt-3 text-[11px] text-zinc-500">${item.recommendedMissing.length} recomendados pendentes</div>` : ''}
+        </div>
+      `;
+      detail.querySelectorAll('[data-jump]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (!btn.dataset.jump) {
+            activeStep = 'review';
+          } else {
+            const field = fields.find((item) => item.path === btn.dataset.jump);
+            if (field) activeStep = field.step;
+          }
+          render();
+          if (btn.dataset.jump) {
+            setTimeout(() => byId(`field-${btn.dataset.jump.replaceAll('.', '-')}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+          }
+        });
+      });
+    }
+
+    function calculateGlobalProgress() {
+      const relevant = fields.filter((field) => !field.path.startsWith('meta.') && !field.path.startsWith('fieldMeta.'));
+      const filled = relevant.filter((field) => isFilled(getValue(field.path))).length;
+      return Math.round((filled / Math.max(relevant.length, 1)) * 100);
+    }
+
+    function renderStepHeader(step) {
+      const stepFields = fields.filter((field) => field.step === step.id);
+      const filled = step.id === 'review'
+        ? Object.values(state.artifacts || {}).filter(Boolean).length
+        : stepFields.filter((field) => isFilled(getValue(field.path))).length;
+      const total = step.id === 'review' ? Object.keys(rules.artifactGlobs || {}).length : Math.max(stepFields.length, 1);
+      byId('step-kicker').textContent = `Etapa ${steps.findIndex((item) => item.id === step.id) + 1} de ${steps.length}`;
+      byId('step-title').textContent = step.title;
+      byId('step-description').textContent = step.description || '';
+      byId('step-progress-label').textContent = `${filled}/${total}`;
+    }
+
+    function render() {
+      const step = steps.find((item) => item.id === activeStep) || steps[0];
+      activeStep = step.id;
+      renderStepNav();
+      renderStepHeader(step);
+      byId('form-body').innerHTML = renderFormStep(step);
+      bindFormEvents();
+
+      const idx = steps.findIndex((item) => item.id === activeStep);
+      byId('prev-step').disabled = idx === 0;
+      byId('next-step').disabled = idx === steps.length - 1;
+      byId('global-progress').style.width = `${calculateGlobalProgress()}%`;
+      renderSkillsPanel();
+    }
+
+    function refreshAll() {
+      const step = steps.find((item) => item.id === activeStep) || steps[0];
+      renderStepHeader(step);
+      renderStepNav();
+      byId('global-progress').style.width = `${calculateGlobalProgress()}%`;
+      renderSkillsPanel();
+    }
+
+    function exportJson() {
+      saveNow();
+      const slug = state.project?.slug || 'project-brief';
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slug}-project-brief.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copySummary() {
+      const evaluated = evaluateSkills();
+      const ready = evaluated.filter((item) => ['done', 'available', 'recommended'].includes(item.state)).map((item) => item.skillId);
+      const almost = evaluated.filter((item) => item.state === 'almost').map((item) => item.skillId);
+      const text = [
+        `# Briefing ${state.project?.slug || ''}`.trim(),
+        '',
+        `Skills liberadas: ${ready.join(', ') || 'nenhuma'}`,
+        `Quase liberadas: ${almost.join(', ') || 'nenhuma'}`,
+        '',
+        `Projeto: ${state.project?.name || state.project?.slug || 'não definido'}`,
+        `Nicho: ${state.market?.niche || 'não definido'}`,
+        `Oferta: ${state.offer?.name || 'não definida'}`
+      ].join('\n');
+      await navigator.clipboard.writeText(text);
+      byId('save-state').innerHTML = '<i class="fa-solid fa-copy text-[10px]"></i> resumo copiado';
+    }
+
+    async function init() {
+      try {
+        const [schemaRes, rulesRes] = await Promise.all([
+          fetch('data/project-brief.schema.json'),
+          fetch('data/skill-unlock-rules.json')
+        ]);
+        schema = await schemaRes.json();
+        rules = await rulesRes.json();
+      } catch (error) {
+        byId('form-body').innerHTML = `
+          <div class="field-card">
+            <h1 class="font-display text-xl">Não consegui carregar os JSONs.</h1>
+            <p class="text-zinc-400 text-sm mt-2">Abra via servidor local, por exemplo: http://localhost:8765/briefing.html</p>
+          </div>
+        `;
+        return;
+      }
+      steps = schema['x-steps'];
+      fields = flattenSchemaFields();
+      loadDraft();
+      render();
+      saveNow();
+
+      byId('prev-step').addEventListener('click', () => {
+        const idx = steps.findIndex((item) => item.id === activeStep);
+        activeStep = steps[Math.max(0, idx - 1)].id;
+        render();
+      });
+      byId('next-step').addEventListener('click', () => {
+        const idx = steps.findIndex((item) => item.id === activeStep);
+        activeStep = steps[Math.min(steps.length - 1, idx + 1)].id;
+        render();
+      });
+      byId('export-btn').addEventListener('click', exportJson);
+      byId('copy-summary').addEventListener('click', copySummary);
+      byId('reset-btn').addEventListener('click', () => {
+        if (!confirm('Limpar o briefing salvo neste navegador?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
