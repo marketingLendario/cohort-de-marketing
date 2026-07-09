@@ -3,6 +3,11 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import {
+  DEFAULT_LOCAL_RUNNER_LIMITS,
+  resolveLocalRunnerLimits,
+  sanitizeCodexEnv,
+} from './local-runner-security.js';
 
 export interface SkillProposalArtifact {
   artifactType: string;
@@ -58,6 +63,10 @@ interface CodexExecution {
   cwd: string;
   outputPath: string;
   timeoutMs: number;
+  /** Janela entre SIGTERM e SIGKILL no kill escalonado (AC5). */
+  killGraceMs: number;
+  /** Ambiente já sanitizado (sem OPENAI_API_KEY / CODEX_API_KEY — AC4). */
+  env: NodeJS.ProcessEnv;
 }
 
 type CodexExecutor = (execution: CodexExecution) => Promise<void>;
@@ -102,27 +111,35 @@ export const skillProposalSchema = {
 } as const;
 
 function defaultCodexExecutor(codexPath: string): CodexExecutor {
-  return ({ args, prompt, cwd, timeoutMs }) => new Promise((resolvePromise, reject) => {
+  return ({ args, prompt, cwd, timeoutMs, killGraceMs, env }) => new Promise((resolvePromise, reject) => {
+    // Ambiente já sanitizado (AC4): sem chaves OpenAI/Codex no processo filho.
     const child = spawn(codexPath, args, {
       cwd,
-      env: process.env,
+      env,
       stdio: ['pipe', 'ignore', 'pipe'],
     });
     let stderr = '';
+    let killTimer: ReturnType<typeof setTimeout> | undefined;
+    // Kill escalonado (AC5): SIGTERM na expiração, SIGKILL após a janela de graça.
     const timer = setTimeout(() => {
       child.kill('SIGTERM');
+      killTimer = setTimeout(() => child.kill('SIGKILL'), killGraceMs);
       reject(new Error(`Codex CLI excedeu o limite de ${Math.round(timeoutMs / 1000)} segundos.`));
     }, timeoutMs);
+    const clearTimers = () => {
+      clearTimeout(timer);
+      if (killTimer) clearTimeout(killTimer);
+    };
 
     child.stderr.on('data', (chunk: Buffer) => {
       if (stderr.length < 64_000) stderr += chunk.toString();
     });
     child.on('error', (error) => {
-      clearTimeout(timer);
+      clearTimers();
       reject(new Error(`Não foi possível iniciar o Codex CLI: ${error.message}`));
     });
     child.on('close', (code, signal) => {
-      clearTimeout(timer);
+      clearTimers();
       if (code === 0) resolvePromise();
       else reject(new Error(`Codex CLI falhou (${signal ?? `exit ${code}`}): ${stderr.trim() || 'sem detalhes'}`));
     });
@@ -134,6 +151,7 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
   private readonly repoRoot: string;
   private readonly model?: string;
   private readonly timeoutMs: number;
+  private readonly killGraceMs: number;
   private readonly execute: CodexExecutor;
 
   constructor(options: {
@@ -141,11 +159,13 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
     codexPath?: string;
     model?: string;
     timeoutMs?: number;
+    killGraceMs?: number;
     execute?: CodexExecutor;
   }) {
     this.repoRoot = options.repoRoot;
     this.model = options.model;
-    this.timeoutMs = options.timeoutMs ?? 10 * 60 * 1000;
+    this.timeoutMs = options.timeoutMs ?? DEFAULT_LOCAL_RUNNER_LIMITS.timeoutMs;
+    this.killGraceMs = options.killGraceMs ?? DEFAULT_LOCAL_RUNNER_LIMITS.killGraceMs;
     this.execute = options.execute ?? defaultCodexExecutor(options.codexPath ?? 'codex');
   }
 
@@ -201,7 +221,15 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
         }),
       ].filter(Boolean).join('\n');
 
-      await this.execute({ args, prompt, cwd: this.repoRoot, outputPath, timeoutMs: this.timeoutMs });
+      await this.execute({
+        args,
+        prompt,
+        cwd: this.repoRoot,
+        outputPath,
+        timeoutMs: this.timeoutMs,
+        killGraceMs: this.killGraceMs,
+        env: sanitizeCodexEnv(process.env),
+      });
       const proposal = JSON.parse(await readFile(outputPath, 'utf8')) as SkillProposal;
       return {
         skillId,
@@ -218,10 +246,12 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
 export function createLocalSkillRunnerFromEnv(): LocalSkillRunner | null {
   if (process.env.LOCAL_SKILL_RUNNER_ENABLED !== 'true') return null;
   const repoRoot = process.env.COHORT_REPO_ROOT ?? resolve(process.cwd(), '../..');
+  const limits = resolveLocalRunnerLimits();
   return new CodexCliLocalSkillRunner({
     repoRoot,
     codexPath: process.env.CODEX_CLI_PATH,
     model: process.env.CODEX_SKILL_MODEL,
-    timeoutMs: process.env.CODEX_SKILL_TIMEOUT_MS ? Number(process.env.CODEX_SKILL_TIMEOUT_MS) : undefined,
+    timeoutMs: limits.timeoutMs,
+    killGraceMs: limits.killGraceMs,
   });
 }
