@@ -17,6 +17,7 @@
 *.tmp
 *.bak
 .cache/
+.codegraph/
 
 # Node (caso adicione build no futuro)
 node_modules/
