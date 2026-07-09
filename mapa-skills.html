@@ -1098,6 +1098,56 @@ function registerArtifacts(skill, artifacts) {
   });
 }
 
+function eraseBrightPdfEdges(imageData) {
+  const { data, width, height } = imageData;
+  const seen = new Uint8Array(width * height);
+  const queue = [];
+  const fill = [10, 10, 10, 255];
+
+  const isBrightNeutral = (idx) => {
+    const o = idx * 4;
+    const a = data[o + 3];
+    if (a < 20) return true;
+    const r = data[o], g = data[o + 1], b = data[o + 2];
+    const luminance = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
+    const spread = Math.max(r, g, b) - Math.min(r, g, b);
+    return luminance > 175 && spread < 70;
+  };
+
+  const push = (x, y) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) return;
+    const idx = y * width + x;
+    if (seen[idx] || !isBrightNeutral(idx)) return;
+    seen[idx] = 1;
+    queue.push(idx);
+  };
+
+  for (let x = 0; x < width; x++) {
+    push(x, 0);
+    push(x, height - 1);
+  }
+  for (let y = 1; y < height - 1; y++) {
+    push(0, y);
+    push(width - 1, y);
+  }
+
+  while (queue.length) {
+    const idx = queue.pop();
+    const o = idx * 4;
+    data[o] = fill[0];
+    data[o + 1] = fill[1];
+    data[o + 2] = fill[2];
+    data[o + 3] = fill[3];
+
+    const x = idx % width;
+    const y = (idx - x) / width;
+    push(x + 1, y);
+    push(x - 1, y);
+    push(x, y + 1);
+    push(x, y - 1);
+  }
+}
+
 function cropWhitePdfMargins(canvas) {
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx || !canvas.width || !canvas.height) return false;
@@ -1144,12 +1194,20 @@ function cropWhitePdfMargins(canvas) {
   if (removedX < 20 && removedY < 20) return false;
 
   const cropped = ctx.getImageData(minX, minY, cropW, cropH);
+  eraseBrightPdfEdges(cropped);
+
   const outerPad = 18;
-  canvas.width = cropW + outerPad * 2;
-  canvas.height = cropH + outerPad * 2;
+  const innerPad = 42;
+  const frameW = cropW + innerPad * 2;
+  const frameH = cropH + innerPad * 2;
+  canvas.width = frameW + outerPad * 2;
+  canvas.height = frameH + outerPad * 2;
   ctx.fillStyle = '#0a0a0a';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.putImageData(cropped, outerPad, outerPad);
+  ctx.strokeStyle = 'rgba(245, 245, 245, 0.82)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(outerPad, outerPad, frameW, frameH);
+  ctx.putImageData(cropped, outerPad + innerPad, outerPad + innerPad);
   return true;
 }
 
