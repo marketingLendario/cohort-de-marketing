@@ -43,6 +43,7 @@
     .main-grid {
       display: grid;
       grid-template-columns: 240px minmax(0, 1fr) 380px;
+      align-items: start;
       gap: 18px;
       width: 100%;
       margin: 0 auto;
@@ -127,6 +128,69 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 8px;
+    }
+
+    .field-help {
+      position: relative;
+      display: inline-flex;
+      width: 17px;
+      height: 17px;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-full);
+      color: var(--primary);
+      background: hsl(var(--primary-hsl) / 0.07);
+      font-size: 11px;
+      line-height: 1;
+      cursor: help;
+    }
+
+    .field-help__bubble {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 9px);
+      z-index: 80;
+      width: min(340px, calc(100vw - 48px));
+      transform: translateX(-50%) translateY(4px);
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-base);
+      background: var(--popover);
+      color: var(--foreground);
+      padding: 10px 12px;
+      box-shadow: var(--shadow-levitate);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.45;
+      text-transform: none;
+      white-space: normal;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.15s var(--ease-out), transform 0.15s var(--ease-out), visibility 0.15s;
+    }
+
+    .field-help__bubble::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      width: 9px;
+      height: 9px;
+      transform: translate(-50%, -5px) rotate(45deg);
+      border-right: 1px solid var(--hairline-strong);
+      border-bottom: 1px solid var(--hairline-strong);
+      background: var(--popover);
+    }
+
+    .field-help:hover .field-help__bubble,
+    .field-help:focus-visible .field-help__bubble {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
     }
 
     input, select, textarea {
@@ -379,6 +443,103 @@
       blocked: 'bloqueada',
       not_applicable: 'não aplica'
     };
+    const FIELD_HELP = {
+      'project.slug': 'Use um identificador curto para a pasta do projeto. Só letras minúsculas, números e hífens. Ex.: academia-fit.',
+      'project.name': 'Escreva o nome público ou interno do projeto. Ex.: Academia Fit N12.',
+      'project.ownerName': 'Nome da pessoa que assina, ensina ou representa a autoridade principal da oferta.',
+      'project.clientName': 'Preencha quando você estiver atendendo um cliente. Se for projeto próprio, pode deixar em branco.',
+      'project.startingPoint': 'Escolha em que estado o projeto começa: já rodando, do zero, sem projeto claro ou como afiliado.',
+      'project.offerType': 'Escolha o tipo de negócio. Isso muda quais funis, páginas e restrições fazem sentido.',
+      'project.operator': 'Informe quem executa o funil na prática: o dono do projeto ou uma agência/operador.',
+      'project.regulatedNiche': 'Marque se o nicho exige cuidado legal ou de promessas, como saúde, jurídico, psicologia ou financeiro.',
+      'project.voice': 'Defina se a comunicação sai como pessoa especialista ou como marca/empresa.',
+      'project.ticketRange': 'Escolha a faixa de preço percebida. Isso influencia formato de funil, objeções e nível de prova.',
+      'project.currentStage': 'Informe onde o projeto está agora para evitar pedir peças antes da base estar pronta.',
+      'market.niche': 'Descreva o mercado em poucas palavras, com segmento e contexto. Ex.: emagrecimento sustentável para mulheres 35+.',
+      'market.productCategory': 'Categoria objetiva do que será vendido. Ex.: mentoria, curso, suplemento, SaaS, clínica, serviço B2B.',
+      'market.targetAudience': 'Quem compra ou decide. Inclua perfil, momento de vida, nível de maturidade e recorte principal.',
+      'market.avatarSummary': 'Resumo direto do avatar: quem é, o que quer, o que já tentou e por que ainda não resolveu.',
+      'market.dominantPain': 'A dor principal que move a compra. Escreva como o público falaria, sem linguagem genérica.',
+      'market.objections': 'Liste uma objeção por linha. Ex.: caro, não tenho tempo, já tentei antes, não confio.',
+      'market.desiredTransformation': 'Resultado desejado em termos concretos: de qual estado para qual estado a pessoa quer ir.',
+      'market.awarenessLevel': 'Use 1 a 5. 1 não sabe do problema; 5 já quer comprar a solução.',
+      'market.marketSophistication': 'Indique o quanto o mercado já viu promessas parecidas. Quanto mais maduro, mais específico o mecanismo precisa ser.',
+      'market.trafficTemperature': 'Frio ainda não conhece você; morno já teve contato; quente já confia ou pediu informação.',
+      'market.trafficSource': 'Escolha de onde virão os leads principais. Isso muda tom, velocidade e nível de contexto necessário.',
+      'market.competitors': 'Adicione concorrentes reais para pesquisa. Use nome, link, @handle e uma nota objetiva do que observar.',
+      'market.competitors.name': 'Nome do concorrente, produto, perfil ou empresa que deve ser analisado.',
+      'market.competitors.url': 'Cole a URL principal do concorrente, como site, página de vendas ou perfil social.',
+      'market.competitors.handle': 'Informe o @handle quando a referência principal estiver em rede social.',
+      'market.competitors.notes': 'Escreva o que observar nesse concorrente: promessa, anúncio, página, oferta, criativos ou posicionamento.',
+      'market.researchMode': 'Escolha se a pesquisa usará materiais enviados por você, busca web, ou uma mistura dos dois.',
+      'market.userResearchMaterials': 'Cole links, transcrições, pesquisas, reviews, prints descritos ou notas que devem orientar a pesquisa.',
+      'market.trendSearchTerms': 'Liste termos de busca para tendências. Use palavras que o público realmente pesquisaria ou comentaria.',
+      'offer.name': 'Nome comercial da oferta. É o nome que aparece na comunicação ou organização interna.',
+      'offer.productName': 'Nome do produto ou solução entregue. Pode ser diferente do nome da oferta.',
+      'offer.promise': 'Promessa central com resultado e contexto. Evite promessa vaga; escreva o que muda para o cliente.',
+      'offer.uniqueMechanism': 'O mecanismo próprio que explica por que essa solução funciona de forma diferente.',
+      'offer.problemMechanism': 'O motivo específico pelo qual o problema continua acontecendo hoje.',
+      'offer.solutionMechanism': 'O processo, método ou alavanca que resolve o mecanismo do problema.',
+      'offer.exactPrice': 'Digite apenas o preço cobrado em reais, sem R$. Ex.: 497.',
+      'offer.anchorPrice': 'Digite o preço de comparação ou valor ancorado em reais, sem R$. Ex.: 1997.',
+      'offer.guarantee': 'Explique a garantia real: prazo, condição e o que a pessoa recebe se acionar.',
+      'offer.deliverables': 'Liste um entregável por linha. Inclua módulos, encontros, templates, suporte, comunidade ou bônus.',
+      'offer.proofAssets': 'Liste provas existentes: depoimentos, números, prints, cases, reviews, antes/depois ou autoridade.',
+      'offer.bonuses': 'Adicione só bônus que podem ser realmente entregues. Cada bônus precisa ter nome, tipo e nota se necessário.',
+      'offer.bonuses.name': 'Nome claro do bônus. Ex.: Checklist de compras da semana.',
+      'offer.bonuses.canDeliver': 'Marque somente se esse bônus está aprovado e pode ser entregue de verdade.',
+      'offer.bonuses.type': 'Escolha o formato real do bônus. Isso orienta a skill de bônus e mockups.',
+      'offer.bonuses.notes': 'Observações sobre conteúdo, restrições, promessa ou forma de entrega do bônus.',
+      'offer.upsell': 'Preencha se existe oferta adicional depois da compra principal. Se não existir, deixe vazio.',
+      'offer.downsell': 'Preencha se existe oferta mais barata para quem recusou a principal. Se não existir, deixe vazio.',
+      'offer.backendOffer': 'Preencha se existe venda posterior, recorrência, high ticket ou esteira de continuidade.',
+      'offer.affiliate': 'Use apenas quando a venda for como afiliado. Inclua links oficiais e regras do produtor.',
+      'brand.designMode': 'Escolha como a identidade visual será criada ou reaproveitada.',
+      'brand.sourceUrl': 'Cole a URL que deve guiar a extração visual. Use site, página ou perfil com identidade clara.',
+      'brand.referenceImages': 'Liste caminhos ou links de imagens de referência. Uma por linha.',
+      'brand.vibeWords': 'Use até três palavras de direção visual. Ex.: premium, clínico, energético.',
+      'brand.colors': 'Liste cores aprovadas em nome ou HEX. Ex.: #D8C3A5 ou dourado suave.',
+      'brand.forbiddenColors': 'Liste cores que não devem aparecer. Isso evita retrabalho visual.',
+      'brand.fonts': 'Liste fontes existentes ou estilo desejado. Ex.: serifada editorial, sans geométrica.',
+      'brand.logoAsset': 'Informe o caminho local ou link do logo aprovado.',
+      'brand.brandAssets': 'Liste outros ativos: fotos, ícones, paleta, brandbook, pasta Drive ou referências.',
+      'brand.approvedDirection': 'Marque apenas quando a direção visual já estiver aprovada para uso nas peças.',
+      'funnel.recommendedFormat': 'Escolha o formato de funil prescrito ou deixe não definido até rodar metodo-funil.',
+      'funnel.closingDestination': 'Informe para onde a pessoa vai no fechamento: checkout, reunião, conversa comercial ou produtor.',
+      'funnel.captureMoment': 'Escolha quando o lead será capturado no fluxo, antes ou depois do resultado/diagnóstico.',
+      'funnel.segmentationAxis': 'Defina como o lead será segmentado no quiz ou diagnóstico.',
+      'funnel.quizResultCount': 'Digite entre 3 e 5 resultados. Use poucos perfis para manter clareza e execução.',
+      'funnel.bigDomino': 'A crença central que, se aceita, torna a compra a próxima decisão lógica.',
+      'funnel.webinarSecrets': 'Liste três segredos ou blocos de conteúdo do webinar, um por linha.',
+      'funnel.originStory': 'Conte a origem do método/oferta: problema, virada, descoberta e prova.',
+      'funnel.webinarFormat': 'Escolha se o webinar será ao vivo, evergreen ou híbrido.',
+      'funnel.presenterModel': 'Informe se uma pessoa apresenta ou se há vários consultores/apresentadores.',
+      'funnel.cartTargetDate': 'Data alvo de abertura ou fechamento do carrinho, no formato AAAA-MM-DD.',
+      'funnel.launchType': 'Escolha o tipo de lançamento para ajustar sequência, urgência e aquecimento.',
+      'funnel.audienceListSize': 'Digite apenas o tamanho aproximado da lista ou audiência disponível.',
+      'channels.emailTypes': 'Liste os tipos de e-mail necessários. Ex.: convite, lembrete, venda, recap.',
+      'channels.primaryCtaText': 'Texto exato do botão ou chamada principal. Ex.: Quero fazer meu diagnóstico.',
+      'channels.primaryCtaUrl': 'Cole a URL final do CTA principal, começando por https://.',
+      'channels.eventUrl': 'Link da aula, webinar, live ou evento, se existir.',
+      'channels.thankYouPageUrl': 'URL da página de obrigado ou confirmação depois do cadastro/compra.',
+      'channels.whatsappTool': 'Nome da ferramenta usada para WhatsApp/DM. Ex.: Manychat, Zenvia, manual.',
+      'channels.automationMode': 'Informe se os envios serão manuais, automatizados, mistos ou ainda indefinidos.',
+      'channels.detectableEvents': 'Marque eventos que o funil consegue detectar para automações e recuperação.',
+      'channels.contentPlatforms': 'Liste onde o conteúdo será publicado: Instagram, YouTube, TikTok, X ou LinkedIn.',
+      'channels.contentFormats': 'Escolha formatos que serão realmente produzidos, como reels, carrossel ou artigo.',
+      'channels.voiceMaterials': 'Liste materiais que mostram a voz do especialista: lives, vídeos, áudios, posts ou transcrições.',
+      'channels.referenceCreators': 'Liste criadores de referência para modelar conteúdo sem copiar.',
+      'channels.adChannels': 'Escolha canais de mídia paga que serão usados nos criativos.',
+      'channels.adFormats': 'Escolha os formatos de criativo que precisam ser gerados.',
+      'channels.creativeScope': 'Explique o pacote de criativos esperado: quantidade, canais, formatos e objetivo.',
+      'channels.swipePatterns': 'Liste padrões do swipe file: hooks, ângulos, CTAs, formatos ou estruturas vencedoras.',
+      'data.analyticsVariant': 'Escolha a variante de análise mais parecida com o funil real.',
+      'data.dataSourceNotes': 'Explique de onde vieram os números: GA4, checkout, CRM, planilha, estimativa ou observação.',
+      'integrations.apifyStatus': 'Informe se a chave Apify está configurada, ausente, desnecessária ou desconhecida.',
+      'integrations.openRouterStatus': 'Informe se o OpenRouter está configurado, ausente, desnecessário ou desconhecido.',
+      'integrations.activeCampaignStatus': 'Informe se ActiveCampaign está configurado, ausente, desnecessário ou desconhecido.',
+      'integrations.calendarStatus': 'Informe se Calendly/TidyCal está configurado, ausente, desnecessário ou desconhecido.'
+    };
 
     let schema;
     let rules;
@@ -411,6 +572,7 @@
 
     function toTitle(value) {
       return String(value || '')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
         .replace(/[-_]/g, ' ')
         .replace(/\b\w/g, (char) => char.toUpperCase());
     }
@@ -446,6 +608,79 @@
     function fieldLabel(path) {
       const field = fields.find((item) => item.path === path);
       return field?.schema?.title || path;
+    }
+
+    function readableFieldName(path, def, label) {
+      const raw = label || def.title || fieldLabel(path);
+      if (!raw || raw === path) return toTitle(path.split('.').at(-1));
+      return raw;
+    }
+
+    function enumOptions(def) {
+      return (def.enum || []).map((option) => toTitle(option)).join(', ');
+    }
+
+    function fieldHelp(path, def, label) {
+      if (FIELD_HELP[path]) return FIELD_HELP[path];
+      const name = readableFieldName(path, def, label).toLowerCase();
+      const lowerPath = path.toLowerCase();
+      if (lowerPath.includes('url') || lowerPath.includes('link')) {
+        return 'Cole o link completo, começando por https://. Use a página final que o lead ou aluno deve acessar.';
+      }
+      if (def['x-unit'] === 'BRL' || lowerPath.includes('price') || name.includes('preco') || name.includes('preço')) {
+        return `Digite apenas o valor numérico de ${name}, sem R$ e sem texto. Ex.: 497.`;
+      }
+      if (path.startsWith('data.') && (def.type === 'number' || def.type === 'integer')) {
+        return `Digite a quantidade de ${name} no período analisado. Use só números; deixe vazio se ainda não houver dado confiável.`;
+      }
+      if (def.enum) {
+        const unknownHint = def.enum.includes('nao-sei') || def.enum.includes('unknown') ? ' Se não souber, escolha a opção de desconhecido.' : '';
+        return `Escolha a opção que melhor representa ${name}. Opções: ${enumOptions(def)}.${unknownHint}`;
+      }
+      if (def.type === 'boolean') {
+        return `Marque somente se ${name} já estiver confirmado. Se ainda houver dúvida, deixe desmarcado.`;
+      }
+      if (def.type === 'integer') {
+        const range = [def.minimum != null ? `mínimo ${def.minimum}` : '', def.maximum != null ? `máximo ${def.maximum}` : ''].filter(Boolean).join(', ');
+        return `Digite um número inteiro para ${name}${range ? ` (${range})` : ''}. Não use texto.`;
+      }
+      if (def.type === 'number') {
+        return `Digite apenas o número de ${name}. Não use texto, moeda ou porcentagem.`;
+      }
+      if (def.type === 'array' && def.items?.type === 'object') {
+        return `Clique em Adicionar e crie um item para cada ${name}. Preencha só o que for real ou conhecido.`;
+      }
+      if (def.type === 'array') {
+        return `Liste ${name} com um item por linha. Prefira termos concretos e fáceis de reaproveitar nas skills.`;
+      }
+      if (def.type === 'object') {
+        return `Preencha os subcampos de ${name} apenas quando existirem neste projeto. Deixe vazio se não se aplica.`;
+      }
+      if (def['x-control'] === 'textarea') {
+        return `Escreva ${name} em frases curtas, com fatos, exemplos e contexto suficiente para a skill usar sem adivinhar.`;
+      }
+      return `Informe ${name} de forma direta e verificável. Se ainda não souber, deixe em branco por enquanto.`;
+    }
+
+    function renderFieldHelp(path, def, label) {
+      const help = fieldHelp(path, def, label);
+      return `
+        <span class="field-help" tabindex="0" role="note" aria-label="${escapeHtml(help)}">
+          <i class="iconoir-info-circle" aria-hidden="true"></i>
+          <span class="field-help__bubble">${escapeHtml(help)}</span>
+        </span>
+      `;
+    }
+
+    function renderFieldLabel(path, def, label, options = {}) {
+      const text = readableFieldName(path, def, label);
+      return `
+        <label>
+          <span>${escapeHtml(text)}</span>
+          ${renderFieldHelp(path, def, text)}
+          ${options.showPath ? `<span class="field-path">${escapeHtml(path)}</span>` : ''}
+        </label>
+      `;
     }
 
     function emptyForSchema(def) {
@@ -574,7 +809,7 @@
             const childPath = `${path}.${key}`;
             return `
               <div>
-                <label>${escapeHtml(child.title || toTitle(key))}</label>
+                ${renderFieldLabel(childPath, child, child.title || toTitle(key))}
                 ${renderControl(childPath, child)}
               </div>
             `;
@@ -599,9 +834,10 @@
               <div class="grid gap-3 sm:grid-cols-2">
                 ${props.map(([key, child]) => {
                   const childValue = item?.[key] ?? emptyForSchema(child);
+                  const childPath = `${path}.${key}`;
                   return `
                     <div>
-                      <label>${escapeHtml(child.title || toTitle(key))}</label>
+                      ${renderFieldLabel(childPath, child, child.title || toTitle(key))}
                       ${renderInlineArrayControl(path, index, key, child, childValue)}
                     </div>
                   `;
@@ -632,10 +868,7 @@
         <div class="form-grid grid gap-4 grid-cols-2">
           ${stepFields.map((field) => `
             <div class="field-card ${field.schema.type === 'object' || field.schema.type === 'array' ? 'col-span-full' : ''}" id="field-${field.path.replaceAll('.', '-')}">
-              <label>
-                <span>${escapeHtml(field.schema.title || fieldLabel(field.path))}</span>
-                <span class="field-path">${escapeHtml(field.path)}</span>
-              </label>
+              ${renderFieldLabel(field.path, field.schema, field.schema.title || fieldLabel(field.path), { showPath: true })}
               ${renderControl(field.path, field.schema)}
             </div>
           `).join('')}
