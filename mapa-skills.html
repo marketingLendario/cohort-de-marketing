@@ -114,6 +114,8 @@
           <button onclick="flowZoom(-0.15)" title="Zoom out"><i class="iconoir-minus"></i></button>
           <button onclick="flowFit()" title="Ajustar à tela"><i class="iconoir-expand"></i></button>
           <button onclick="flowReset()" title="Reset"><i class="iconoir-refresh"></i></button>
+          <button id="flow-orientation-horizontal" class="flow-orientation-btn is-active" onclick="setFlowOrientation('horizontal')" title="Diagrama horizontal">H</button>
+          <button id="flow-orientation-vertical" class="flow-orientation-btn" onclick="setFlowOrientation('vertical')" title="Diagrama vertical">V</button>
         </div>
         <div id="flow-minimap" title="Clique para navegar">
           <span id="minimap-label">Minimap</span>
@@ -394,6 +396,7 @@ let currentSelected = null;
 let currentArtifact = null;
 let artifactRegistry = {};
 let flowState = { x: 40, y: 40, scale: 1 };
+let flowOrientation = localStorage.getItem('cohort-flow-orientation') === 'vertical' ? 'vertical' : 'horizontal';
 let flowPanning = false, flowPanStart = null;
 let canvasMetrics = { w: 0, h: 0 };
 let panAnimFrame = null;
@@ -415,12 +418,70 @@ const REF_TO_SKILL = {
 // ═══════════════════════════════════════════════════════════
 // FLOW CANVAS
 // ═══════════════════════════════════════════════════════════
-function getNodeCenter(id) {
+function getFlowPos(id) {
   const pos = FLOW_POS[id];
-  if (!pos) return { x: 0, y: 0 };
+  if (!pos) return null;
+  if (flowOrientation === 'vertical') return { col: pos.row, row: pos.col };
+  return pos;
+}
+
+function getFlowOrigin(id) {
+  const pos = getFlowPos(id);
+  if (!pos) return null;
   return {
-    x: pos.col * CELL_W + NODE_W / 2 + 20,
-    y: pos.row * CELL_H + NODE_H / 2 + 20
+    x: pos.col * CELL_W + 20,
+    y: pos.row * CELL_H + 20
+  };
+}
+
+function getFlowPositions() {
+  return SKILLS
+    .map(skill => getFlowPos(skill.id))
+    .filter(Boolean);
+}
+
+function getFlowEdgePath(from, to) {
+  const a = getNodeCenter(from);
+  const b = getNodeCenter(to);
+  if (flowOrientation === 'vertical') {
+    const x1 = a.x;
+    const y1 = a.y + NODE_H / 2 - 10;
+    const x2 = b.x;
+    const y2 = b.y - NODE_H / 2 + 10;
+    const my = (y1 + y2) / 2;
+    return `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
+  }
+  const x1 = a.x + NODE_W / 2 - 10;
+  const y1 = a.y;
+  const x2 = b.x - NODE_W / 2 + 10;
+  const y2 = b.y;
+  const mx = (x1 + x2) / 2;
+  return `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+}
+
+function syncFlowOrientationUI() {
+  const vp = document.getElementById('flow-viewport');
+  vp?.classList.toggle('flow-vertical', flowOrientation === 'vertical');
+  document.getElementById('flow-orientation-horizontal')?.classList.toggle('is-active', flowOrientation === 'horizontal');
+  document.getElementById('flow-orientation-vertical')?.classList.toggle('is-active', flowOrientation === 'vertical');
+}
+
+function setFlowOrientation(orientation) {
+  if (!['horizontal', 'vertical'].includes(orientation) || orientation === flowOrientation) return;
+  cancelPanAnimation();
+  flowOrientation = orientation;
+  localStorage.setItem('cohort-flow-orientation', flowOrientation);
+  syncFlowOrientationUI();
+  renderFlowCanvas();
+  setTimeout(flowFit, 30);
+}
+
+function getNodeCenter(id) {
+  const origin = getFlowOrigin(id);
+  if (!origin) return { x: 0, y: 0 };
+  return {
+    x: origin.x + NODE_W / 2,
+    y: origin.y + NODE_H / 2
   };
 }
 
@@ -428,10 +489,11 @@ function renderFlowCanvas() {
   const nodesEl = document.getElementById('flow-nodes');
   const svgEl = document.getElementById('flow-svg');
   nodesEl.innerHTML = '';
+  syncFlowOrientationUI();
 
   // Calculate canvas size
   let maxCol = 0, maxRow = 0;
-  Object.values(FLOW_POS).forEach(p => { maxCol = Math.max(maxCol, p.col); maxRow = Math.max(maxRow, p.row); });
+  getFlowPositions().forEach(p => { maxCol = Math.max(maxCol, p.col); maxRow = Math.max(maxRow, p.row); });
   const canvasW = (maxCol + 1) * CELL_W + 80;
   const canvasH = (maxRow + 1) * CELL_H + 80;
   svgEl.setAttribute('width', canvasW);
@@ -448,6 +510,12 @@ function renderFlowCanvas() {
   ];
   let swimHTML = '';
   lanes.forEach(l => {
+    if (flowOrientation === 'vertical') {
+      const x = l.row * CELL_W;
+      swimHTML += `<rect x="${x}" y="0" width="${CELL_W * 2}" height="${canvasH}" fill="${l.color}" rx="0"/>`;
+      swimHTML += `<text x="${x + 8}" y="18" fill="#3f3f46" font-size="9" font-weight="600" font-family="Inter,sans-serif" letter-spacing="0.08em">${l.label}</text>`;
+      return;
+    }
     const y = l.row * CELL_H;
     swimHTML += `<rect x="0" y="${y}" width="${canvasW}" height="${CELL_H * 2}" fill="${l.color}" rx="0"/>`;
     swimHTML += `<text x="8" y="${y + CELL_H + 4}" fill="#3f3f46" font-size="9" font-weight="600" font-family="Inter,sans-serif" letter-spacing="0.08em">${l.label}</text>`;
@@ -458,28 +526,21 @@ function renderFlowCanvas() {
   let edgesHTML = swimHTML;
   if (showConns) {
     FLOW_EDGES.forEach(([from, to, kind]) => {
-      const a = getNodeCenter(from);
-      const b = getNodeCenter(to);
-      const x1 = a.x + NODE_W / 2 - 10;
-      const y1 = a.y;
-      const x2 = b.x - NODE_W / 2 + 10;
-      const y2 = b.y;
-      const mx = (x1 + x2) / 2;
       const cls = kind === 'utility' ? 'flow-edge utility' : (kind === 'branch' ? 'flow-edge branch' : 'flow-edge');
-      edgesHTML += `<path class="${cls}" data-from="${from}" data-to="${to}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"/>`;
+      edgesHTML += `<path class="${cls}" data-from="${from}" data-to="${to}" d="${getFlowEdgePath(from, to)}"/>`;
     });
   }
   svgEl.innerHTML = edgesHTML;
 
   // Draw nodes
   SKILLS.forEach(skill => {
-    const pos = FLOW_POS[skill.id];
-    if (!pos) return;
+    const origin = getFlowOrigin(skill.id);
+    if (!origin) return;
     const el = document.createElement('div');
     el.className = 'flow-node';
     el.dataset.id = skill.id;
-    el.style.left = (pos.col * CELL_W + 20) + 'px';
-    el.style.top = (pos.row * CELL_H + 20) + 'px';
+    el.style.left = origin.x + 'px';
+    el.style.top = origin.y + 'px';
     el.innerHTML = `
       <div class="flex items-center gap-2 mb-1">
         <div class="fn-phase-dot" style="background:${skill.phaseColor}"></div>
@@ -564,10 +625,12 @@ function flowZoom(delta) {
 function getComfortableFocusScale() {
   const vp = document.getElementById('flow-viewport');
   if (!vp || !canvasMetrics.w) return 0.85;
-  const fitScale = Math.min((vp.clientWidth - 40) / canvasMetrics.w, (vp.clientHeight - 40) / canvasMetrics.h, 1);
-  // ~3.5 colunas visíveis — legível sem zoom out total
-  const colScale = (vp.clientWidth * 0.82) / (CELL_W * 3.5);
-  return Math.min(1.15, Math.max(fitScale * 1.35, Math.min(colScale, 1)));
+  const fitScale = Math.min((vp.clientWidth - 16) / canvasMetrics.w, (vp.clientHeight - 16) / canvasMetrics.h, 1);
+  // Mantém alguns nós ao redor legíveis sem voltar para o zoom total.
+  const axisScale = flowOrientation === 'vertical'
+    ? (vp.clientHeight * 0.78) / (CELL_H * 4.5)
+    : (vp.clientWidth * 0.82) / (CELL_W * 3.5);
+  return Math.min(1.15, Math.max(fitScale * 1.35, Math.min(axisScale, 1)));
 }
 
 function flowFit() {
@@ -575,7 +638,8 @@ function flowFit() {
   const canvas = document.getElementById('flow-canvas');
   const vpW = vp.clientWidth, vpH = vp.clientHeight;
   const cW = canvas.offsetWidth, cH = canvas.offsetHeight;
-  const scale = Math.min((vpW - 40) / cW, (vpH - 40) / cH, 1);
+  const padding = 16;
+  const scale = Math.min((vpW - padding) / cW, (vpH - padding) / cH, 1);
   flowState.scale = scale;
   flowState.x = (vpW - cW * scale) / 2;
   flowState.y = (vpH - cH * scale) / 2;
@@ -583,8 +647,7 @@ function flowFit() {
 }
 
 function flowReset() {
-  flowState = { x: 40, y: 40, scale: 1 };
-  applyFlowTransform();
+  flowFit();
 }
 
 function clearFlowHighlight() {
@@ -677,22 +740,22 @@ function renderMinimap() {
   ctx.lineWidth = 0.5;
   FLOW_EDGES.forEach(([from, to]) => {
     const a = getNodeCenter(from), b = getNodeCenter(to);
-    const x1 = (a.x + NODE_W / 2) * scale + ox;
-    const y1 = a.y * scale + oy;
-    const x2 = (b.x - NODE_W / 2) * scale + ox;
-    const y2 = b.y * scale + oy;
+    const x1 = flowOrientation === 'vertical' ? a.x : a.x + NODE_W / 2;
+    const y1 = flowOrientation === 'vertical' ? a.y + NODE_H / 2 : a.y;
+    const x2 = flowOrientation === 'vertical' ? b.x : b.x - NODE_W / 2;
+    const y2 = flowOrientation === 'vertical' ? b.y - NODE_H / 2 : b.y;
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(x1 * scale + ox, y1 * scale + oy);
+    ctx.lineTo(x2 * scale + ox, y2 * scale + oy);
     ctx.stroke();
   });
 
   // nodes
   SKILLS.forEach(skill => {
-    const pos = FLOW_POS[skill.id];
-    if (!pos) return;
-    const x = (pos.col * CELL_W + 20) * scale + ox;
-    const y = (pos.row * CELL_H + 20) * scale + oy;
+    const origin = getFlowOrigin(skill.id);
+    if (!origin) return;
+    const x = origin.x * scale + ox;
+    const y = origin.y * scale + oy;
     const w = NODE_W * scale, h = NODE_H * scale;
     ctx.fillStyle = skill.phaseColor + '99';
     ctx.fillRect(x, y, w, h);

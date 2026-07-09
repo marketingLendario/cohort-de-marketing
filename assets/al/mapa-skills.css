@@ -2,8 +2,8 @@
 
 #flow-viewport {
   position: relative;
-  height: min(72vh, 680px);
-  min-height: 420px;
+  height: clamp(560px, calc(100vh - 210px), 860px);
+  min-height: 460px;
   background: var(--background);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-lg);
@@ -87,6 +87,20 @@
 
 .flow-node::before { left: -5px; }
 .flow-node::after { right: -5px; }
+
+#flow-viewport.flow-vertical .flow-node::before {
+  left: 50%;
+  top: -5px;
+  transform: translateX(-50%);
+}
+
+#flow-viewport.flow-vertical .flow-node::after {
+  left: 50%;
+  right: auto;
+  top: auto;
+  bottom: -5px;
+  transform: translateX(-50%);
+}
 
 .flow-node:hover {
   border-color: var(--hairline-strong);
@@ -195,6 +209,21 @@
   justify-content: center;
 }
 
+.flow-toolbar .flow-orientation-btn {
+  width: auto;
+  min-width: 34px;
+  padding: 0 9px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.flow-toolbar .flow-orientation-btn.is-active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
 .flow-toolbar button:hover {
   background: hsl(var(--foreground-hsl) / 0.05);
   color: var(--foreground);
@@ -256,6 +285,18 @@
 .flow-node.tour-active {
   border-color: var(--warning) !important;
   box-shadow: 0 0 0 2px var(--background), 0 0 0 3px hsl(var(--warning-hsl) / 0.55) !important;
+}
+
+@media (max-width: 760px) {
+  #flow-viewport {
+    height: calc(100vh - 190px);
+    min-height: 420px;
+  }
+
+  #flow-minimap {
+    width: 150px;
+    height: 92px;
+  }
 }
 
 #tour-bar {

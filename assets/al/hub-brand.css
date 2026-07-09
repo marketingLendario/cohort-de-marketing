@@ -80,9 +80,9 @@ a { color: inherit; text-decoration: none; }
 }
 
 .hub-header__inner {
-  max-width: 1500px;
+  max-width: none;
   margin: 0 auto;
-  padding: 16px 24px;
+  padding: 14px clamp(12px, 1.2vw, 18px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -164,9 +164,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ── Controls ── */
 .hub-shell {
-  max-width: 1500px;
+  max-width: none;
   margin: 0 auto;
-  padding: 24px 24px 40px;
+  padding: 16px clamp(10px, 1.2vw, 18px) 32px;
 }
 
 .hub-toolbar {
