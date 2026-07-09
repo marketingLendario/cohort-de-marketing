@@ -67,6 +67,8 @@ Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao ab
 
 As skills leem o **Perfil do Projeto** (no topo do seu offerbook) e se adaptam ao seu negócio: especialista, agência, B2B, negócio local, nicho regulado (saúde/jurídico/psico/financeiro), afiliado ou "ainda não sei o que vender".
 
+Para entender exatamente o que cada skill pode pedir ao usuário, consulte o [Mapa de inputs das skills](./docs/skill-inputs.md).
+
 ---
 
 ## Estrutura do repositório
@@ -80,6 +82,8 @@ cohort-de-marketing/
 │   └── skills/                   as 25 skills + regras compartilhadas (_shared/)
 ├── .agents/
 │   └── skills/                   espelho literal para Codex carregar as mesmas skills
+├── docs/
+│   └── skill-inputs.md            mapa dos inputs pedidos por cada skill
 ├── aula-01/                      docs e templates da Aula 1
 ├── aula-02/                      material de apoio da Aula 2
 └── projetos/                     nasce quando você roda as skills (só seu, fora do git)
