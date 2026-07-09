@@ -32,6 +32,14 @@ import {
 import { getBffHealth } from './index.js'
 import { getWorkerHealth } from './worker/index.js'
 import { createLocalSkillRunnerFromEnv, type LocalSkillRunner } from './local-skill-runner.js'
+import {
+  LOCAL_RUNNER_TOKEN_HEADER,
+  authorizeLocalRunnerRequest,
+  createConcurrencyLimiter,
+  resolveLocalRunnerLimits,
+  resolveLocalRunnerToken,
+  type LocalRunnerLimits,
+} from './local-runner-security.js'
 import { z } from 'zod'
 
 export interface BuildAppOptions {
@@ -48,6 +56,13 @@ export interface BuildAppOptions {
   corsOrigin?: string
   /** Runner LOCAL injetável. `null` mantém a capacidade explicitamente desligada. */
   skillRunner?: LocalSkillRunner | null
+  /**
+   * Segredo local do boundary do runner (AC2). Quando omitido, é resolvido do
+   * ambiente (`LOCAL_SKILL_RUNNER_TOKEN`) ou gerado efêmero (fail-closed).
+   */
+  localRunnerToken?: string
+  /** Override de limites operacionais do runner (AC5) — usado em testes. */
+  localRunnerLimits?: Partial<LocalRunnerLimits>
 }
 
 export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
@@ -61,9 +76,42 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
         })()
   const skillRunner = options.skillRunner !== undefined ? options.skillRunner : createLocalSkillRunnerFromEnv()
 
+  // Boundary de segurança do runner local (STORY-8.W1.2). Token e limiter só são
+  // materializados quando o runner está ligado — capacidade desligada = sem custo.
+  const runnerLimits: LocalRunnerLimits = { ...resolveLocalRunnerLimits(), ...options.localRunnerLimits }
+  let runnerToken: string | null = null
+  let runnerLimiter: ReturnType<typeof createConcurrencyLimiter> | null = null
+  let runnerTokenEphemeral = false
+  if (skillRunner) {
+    if (options.localRunnerToken && options.localRunnerToken.length > 0) {
+      runnerToken = options.localRunnerToken
+    } else {
+      const resolved = resolveLocalRunnerToken()
+      runnerToken = resolved.token
+      runnerTokenEphemeral = resolved.ephemeral
+    }
+    runnerLimiter = createConcurrencyLimiter(runnerLimits.maxConcurrency)
+  }
+
   const app = Fastify({
-    logger: { level: process.env.LOG_LEVEL || 'info' },
+    logger: {
+      level: process.env.LOG_LEVEL || 'info',
+      // Nunca registrar o segredo do boundary, mesmo se headers forem logados (AC3).
+      redact: {
+        paths: [`req.headers["${LOCAL_RUNNER_TOKEN_HEADER}"]`],
+        censor: '[REDACTED]',
+      },
+    },
   })
+
+  if (runnerTokenEphemeral) {
+    // Fail-closed: sem segredo compartilhado configurado o runner fica efetivamente
+    // trancado (o proxy Vite não conhece o token efêmero). NÃO logamos o valor (AC3).
+    app.log.warn(
+      'Runner local sem LOCAL_SKILL_RUNNER_TOKEN configurado — token efêmero gerado; ' +
+        'configure o segredo local compartilhado com o proxy Vite para habilitar chamadas autorizadas.',
+    )
+  }
 
   await app.register(cors, {
     origin: options.corsOrigin || process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -98,17 +146,39 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     operatorInput: z.string().max(20_000).optional(),
   })
 
-  app.post('/api/local/skills/:skillId/run', async (req, reply) => {
-    if (!skillRunner) {
+  // bodyLimit por rota (AC5): restringe só o endpoint do runner, sem afetar o
+  // limite global (tRPC/SSE mantêm o default do Fastify).
+  app.post('/api/local/skills/:skillId/run', { bodyLimit: runnerLimits.bodyLimitBytes }, async (req, reply) => {
+    if (!skillRunner || !runnerToken || !runnerLimiter) {
       return reply.status(503).send({
         code: 'LOCAL_SKILL_RUNNER_DISABLED',
         message: 'Runner local desabilitado. Defina LOCAL_SKILL_RUNNER_ENABLED=true e mantenha o Codex CLI autenticado.',
       })
     }
+
+    // Boundary autenticado (AC2): 401 sem token, 403 com token inválido.
+    const providedToken = req.headers[LOCAL_RUNNER_TOKEN_HEADER]
+    const auth = authorizeLocalRunnerRequest(
+      Array.isArray(providedToken) ? providedToken[0] : providedToken,
+      runnerToken,
+    )
+    if (!auth.ok) {
+      return reply.status(auth.status).send({ code: auth.code, message: auth.message })
+    }
+
     const parsed = localSkillRunSchema.safeParse(req.body)
     if (!parsed.success) {
       return reply.status(400).send({ code: 'INVALID_SKILL_INPUT', issues: parsed.error.issues })
     }
+
+    // Limite de concorrência (AC5): fail-fast com 429, sem enfileirar.
+    if (!runnerLimiter.tryAcquire()) {
+      return reply.status(429).send({
+        code: 'LOCAL_SKILL_RUNNER_BUSY',
+        message: `Limite de execuções simultâneas atingido (${runnerLimiter.max}). Tente novamente em instantes.`,
+      })
+    }
+
     const { skillId } = req.params as { skillId: string }
     try {
       const result = await skillRunner.run(skillId, parsed.data)
@@ -119,6 +189,8 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
         code: 'LOCAL_SKILL_RUN_FAILED',
         message: error instanceof Error ? error.message : 'Falha inesperada no runner local.',
       })
+    } finally {
+      runnerLimiter.release()
     }
   })
 

@@ -6,9 +6,11 @@
  * STORY-AL-ADS-1.3 (AC8, AC9).
  */
 import { buildApp } from './app.js'
+import { resolveLocalBindHost } from './local-runner-security.js'
 
 const PORT = Number(process.env.PORT) || 3002
-const HOST = process.env.HOST || '0.0.0.0'
+// Loopback por padrão (AC1). Um bind público (ex.: 0.0.0.0) exige HOST explícito.
+const HOST = resolveLocalBindHost()
 
 async function start(): Promise<void> {
   const app = await buildApp()
