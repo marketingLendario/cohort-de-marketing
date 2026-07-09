@@ -1,0 +1,57 @@
+---
+status: Draft
+story_id: "8.W2.3"
+title: "Aprovação em duas fases: DB e filesystem"
+epic: 8
+wave: "W2"
+parent_epic: "docs/stories/epic-8/EPIC-8-PERSISTENCIA-RUNTIME-OPERACIONAL.md"
+deploy_type: none
+appetite: 2d
+hill_phase: figuring_out
+confidence_level: medium
+involves_ui: true
+executor: "@dev"
+quality_gate: "@qa"
+accountable: "Rafael Costa"
+depends_on: ["8.W1.3", "8.W2.1", "8.W2.2"]
+consumes_artifacts_of: ["8.W1.3", "8.W2.1", "8.W2.2"]
+file_scope: shared
+touched_paths:
+  - "apps/academia-lendaria-ads-studio/server/artifact-approval.ts"
+  - "apps/academia-lendaria-ads-studio/server/app.ts"
+  - "apps/academia-lendaria-ads-studio/src/components/project-journey.tsx"
+  - "apps/academia-lendaria-ads-studio/src/components/project-artifacts.tsx"
+---
+
+# STORY-8.W2.3 - Aprovação em duas fases: DB e filesystem
+
+## User Story
+
+**Como** revisor humano
+**Quero** comparar, editar, aprovar ou rejeitar uma proposta antes da escrita
+**Para** manter o filesystem e o banco coerentes e auditáveis.
+
+## Acceptance Criteria
+
+1. UI mostra diff, arquivos afetados, warnings e invalidações antes de aprovar.
+2. Aprovação chama endpoint idempotente com expected hash/revision.
+3. Fluxo usa outbox/compensação: DB e filesystem não ficam silenciosamente divergentes.
+4. Sucesso materializa arquivo, metadado, evento e status `done` com o mesmo hash.
+5. Rejeição/cancelamento não escreve arquivos; edição gera nova proposta/revisão.
+6. Testes injetam falha antes/depois do rename e provam retry/repair determinístico.
+
+## Tasks
+
+- [ ] Criar contrato e endpoint de approval.
+- [ ] Implementar outbox/compensação e idempotência.
+- [ ] Construir UI de diff e impactos.
+- [ ] Integrar status, invalidation e audit event.
+- [ ] Cobrir failure injection e repair.
+
+## File List
+
+- `apps/academia-lendaria-ads-studio/server/artifact-approval.ts`
+- `apps/academia-lendaria-ads-studio/server/app.ts`
+- `apps/academia-lendaria-ads-studio/src/components/project-journey.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/project-artifacts.tsx`
+

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/skill-catalog.schema.json",
+  "title": "Skill Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "canonicalSkillRoot", "mirrorSkillRoot", "skills", "edges"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "generatedAt": { "type": "string", "format": "date" },
+    "canonicalSkillRoot": { "type": "string" },
+    "mirrorSkillRoot": { "type": "string" },
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "command",
+          "description",
+          "phase",
+          "phaseColor",
+          "order",
+          "kind",
+          "level",
+          "skillPath",
+          "prerequisites",
+          "outputs",
+          "primaryArtifacts",
+          "feeds",
+          "guard",
+          "artifactSummary",
+          "execution"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "title": { "type": "string", "minLength": 1 },
+          "command": { "type": "string", "pattern": "^/[a-z0-9][a-z0-9-]*$" },
+          "description": { "type": "string", "minLength": 1 },
+          "phase": { "type": "string", "minLength": 1 },
+          "phaseColor": { "type": "string", "minLength": 1 },
+          "order": { "type": "integer", "minimum": 0 },
+          "kind": { "type": "string", "minLength": 1 },
+          "level": { "type": "string", "minLength": 1 },
+          "skillPath": { "type": "string", "pattern": "^\\.claude/skills/.+/SKILL\\.md$" },
+          "prerequisites": { "type": "array", "items": { "type": "string" } },
+          "outputs": { "type": "array", "items": { "type": "string" } },
+          "primaryArtifacts": { "type": "array", "items": { "type": "string" } },
+          "feeds": { "type": "array", "items": { "type": "string" } },
+          "guard": { "type": "string" },
+          "artifactSummary": { "type": "string" },
+          "execution": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "requiresHumanReview"],
+            "properties": {
+              "mode": { "enum": ["local_skill", "deterministic"] },
+              "requiresHumanReview": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "type": { "enum": ["dependency", "feedback", "utility"] }
+        }
+      }
+    }
+  }
+}
+

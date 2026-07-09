@@ -1146,8 +1146,18 @@
 
     function exportJson() {
       saveNow();
-      const slug = state.project?.slug || 'project-brief';
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const slug = state.project?.slug;
+      if (!slug) {
+        alert('Preencha o slug do projeto antes de exportar.');
+        activeStep = 'project';
+        render();
+        return;
+      }
+      const exportState = structuredClone(state);
+      // `artifacts` e estado de interface nao pertencem ao ProjectBrief 0.1.0.
+      // O novo produto migra artefatos para um registry separado.
+      delete exportState.artifacts;
+      const blob = new Blob([JSON.stringify(exportState, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

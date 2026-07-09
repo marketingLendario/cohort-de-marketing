@@ -88,6 +88,11 @@ Se a credencial faltar, a skill deve pedir a chave, ajudar a configurar ou ofere
 | `recuperacao-funil` | comportamentos detectáveis, canais, suporte humano/IA, links, timing, oferta/downsell |
 | `cro-funil` | dados de conversão, credenciais, CSVs ou formulário manual, variante do funil |
 | `status-funil` | apenas escolha de projeto quando houver mais de um |
+| `zelador` | confirmação literal dos 7 itens de conta/tracking e evidência vista na tela |
+| `briefista` | ângulos validados, nível de consciência, provas, voz e formatos |
+| `estruturador` | gate do Zelador, 2-3 finalistas, objetivo, verba e período |
+| `leitor-de-metricas` | métricas prontas e nomeadas, fonte, janela e confirmação de venda para ROAS Real |
+| `diagnosticador` | leitura confirmada, break-even e decisão humana sobre a alavanca |
 
 ## Detalhe por skill
 
@@ -712,6 +717,74 @@ O que a skill não deve pedir:
 - Não cria entregáveis.
 
 Ela lê arquivos existentes, `pendências.md`, Perfil do Projeto e Destino do fechamento para mostrar o estado real do funil.
+
+### `zelador`
+
+Inputs diretos:
+
+- O que o operador viu para BM, conta, pixel, CAPI, deduplicação, domínio e pagamento.
+- Evidência textual concreta para cada confirmação.
+- Event Match Quality somente quando aparecer literalmente no Events Manager.
+
+Bloqueio:
+
+- Qualquer item crítico falso, ambíguo ou sem evidência mantém o status CRÍTICO.
+
+### `briefista`
+
+Inputs diretos:
+
+- Ângulos produzidos na Aula 2.
+- Nível de consciência declarado para cada ângulo.
+- Provas, voz, formatos e contexto da campanha.
+- Curadoria humana de dois a três finalistas.
+
+Bloqueio:
+
+- Ângulo sem nível de consciência não entra na bateria.
+
+### `estruturador`
+
+Inputs diretos:
+
+- Auditoria do Zelador não crítica.
+- Dois a três finalistas curados.
+- Objetivo Vendas ou Cadastro.
+- Verba diária e período.
+
+Bloqueios:
+
+- Verba abaixo de R$20 por dia.
+- Tracking crítico.
+- Finalistas ainda não escolhidos pelo operador.
+
+### `leitor-de-metricas`
+
+Inputs diretos:
+
+- Métricas prontas, nomeadas e copiadas literalmente da fonte.
+- Fonte e janela de atribuição.
+- Confirmação de venda no checkout/CRM para carimbar ROAS como Real.
+
+Contrato:
+
+- Não calcula CTR, CPM, CPA, ROAS ou frequência a partir de outros campos.
+- Campo ausente vira `não fornecido`.
+
+### `diagnosticador`
+
+Inputs diretos:
+
+- Sinais confirmados pelo Leitor.
+- Break-even correto para a unidade comparada.
+- Aprovação ou rejeição humana da alavanca.
+
+Saída obrigatória:
+
+- Hipótese.
+- Uma alavanca.
+- Critério de sucesso.
+- Critério de reversão.
 
 ## Próximos usos deste documento
 

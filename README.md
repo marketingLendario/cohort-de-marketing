@@ -46,13 +46,17 @@ Mapear mercado, ler concorrentes e desenhar uma oferta que sai da gaveta. Skills
 
 Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa dita a ordem) → copy, quiz/webinário/VSL, página, e-mails, conteúdo, recuperação, back-end, CRO — com o **Book do Funil** como hub de tudo que você gera.
 
-### Aula 3 · Tráfego · Aula 4 · Dados
+### Aula 3 · Tráfego
 
-**Status:** em breve. As páginas que você gera já nascem pixel-ready (os IDs entram na Aula 3) e a planilha de KPIs do CRO é o embrião do dashboard (Aula 4).
+**Status:** em desenvolvimento no Marketing Studio. O Squad de Tráfego já possui cinco skills canônicas: `/zelador` → `/briefista` → `/estruturador` → `/leitor-de-metricas` → `/diagnosticador`. O modo Cohort prepara e recomenda; publicação e decisões continuam humanas.
+
+### Aula 4 · Dados
+
+**Status:** em breve. A operação semanal da Aula 3 já preserva métricas, selos, diagnóstico e decisões como base do futuro painel.
 
 ---
 
-## As 25 skills
+## As 30 skills
 
 Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao abrir o Claude Code na pasta. Para o Codex, `.agents/skills/` é um espelho literal da pasta canônica; chame com `@` quando a interface usar esse prefixo. Se houver dúvida, siga sempre `.claude/skills/` como fonte de verdade.
 
@@ -64,10 +68,44 @@ Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao ab
 | **Formatos de funil** | `/quiz-funil` · `/webinario-funil` · `/vsl-funil` · `/advertorial-funil` · `/lancamento-funil` |
 | **Peças** | `/pagina-vendas-funil` · `/email-funil` · `/whatsapp-funil` · `/conteudo-funil` · `/recuperacao-funil` · `/backend-funil` · `/cro-funil` |
 | **Reforço de oferta** | `/mockup-produto-funil` · `/bonus-funil` · `/criativos-funil` |
+| **Tráfego (Aula 3)** | `/zelador` · `/briefista` · `/estruturador` · `/leitor-de-metricas` · `/diagnosticador` |
 
 As skills leem o **Perfil do Projeto** (no topo do seu offerbook) e se adaptam ao seu negócio: especialista, agência, B2B, negócio local, nicho regulado (saúde/jurídico/psico/financeiro), afiliado ou "ainda não sei o que vender".
 
 Para entender exatamente o que cada skill pode pedir ao usuário, consulte o [Mapa de inputs das skills](./docs/skill-inputs.md).
+
+---
+
+## Marketing Studio
+
+O Marketing Studio unifica Briefing, Jornada de Skills, Artefatos, Ads Studio e Operação Semanal em `apps/academia-lendaria-ads-studio/`.
+
+```bash
+npm --prefix apps/academia-lendaria-ads-studio install
+npm --prefix apps/academia-lendaria-ads-studio run dev
+```
+
+Para executar skills pela interface, inicie também o runner local:
+
+```bash
+LOCAL_SKILL_RUNNER_ENABLED=true npm --prefix apps/academia-lendaria-ads-studio run dev:server
+```
+
+O runner chama `codex exec` em sandbox `read-only`, reutiliza a autenticação local
+do Codex CLI e permanece desligado por padrão. Não é necessário configurar
+`OPENAI_API_KEY` para operar as skills pela interface. Confirme antes com
+`codex --version`; se necessário, autentique uma vez com `codex login`.
+
+Validação completa do app:
+
+```bash
+npm --prefix apps/academia-lendaria-ads-studio test
+npm --prefix apps/academia-lendaria-ads-studio run test:visual
+npm --prefix apps/academia-lendaria-ads-studio run lint:db
+npm --prefix apps/academia-lendaria-ads-studio run test:db
+```
+
+O mock visual canônico importado fica em `docs/design/mocks/academia-lendaria-ads-studio/ads-studio.dc.html`.
 
 ---
 
@@ -78,12 +116,16 @@ cohort-de-marketing/
 ├── GUIA-DO-ALUNO.html           ← leia primeiro (Aulas 1 e 2 na ordem)
 ├── AGENTS.md                     instruções pro Codex e outros agentes
 ├── .env.example                  template das chaves (copie pra .env)
+├── apps/
+│   └── academia-lendaria-ads-studio/  painel Ads Factory
 ├── .claude/
-│   └── skills/                   as 25 skills + regras compartilhadas (_shared/)
+│   └── skills/                   as 30 skills + regras compartilhadas (_shared/)
 ├── .agents/
 │   └── skills/                   espelho literal para Codex carregar as mesmas skills
 ├── docs/
-│   └── skill-inputs.md            mapa dos inputs pedidos por cada skill
+│   ├── skill-inputs.md            mapa dos inputs pedidos por cada skill
+│   ├── stories/                   trilha de desenvolvimento do painel
+│   └── design/mocks/              mocks visuais importados
 ├── aula-01/                      docs e templates da Aula 1
 ├── aula-02/                      material de apoio da Aula 2
 └── projetos/                     nasce quando você roda as skills (só seu, fora do git)

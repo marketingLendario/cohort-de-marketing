@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/weekly-panel.v1.schema.json",
+  "title": "Weekly Panel v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "projectId",
+    "campaignId",
+    "weekStart",
+    "revision",
+    "status",
+    "metrics",
+    "reader",
+    "decision",
+    "events"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "campaignId": { "type": "string", "minLength": 1 },
+    "weekStart": { "type": "string", "format": "date" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["draft", "reading_ready", "diagnosed", "decided", "closed"] },
+    "trackingAuditArtifactId": { "type": "string" },
+    "campaignPlanRevisionId": { "type": "string" },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value", "seal", "source", "confirmedByHuman"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "value": { "type": ["number", "null"] },
+          "seal": { "enum": ["Real", "Estimado", "nao_fornecido"] },
+          "source": { "type": "string" },
+          "attributionWindow": { "type": ["string", "null"] },
+          "premise": { "type": ["string", "null"] },
+          "confirmedByHuman": { "type": "boolean" },
+          "cashConfirmed": { "type": "boolean" }
+        }
+      }
+    },
+    "reader": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["literalOnly", "sampleSufficientForCpa", "note"],
+      "properties": {
+        "literalOnly": { "const": true },
+        "sampleSufficientForCpa": { "type": "boolean" },
+        "note": { "type": "string" },
+        "reviewedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "diagnosis": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["hypothesis", "singleLever", "successCriterion", "reversalCriterion"],
+      "properties": {
+        "hypothesis": { "type": "string", "minLength": 1 },
+        "singleLever": { "type": "string", "minLength": 1 },
+        "successCriterion": { "type": "string", "minLength": 1 },
+        "reversalCriterion": { "type": "string", "minLength": 1 },
+        "circuitBreakerTriggered": { "type": "boolean" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["pending", "approved", "rejected"] },
+        "decidedBy": { "type": "string" },
+        "decidedAt": { "type": "string", "format": "date-time" },
+        "humanAction": { "type": "string" }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "actor", "createdAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "actor": { "enum": ["human", "system", "skill"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "payload": true
+        }
+      }
+    }
+  }
+}
+

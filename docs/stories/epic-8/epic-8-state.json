@@ -1,0 +1,47 @@
+{
+  "schema_version": "epic-state-v1",
+  "epic_id": "8",
+  "title": "Persistência e Runtime Operacional do Marketing Studio",
+  "status": "InProgress",
+  "created": "2026-07-09",
+  "waves": [
+    {
+      "wave_id": "W1",
+      "status": "ready",
+      "build_dependencies": [],
+      "parallel_groups": [["8.W1.1", "8.W1.2", "8.W1.3"]],
+      "stories": [
+        { "story_id": "8.W1.1", "status": "Ready", "depends_on": [], "ids_verdict": "CREATE" },
+        { "story_id": "8.W1.2", "status": "Ready", "depends_on": [], "ids_verdict": "ADAPT" },
+        { "story_id": "8.W1.3", "status": "Ready", "depends_on": [], "ids_verdict": "CREATE" }
+      ]
+    },
+    {
+      "wave_id": "W2",
+      "status": "planned",
+      "build_dependencies": ["W1"],
+      "parallel_groups": [["8.W2.1", "8.W2.2"], ["8.W2.3"]],
+      "stories": [
+        { "story_id": "8.W2.1", "status": "Draft", "depends_on": ["8.W1.1"], "ids_verdict": "ADAPT" },
+        { "story_id": "8.W2.2", "status": "Draft", "depends_on": ["8.W1.1", "8.W1.2"], "ids_verdict": "ADAPT" },
+        { "story_id": "8.W2.3", "status": "Draft", "depends_on": ["8.W1.3", "8.W2.1", "8.W2.2"], "ids_verdict": "CREATE" }
+      ]
+    },
+    {
+      "wave_id": "W3",
+      "status": "planned",
+      "build_dependencies": ["W2"],
+      "parallel_groups": [["8.W3.1", "8.W3.2"], ["8.W3.3"]],
+      "stories": [
+        { "story_id": "8.W3.1", "status": "Draft", "depends_on": ["8.W2.3"], "ids_verdict": "CREATE" },
+        { "story_id": "8.W3.2", "status": "Draft", "depends_on": ["8.W2.1", "8.W2.2"], "ids_verdict": "ADAPT" },
+        { "story_id": "8.W3.3", "status": "Draft", "depends_on": ["8.W3.1", "8.W3.2"], "ids_verdict": "CREATE" }
+      ]
+    }
+  ],
+  "references": {
+    "masterplan": "docs/design/cohort-marketing-unified-product-masterplan.md",
+    "previous_cut": "docs/stories/2026-07-09-cohort-marketing-unified-product.md",
+    "adr": "docs/architecture/ADR-001-cohort-marketing-unified-domain.md"
+  }
+}

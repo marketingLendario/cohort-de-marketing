@@ -34,7 +34,12 @@
     "bonuses": ["bonus/index.md", "bonus/*.md"],
     "backend": ["back-end.md", "backend.md"],
     "recovery": ["recuperacao.md"],
-    "cro": ["cro.md"]
+    "cro": ["cro.md"],
+    "trafficTrackingAudit": ["squad-trafego/tracking-audit.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficCreativeBattery": ["squad-trafego/creative-battery.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficCampaignPlan": ["squad-trafego/campaign-plan.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficMetricReading": ["squad-trafego/metric-reading.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficDiagnosis": ["squad-trafego/diagnosis.json", "PAINEL-DA-SEMANA.yaml"]
   },
   "skills": {
     "comecar": {
@@ -429,6 +434,56 @@
       "recommendedArtifacts": [],
       "availableWhen": "Disponivel quando ha projeto para inspecionar.",
       "panelHint": "Le arquivos e pendencias; nao cria conteudo."
+    },
+    "zelador": {
+      "type": "traffic",
+      "command": "/zelador",
+      "primaryArtifacts": ["trafficTrackingAudit"],
+      "requiredFields": ["project.slug", "channels.primaryCtaUrl"],
+      "recommendedFields": ["channels.thankYouPageUrl", "project.regulatedNiche"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["funnel", "salesPage"],
+      "panelHint": "Confirma conta e tracking item a item antes da campanha."
+    },
+    "briefista": {
+      "type": "traffic",
+      "command": "/briefista",
+      "primaryArtifacts": ["trafficCreativeBattery"],
+      "requiredFields": ["project.slug", "market.awarenessLevel", "market.dominantPain"],
+      "recommendedFields": ["market.avatarSummary", "offer.proofAssets", "project.voice", "channels.adFormats"],
+      "requiredArtifacts": ["copy"],
+      "recommendedArtifacts": ["offerbook", "funnel", "trafficTrackingAudit"],
+      "panelHint": "Gera bateria a partir de angulos e aguarda curadoria humana."
+    },
+    "estruturador": {
+      "type": "traffic",
+      "command": "/estruturador",
+      "primaryArtifacts": ["trafficCampaignPlan"],
+      "requiredFields": ["project.slug", "offer.exactPrice"],
+      "recommendedFields": ["channels.primaryCtaUrl", "market.trafficTemperature"],
+      "requiredArtifacts": ["trafficTrackingAudit", "trafficCreativeBattery"],
+      "recommendedArtifacts": ["funnel"],
+      "panelHint": "Monta o default sagrado somente apos tracking e curadoria."
+    },
+    "leitor-de-metricas": {
+      "type": "traffic",
+      "command": "/leitor-de-metricas",
+      "primaryArtifacts": ["trafficMetricReading"],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": ["data.dataSourceNotes"],
+      "requiredArtifacts": ["trafficCampaignPlan"],
+      "recommendedArtifacts": [],
+      "panelHint": "Rotula apenas metricas literais confirmadas; ausente fica nao fornecido."
+    },
+    "diagnosticador": {
+      "type": "traffic",
+      "command": "/diagnosticador",
+      "primaryArtifacts": ["trafficDiagnosis"],
+      "requiredFields": ["project.slug", "offer.exactPrice"],
+      "recommendedFields": ["data.dataSourceNotes"],
+      "requiredArtifacts": ["trafficMetricReading"],
+      "recommendedArtifacts": ["trafficCampaignPlan"],
+      "panelHint": "Recomenda uma alavanca com sucesso e reversao; nunca executa."
     }
   }
 }

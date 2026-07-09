@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/project-brief.v1.schema.json",
+  "title": "Project Brief Revision v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "workspaceId",
+    "projectId",
+    "revision",
+    "status",
+    "createdAt",
+    "updatedAt",
+    "data",
+    "fieldSources"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "workspaceId": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["draft", "active", "superseded"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "data": { "$ref": "../project-brief.schema.json" },
+    "fieldSources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source", "confirmation", "updatedAt"],
+        "properties": {
+          "source": { "enum": ["user", "artifact", "inferred", "migration"] },
+          "confirmation": { "enum": ["confirmed", "pending", "not_applicable"] },
+          "sourceArtifactId": { "type": "string" },
+          "sourceRevisionId": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
+

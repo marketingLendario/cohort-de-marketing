@@ -1,0 +1,6 @@
+{
+  "framework": "vite",
+  "buildCommand": "cd ../.. && npm --prefix apps/academia-lendaria-ads-studio run build",
+  "outputDirectory": "dist",
+  "installCommand": "cd ../.. && npm install --package-lock=false"
+}

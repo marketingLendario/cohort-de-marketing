@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/campaign-plan.v1.schema.json",
+  "title": "Campaign Plan Revision v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "projectId",
+    "campaignId",
+    "revision",
+    "sourceBrief",
+    "platform",
+    "objective",
+    "budget",
+    "angles",
+    "finalists",
+    "tracking",
+    "manualSubmission",
+    "overrides"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "campaignId": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "sourceBrief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision"],
+      "properties": {
+        "id": { "type": "string" },
+        "revision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "platform": { "const": "meta" },
+    "objective": { "enum": ["sales", "leads"] },
+    "landingPageUrl": { "type": "string", "format": "uri" },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["daily", "periodDays"],
+      "properties": {
+        "daily": { "type": "number", "minimum": 20 },
+        "periodDays": { "type": "integer", "minimum": 1 },
+        "currency": { "const": "BRL" }
+      }
+    },
+    "angles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "awarenessLevel", "source"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string", "minLength": 1 },
+          "awarenessLevel": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "source": { "enum": ["brief", "artifact", "human"] }
+        }
+      }
+    },
+    "finalists": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "angleId", "hook", "copy", "format", "selectedByHuman"],
+        "properties": {
+          "id": { "type": "string" },
+          "angleId": { "type": "string" },
+          "hook": { "type": "string" },
+          "copy": { "type": "string" },
+          "format": { "enum": ["feed", "reels-9x16"] },
+          "selectedByHuman": { "const": true }
+        }
+      }
+    },
+    "tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "criticalItemsConfirmed", "checks"],
+      "properties": {
+        "status": { "enum": ["PENDING", "OK", "PARCIAL", "CRITICO"] },
+        "criticalItemsConfirmed": { "type": "boolean" },
+        "auditArtifactId": { "type": "string" },
+        "checks": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["value", "evidence", "critical"],
+            "properties": {
+              "value": { "type": ["boolean", "null"] },
+              "evidence": { "type": "string" },
+              "critical": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "structure": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "manualSubmission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["not_ready", "ready", "confirmed_by_human"] },
+        "confirmedAt": { "type": "string", "format": "date-time" },
+        "confirmedBy": { "type": "string" }
+      }
+    },
+    "overrides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "reason", "updatedAt"],
+        "properties": {
+          "value": true,
+          "reason": { "type": "string", "minLength": 1 },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
