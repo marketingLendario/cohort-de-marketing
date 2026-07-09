@@ -154,12 +154,20 @@
   color: var(--muted-foreground);
 }
 
+.flow-node .fn-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+
 .flow-node .fn-name {
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
   line-height: 1.2;
   color: var(--foreground);
+  min-width: 0;
 }
 
 .flow-node .fn-type {
@@ -556,6 +564,15 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--hairline);
   background: #fff;
+}
+
+.hub-modal__body .preview-frame {
+  height: 100%;
+  min-height: 0;
+}
+
+#am-preview-pdf-wrap {
+  min-height: 100%;
 }
 
 .preview-frame--tall { min-height: 520px; }

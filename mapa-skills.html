@@ -542,7 +542,7 @@ function renderFlowCanvas() {
     el.style.left = origin.x + 'px';
     el.style.top = origin.y + 'px';
     el.innerHTML = `
-      <div class="flex items-center gap-2 mb-1">
+      <div class="fn-head">
         <div class="fn-phase-dot" style="background:${skill.phaseColor}"></div>
         <span class="fn-name flex-1 truncate">${skill.name}</span>
         ${skill.order < 99 ? `<span class="fn-order">${skill.order}</span>` : ''}
@@ -1163,6 +1163,12 @@ async function openArtifactById(artifactId) {
   await openArtifactPreview(artifact);
 }
 
+function syncArtifactButtons(activeId) {
+  document.querySelectorAll('.artifact-btn').forEach(btn => {
+    btn.classList.toggle('is-active', btn.dataset.artifactId === activeId);
+  });
+}
+
 function getHtmlTwinForArtifact(artifact) {
   if (artifact.htmlId && artifactRegistry[artifact.htmlId]) return artifactRegistry[artifact.htmlId];
   const skillArts = Object.values(artifactRegistry).filter(a => a.skillId === artifact.skillId);
@@ -1195,8 +1201,9 @@ function showArtifactTab(mode) {
 
 async function openArtifactPreview(artifact) {
   currentArtifact = artifact;
-  const modal = document.getElementById('artifact-modal');
-  modal.classList.remove('hidden');
+  const panel = document.getElementById('artifact-modal');
+  panel.classList.remove('hidden');
+  syncArtifactButtons(artifact.id);
 
   document.getElementById('am-label').textContent = artifact.label;
   document.getElementById('am-path').textContent = artifact.path;
@@ -1304,6 +1311,7 @@ function switchPreviewTab(tab) {
 
 function closeArtifactModal() {
   document.getElementById('artifact-modal').classList.add('hidden');
+  syncArtifactButtons(null);
   clearPdfPreview();
   currentArtifact = null;
 }
@@ -1324,6 +1332,7 @@ function selectSkill(skillId, element, fromTour = false) {
 
   const skill = SKILLS.find(s => s.id === skillId);
   if (!skill) return;
+  if (currentSelected?.id && currentSelected.id !== skillId) closeArtifactModal();
   currentSelected = skill;
 
   const tourIdx = N12_TOUR.indexOf(skillId);
@@ -1356,7 +1365,7 @@ function selectSkill(skillId, element, fromTour = false) {
     artifacts.forEach(art => {
       const icon = getFormatIcon(art.format);
       const hasPreview = art.content || art.format === 'pdf' || art.format === 'docx' || art.sampleUrl || art.htmlId;
-      content += `<button type="button" onclick="openArtifactById('${art.id}')" class="artifact-btn" style="${hasPreview ? '' : 'opacity:0.7'}">
+      content += `<button type="button" onclick="openArtifactById('${art.id}')" class="artifact-btn" data-artifact-id="${art.id}" style="${hasPreview ? '' : 'opacity:0.7'}">
         <i class="${icon} ab-icon"></i>
         <div class="flex-1 min-w-0">
           <div class="font-mono truncate">${art.label}</div>
@@ -1393,6 +1402,7 @@ function getIconForSkill(skill) {
 }
 
 function closeDetail() {
+  closeArtifactModal();
   document.getElementById('detail-panel').classList.add('hidden');
   document.querySelectorAll('.flow-node.selected, .node.selected').forEach(el => el.classList.remove('selected'));
   clearFlowHighlight();
