@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "8.W2.2"
 title: "Runs duráveis, assíncronos e observáveis"
 epic: 8
@@ -182,7 +182,7 @@ Correção end-to-end (sem tocar o design visual), executor **@dev** em worktree
   filho Codex não herda mais `SUPABASE_SERVICE_ROLE_KEY`, `LOCAL_SKILL_RUNNER_TOKEN`,
   `APIFY_TOKEN`, chaves OpenAI/Codex nem segredos arbitrários — testes provam o corte.
 
-**Gates re-executados (worktree, verdes):** `npm test` (25 arquivos / 175 testes) ·
+**Gates re-executados (worktree, verdes):** `npm test` (25 arquivos / 176 testes) ·
 `npm run lint` · `npm run typecheck` · `npm run build` · `npm run build:server` ·
 `npm run lint:db` · `npm run test:db` (Files=3, Tests=15) · `git diff --check` limpo.
 
@@ -196,6 +196,16 @@ Correção end-to-end (sem tocar o design visual), executor **@dev** em worktree
 - **`resolveTenantWorkspaceId` no fallback sem DB** ainda confia no `provided` — aceitável
   porque nesse caminho não há writer service-role (RLS-bypassing) a proteger; a proteção
   real vale exatamente onde o Supabase backend existe.
+
+## QA Gate Final
+
+- **Veredito:** SHIP no re-gate independente de `602f44c`; nenhum P0, P1 ou P2 remanescente.
+- **Achados fechados:** retry concorrente com CAS + 409 para o perdedor; pointer durável do
+  `skill_run` em modo real; retomada após nova hidratação; compensação de job órfão; tenant
+  derivado e fail-closed; allowlist do ambiente do Codex CLI.
+- **Evidência:** `npm test` (25 arquivos / 176 testes), lint, typecheck, app build, server build,
+  DB lint, pgTAP (3 arquivos / 15 testes) e `git diff --check` verdes.
+- **Próxima costura:** aprovação/rejeição e materialização persistentes pertencem à 8.W2.3.
 
 ## Implementation Notes
 

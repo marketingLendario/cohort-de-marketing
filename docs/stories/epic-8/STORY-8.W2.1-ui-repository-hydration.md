@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "8.W2.1"
 title: "Hidratação e persistência da UI via repository"
 epic: 8
@@ -225,3 +225,12 @@ briefing, artefatos, skill runs, campaign plans, weekly panels).
 - Não há E2E Playwright nesta story (AC6 menciona E2E); a cobertura entregue
   é de component/unit tests (store, hook/controller, boundary, repository).
   Nenhum arquivo de E2E estava no `touched_paths`/File List desta story.
+
+## QA Gate Final
+
+- **Veredito:** PASS no fan-in da Wave 2 e no re-gate independente de `602f44c`.
+- **Cobertura:** AC1-AC5 confirmados; hidratação real das seis coleções, isolamento demo/real,
+  autosave de `0`/`false`/`not_applicable` e conflito sem overwrite.
+- **Evidência integrada:** `npm test` (25 arquivos / 176 testes), lint, typecheck, app build,
+  server build, DB lint, pgTAP (3 arquivos / 15 testes) e `git diff --check` verdes.
+- **Risco aceito:** E2E Playwright do fluxo completo fica no piloto da Wave 3; não há P0-P2.

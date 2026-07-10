@@ -1,5 +1,5 @@
 ---
-status: Draft
+status: Ready
 story_id: "8.W2.3"
 title: "Aprovação em duas fases: DB e filesystem"
 epic: 8
@@ -24,6 +24,12 @@ touched_paths:
   - "apps/academia-lendaria-ads-studio/supabase/tests/artifact_approval.sql"
   - "apps/academia-lendaria-ads-studio/src/lib/artifact-approval.ts"
   - "apps/academia-lendaria-ads-studio/src/lib/artifact-approval.test.ts"
+  - "apps/academia-lendaria-ads-studio/src/lib/project-repository.ts"
+  - "apps/academia-lendaria-ads-studio/src/lib/project-repository.test.ts"
+  - "apps/academia-lendaria-ads-studio/src/hooks/use-project-workspace.ts"
+  - "apps/academia-lendaria-ads-studio/src/hooks/use-project-workspace.test.ts"
+  - "apps/academia-lendaria-ads-studio/src/stores/project-store.ts"
+  - "apps/academia-lendaria-ads-studio/src/stores/project-store.test.ts"
   - "apps/academia-lendaria-ads-studio/src/components/project-journey.tsx"
   - "apps/academia-lendaria-ads-studio/src/components/project-artifacts.tsx"
   - "apps/academia-lendaria-ads-studio/src/components/artifact-approval-review.tsx"
@@ -46,6 +52,8 @@ touched_paths:
 4. Sucesso materializa arquivo, metadado, evento e status `done` com o mesmo hash.
 5. Rejeição/cancelamento não escreve arquivos; edição gera nova proposta/revisão.
 6. Testes injetam falha antes/depois do rename e provam retry/repair determinístico.
+7. Aprovação e rejeição persistem a revisão humana do `skill_run`; após reload, `done` ou
+   `cancelled` reaparece igual e nunca volta indevidamente para `needs_review`.
 
 ## Tasks
 
@@ -53,6 +61,7 @@ touched_paths:
 - [ ] Implementar outbox/compensação e idempotência.
 - [ ] Construir UI de diff e impactos.
 - [ ] Integrar status, invalidation e audit event.
+- [ ] Persistir approve/reject no repository e provar reidratação em nova sessão.
 - [ ] Cobrir failure injection e repair.
 
 ## File List
@@ -64,6 +73,12 @@ touched_paths:
 - `apps/academia-lendaria-ads-studio/supabase/tests/artifact_approval.sql`
 - `apps/academia-lendaria-ads-studio/src/lib/artifact-approval.ts`
 - `apps/academia-lendaria-ads-studio/src/lib/artifact-approval.test.ts`
+- `apps/academia-lendaria-ads-studio/src/lib/project-repository.ts`
+- `apps/academia-lendaria-ads-studio/src/lib/project-repository.test.ts`
+- `apps/academia-lendaria-ads-studio/src/hooks/use-project-workspace.ts`
+- `apps/academia-lendaria-ads-studio/src/hooks/use-project-workspace.test.ts`
+- `apps/academia-lendaria-ads-studio/src/stores/project-store.ts`
+- `apps/academia-lendaria-ads-studio/src/stores/project-store.test.ts`
 - `apps/academia-lendaria-ads-studio/src/components/project-journey.tsx`
 - `apps/academia-lendaria-ads-studio/src/components/project-artifacts.tsx`
 - `apps/academia-lendaria-ads-studio/src/components/artifact-approval-review.tsx`
