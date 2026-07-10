@@ -19,6 +19,7 @@ file_scope: exclusive
 touched_paths:
   - "apps/academia-lendaria-ads-studio/server/local-bootstrap.ts"
   - "apps/academia-lendaria-ads-studio/server/local-bootstrap.test.ts"
+  - "apps/academia-lendaria-ads-studio/server/artifact-fs-worker-client.ts"
   - "apps/academia-lendaria-ads-studio/server/app.ts"
   - "apps/academia-lendaria-ads-studio/src/lib/local-bootstrap.ts"
   - "apps/academia-lendaria-ads-studio/src/lib/local-bootstrap.test.ts"
@@ -64,6 +65,7 @@ touched_paths:
 |---------|----------|
 | `apps/academia-lendaria-ads-studio/server/local-bootstrap.ts` | ADD |
 | `apps/academia-lendaria-ads-studio/server/local-bootstrap.test.ts` | ADD |
+| `apps/academia-lendaria-ads-studio/server/artifact-fs-worker-client.ts` | MODIFY (QA gate) |
 | `apps/academia-lendaria-ads-studio/server/app.ts` | MODIFY |
 | `apps/academia-lendaria-ads-studio/src/lib/local-bootstrap.ts` | ADD |
 | `apps/academia-lendaria-ads-studio/src/lib/local-bootstrap.test.ts` | ADD |
@@ -91,6 +93,10 @@ touched_paths:
   são sanitizadas e não incluem senha, service role ou boundary token.
 - UI oferece o primeiro acesso na tela de login e, após a criação, chama
   `signInWithPassword`, deixando o fluxo normal abrir `Seus projetos`.
+- A composição do primeiro acesso é uma seção sem card próprio dentro do card
+  de login, preservando uma hierarquia visual única.
+- O gate integral revelou um `EPIPE` não tratado no stream do worker de
+  artefatos; o listener do pipe agora converte a falha em rejeição controlada.
 
 ### Evidências
 
@@ -109,6 +115,9 @@ touched_paths:
 - Autenticação continua sendo a sessão local do Codex CLI no runner existente.
 - A primeira revisão Codex encontrou o lock restrito ao processo; o finding P2
   foi fechado com claim/lease durável, reconciliação e cobertura pgTAP.
+- A segunda revisão encontrou fencing e conclusão ambígua como P1; ambos foram
+  fechados separando `ownerToken` de `claimToken`, verificando lease em toda
+  mutação e reconciliando o estado durável antes de qualquer compensação.
 
 ## Change Log
 
@@ -118,9 +127,9 @@ touched_paths:
 
 ## Validação executada
 
-- Testes focados: 4 arquivos / 10 testes — PASS.
-- `npm test` com `VITE_SUPABASE_URL` e anon key local de teste: 36 arquivos / 278 testes — PASS.
-- `npx supabase test db`: 5 arquivos / 50 testes — PASS.
+- Testes focados: 4 arquivos / 12 testes — PASS.
+- `npm test` com `VITE_SUPABASE_URL` e anon key local de teste: 36 arquivos / 280 testes — PASS em duas repetições consecutivas.
+- `npx supabase test db`: 5 arquivos / 51 testes — PASS.
 - `npm run lint`: PASS.
 - `npm run typecheck`: PASS.
 - `npm run build`: PASS.
