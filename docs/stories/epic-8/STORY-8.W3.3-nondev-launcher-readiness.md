@@ -1,5 +1,5 @@
 ---
-status: Draft
+status: Ready
 story_id: "8.W3.3"
 title: "Launcher e readiness para não devs"
 epic: 8
@@ -18,8 +18,20 @@ consumes_artifacts_of: ["8.W3.1", "8.W3.2"]
 file_scope: shared
 touched_paths:
   - "scripts/marketing-studio.mjs"
+  - "scripts/marketing-studio.test.mjs"
+  - "apps/academia-lendaria-ads-studio/server/readiness.ts"
+  - "apps/academia-lendaria-ads-studio/server/readiness.test.ts"
+  - "apps/academia-lendaria-ads-studio/server/app.ts"
   - "apps/academia-lendaria-ads-studio/src/components/system-readiness.tsx"
+  - "apps/academia-lendaria-ads-studio/src/components/system-readiness.test.tsx"
+  - "apps/academia-lendaria-ads-studio/src/components/unified-shell.tsx"
+  - "apps/academia-lendaria-ads-studio/src/lib/system-readiness.ts"
+  - "apps/academia-lendaria-ads-studio/src/index.css"
   - "apps/academia-lendaria-ads-studio/package.json"
+  - "apps/academia-lendaria-ads-studio/package-lock.json"
+  - ".aiox/waves/epic-8-wave-3/qa-w3.3.yaml"
+  - "docs/qa/epic-8-nondev-launcher.md"
+  - "docs/stories/epic-8/STORY-8.W3.3-nondev-launcher-readiness.md"
   - "README.md"
   - ".env.example"
 ---
@@ -56,4 +68,3 @@ touched_paths:
 - `apps/academia-lendaria-ads-studio/package.json`
 - `README.md`
 - `.env.example`
-

@@ -66,8 +66,8 @@ incorreto).
 
 ### W3 - Piloto e entrega
 
-**Status:** InProgress em 2026-07-10. 8.W3.1 e 8.W3.2 estão Ready para o
-primeiro batch paralelo; 8.W3.3 permanece Draft até o fan-in das duas.
+**Status:** InProgress em 2026-07-10. 8.W3.1 e 8.W3.2 concluídas com gate
+independente `SHIP`; 8.W3.3 está Ready e é o último batch do epic.
 
 - 8.W3.1 - E2E real do Squad de Tráfego
 - 8.W3.2 - Cutover legado e alertas do monitor
@@ -96,5 +96,5 @@ primeiro batch paralelo; 8.W3.3 permanece Draft até o fan-in das duas.
 
 Orquestração por `/sinkra-wave-execute epic-8`, com preflight determinístico,
 DAG por ownership, worktree por story, `/sinkra-full-cycle` por child e fan-in
-exclusivo de `@devops`. W1 e W2 estão concluídas; resume point atual: W3 batch 1
-(`8.W3.1` + `8.W3.2`).
+exclusivo de `@devops`. W1, W2 e o primeiro batch de W3 estão concluídos;
+resume point atual: `8.W3.3` (launcher e readiness para não devs).
