@@ -19,3 +19,13 @@ Script: [`traffic-controlled-matrix.mts`](../../apps/academia-lendaria-ads-studi
 ## Limites
 
 Este teste valida o comportamento das skills e dos handoffs no runner local. Não usa credenciais Meta nem substitui o próximo teste controlado em uma conta real, que deve começar em modo de leitura/recomendação e sem publicação.
+
+## Gate Meta em modo leitura
+
+O check L1 foi executado para `controlled-traffic` e retornou:
+
+- `adapterAvailable: false`;
+- `capabilityUnavailable: true`;
+- motivo: `services/meta-ads/index.js` não existe neste checkout.
+
+Isso é um bloqueio de capacidade, não uma falha silenciosa. O `MetaCliPublisher` atual implementa apenas `check`; criação e confirmação de campanhas continuam como stubs. Nenhuma chamada de mutação foi realizada.
