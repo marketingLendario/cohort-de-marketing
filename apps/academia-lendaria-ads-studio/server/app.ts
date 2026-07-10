@@ -74,6 +74,13 @@ import {
   localBootstrapInputSchema,
   type LocalBootstrapService,
 } from './local-bootstrap.js'
+import {
+  createProjectIntakeService,
+  createSupabaseProjectIntakeStore,
+  ProjectIntakeError,
+  type ProjectIntakeErrorCode,
+  type ProjectIntakeService,
+} from './project-intake.js'
 
 export interface BuildAppOptions {
   /** Inject a store (tests); defaults to the in-memory skeleton store. */
@@ -128,6 +135,8 @@ export interface BuildAppOptions {
   readinessFile?: string
   /** Bootstrap one-shot do operador local; injetável para testes. */
   localBootstrapService?: LocalBootstrapService | null
+  /** Intake seguro de artefatos do filesystem; injetável para testes. */
+  projectIntakeService?: ProjectIntakeService | null
 }
 
 export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
@@ -171,6 +180,15 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
         ? createArtifactApprovalService({
             store: createSupabaseArtifactApprovalStore(backendSupabase),
             runs: createSupabaseApprovalRunGateway(backendSupabase),
+            projectsRoot,
+          })
+        : null
+  const projectIntakeService: ProjectIntakeService | null =
+    options.projectIntakeService !== undefined
+      ? options.projectIntakeService
+      : backendSupabase
+        ? createProjectIntakeService({
+            store: createSupabaseProjectIntakeStore(backendSupabase),
             projectsRoot,
           })
         : null
@@ -427,6 +445,31 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     return true
   }
 
+  /**
+   * Boundary guard for filesystem intake (EPIC-9 / STORY-9.W2.1). Same local
+   * token do boundary `/api/local/*`, sem exigir o runner Codex: a capacidade só
+   * depende do backend service-role e do scanner confinado em `projetos/`.
+   */
+  function guardProjectIntakeRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!projectIntakeService || !runnerToken) {
+      reply.status(503).send({
+        code: 'PROJECT_INTAKE_DISABLED',
+        message: 'Intake local desabilitado (sem backend de persistência configurado).',
+      })
+      return false
+    }
+    const providedToken = req.headers[LOCAL_RUNNER_TOKEN_HEADER]
+    const auth = authorizeLocalRunnerRequest(
+      Array.isArray(providedToken) ? providedToken[0] : providedToken,
+      runnerToken,
+    )
+    if (!auth.ok) {
+      reply.status(auth.status).send({ code: auth.code, message: auth.message })
+      return false
+    }
+    return true
+  }
+
   const approvalArtifactSchema = z.object({
     artifactType: z.string().min(1),
     title: z.string().min(1),
@@ -445,6 +488,15 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     expectedProposalRevision: z.number().int().positive(),
     idempotencyKey: z.string().min(1).max(200),
     artifacts: z.array(approvalArtifactSchema).optional(),
+  })
+  const projectIntakePreviewSchema = z.object({
+    projectId: z.string().min(1),
+    sourceSlug: z.string().min(1),
+  })
+  const projectIntakeConfirmSchema = z.object({
+    projectId: z.string().min(1),
+    sourceSlug: z.string().min(1),
+    expectedManifestHash: z.string().min(1),
   })
 
   // Treatable approval errors → HTTP: stale/conflict decisions are 409, a missing
@@ -466,6 +518,80 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
         return 500
     }
   }
+
+  function projectIntakeErrorStatus(code: ProjectIntakeErrorCode): number {
+    switch (code) {
+      case 'project-not-found':
+      case 'source-not-found':
+        return 404
+      case 'manifest-stale':
+        return 409
+      case 'path-traversal':
+      case 'symlink-rejected':
+      case 'secret-rejected':
+      case 'allowlist-violation':
+        return 400
+      default:
+        return 500
+    }
+  }
+
+  // --- Filesystem intake (EPIC-9 / STORY-9.W2.1) ---------------------------
+  app.get('/api/local/project-intake/sources', async (req, reply) => {
+    if (!guardProjectIntakeRequest(req, reply)) return reply
+    try {
+      return reply.status(200).send(await projectIntakeService!.listSources())
+    } catch (error) {
+      if (error instanceof ProjectIntakeError) {
+        return reply.status(projectIntakeErrorStatus(error.code)).send({ code: error.code, message: error.message })
+      }
+      req.log.error(error, 'project intake source listing failed')
+      return reply.status(500).send({
+        code: 'PROJECT_INTAKE_SOURCE_LIST_FAILED',
+        message: error instanceof Error ? error.message : 'Falha ao listar diretórios para intake.',
+      })
+    }
+  })
+
+  app.post('/api/local/project-intake/preview', async (req, reply) => {
+    if (!guardProjectIntakeRequest(req, reply)) return reply
+    const parsed = projectIntakePreviewSchema.safeParse(req.body)
+    if (!parsed.success) {
+      return reply.status(400).send({ code: 'INVALID_PROJECT_INTAKE_INPUT', issues: parsed.error.issues })
+    }
+    try {
+      return reply.status(200).send(await projectIntakeService!.preview(parsed.data))
+    } catch (error) {
+      if (error instanceof ProjectIntakeError) {
+        return reply.status(projectIntakeErrorStatus(error.code)).send({ code: error.code, message: error.message })
+      }
+      req.log.error(error, 'project intake preview failed')
+      return reply.status(500).send({
+        code: 'PROJECT_INTAKE_PREVIEW_FAILED',
+        message: error instanceof Error ? error.message : 'Falha ao gerar o preview do intake.',
+      })
+    }
+  })
+
+  app.post('/api/local/project-intake/confirm', async (req, reply) => {
+    if (!guardProjectIntakeRequest(req, reply)) return reply
+    const parsed = projectIntakeConfirmSchema.safeParse(req.body)
+    if (!parsed.success) {
+      return reply.status(400).send({ code: 'INVALID_PROJECT_INTAKE_INPUT', issues: parsed.error.issues })
+    }
+    try {
+      return reply.status(200).send(await projectIntakeService!.confirm(parsed.data))
+    } catch (error) {
+      if (error instanceof ProjectIntakeError) {
+        return reply.status(projectIntakeErrorStatus(error.code)).send({ code: error.code, message: error.message })
+      }
+      req.log.error(error, 'project intake confirmation failed')
+      return reply.status(500).send({
+        code: 'PROJECT_INTAKE_CONFIRM_FAILED',
+        message: error instanceof Error ? error.message : 'Falha ao confirmar o intake do projeto.',
+      })
+    }
+  })
 
   // --- Phase 1: plan (read-only diff/affected/warnings — AC1) ---------------
   app.post('/api/local/artifact-approvals/plan', { bodyLimit: runnerLimits.bodyLimitBytes }, async (req, reply) => {
