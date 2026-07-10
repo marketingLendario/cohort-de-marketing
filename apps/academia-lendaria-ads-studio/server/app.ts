@@ -67,6 +67,13 @@ import {
 import { z } from 'zod'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { readReadinessSnapshot } from './readiness.js'
+import {
+  createLocalBootstrapService,
+  createSupabaseLocalBootstrapStore,
+  LocalBootstrapClosedError,
+  localBootstrapInputSchema,
+  type LocalBootstrapService,
+} from './local-bootstrap.js'
 
 export interface BuildAppOptions {
   /** Inject a store (tests); defaults to the in-memory skeleton store. */
@@ -119,6 +126,8 @@ export interface BuildAppOptions {
   cohortRepoRoot?: string
   /** Snapshot sanitizado produzido pelo launcher local (STORY-8.W3.3). */
   readinessFile?: string
+  /** Bootstrap one-shot do operador local; injetável para testes. */
+  localBootstrapService?: LocalBootstrapService | null
 }
 
 export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
@@ -126,6 +135,12 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
   // Cliente Supabase backend compartilhado (service-role, NFR10) — usado pelo
   // Gate#1 e pelo journal durável de skill-runs. Null sem credenciais.
   const backendSupabase: SupabaseClient | null = createBackendSupabaseClient()
+  const localBootstrapService: LocalBootstrapService | null =
+    options.localBootstrapService !== undefined
+      ? options.localBootstrapService
+      : backendSupabase
+        ? createLocalBootstrapService(createSupabaseLocalBootstrapStore(backendSupabase))
+        : null
   const campaignRepo =
     options.campaignRepo !== undefined
       ? options.campaignRepo
@@ -267,6 +282,55 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     return reply.status(200).send(
       await readReadinessSnapshot(options.readinessFile ?? process.env.MARKETING_STUDIO_READINESS_FILE),
     )
+  })
+
+  function isLoopbackRequest(req: FastifyRequest): boolean {
+    const address = req.ip.replace(/^::ffff:/, '')
+    return address === '127.0.0.1' || address === '::1'
+  }
+
+  function guardLocalBootstrapRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!isLoopbackRequest(req)) {
+      reply.status(403).send({ code: 'LOCAL_BOOTSTRAP_LOOPBACK_ONLY', message: 'Este recurso só está disponível localmente.' })
+      return false
+    }
+    if (!localBootstrapService || !runnerToken) {
+      reply.status(503).send({ code: 'LOCAL_BOOTSTRAP_DISABLED', message: 'Primeiro acesso local indisponível.' })
+      return false
+    }
+    const providedToken = req.headers[LOCAL_RUNNER_TOKEN_HEADER]
+    const auth = authorizeLocalRunnerRequest(Array.isArray(providedToken) ? providedToken[0] : providedToken, runnerToken)
+    if (!auth.ok) {
+      reply.status(auth.status).send({ code: auth.code, message: auth.message })
+      return false
+    }
+    return true
+  }
+
+  app.get('/api/local/bootstrap/status', async (req, reply) => {
+    if (!guardLocalBootstrapRequest(req, reply)) return reply
+    reply.header('cache-control', 'no-store')
+    try {
+      return reply.status(200).send(await localBootstrapService!.status())
+    } catch {
+      return reply.status(503).send({ code: 'LOCAL_BOOTSTRAP_UNAVAILABLE', message: 'Não foi possível consultar o primeiro acesso.' })
+    }
+  })
+
+  app.post('/api/local/bootstrap', async (req, reply) => {
+    if (!guardLocalBootstrapRequest(req, reply)) return reply
+    const parsed = localBootstrapInputSchema.safeParse(req.body)
+    if (!parsed.success) {
+      return reply.status(400).send({ code: 'INVALID_LOCAL_BOOTSTRAP_INPUT', issues: parsed.error.issues })
+    }
+    try {
+      return reply.status(201).send(await localBootstrapService!.create(parsed.data))
+    } catch (error) {
+      if (error instanceof LocalBootstrapClosedError) {
+        return reply.status(409).send({ code: 'LOCAL_BOOTSTRAP_CLOSED', message: error.message })
+      }
+      return reply.status(500).send({ code: 'LOCAL_BOOTSTRAP_FAILED', message: 'Não foi possível concluir o primeiro acesso.' })
+    }
   })
 
   const localSkillRunSchema = z.object({

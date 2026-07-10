@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Input, Label, Alert } from '@/lib/lendaria-ds';
 import { DEMO_AUTH_ENABLED, DEMO_EMAIL, DEMO_PASSWORD, signInDemo } from '@/lib/demo-mode';
 import { supabase } from '@/lib/supabase';
+import { LocalFirstRun } from '@/components/local-first-run';
 
 /**
  * Login (AC1 — STORY-AL-ADS-1.2).
@@ -48,6 +49,7 @@ export function LoginForm() {
           <CardDescription>Entre para operar suas contas de mídia.</CardDescription>
         </CardHeader>
         <CardContent>
+          <LocalFirstRun />
           {DEMO_AUTH_ENABLED ? (
             <Alert variant="info" style={{ marginBottom: '1rem' }}>
               Demo local: {DEMO_EMAIL} / {DEMO_PASSWORD}

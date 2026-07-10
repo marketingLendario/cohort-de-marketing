@@ -34,6 +34,16 @@
   text-align: center;
 }
 
+.local-first-run {
+  margin-bottom: 1.5rem;
+  border-color: hsl(var(--primary-hsl) / 0.42);
+}
+
+.local-first-run__form {
+  display: grid;
+  gap: 1rem;
+}
+
 .cms-centered-state h1,
 .cms-centered-state p {
   margin: 0;
