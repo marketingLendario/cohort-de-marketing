@@ -2,10 +2,13 @@ import type { ReactNode } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useSpokes } from '@/hooks/use-spokes';
 import { LoginForm } from '@/components/login-form';
+import { ProjectHydrationBoundary } from '@/components/project-hydration-boundary';
+import { useSpokeStore } from '@/stores/spoke-store';
 
 export function AuthenticatedRoute({ children }: { children: ReactNode }) {
   const { session, loading: authLoading } = useAuth();
   const { loading: spokesLoading, error: spokesError } = useSpokes(Boolean(session));
+  const activeSpokeId = useSpokeStore((state) => state.activeSpokeId);
 
   if (authLoading || (session && spokesLoading)) {
     return (
@@ -27,6 +30,6 @@ export function AuthenticatedRoute({ children }: { children: ReactNode }) {
     );
   }
 
-  return children;
+  return <ProjectHydrationBoundary workspaceId={activeSpokeId}>{children}</ProjectHydrationBoundary>;
 }
 

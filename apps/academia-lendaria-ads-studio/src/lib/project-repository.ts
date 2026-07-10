@@ -478,11 +478,20 @@ export interface ProjectRepository {
   listCampaignPlanRevisions(workspaceId: string, campaignId: string): Promise<CampaignPlanRevision[]>;
   getLatestCampaignPlan(workspaceId: string, campaignId: string): Promise<CampaignPlanRevision | null>;
   createCampaignPlanRevision(input: CreateCampaignPlanInput): Promise<CampaignPlanRevision>;
+  /**
+   * Todas as revisões de plano de campanha de um projeto, através de todas as
+   * campanhas dele (STORY-8.W2.1 — AC5). `project_id` já é coluna própria da
+   * tabela (FK para `marketing_projects`), então a hidratação do workspace não
+   * precisa descobrir `campaignId` antes de listar.
+   */
+  listCampaignPlanRevisionsForProject(workspaceId: string, projectId: string): Promise<CampaignPlanRevision[]>;
 
   // Painéis semanais (versionados — OCC)
   listWeeklyPanels(workspaceId: string, campaignId: string): Promise<WeeklyPanel[]>;
   getLatestWeeklyPanel(workspaceId: string, campaignId: string, weekStart: string): Promise<WeeklyPanel | null>;
   createWeeklyPanelRevision(input: CreateWeeklyPanelInput): Promise<WeeklyPanel>;
+  /** Todos os painéis semanais de um projeto, através de todas as campanhas dele (STORY-8.W2.1 — AC5). */
+  listWeeklyPanelsForProject(workspaceId: string, projectId: string): Promise<WeeklyPanel[]>;
 }
 
 // ---------------------------------------------------------------------------
@@ -688,6 +697,17 @@ export function createSupabaseProjectRepository(client: SupabaseClient = supabas
       return rowToCampaignPlan(data as CampaignPlanRow);
     },
 
+    async listCampaignPlanRevisionsForProject(workspaceId, projectId) {
+      const { data, error } = await client
+        .from('campaign_plan_revisions')
+        .select(CAMPAIGN_PLAN_COLS)
+        .eq('workspace_id', workspaceId)
+        .eq('project_id', projectId)
+        .order('revision', { ascending: false });
+      if (error) throw toRepositoryError(error, 'campaign_plan_revisions');
+      return (data as CampaignPlanRow[] | null ?? []).map(rowToCampaignPlan);
+    },
+
     // ---- Painéis semanais ----
     async listWeeklyPanels(workspaceId, campaignId) {
       const { data, error } = await client
@@ -723,6 +743,18 @@ export function createSupabaseProjectRepository(client: SupabaseClient = supabas
         .single();
       if (error) throw toRepositoryError(error, 'ads_weekly_panels');
       return rowToWeeklyPanel(data as WeeklyPanelRow);
+    },
+
+    async listWeeklyPanelsForProject(workspaceId, projectId) {
+      const { data, error } = await client
+        .from('ads_weekly_panels')
+        .select(WEEKLY_PANEL_COLS)
+        .eq('workspace_id', workspaceId)
+        .eq('project_id', projectId)
+        .order('week_start', { ascending: false })
+        .order('revision', { ascending: false });
+      if (error) throw toRepositoryError(error, 'ads_weekly_panels');
+      return (data as WeeklyPanelRow[] | null ?? []).map(rowToWeeklyPanel);
     },
   };
 }

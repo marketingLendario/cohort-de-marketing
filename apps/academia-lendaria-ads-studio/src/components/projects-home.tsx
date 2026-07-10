@@ -5,16 +5,19 @@ import { useProjectStore } from '@/stores/project-store';
 import { useSpokeStore } from '@/stores/spoke-store';
 import { DEMO_AUTH_ENABLED, signOutDemo } from '@/lib/demo-mode';
 import { supabase } from '@/lib/supabase';
+import { useProjectWorkspaceActions } from '@/components/project-hydration-boundary';
 
 export function ProjectsHome() {
   const navigate = useNavigate();
   const projects = useProjectStore((state) => state.projects);
-  const createProject = useProjectStore((state) => state.createProject);
+  const createDemoProject = useProjectStore((state) => state.createProject);
   const setActiveProject = useProjectStore((state) => state.setActiveProject);
+  const { createProject: createPersistentProject } = useProjectWorkspaceActions();
   const activeSpokeId = useSpokeStore((state) => state.activeSpokeId);
   const resetSpokes = useSpokeStore((state) => state.reset);
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const visibleProjects = projects.filter((project) => !activeSpokeId || project.workspaceId === activeSpokeId);
 
   function openProject(projectId: string) {
@@ -22,11 +25,26 @@ export function ProjectsHome() {
     navigate({ to: '/projects/$projectId/overview', params: { projectId } });
   }
 
-  function submitProject(event: React.FormEvent) {
+  async function submitProject(event: React.FormEvent) {
     event.preventDefault();
-    if (!name.trim() || !activeSpokeId) return;
-    const projectId = createProject(activeSpokeId, name.trim());
-    openProject(projectId);
+    const trimmedName = name.trim();
+    if (!trimmedName || !activeSpokeId || submitting) return;
+
+    // Caminho demo: criação local e síncrona, sem repository (AC4).
+    if (DEMO_AUTH_ENABLED) {
+      openProject(createDemoProject(activeSpokeId, trimmedName));
+      return;
+    }
+
+    // Modo real: persiste no repository ANTES de navegar (AC1/AC5) — a tela
+    // de destino já encontra o projeto no cache ao montar.
+    setSubmitting(true);
+    try {
+      const projectId = await createPersistentProject(trimmedName);
+      openProject(projectId);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function signOut() {
@@ -73,7 +91,9 @@ export function ProjectsHome() {
                 placeholder="Ex.: Nova oferta 2026"
                 autoFocus
               />
-              <Button type="submit" disabled={!name.trim() || !activeSpokeId}>Criar e abrir</Button>
+              <Button type="submit" disabled={!name.trim() || !activeSpokeId || submitting}>
+                {submitting ? 'Criando...' : 'Criar e abrir'}
+              </Button>
             </div>
           </form>
         ) : null}

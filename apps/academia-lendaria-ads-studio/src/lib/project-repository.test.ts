@@ -313,4 +313,52 @@ describe('adapter Supabase', () => {
       RepositoryForbiddenError,
     );
   });
+
+  it('listCampaignPlanRevisionsForProject filtra por workspace_id + project_id, sem exigir campaignId (AC5)', async () => {
+    const campaignPlanRow = {
+      id: 'cp1',
+      workspace_id: 'ws1',
+      project_id: 'p1',
+      campaign_id: 'c1',
+      revision: 1,
+      schema_version: '1.0.0',
+      data: { schemaVersion: '1.0.0', platform: 'meta', objective: 'sales', revision: 1 },
+      created_at: '2026-07-09T00:00:00.000Z',
+      updated_at: '2026-07-09T00:00:00.000Z',
+    };
+    const { client, eqCalls } = makeClient({ data: [campaignPlanRow], error: null });
+    const repo = createSupabaseProjectRepository(client);
+
+    const plans = await repo.listCampaignPlanRevisionsForProject('ws1', 'p1');
+
+    expect(plans).toHaveLength(1);
+    expect(plans[0]).toMatchObject({ id: 'cp1', projectId: 'p1', campaignId: 'c1' });
+    expect(eqCalls).toContainEqual(['workspace_id', 'ws1']);
+    expect(eqCalls).toContainEqual(['project_id', 'p1']);
+  });
+
+  it('listWeeklyPanelsForProject filtra por workspace_id + project_id, sem exigir campaignId (AC5)', async () => {
+    const weeklyPanelRow = {
+      id: 'wp1',
+      workspace_id: 'ws1',
+      project_id: 'p1',
+      campaign_id: 'c1',
+      week_start: '2026-07-06',
+      revision: 1,
+      schema_version: '1.0.0',
+      status: 'draft',
+      data: { schemaVersion: '1.0.0', status: 'draft', metrics: [] },
+      created_at: '2026-07-09T00:00:00.000Z',
+      updated_at: '2026-07-09T00:00:00.000Z',
+    };
+    const { client, eqCalls } = makeClient({ data: [weeklyPanelRow], error: null });
+    const repo = createSupabaseProjectRepository(client);
+
+    const panels = await repo.listWeeklyPanelsForProject('ws1', 'p1');
+
+    expect(panels).toHaveLength(1);
+    expect(panels[0]).toMatchObject({ id: 'wp1', projectId: 'p1', campaignId: 'c1', weekStart: '2026-07-06' });
+    expect(eqCalls).toContainEqual(['workspace_id', 'ws1']);
+    expect(eqCalls).toContainEqual(['project_id', 'p1']);
+  });
 });
