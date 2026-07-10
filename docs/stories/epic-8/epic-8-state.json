@@ -7,13 +7,13 @@
   "waves": [
     {
       "wave_id": "W1",
-      "status": "ready",
+      "status": "done",
       "build_dependencies": [],
       "parallel_groups": [["8.W1.1", "8.W1.2", "8.W1.3"]],
       "stories": [
-        { "story_id": "8.W1.1", "status": "Ready", "depends_on": [], "ids_verdict": "CREATE" },
-        { "story_id": "8.W1.2", "status": "Ready", "depends_on": [], "ids_verdict": "ADAPT" },
-        { "story_id": "8.W1.3", "status": "Ready", "depends_on": [], "ids_verdict": "CREATE" }
+        { "story_id": "8.W1.1", "status": "Done", "depends_on": [], "ids_verdict": "CREATE" },
+        { "story_id": "8.W1.2", "status": "Done", "depends_on": [], "ids_verdict": "ADAPT" },
+        { "story_id": "8.W1.3", "status": "Done", "depends_on": [], "ids_verdict": "CREATE" }
       ]
     },
     {

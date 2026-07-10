@@ -44,6 +44,9 @@ execução local do Codex CLI. Este epic fecha os gaps de produção observados:
 
 ### W1 - Fundações isoláveis
 
+**Status:** Done em 2026-07-09. Fan-in local `4dfa684`, quality gate integrado
+PASS (113 testes, lint, typecheck, builds e pgTAP 10/10).
+
 - 8.W1.1 - Repository Supabase do domínio unificado
 - 8.W1.2 - Boundary seguro do runner Codex CLI local
 - 8.W1.3 - Materializador atômico de artefatos
@@ -86,4 +89,3 @@ As três stories têm ownership de arquivos disjunto e podem executar em paralel
 Orquestração por `/sinkra-wave-execute epic-8 W1`, com preflight determinístico,
 DAG por ownership, worktree por story, `/sinkra-full-cycle` por child e fan-in
 exclusivo de `@devops`.
-

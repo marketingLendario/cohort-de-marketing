@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "8.W1.2"
 title: "Boundary seguro do runner Codex CLI local"
 epic: 8
@@ -100,3 +100,14 @@ demais arquivos consomem-no sem duplicar lógica.
   No errors.
 - `eslint` nos 6 arquivos do escopo: No issues found.
 
+## QA Gate
+
+**Veredito:** PASS em 2026-07-09. Nenhum finding P0/P1/P2.
+
+- `npm test`: 19 arquivos / 113 testes; typecheck e lint verdes.
+- Bind loopback, 401/403, token server-side, redaction, limites e limpeza do
+  ambiente do subprocesso foram verificados contra o código e os testes.
+- `OPENAI_API_KEY` e `CODEX_API_KEY` não chegam ao `codex exec`; a autenticação
+  permanece a sessão local do Codex CLI.
+- Riscos P3 mantidos: pequena janela de subcontagem enquanto o SIGKILL aguarda a
+  graça e possível `EPIPE` no stdin quando o binário não inicia.

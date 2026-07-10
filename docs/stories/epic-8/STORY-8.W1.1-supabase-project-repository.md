@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "8.W1.1"
 title: "Repository Supabase do domínio unificado"
 epic: 8
@@ -101,3 +101,14 @@ touched_paths:
 - `.env` local (gitignored) foi criado a partir de `.env.example` para os testes de
   cliente rodarem na worktree fresca — não versionado, não é deliverable.
 
+## QA Gate
+
+**Veredito:** PASS em 2026-07-09. Nenhum finding P0/P1/P2.
+
+- `npm test`: 19 arquivos / 113 testes.
+- `npm run typecheck` e `npm run lint`: PASS.
+- `npm run test:db`: pgTAP 10/10; `npm run lint:db`: sem erros.
+- RLS, filtro `workspace_id`, ausência de `service_role` e OCC por revisão
+  verificados diretamente na implementação e nas migrations.
+- Riscos P3 mantidos: integração TS contra Supabase local fica para W2.1 e a
+  unicidade de uma única revisão `active` por projeto ainda depende da aplicação.

@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "8.W1.3"
 title: "Materializador atômico de artefatos"
 epic: 8
@@ -78,9 +78,19 @@ touched_paths:
 - `eslint` (módulo + teste): **No issues found**.
 - Contrato: `JSON.parse` OK.
 
+## QA Gate
+
+**Veredito:** PASS em 2026-07-09. Nenhum finding P0/P1/P2.
+
+- `npm test`: 19 arquivos / 113 testes; typecheck e lint verdes.
+- Traversal, absoluto, slug, symlink ancestral/alvo, escrita atômica, rollback,
+  idempotência e conflito foram verificados diretamente na implementação.
+- O módulo permanece standalone por decisão da story; o wiring transacional com
+  Supabase pertence à W2.3.
+
 ## Change Log
 
 | Data | Autor | Mudança |
 |------|-------|---------|
 | 2026-07-09 | @dev | Implementação completa (contrato + materializador + 20 testes). Status Ready → InReview. Contrato materializado em `apps/.../data/contracts/` conforme ownership do fan-out; File List/`touched_paths` alinhados. |
-
+| 2026-07-09 | @qa | Quality gate integrado PASS; status InReview → Done. |
