@@ -1,5 +1,5 @@
 ---
-status: Ready
+status: Done
 story_id: "9.W1.3"
 title: "E2E de onboarding em instalação limpa"
 epic: 9
@@ -22,7 +22,7 @@ touched_paths:
   - "docs/qa/epic-9-w1-onboarding.md"
   - "docs/stories/epic-9/STORY-9.W1.3-clean-install-onboarding-e2e.md"
   - "docs/stories/epic-9/epic-9-state.json"
-  - ".aiox/waves/epic-9-wave-1/qa-gate.yaml"
+  - ".aiox/waves/9-wave-1/qa-gate.yaml"
 ---
 
 # STORY-9.W1.3 - E2E de onboarding em instalação limpa
@@ -45,12 +45,59 @@ touched_paths:
 
 ## Tasks
 
-- [ ] Criar fixture limpa e spec E2E.
-- [ ] Provar bloqueio do segundo bootstrap.
-- [ ] Provar round-trip do briefing importado.
-- [ ] Capturar e inspecionar desktop/mobile.
-- [ ] Rodar gates e fechar a W1.
+- [x] Criar fixture limpa e spec E2E.
+- [x] Provar bloqueio do segundo bootstrap.
+- [x] Provar round-trip do briefing importado.
+- [x] Capturar e inspecionar desktop/mobile.
+- [x] Rodar gates e fechar a W1.
 
 ## File List
 
-- A preencher durante a implementação.
+| Arquivo | Operação |
+|---|---|
+| `apps/academia-lendaria-ads-studio/e2e/story-9-w1-onboarding.mjs` | ADD |
+| `apps/academia-lendaria-ads-studio/package.json` | MODIFY |
+| `docs/qa/epic-9-w1-onboarding.md` | ADD |
+| `docs/stories/epic-9/STORY-9.W1.3-clean-install-onboarding-e2e.md` | MODIFY |
+| `docs/stories/epic-9/epic-9-state.json` | MODIFY |
+| `.aiox/waves/9-wave-1/qa-gate.yaml` | ADD |
+
+## QA Gate
+
+**Veredito:** SHIP em 2026-07-10. Nenhum finding aberto P0/P1/P2.
+
+- Banco limpo é provado por contagem direta de usuários, workspaces, memberships
+  e projetos, inclusive quando o gateway retorna `502` transitório.
+- Primeiro operador e importação são executados pela UI; o projeto importado
+  recebe UUID real e revisão ativa persistida.
+- Reload e um novo `BrowserContext` preservam valores e proveniência; a
+  exportação pela UI confirma a revisão ativa `1` e o mesmo `projectId`.
+- O segundo bootstrap retorna `409`; o owner original continua autenticável.
+- Desktop e mobile passaram sem console error, page error, request failure,
+  resposta inesperada, overflow ou overlap.
+- O runner recusa worktree com launcher ativo e só encerra o `runtimeId` que
+  iniciou, preservando sessões preexistentes.
+- O runner também recusa um Supabase já ativo; a rodada válida possui o ciclo
+  completo do stack compartilhado e não reseta dados de outro worktree.
+- Uma tentativa parcial de `supabase start` também é assumida pelo runner: se o
+  banco iniciou, DB/Auth/REST/Kong são exigidos e o teardown encerra
+  explicitamente o `project_id`, mesmo quando a CLI falha por healthcheck
+  tardio de serviço auxiliar.
+
+## Validação executada
+
+- `npm run test:e2e:onboarding` - PASS.
+- `npm test` - 37 arquivos / 291 testes PASS.
+- `npm run lint` - PASS.
+- `npm run typecheck` - PASS.
+- `npm run build` e `npm run build:server` - PASS.
+- `npm run lint:db` - sem erros.
+- `npm run test:db` - 5 arquivos / 52 testes PASS após reset limpo.
+- Catálogo - 30 skills / 40 relações / espelho canônico válido.
+- `git diff --check` - PASS.
+
+## Change Log
+
+| Data | Agente | Mudança |
+|---|---|---|
+| 2026-07-10 | @qa | E2E limpo do onboarding, evidência visual, gates integrados e fechamento da Wave 1. Status Ready -> Done. |
