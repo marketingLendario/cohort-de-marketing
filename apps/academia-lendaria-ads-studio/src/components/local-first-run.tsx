@@ -29,8 +29,8 @@ export function LocalFirstRun() {
       await createLocalBootstrap({ email, password, workspaceName })
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
       if (signInError) throw new Error('Acesso criado, mas não foi possível entrar automaticamente.')
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Não foi possível concluir o primeiro acesso.')
+    } catch {
+      setError('Não foi possível criar seu acesso agora. Os dados preenchidos continuam aqui; tente novamente.')
       setSubmitting(false)
     }
   }
@@ -38,15 +38,15 @@ export function LocalFirstRun() {
   return (
     <section className="local-first-run" aria-labelledby="local-first-run-title">
       <div className="local-first-run__header">
-        <h2 id="local-first-run-title">Primeiro acesso local</h2>
-        <p>Crie seu operador e o workspace inicial para começar.</p>
+        <h2 id="local-first-run-title">Seu primeiro acesso</h2>
+        <p>Preencha seus dados para entrar e criar o primeiro projeto.</p>
       </div>
       <form onSubmit={handleSubmit} className="local-first-run__form">
         <div><Label htmlFor="first-run-email">E-mail</Label><Input id="first-run-email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></div>
         <div><Label htmlFor="first-run-password">Senha</Label><Input id="first-run-password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} /></div>
-        <div><Label htmlFor="first-run-workspace">Nome do workspace</Label><Input id="first-run-workspace" required minLength={2} value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} /></div>
+        <div><Label htmlFor="first-run-workspace">Nome do seu negócio</Label><Input id="first-run-workspace" required minLength={2} value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} /></div>
         {error ? <Alert variant="destructive">{error}</Alert> : null}
-        <Button type="submit" disabled={submitting}>{submitting ? 'Configurando…' : 'Criar acesso local'}</Button>
+        <Button type="submit" disabled={submitting}>{submitting ? 'Criando seu acesso…' : error ? 'Tentar novamente' : 'Criar meu acesso'}</Button>
       </form>
     </section>
   )

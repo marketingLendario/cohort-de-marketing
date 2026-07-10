@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, Icon } from '@/lib/lendaria-ds';
 import { useProjectStore } from '@/stores/project-store';
@@ -45,6 +45,20 @@ interface IntakeConfirmation {
 async function readProjectIntakeError(response: Response): Promise<string> {
   const payload = (await response.json().catch(() => ({}))) as { message?: string };
   return payload.message ?? `Intake respondeu ${response.status}.`;
+}
+
+function studentFacingImportError(message: string): string {
+  if (/segredo|\.env|secret/i.test(message)) {
+    return 'Essa pasta contém um arquivo privado e não pode ser importada. Remova esse arquivo da seleção e tente novamente.';
+  }
+  if (/conflito|conflict|hash|manifest/i.test(message)) {
+    return 'Os materiais mudaram durante a revisão. Revise a pasta novamente antes de continuar.';
+  }
+  return 'Não foi possível ler esses materiais agora. Confira se a pasta continua disponível e tente novamente.';
+}
+
+function sourceName(source: IntakeSource): string {
+  return source.slug.split('-').filter(Boolean).map((word) => `${word[0]?.toUpperCase() ?? ''}${word.slice(1)}`).join(' ');
 }
 
 async function fetchProjectIntakeSources(): Promise<IntakeSource[]> {
@@ -97,6 +111,8 @@ export function ProjectsHome() {
   const [confirmingIntake, setConfirmingIntake] = useState(false);
   const [intakeError, setIntakeError] = useState<string | null>(null);
   const [intakeSuccess, setIntakeSuccess] = useState<string | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const visibleProjects = projects.filter((project) => !activeSpokeId || project.workspaceId === activeSpokeId);
 
   useEffect(() => {
@@ -117,7 +133,7 @@ export function ProjectsHome() {
         sources.some((source) => source.slug === current) ? current : sources[0]?.slug || ''
       ));
     } catch (error) {
-      setIntakeError(error instanceof Error ? error.message : 'Não foi possível listar as fontes locais.');
+      setIntakeError(studentFacingImportError(error instanceof Error ? error.message : ''));
     } finally {
       setIntakeLoading(false);
     }
@@ -138,7 +154,7 @@ export function ProjectsHome() {
           sources.some((source) => source.slug === current) ? current : sources[0]?.slug || ''
         ));
       } catch (error) {
-        if (active) setIntakeError(error instanceof Error ? error.message : 'Não foi possível listar as fontes locais.');
+        if (active) setIntakeError(studentFacingImportError(error instanceof Error ? error.message : ''));
       } finally {
         if (active) setIntakeLoading(false);
       }
@@ -163,6 +179,7 @@ export function ProjectsHome() {
     const trimmedName = name.trim();
     if (!trimmedName || !activeSpokeId || submitting) return;
 
+    setCreateError(null);
     // Caminho demo: criação local e síncrona, sem repository (AC4).
     if (DEMO_AUTH_ENABLED) {
       openProject(createDemoProject(activeSpokeId, trimmedName));
@@ -175,6 +192,8 @@ export function ProjectsHome() {
     try {
       const projectId = await createPersistentProject(trimmedName);
       openProject(projectId);
+    } catch {
+      setCreateError('Não foi possível criar o projeto agora. Seus dados continuam aqui; tente novamente.');
     } finally {
       setSubmitting(false);
     }
@@ -196,7 +215,7 @@ export function ProjectsHome() {
       setIntakePreview(await fetchProjectIntakePreview({ projectId: intakeProjectId, sourceSlug: intakeSourceSlug }));
     } catch (error) {
       setIntakePreview(null);
-      setIntakeError(error instanceof Error ? error.message : 'Não foi possível gerar o preview do intake.');
+      setIntakeError(studentFacingImportError(error instanceof Error ? error.message : ''));
     } finally {
       setIntakeLoading(false);
     }
@@ -213,10 +232,10 @@ export function ProjectsHome() {
         sourceSlug: intakeSourceSlug,
         expectedManifestHash: intakePreview.manifest.hash,
       });
-      setIntakeSuccess(`Intake confirmado: ${result.imported} importado(s), ${result.unchanged} reaproveitado(s).`);
+      setIntakeSuccess(`${result.imported} material(is) adicionado(s) e ${result.unchanged} já estava(m) atualizado(s).`);
       setIntakePreview((current) => current ? { ...current, manifest: { ...current.manifest, hash: result.manifestHash } } : current);
     } catch (error) {
-      setIntakeError(error instanceof Error ? error.message : 'Não foi possível confirmar o intake.');
+      setIntakeError(studentFacingImportError(error instanceof Error ? error.message : ''));
     } finally {
       setConfirmingIntake(false);
     }
@@ -238,14 +257,14 @@ export function ProjectsHome() {
       <main className="cms-projects-main">
         <div className="asx-page-head cms-projects-head">
           <div>
-            <div className="asx-page-head__eyebrow">Workspace</div>
+            <div className="asx-page-head__eyebrow">Seu trabalho</div>
             <h1 className="asx-page-head__title">Seus <em>projetos</em></h1>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             {!DEMO_AUTH_ENABLED ? (
               <Button variant="ghost" onClick={() => setShowingIntake((value) => !value)}>
                 <Icon name={showingIntake ? 'xmark' : 'folder'} size={14} />
-                {showingIntake ? 'Fechar intake' : 'Intake local'}
+                {showingIntake ? 'Fechar materiais' : 'Trazer materiais'}
               </Button>
             ) : null}
             <Button onClick={() => setCreating((value) => !value)}>
@@ -260,6 +279,7 @@ export function ProjectsHome() {
             <label htmlFor="new-project-name">Nome do projeto</label>
             <div>
               <input
+                ref={nameInputRef}
                 id="new-project-name"
                 className="al-input"
                 value={name}
@@ -271,36 +291,50 @@ export function ProjectsHome() {
                 {submitting ? 'Criando...' : 'Criar e abrir'}
               </Button>
             </div>
+            {createError ? (
+              <div className="cms-inline-recovery" role="alert">
+                <span>{createError}</span>
+                <Button type="submit" variant="ghost" disabled={submitting}>Tentar novamente</Button>
+              </div>
+            ) : null}
           </form>
+        ) : null}
+
+        {visibleProjects.length === 0 && !creating ? (
+          <section className="cms-first-project" aria-labelledby="first-project-title">
+            <span className="cms-first-project__step">Primeiro passo</span>
+            <div>
+              <h2 id="first-project-title">Crie seu primeiro projeto</h2>
+              <p>Dê um nome ao trabalho que você quer organizar. Depois, você poderá trazer seus materiais e verá exatamente o que fazer em seguida.</p>
+            </div>
+            <Button onClick={() => {
+              setCreating(true);
+              window.requestAnimationFrame(() => nameInputRef.current?.focus());
+            }}>
+              <Icon name="plus" size={14} />
+              Começar meu projeto
+            </Button>
+          </section>
         ) : null}
 
         {showingIntake ? (
           <section
-            aria-label="Intake local do filesystem"
-            style={{
-              border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: 16,
-              padding: 20,
-              marginBottom: 24,
-              display: 'grid',
-              gap: 16,
-            }}
+            aria-labelledby="project-materials-title"
+            className="cms-project-materials"
           >
-            <div>
-              <strong>Intake local do filesystem</strong>
-              <p style={{ margin: '6px 0 0', opacity: 0.8 }}>
-                Escaneia apenas diretórios de <code>projetos/</code>, gera preview com manifesto, hashes e conflitos, e só registra metadata no Supabase após confirmação humana.
-              </p>
+            <div className="cms-project-materials__intro">
+              <span>Segundo passo</span>
+              <h2 id="project-materials-title">Traga os materiais que você já tem</h2>
+              <p>Escolha a pasta do seu projeto. Você poderá conferir tudo antes de adicionar, sem alterar os arquivos originais.</p>
             </div>
 
-            <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+            <div className="cms-project-materials__fields">
               <label>
-                <span>Projeto alvo</span>
+                <span>Adicionar ao projeto</span>
                 <select
                   className="al-input"
                   value={intakeProjectId}
                   onChange={(event) => setIntakeProjectId(event.target.value)}
-                  style={{ width: '100%', marginTop: 6 }}
                 >
                   {visibleProjects.map((project) => (
                     <option key={project.id} value={project.id}>
@@ -311,81 +345,74 @@ export function ProjectsHome() {
               </label>
 
               <label>
-                <span>Diretório em projetos/</span>
+                <span>Pasta com seus materiais</span>
                 <select
                   className="al-input"
                   value={intakeSourceSlug}
                   onChange={(event) => setIntakeSourceSlug(event.target.value)}
-                  style={{ width: '100%', marginTop: 6 }}
                 >
-                  <option value="">Selecione…</option>
+                  <option value="">Escolha uma pasta…</option>
                   {intakeSources.map((source) => (
                     <option key={source.slug} value={source.slug}>
-                      {source.root}
+                      {sourceName(source)}
                     </option>
                   ))}
                 </select>
               </label>
             </div>
 
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <div className="cms-project-materials__actions">
               <Button variant="ghost" onClick={() => setShowingIntake((value) => !value)}>
                 Fechar
               </Button>
               <Button variant="ghost" onClick={() => void loadIntakeSources()} disabled={intakeLoading}>
-                Atualizar diretórios
+                Procurar novamente
               </Button>
               <Button onClick={previewIntake} disabled={!intakeProjectId || !intakeSourceSlug || intakeLoading || visibleProjects.length === 0}>
-                {intakeLoading ? 'Gerando preview...' : 'Gerar preview'}
+                {intakeLoading ? 'Preparando revisão...' : 'Revisar materiais'}
               </Button>
               <Button
                 onClick={confirmIntake}
                 disabled={!intakePreview || confirmingIntake || intakeLoading}
               >
-                {confirmingIntake ? 'Confirmando...' : 'Confirmar intake'}
+                {confirmingIntake ? 'Adicionando...' : 'Adicionar materiais'}
               </Button>
             </div>
 
-            {visibleProjects.length === 0 ? <p>Nenhum projeto real disponível para receber o intake.</p> : null}
-            {intakeSources.length === 0 && !intakeLoading ? <p>Nenhum diretório válido encontrado em <code>projetos/</code>.</p> : null}
-            {intakeError ? <p role="alert">{intakeError}</p> : null}
-            {intakeSuccess ? <p>{intakeSuccess}</p> : null}
+            {visibleProjects.length === 0 ? <p className="cms-guidance">Crie um projeto primeiro. Depois, volte aqui para adicionar os materiais.</p> : null}
+            {intakeSources.length === 0 && !intakeLoading ? (
+              <div className="cms-inline-recovery" role="status">
+                <span>Nenhuma pasta de materiais foi encontrada. Salve seus materiais na pasta de projetos e procure novamente.</span>
+                <Button variant="ghost" onClick={() => void loadIntakeSources()}>Procurar novamente</Button>
+              </div>
+            ) : null}
+            {intakeError ? (
+              <div className="cms-inline-recovery" role="alert">
+                <span>{intakeError}</span>
+                <Button variant="ghost" onClick={() => void loadIntakeSources()}>Tentar novamente</Button>
+              </div>
+            ) : null}
+            {intakeSuccess ? (
+              <div className="cms-material-success" role="status">
+                <div><strong>Materiais adicionados</strong><span>{intakeSuccess}</span></div>
+                <Button onClick={() => openProject(intakeProjectId)}>Ver minha próxima ação</Button>
+              </div>
+            ) : null}
 
             {intakePreview ? (
-              <div style={{ display: 'grid', gap: 12 }}>
-                <div
-                  style={{
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 12,
-                    padding: 16,
-                    display: 'grid',
-                    gap: 8,
-                  }}
-                >
-                  <strong>Manifesto gerado</strong>
-                  <span><code>{intakePreview.manifest.sourcePath}</code></span>
-                  <span>{intakePreview.manifest.fileCount} arquivo(s) allowlisted</span>
-                  <span><code>{intakePreview.manifest.hash}</code></span>
-                  <span>Allowlist: {intakePreview.manifest.allowlistVersion}</span>
-                  <span><code>{intakePreview.manifest.allowlist.join(', ')}</code></span>
+              <div className="cms-material-review">
+                <div className="cms-material-review__summary">
+                  <strong>Pronto para revisar</strong>
+                  <span>{intakePreview.manifest.fileCount} material(is) encontrado(s)</span>
+                  <span>Seus arquivos originais não serão alterados.</span>
+                  {intakePreview.conflicts.length > 0 ? <span>{intakePreview.conflicts.length} material(is) será(ão) atualizado(s) com a versão escolhida.</span> : null}
                 </div>
 
-                <div style={{ display: 'grid', gap: 10 }}>
+                <div className="cms-material-review__list" aria-label="Materiais encontrados">
                   {intakePreview.files.map((file) => (
-                    <article
-                      key={`${file.path}:${file.hash}`}
-                      style={{
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: 12,
-                        padding: 14,
-                        display: 'grid',
-                        gap: 6,
-                      }}
-                    >
+                    <article key={`${file.path}:${file.hash}`}>
                       <strong>{file.path}</strong>
-                      <span>Tipo: <code>{file.artifactType}</code> · Formato: <code>{file.format}</code></span>
-                      <span>Hash: <code>{file.hash}</code></span>
-                      <span>Conflito: <code>{file.conflict}</code>{file.existingHash ? ` · atual ${file.existingHash}` : ''}</span>
+                      <span>{file.conflict === 'new' ? 'Novo material' : file.conflict === 'unchanged' ? 'Já está atualizado' : 'Será atualizado'}</span>
                     </article>
                   ))}
                 </div>

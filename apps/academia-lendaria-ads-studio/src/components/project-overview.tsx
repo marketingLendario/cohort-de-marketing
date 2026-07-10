@@ -18,9 +18,23 @@ function actionCopy(action: ReturnType<typeof nextProjectAction>) {
   if (action.action === 'review') return 'Revisar proposta';
   if (action.action === 'resume') return 'Acompanhar execução';
   if (action.action === 'open_result') return 'Abrir resultado';
-  if (action.action === 'run') return 'Executar skill';
-  if (action.action === 'open_artifact') return 'Resolver artefato';
-  return 'Completar briefing';
+  if (action.action === 'run') return 'Começar esta etapa';
+  if (action.action === 'open_artifact') return 'Revisar material';
+  return 'Completar informações';
+}
+
+function studentDescription(skillId: string | undefined, fallback: string | undefined) {
+  if (skillId === 'comecar') return 'Vamos conferir o que já está pronto e indicar o primeiro passo do seu projeto.';
+  return fallback
+    ?.replace(/\bskills?\b/gi, 'etapas')
+    .replace(/\b(?:Git|Apify|Node|YAML|CLI|API)\b/gi, 'ferramentas necessárias')
+    ?? 'Abra esta etapa para ver a orientação e continuar.';
+}
+
+function studentMissingLabel(value: string | undefined) {
+  if (!value) return undefined;
+  const label = value.split('.').at(-1)?.replaceAll('_', ' ') ?? value;
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 export function ProjectOverview({ projectId }: { projectId: string }) {
@@ -41,7 +55,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
   const pendingReview = evaluations.filter((evaluation) => evaluation.lifecycle === 'needs_review').length;
   const campaigns = getDemoCampaigns(project.workspaceId).filter((campaign) => !campaign.project_id || campaign.project_id === projectId);
   const recentArtifacts = [...artifacts].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 4);
-  const missingLabel = next?.missingFields[0] ?? next?.missingArtifacts[0] ?? next?.missingAlternatives[0];
+  const missingLabel = studentMissingLabel(next?.missingFields[0] ?? next?.missingArtifacts[0] ?? next?.missingAlternatives[0]);
 
   const sectionId = next?.missingFields[0]?.split('.')[0] ?? 'project';
   const actionLink = !next ? null : next.action === 'fill_field' ? (
@@ -88,15 +102,15 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
         <div className="cms-next-action__copy">
           <span className="cms-kicker">Ação recomendada</span>
           <h2>{nextSkill?.title ?? 'Tudo em dia'}</h2>
-          <p>{nextSkill?.description ?? 'Não há pendências abertas neste projeto.'}</p>
+          <p>{studentDescription(nextSkill?.id, nextSkill?.description) ?? 'Não há pendências abertas neste projeto.'}</p>
           {missingLabel ? <span className="cms-next-action__reason">Falta resolver: {missingLabel}</span> : null}
         </div>
         {actionLink}
       </section>
 
       <section className="cms-stat-strip" aria-label="Resumo do projeto">
-        <div><strong>{done}</strong><span>skills concluídas</span></div>
-        <div><strong>{ready}</strong><span>prontas para rodar</span></div>
+        <div><strong>{done}</strong><span>etapas concluídas</span></div>
+        <div><strong>{ready}</strong><span>prontas para começar</span></div>
         <div><strong>{pendingReview}</strong><span>aguardando revisão</span></div>
         <div><strong>{campaigns.length}</strong><span>campanhas</span></div>
       </section>
@@ -106,7 +120,7 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
           <div className="cms-section__head">
             <div>
               <span className="cms-kicker">Jornada</span>
-              <h2>Estado das próximas skills</h2>
+              <h2>Estado das próximas etapas</h2>
             </div>
             <Link to="/projects/$projectId/journey" params={{ projectId }}>Ver jornada</Link>
           </div>

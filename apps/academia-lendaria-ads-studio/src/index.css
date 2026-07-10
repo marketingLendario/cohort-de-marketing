@@ -419,6 +419,147 @@
   flex: 1;
 }
 
+.cms-first-project,
+.cms-project-materials {
+  margin-bottom: 28px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-base);
+  background: var(--card);
+}
+
+.cms-first-project {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+}
+
+.cms-first-project__step,
+.cms-project-materials__intro > span {
+  color: var(--primary);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cms-first-project h2,
+.cms-project-materials h2 {
+  margin: 3px 0 4px;
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 400;
+}
+
+.cms-first-project p,
+.cms-project-materials p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.cms-project-materials {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.cms-project-materials__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cms-project-materials__fields label > span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.cms-project-materials__fields .al-input {
+  width: 100%;
+}
+
+.cms-project-materials__actions,
+.cms-inline-recovery,
+.cms-material-success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cms-inline-recovery,
+.cms-material-success,
+.cms-material-review__summary {
+  padding: 13px 14px;
+  border: 1px solid hsl(var(--warning-hsl) / 0.35);
+  border-radius: var(--radius-sm);
+  background: hsl(var(--warning-hsl) / 0.06);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.cms-new-project > .cms-inline-recovery {
+  margin-top: 10px;
+  justify-content: space-between;
+}
+
+.cms-material-success {
+  justify-content: space-between;
+  border-color: hsl(var(--success-hsl) / 0.35);
+  background: hsl(var(--success-hsl) / 0.06);
+}
+
+.cms-material-success strong,
+.cms-material-success span,
+.cms-material-review__summary strong,
+.cms-material-review__summary span {
+  display: block;
+}
+
+.cms-material-success span,
+.cms-material-review__summary span {
+  margin-top: 3px;
+  color: var(--muted-foreground);
+}
+
+.cms-material-review {
+  display: grid;
+  gap: 10px;
+}
+
+.cms-material-review__list {
+  display: grid;
+  gap: 8px;
+}
+
+.cms-material-review__list article {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+}
+
+.cms-material-review__list strong {
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+
+.cms-material-review__list span {
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  font-size: 9px;
+}
+
 .cms-project-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -563,6 +704,30 @@
   }
 
   .cms-new-project > div {
+    flex-direction: column;
+  }
+
+  .cms-first-project,
+  .cms-project-materials__fields {
+    grid-template-columns: 1fr;
+  }
+
+  .cms-first-project {
+    align-items: stretch;
+    padding: 20px;
+  }
+
+  .cms-first-project .al-btn,
+  .cms-project-materials__actions .al-btn,
+  .cms-material-success .al-btn,
+  .cms-inline-recovery .al-btn {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .cms-material-review__list article {
+    align-items: flex-start;
     flex-direction: column;
   }
 }
@@ -2422,7 +2587,29 @@
 
 .cms-system-readiness__check p {
   color: var(--foreground);
-  font-family: var(--font-mono);
+}
+
+.cms-system-readiness__retry {
+  width: calc(100% - 32px);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 16px 16px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-sm);
+  color: var(--foreground);
+  background: hsl(var(--foreground-hsl) / 0.04);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cms-system-readiness__retry:disabled {
+  cursor: wait;
+  opacity: 0.55;
 }
 
 @media (max-width: 560px) {

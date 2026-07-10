@@ -19,7 +19,9 @@ describe('ProjectOverview', () => {
     render(<ProjectOverview projectId={DEMO_PROJECT_ID} />);
 
     expect(screen.getByRole('heading', { name: /Próximo passo do projeto/i })).toBeInTheDocument();
-    expect(screen.getByText('skills concluídas')).toBeInTheDocument();
+    expect(screen.getByText('etapas concluídas')).toBeInTheDocument();
+    expect(screen.getByText(/Vamos conferir o que já está pronto/)).toBeInTheDocument();
+    expect(screen.queryByText(/Git|Apify|Node|primeiro comando/i)).not.toBeInTheDocument();
     expect(screen.getByText('campanhas')).toBeInTheDocument();
   });
 });

@@ -9,6 +9,6 @@ describe('LoginForm local bootstrap', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: 'empty' }), { status: 200 })))
     render(<LoginForm />)
     expect(screen.getByRole('button', { name: 'Entrar' })).toBeInTheDocument()
-    expect(await screen.findByRole('heading', { name: 'Primeiro acesso local' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Seu primeiro acesso' })).toBeInTheDocument()
   })
 })

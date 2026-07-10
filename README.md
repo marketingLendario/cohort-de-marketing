@@ -80,20 +80,30 @@ Para entender exatamente o que cada skill pode pedir ao usuário, consulte o [Ma
 
 O Marketing Studio unifica Briefing, Jornada de Skills, Artefatos, Ads Studio e Operação Semanal em `apps/academia-lendaria-ads-studio/`.
 
+### Primeira vez no Studio
+
+Depois que o Studio abrir no navegador, toda a jornada acontece pela tela:
+
+1. Em **Seu primeiro acesso**, informe e-mail, senha e o nome do seu negócio.
+2. Em **Seus projetos**, escolha **Começar meu projeto** e dê um nome ao trabalho.
+3. Se você já tem materiais, escolha **Trazer materiais**, confira a lista e confirme. Os arquivos originais não são alterados.
+4. Escolha **Ver minha próxima ação**. A visão geral mostra uma única recomendação e leva direto ao ponto que precisa de atenção.
+
+Se algo interromper a jornada, não apague nem refaça o projeto. Use **Tentar novamente** na própria mensagem. O nome digitado é preservado. No cabeçalho, o indicador de estado explica em linguagem simples o que precisa de atenção; escolha **Verificar novamente** depois de seguir a orientação. Em telas pequenas, os mesmos passos aparecem em uma coluna, com botões de toque amplo.
+
+As instruções abaixo são apenas para quem prepara a instalação. O aluno não precisa copiá-las durante o uso.
+
 Para iniciar tudo pela raiz do repositório, use um único comando:
 
 ```bash
 node scripts/marketing-studio.mjs start
 ```
 
-O launcher confere Node, autenticação do Codex CLI, portas, permissões, banco,
-migrations e navegador; instala as dependências quando necessário; inicia a
-interface, o BFF e os serviços locais; e abre o Studio. Ele reutiliza a
-autenticação local do Codex CLI e não usa `OPENAI_API_KEY`.
+O inicializador prepara os serviços locais necessários e abre o Studio. A tela
+do aluno não mostra comandos, configurações internas nem detalhes de banco.
 
-Se o diagnóstico pedir autenticação, rode `codex login` uma vez e repita o
-comando. O ícone de servidor no cabeçalho mostra os estados **pronto**,
-**degradado** ou **bloqueado**, com a recuperação indicada para cada capacidade.
+O indicador no cabeçalho mostra **tudo pronto**, **um item precisa de atenção**
+ou **ação necessária para continuar**, sempre com recuperação na própria tela.
 
 Comandos de apoio:
 

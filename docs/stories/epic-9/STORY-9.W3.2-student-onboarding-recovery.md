@@ -1,5 +1,5 @@
 ---
-status: Ready
+status: Done
 story_id: "9.W3.2"
 title: "Onboarding e recuperação para alunos"
 epic: 9
@@ -36,7 +36,34 @@ touched_paths:
 
 ## Tasks
 
-- [ ] Corrigir bloqueios de UX do piloto.
-- [ ] Integrar recuperações ao readiness e à próxima ação.
-- [ ] Validar acessibilidade e responsividade.
-- [ ] Atualizar documentação do aluno.
+- [x] Corrigir bloqueios de UX do piloto.
+- [x] Integrar recuperações ao readiness e à próxima ação.
+- [x] Validar acessibilidade e responsividade.
+- [x] Atualizar documentação do aluno.
+
+## Dev Agent Record
+
+### Progress
+
+- [x] Leitura da story, evidências do piloto e padrões existentes.
+- [x] Bloqueios mapeados: estado vazio sem condução, importação com linguagem técnica, falha de criação sem recuperação e diagnóstico expondo comandos internos.
+- [x] Implementação e testes.
+- [x] Validação visual desktop/mobile.
+- [x] Revisão final e gates.
+
+### File List
+
+- `docs/stories/epic-9/STORY-9.W3.2-student-onboarding-recovery.md`
+- `apps/academia-lendaria-ads-studio/src/components/local-first-run.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/local-first-run.test.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/login-form.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/login-form.test.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/project-overview.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/project-overview.test.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/projects-home.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/projects-home.test.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/system-readiness.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/system-readiness.test.tsx`
+- `apps/academia-lendaria-ads-studio/src/index.css`
+- `README.md`
+- `docs/qa/epic-9-student-onboarding.md`

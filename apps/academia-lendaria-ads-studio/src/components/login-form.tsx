@@ -46,7 +46,7 @@ export function LoginForm() {
       <Card style={{ width: '100%', maxWidth: '24rem' }}>
         <CardHeader>
           <CardTitle>Academia Lendária Ads Studio</CardTitle>
-          <CardDescription>Entre para operar suas contas de mídia.</CardDescription>
+          <CardDescription>Entre para continuar seu projeto de marketing.</CardDescription>
         </CardHeader>
         <CardContent>
           <LocalFirstRun />

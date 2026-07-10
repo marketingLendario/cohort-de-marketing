@@ -78,20 +78,20 @@ describe('ProjectsHome filesystem intake', () => {
     const user = userEvent.setup();
     render(<ProjectsHome />);
 
-    await user.click(screen.getByRole('button', { name: /intake local/i }));
-    expect(await screen.findByRole('option', { name: 'projetos/academia-lendaria' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /trazer materiais/i }));
+    expect(await screen.findByRole('option', { name: 'Academia Lendaria' })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /gerar preview/i }));
+    await user.click(screen.getByRole('button', { name: /revisar materiais/i }));
 
-    expect(await screen.findByText('Manifesto gerado')).toBeInTheDocument();
+    expect(await screen.findByText('Pronto para revisar')).toBeInTheDocument();
     expect(screen.getByText('offerbook.md')).toBeInTheDocument();
-    expect(screen.getByText(/Tipo:/)).toHaveTextContent('offerbook');
-    expect(screen.getByText(/Hash:/)).toHaveTextContent('abc123');
-    expect(screen.getByText(/Conflito:/)).toHaveTextContent('conflict');
+    expect(screen.getByText('Será atualizado')).toBeInTheDocument();
+    expect(screen.queryByText('abc123')).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /confirmar intake/i }));
+    await user.click(screen.getByRole('button', { name: /adicionar materiais/i }));
 
-    expect(await screen.findByText('Intake confirmado: 1 importado(s), 0 reaproveitado(s).')).toBeInTheDocument();
+    expect(await screen.findByText('Materiais adicionados')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ver minha próxima ação' })).toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenLastCalledWith(
       '/api/local/project-intake/confirm',
       expect.objectContaining({
@@ -119,10 +119,26 @@ describe('ProjectsHome filesystem intake', () => {
     const user = userEvent.setup();
     render(<ProjectsHome />);
 
-    await user.click(screen.getByRole('button', { name: /intake local/i }));
-    await screen.findByRole('option', { name: 'projetos/academia-lendaria' });
-    await user.click(screen.getByRole('button', { name: /gerar preview/i }));
+    await user.click(screen.getByRole('button', { name: /trazer materiais/i }));
+    await screen.findByRole('option', { name: 'Academia Lendaria' });
+    await user.click(screen.getByRole('button', { name: /revisar materiais/i }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Arquivo rejeitado por conter segredo conhecido: .env');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Essa pasta contém um arquivo privado');
+    expect(screen.getByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
+  });
+
+  it('keeps project data and offers an in-place retry when creation fails', async () => {
+    useSpokeStore.getState().setActiveSpoke('demo-workspace');
+    createProjectMock.mockRejectedValueOnce(new Error('database unavailable'));
+    const user = userEvent.setup();
+    render(<ProjectsHome />);
+
+    await user.click(screen.getByRole('button', { name: 'Novo projeto' }));
+    await user.type(screen.getByLabelText('Nome do projeto'), 'Minha campanha');
+    await user.click(screen.getByRole('button', { name: 'Criar e abrir' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Seus dados continuam aqui');
+    expect(screen.getByLabelText('Nome do projeto')).toHaveValue('Minha campanha');
+    expect(screen.getByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
   });
 });

@@ -6,9 +6,9 @@ describe('SystemReadiness', () => {
   afterEach(() => vi.restoreAllMocks());
 
   it.each([
-    ['ready', 'Ambiente pronto'],
-    ['degraded', 'Ambiente degradado'],
-    ['blocked', 'Ambiente bloqueado'],
+    ['ready', 'Tudo pronto para continuar'],
+    ['degraded', 'Um item precisa de atenção'],
+    ['blocked', 'Ação necessária para continuar'],
   ] as const)('renders and opens the %s state', async (status, label) => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
       status,
@@ -27,17 +27,19 @@ describe('SystemReadiness', () => {
     render(<SystemReadiness />);
     await waitFor(() => expect(screen.getByRole('button', { name: label })).toBeInTheDocument());
     fireEvent.click(screen.getByRole('button', { name: label }));
-    expect(screen.getByRole('dialog', { name: 'Diagnóstico do ambiente' })).toBeInTheDocument();
-    expect(screen.getByText('Codex CLI')).toBeInTheDocument();
-    if (status !== 'ready') expect(screen.getByText('Rode codex login.')).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Estado do Marketing Studio' })).toBeInTheDocument();
+    expect(screen.getByText('Acesso à inteligência artificial')).toBeInTheDocument();
+    expect(screen.queryByText(/codex|cli|login/i)).not.toBeInTheDocument();
+    if (status !== 'ready') expect(screen.getByRole('button', { name: 'Verificar novamente' })).toBeInTheDocument();
   });
 
   it('falls back to a treatable degraded state when the endpoint fails', async () => {
     vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline'));
     render(<SystemReadiness />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Ambiente degradado' })).toBeInTheDocument());
-    fireEvent.click(screen.getByRole('button', { name: 'Ambiente degradado' }));
-    expect(screen.getByText('O diagnóstico do ambiente não respondeu.')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Um item precisa de atenção' })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: 'Um item precisa de atenção' }));
+    expect(screen.getByText('Verificação do Marketing Studio')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Verificar novamente' })).toBeInTheDocument();
   });
 
   it('moves focus into the diagnostic and restores it on Escape', async () => {
@@ -48,9 +50,9 @@ describe('SystemReadiness', () => {
       checks: [{ id: 'web', label: 'Interface', status: 'ready', detail: 'Ativa.', required: true }],
     }), { status: 200 }));
     render(<SystemReadiness />);
-    const trigger = await screen.findByRole('button', { name: 'Ambiente pronto' });
+    const trigger = await screen.findByRole('button', { name: 'Tudo pronto para continuar' });
     fireEvent.click(trigger);
-    const dialog = screen.getByRole('dialog', { name: 'Diagnóstico do ambiente' });
+    const dialog = screen.getByRole('dialog', { name: 'Estado do Marketing Studio' });
     expect(trigger).toHaveAttribute('aria-controls', dialog.id);
     await waitFor(() => expect(dialog).toHaveFocus());
     fireEvent.keyDown(document, { key: 'Escape' });
@@ -58,7 +60,7 @@ describe('SystemReadiness', () => {
     await waitFor(() => expect(trigger).toHaveFocus());
 
     fireEvent.click(trigger);
-    await waitFor(() => expect(screen.getByRole('dialog', { name: 'Diagnóstico do ambiente' })).toHaveFocus());
+    await waitFor(() => expect(screen.getByRole('dialog', { name: 'Estado do Marketing Studio' })).toHaveFocus());
     fireEvent.mouseDown(document.body);
     expect(screen.queryByRole('dialog', { name: 'Diagnóstico do ambiente' })).not.toBeInTheDocument();
     await waitFor(() => expect(trigger).toHaveFocus());
