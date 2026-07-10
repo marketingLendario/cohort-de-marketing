@@ -1,5 +1,5 @@
 ---
-status: Draft
+status: Ready
 story_id: "9.W3.2"
 title: "Onboarding e recuperação para alunos"
 epic: 9

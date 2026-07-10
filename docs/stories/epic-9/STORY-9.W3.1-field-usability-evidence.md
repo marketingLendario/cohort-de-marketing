@@ -1,5 +1,5 @@
 ---
-status: Draft
+status: Ready
 story_id: "9.W3.1"
 title: "Evidência de usabilidade e métricas do piloto"
 epic: 9
