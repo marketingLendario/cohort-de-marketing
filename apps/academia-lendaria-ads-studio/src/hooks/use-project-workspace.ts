@@ -9,6 +9,7 @@ import {
 } from '@/lib/project-repository';
 import {
   LEGACY_BRIEF_SCHEMA_VERSION,
+  migrateLegacyBrief,
   slugifyProjectName,
   type CampaignPlanRevision,
   type MarketingProject,
@@ -46,6 +47,22 @@ export const AUTOSAVE_DEBOUNCE_MS = 800;
  */
 export const PENDING_SKILL_HASH = 'pending';
 
+function canonicalJsonValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalJsonValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, child]) => [key, canonicalJsonValue(child)]),
+    );
+  }
+  return value;
+}
+
+function sameJsonValue(left: unknown, right: unknown): boolean {
+  return JSON.stringify(canonicalJsonValue(left)) === JSON.stringify(canonicalJsonValue(right));
+}
+
 /** Entrada para persistir o INÍCIO de um skill run como pointer durável da UI. */
 export interface PersistSkillRunStartInput {
   projectId: string;
@@ -77,6 +94,7 @@ export interface ProjectWorkspaceDeps {
 export interface ProjectWorkspaceController {
   hydrate: () => Promise<void>;
   createProject: (name: string) => Promise<string>;
+  importProjectBrief: (input: ProjectBriefData & { artifacts?: Record<string, boolean> }) => Promise<string>;
   /** Força o flush imediato do autosave pendente de um projeto (ignora o debounce). */
   flush: (projectId: string) => Promise<void>;
   /** Recarrega a revisão ativa do repository e limpa o conflito, sem sobrescrever o servidor. */
@@ -146,7 +164,10 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
     campaignPlans: CampaignPlanRevision[];
     weeklyPanels: WeeklyPanel[];
   }> {
-    const projects = await repository.listProjects(workspaceId);
+    // Projetos sem pointer ativo são transações interrompidas. Eles continuam
+    // acessíveis ao importador para retomada, mas nunca entram no snapshot da UI.
+    const projects = (await repository.listProjects(workspaceId))
+      .filter((project) => Boolean(project.activeBriefRevisionId));
     const [briefRevisions, artifacts, skillRuns, campaignPlans, weeklyPanels] = await Promise.all([
       Promise.all(projects.map((project) => repository.listBriefRevisions(workspaceId, project.id))).then((lists) =>
         lists.flat(),
@@ -203,6 +224,77 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
       activeBriefRevisionId: brief.id,
     });
     store.getState().applyCreatedProject(updatedProject, brief);
+    return updatedProject.id;
+  }
+
+  async function importProjectBrief(input: ProjectBriefData & { artifacts?: Record<string, boolean> }): Promise<string> {
+    if (demoEnabled) return store.getState().importLegacyBrief(workspaceId, input);
+
+    const now = new Date().toISOString();
+    const projectId = `import-${crypto.randomUUID()}`;
+    const briefId = `import-brief-${crypto.randomUUID()}`;
+    const migrated = migrateLegacyBrief(input, { id: briefId, workspaceId, projectId, now });
+    const slug = String(input.project.slug);
+    const name = String(input.project.name || slug);
+    const existing = await repository.getProjectBySlug(workspaceId, slug);
+
+    // `activeBriefRevisionId` funciona como commit marker. Um projeto sem esse
+    // pointer é uma importação interrompida e pode ser retomado; um projeto já
+    // ativo só é idempotente se o briefing for semanticamente igual.
+    if (existing && existing.name !== name) {
+      throw new RevisionConflictError('marketing_projects');
+    }
+    const project = existing ?? await repository.createProject({ workspaceId, slug, name });
+    const persistedRevisions = existing ? await repository.listBriefRevisions(workspaceId, project.id) : [];
+    if (persistedRevisions.length > 1) throw new RevisionConflictError('project_brief_revisions');
+    const persistedBrief = existing?.activeBriefRevisionId
+      ? persistedRevisions.find((revision) => revision.id === existing.activeBriefRevisionId)
+      : persistedRevisions[0];
+    if (existing?.activeBriefRevisionId && !persistedBrief) {
+      throw new RevisionConflictError('project_brief_revisions');
+    }
+    if (persistedBrief && (
+      persistedBrief.revision !== 1
+      || !sameJsonValue(persistedBrief.data, migrated.document.data)
+      || !sameJsonValue(persistedBrief.fieldSources, migrated.document.fieldSources)
+    )) {
+      throw new RevisionConflictError('project_brief_revisions');
+    }
+    const brief = persistedBrief ?? await repository.createBriefRevision({
+      workspaceId,
+      projectId: project.id,
+      revision: 1,
+      status: 'active',
+      data: migrated.document.data,
+      fieldSources: migrated.document.fieldSources,
+    });
+    const persistedArtifacts = existing ? await repository.listArtifacts(workspaceId, project.id) : [];
+    const declarations = await Promise.all(
+      migrated.declaredArtifactTypes.map((artifactType) => {
+        const persisted = persistedArtifacts.find((artifact) =>
+          artifact.artifactType === artifactType && artifact.source === 'migration');
+        return repository.upsertArtifact({
+          ...(persisted ? { id: persisted.id } : {}),
+          workspaceId,
+          projectId: project.id,
+          artifactType,
+          title: artifactType,
+          format: 'other',
+          state: 'proposal',
+          verification: 'pending',
+          source: 'migration',
+        });
+      }),
+    );
+    const updatedProject = project.activeBriefRevisionId
+      ? project
+      : await repository.updateProject(workspaceId, project.id, { activeBriefRevisionId: brief.id });
+    if (!destroyed && !store.getState().projects.some((candidate) => candidate.id === updatedProject.id)) {
+      store.getState().applyCreatedProject(updatedProject, brief);
+    }
+    for (const artifact of declarations) {
+      if (!destroyed) store.getState().upsertArtifact(artifact);
+    }
     return updatedProject.id;
   }
 
@@ -338,6 +430,7 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
   return {
     hydrate,
     createProject,
+    importProjectBrief,
     flush,
     resolveConflict,
     persistSkillRunStart,
@@ -353,6 +446,7 @@ export interface UseProjectWorkspaceResult {
   conflict: HydrationConflict | null;
   /** Cria um projeto persistente (repository) fora do demo; local no demo. */
   createProject: (name: string) => Promise<string>;
+  importProjectBrief: (input: ProjectBriefData & { artifacts?: Record<string, boolean> }) => Promise<string>;
   /** Persiste o pointer durável de um skill run recém-iniciado (repo+cache real; cache no demo). */
   persistSkillRunStart: (input: PersistSkillRunStartInput) => Promise<SkillRun>;
   /** Persiste uma transição do skill run (repo+cache real; cache no demo). */
@@ -386,6 +480,11 @@ export function useProjectWorkspace(workspaceId: string | null): UseProjectWorks
     return controllerRef.current.createProject(name);
   }, []);
 
+  const importProjectBrief = useCallback(async (input: ProjectBriefData & { artifacts?: Record<string, boolean> }): Promise<string> => {
+    if (!controllerRef.current) throw new Error('Workspace ainda não hidratado.');
+    return controllerRef.current.importProjectBrief(input);
+  }, []);
+
   const persistSkillRunStart = useCallback(async (input: PersistSkillRunStartInput): Promise<SkillRun> => {
     if (!controllerRef.current) throw new Error('Workspace ainda não hidratado.');
     return controllerRef.current.persistSkillRunStart(input);
@@ -410,6 +509,7 @@ export function useProjectWorkspace(workspaceId: string | null): UseProjectWorks
     error: hydration.error,
     conflict: hydration.conflict,
     createProject,
+    importProjectBrief,
     persistSkillRunStart,
     persistSkillRunUpdate,
     retry,

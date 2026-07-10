@@ -1,3 +1,5 @@
+import { projectBriefSchema } from '@/generated/project-brief-schema';
+
 export const PROJECT_BRIEF_SCHEMA_VERSION = '1.0.0' as const;
 export const LEGACY_BRIEF_SCHEMA_VERSION = '0.1.0' as const;
 
@@ -221,14 +223,154 @@ export function slugifyProjectName(value: string): string {
     .slice(0, 64) || 'novo-projeto';
 }
 
+export interface BriefValidationIssue {
+  path: string;
+  message: string;
+}
+
+const LEGACY_BRIEF_ROOT_FIELDS = new Set([
+  'schemaVersion',
+  'meta',
+  'project',
+  'market',
+  'offer',
+  'brand',
+  'funnel',
+  'channels',
+  'data',
+  'integrations',
+  'fieldMeta',
+  'artifacts',
+]);
+
+interface ValidationSchema {
+  type?: string;
+  properties?: Record<string, ValidationSchema>;
+  additionalProperties?: boolean | ValidationSchema;
+  required?: string[];
+  enum?: unknown[];
+  const?: unknown;
+  pattern?: string;
+  items?: ValidationSchema;
+  minimum?: number;
+  maximum?: number;
+  minItems?: number;
+  maxItems?: number;
+  format?: string;
+}
+
+function validateSchemaValue(value: unknown, schema: ValidationSchema, path: string, issues: BriefValidationIssue[]): void {
+  if (schema.const !== undefined && value !== schema.const) {
+    issues.push({ path, message: `deve ser ${String(schema.const)}.` });
+    return;
+  }
+  if (schema.type === 'object') {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      issues.push({ path, message: 'deve ser um objeto.' });
+      return;
+    }
+    const object = value as Record<string, unknown>;
+    for (const required of schema.required ?? []) {
+      if (!Object.prototype.hasOwnProperty.call(object, required)) {
+        issues.push({ path: `${path}.${required}`, message: 'é obrigatório.' });
+      }
+    }
+    for (const [key, child] of Object.entries(object)) {
+      const childPath = `${path}.${key}`;
+      const propertySchema = schema.properties?.[key];
+      if (propertySchema) validateSchemaValue(child, propertySchema, childPath, issues);
+      else if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
+        validateSchemaValue(child, schema.additionalProperties, childPath, issues);
+      } else if (schema.additionalProperties === false) {
+        issues.push({ path: childPath, message: 'campo não permitido.' });
+      }
+    }
+    return;
+  }
+  if (schema.type === 'array') {
+    if (!Array.isArray(value)) {
+      issues.push({ path, message: 'deve ser uma lista.' });
+      return;
+    }
+    if (schema.minItems !== undefined && value.length < schema.minItems) issues.push({ path, message: `deve ter ao menos ${schema.minItems} item(ns).` });
+    if (schema.maxItems !== undefined && value.length > schema.maxItems) issues.push({ path, message: `deve ter no máximo ${schema.maxItems} item(ns).` });
+    if (schema.items) value.forEach((item, index) => validateSchemaValue(item, schema.items!, `${path}.${index}`, issues));
+    return;
+  }
+  if (schema.type === 'string' && typeof value !== 'string') {
+    issues.push({ path, message: 'deve ser texto.' });
+    return;
+  }
+  if (schema.type === 'number' && (typeof value !== 'number' || !Number.isFinite(value))) {
+    issues.push({ path, message: 'deve ser número.' });
+    return;
+  }
+  if (schema.type === 'integer' && (typeof value !== 'number' || !Number.isInteger(value))) {
+    issues.push({ path, message: 'deve ser número inteiro.' });
+    return;
+  }
+  if (schema.type === 'boolean' && typeof value !== 'boolean') {
+    issues.push({ path, message: 'deve ser booleano.' });
+    return;
+  }
+  if (typeof value === 'number') {
+    if (schema.minimum !== undefined && value < schema.minimum) issues.push({ path, message: `deve ser maior ou igual a ${schema.minimum}.` });
+    if (schema.maximum !== undefined && value > schema.maximum) issues.push({ path, message: `deve ser menor ou igual a ${schema.maximum}.` });
+  }
+  if (schema.enum && !schema.enum.includes(value)) {
+    issues.push({ path, message: `deve ser um de: ${schema.enum.join(', ')}.` });
+  }
+  if (schema.pattern && typeof value === 'string' && !new RegExp(schema.pattern).test(value)) {
+    issues.push({ path, message: 'não corresponde ao formato esperado.' });
+  }
+  if (schema.format === 'date-time' && typeof value === 'string' && Number.isNaN(Date.parse(value))) {
+    issues.push({ path, message: 'deve ser uma data e hora válida.' });
+  }
+  if (schema.format === 'date' && typeof value === 'string' && !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    issues.push({ path, message: 'deve ser uma data válida no formato AAAA-MM-DD.' });
+  }
+}
+
+/** Valida o envelope importável sem normalizar nem descartar o documento original. */
+export function validateLegacyBrief(input: unknown): BriefValidationIssue[] {
+  const issues: BriefValidationIssue[] = [];
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    return [{ path: '$', message: 'deve ser um objeto JSON.' }];
+  }
+  const document = input as Record<string, unknown>;
+  for (const key of Object.keys(document)) {
+    if (!LEGACY_BRIEF_ROOT_FIELDS.has(key)) issues.push({ path: key, message: 'campo não permitido.' });
+  }
+  const canonicalRoot = projectBriefSchema as unknown as ValidationSchema;
+  for (const required of canonicalRoot.required ?? []) {
+    if (!Object.prototype.hasOwnProperty.call(document, required)) {
+      issues.push({ path: required, message: 'é obrigatório.' });
+    }
+  }
+  const canonicalProperties = projectBriefSchema.properties as unknown as Record<string, ValidationSchema>;
+  for (const [key, schema] of Object.entries(canonicalProperties)) {
+    if (document[key] !== undefined) validateSchemaValue(document[key], schema, key, issues);
+  }
+  if (document.artifacts !== undefined) {
+    if (!document.artifacts || typeof document.artifacts !== 'object' || Array.isArray(document.artifacts)) {
+      issues.push({ path: 'artifacts', message: 'deve ser um objeto de flags booleanas.' });
+    } else {
+      for (const [artifactType, declared] of Object.entries(document.artifacts as Record<string, unknown>)) {
+        if (typeof declared !== 'boolean') issues.push({ path: `artifacts.${artifactType}`, message: 'deve ser booleano.' });
+      }
+    }
+  }
+  return issues;
+}
+
 export function migrateLegacyBrief(
   input: ProjectBriefData & { artifacts?: Record<string, boolean> },
   options: { id: string; workspaceId: string; projectId: string; now: string },
 ): { document: ProjectBriefRevision; declaredArtifactTypes: string[] } {
-  if (input.schemaVersion !== LEGACY_BRIEF_SCHEMA_VERSION) {
-    throw new Error('Formato de briefing não suportado. Esperado: 0.1.0.');
+  const issues = validateLegacyBrief(input);
+  if (issues.length) {
+    throw new Error(`Briefing inválido: ${issues.map((issue) => `${issue.path} (${issue.message})`).join('; ')}`);
   }
-  if (!input.project?.slug) throw new Error('O briefing precisa conter project.slug.');
 
   const data = structuredClone(input);
   const declaredArtifactTypes = Object.entries(data.artifacts ?? {})

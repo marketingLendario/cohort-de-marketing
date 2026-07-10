@@ -251,6 +251,131 @@ describe('use-project-workspace — hidratação e criação', () => {
     expect(await repository.getProject(WORKSPACE_ID, projectId)).toMatchObject({ slug: 'novo-projeto' });
     controller.destroy();
   });
+
+  it('importProjectBrief persiste projeto, revisão e artefatos antes de atualizar o cache', async () => {
+    const repository = createFakeRepository();
+    const store = createProjectStore({ demoEnabled: false });
+    const controller = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store, demoEnabled: false });
+    const input = {
+      schemaVersion: '0.1.0' as const,
+      project: { slug: 'importado', name: 'Projeto Importado' },
+      data: { visitors: 0 },
+      brand: { approvedDirection: false },
+      integrations: { apifyStatus: 'unknown' },
+      fieldMeta: { 'brand.approvedDirection': { source: 'user' } },
+      artifacts: { offerbook: true },
+    };
+    const projectId = await controller.importProjectBrief(input);
+    expect(projectId).toBeTruthy();
+    expect(store.getState().projects).toHaveLength(1);
+    expect(store.getState().briefRevisions[0]?.data.data).toEqual(input.data);
+    expect(store.getState().artifacts[0]?.artifactType).toBe('offerbook');
+    const persisted = await repository.getProject(WORKSPACE_ID, projectId);
+    expect(persisted?.activeBriefRevisionId).toBe(store.getState().briefRevisions[0]?.id);
+    controller.destroy();
+
+    const nextStore = createProjectStore({ demoEnabled: false });
+    const nextController = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store: nextStore, demoEnabled: false });
+    await nextController.hydrate();
+    expect(nextStore.getState().projects).toHaveLength(1);
+    expect(nextStore.getState().projects[0]?.id).toBe(projectId);
+    expect(nextStore.getState().briefRevisions[0]?.data.data).toEqual(input.data);
+    nextController.destroy();
+  });
+
+  it('não atualiza cache quando a persistência da primeira revisão falha', async () => {
+    const base = createFakeRepository();
+    const createBriefRevision = vi.fn()
+      .mockRejectedValueOnce(new Error('falha parcial'))
+      .mockImplementation(base.createBriefRevision);
+    const repository: ProjectRepository = {
+      ...base,
+      createBriefRevision,
+    };
+    const store = createProjectStore({ demoEnabled: false });
+    const controller = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store, demoEnabled: false });
+    const input = { schemaVersion: '0.1.0' as const, project: { slug: 'falha' } };
+    await expect(controller.importProjectBrief(input)).rejects.toThrow('falha parcial');
+    expect(store.getState().projects).toHaveLength(0);
+    expect(store.getState().briefRevisions).toHaveLength(0);
+
+    const projectId = await controller.importProjectBrief(input);
+    expect(projectId).toBeTruthy();
+    expect(store.getState().projects).toHaveLength(1);
+    expect(createBriefRevision).toHaveBeenCalledTimes(2);
+    controller.destroy();
+  });
+
+  it('retoma declarações de artefato após falha sem sobrescrever um projeto completo', async () => {
+    const base = createFakeRepository();
+    const upsertArtifact = vi.fn()
+      .mockImplementationOnce(base.upsertArtifact)
+      .mockRejectedValueOnce(new Error('artefato indisponível'))
+      .mockImplementation(base.upsertArtifact);
+    const repository: ProjectRepository = { ...base, upsertArtifact };
+    const firstStore = createProjectStore({ demoEnabled: false });
+    const first = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store: firstStore, demoEnabled: false });
+    const input = { schemaVersion: '0.1.0' as const, project: { slug: 'retomavel' }, artifacts: { offerbook: true, design: true } };
+
+    await expect(first.importProjectBrief(input)).rejects.toThrow('artefato indisponível');
+    expect(firstStore.getState().projects).toHaveLength(0);
+    first.destroy();
+
+    const interruptedStore = createProjectStore({ demoEnabled: false });
+    const interrupted = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store: interruptedStore, demoEnabled: false });
+    await interrupted.hydrate();
+    expect(interruptedStore.getState().projects).toHaveLength(0);
+    interrupted.destroy();
+
+    const retryStore = createProjectStore({ demoEnabled: false });
+    const retry = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store: retryStore, demoEnabled: false });
+    const projectId = await retry.importProjectBrief(input);
+    expect(retryStore.getState().projects[0]?.id).toBe(projectId);
+    expect(new Set(retryStore.getState().artifacts.map((artifact) => artifact.artifactType))).toEqual(new Set(['offerbook', 'design']));
+    const persistedArtifacts = await repository.listArtifacts(WORKSPACE_ID, projectId);
+    expect(persistedArtifacts).toHaveLength(2);
+    expect(new Set(persistedArtifacts.map((artifact) => artifact.artifactType))).toEqual(new Set(['offerbook', 'design']));
+
+    await expect(retry.importProjectBrief(input)).resolves.toBe(projectId);
+    expect(await repository.listProjects(WORKSPACE_ID)).toHaveLength(1);
+    expect(await repository.listBriefRevisions(WORKSPACE_ID, projectId)).toHaveLength(1);
+    expect(await repository.listArtifacts(WORKSPACE_ID, projectId)).toHaveLength(2);
+    retry.destroy();
+  });
+
+  it('reconcilia resposta perdida depois do commit sem duplicar projeto ou revisão', async () => {
+    const base = createFakeRepository();
+    const updateProject = vi.fn(async (...args: Parameters<ProjectRepository['updateProject']>) => {
+      const committed = await base.updateProject(...args);
+      if (updateProject.mock.calls.length === 1) throw new Error('resposta perdida');
+      return committed;
+    });
+    const repository: ProjectRepository = { ...base, updateProject };
+    const store = createProjectStore({ demoEnabled: false });
+    const controller = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store, demoEnabled: false });
+    const input = { schemaVersion: '0.1.0' as const, project: { slug: 'commit-incerto', name: 'Commit Incerto' } };
+
+    await expect(controller.importProjectBrief(input)).rejects.toThrow('resposta perdida');
+    expect(store.getState().projects).toHaveLength(0);
+
+    const projectId = await controller.importProjectBrief(input);
+    expect(store.getState().projects.map((project) => project.id)).toEqual([projectId]);
+    expect(await repository.listProjects(WORKSPACE_ID)).toHaveLength(1);
+    expect(await repository.listBriefRevisions(WORKSPACE_ID, projectId)).toHaveLength(1);
+    controller.destroy();
+  });
+
+  it('recusa slug duplicado sem sobrescrever o projeto existente', async () => {
+    const repository = createFakeRepository();
+    const first = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store: createProjectStore({ demoEnabled: false }), demoEnabled: false });
+    await first.importProjectBrief({ schemaVersion: '0.1.0', project: { slug: 'duplicado' } });
+    const store = createProjectStore({ demoEnabled: false });
+    const second = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store, demoEnabled: false });
+    await expect(second.importProjectBrief({ schemaVersion: '0.1.0', project: { slug: 'duplicado', name: 'Sobrescrita' } })).rejects.toThrow('marketing_projects');
+    expect(store.getState().projects).toHaveLength(0);
+    first.destroy();
+    second.destroy();
+  });
 });
 
 describe('use-project-workspace — autosave e conflito', () => {

@@ -13,12 +13,19 @@ import {
   type BriefJsonSchema,
 } from '@/lib/briefing-fields';
 import { evaluateProjectSkills } from '@/lib/readiness';
+import { DEMO_AUTH_ENABLED } from '@/lib/demo-mode';
+import { useOptionalProjectWorkspaceActions } from '@/components/project-hydration-boundary';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
-import type { ProjectBriefData } from '@/lib/project-domain';
+import { validateLegacyBrief, type ProjectBriefData } from '@/lib/project-domain';
 
 const SCHEMA = projectBriefSchema as unknown as BriefJsonSchema & {
   ['x-steps']: ReadonlyArray<{ id: string; title: string; description?: string }>;
 };
+
+// eslint-disable-next-line react-refresh/only-export-components -- helper puro testável do parser de importação
+export function formatBriefValidationIssues(issues: ReadonlyArray<{ path: string; message: string }>): string {
+  return `Briefing inválido: ${issues.map((issue) => `${issue.path} (${issue.message})`).join('; ')}`;
+}
 
 function sourceLabel(source?: string, confirmation?: string) {
   if (confirmation === 'not_applicable') return 'Não se aplica';
@@ -185,6 +192,7 @@ export function ProjectBriefing({ projectId, sectionId }: { projectId: string; s
   const updateField = useProjectStore((state) => state.updateBriefField);
   const markNotApplicable = useProjectStore((state) => state.markFieldNotApplicable);
   const importLegacyBrief = useProjectStore((state) => state.importLegacyBrief);
+  const workspaceActions = useOptionalProjectWorkspaceActions();
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [importError, setImportError] = useState<string | null>(null);
 
@@ -221,8 +229,16 @@ export function ProjectBriefing({ projectId, sectionId }: { projectId: string; s
   async function importFile(file: File) {
     setImportError(null);
     try {
-      const parsed = JSON.parse(await file.text()) as ProjectBriefData;
-      if (parsed.schemaVersion !== '0.1.0') throw new Error('O importador aceita o export legado 0.1.0.');
+      const raw: unknown = JSON.parse(await file.text());
+      const issues = validateLegacyBrief(raw);
+      if (issues.length) throw new Error(formatBriefValidationIssues(issues));
+      const parsed = raw as ProjectBriefData;
+      if (workspaceActions?.importProjectBrief) {
+        const importedProjectId = await workspaceActions.importProjectBrief(parsed);
+        navigate({ to: '/projects/$projectId/overview', params: { projectId: importedProjectId } });
+        return;
+      }
+      if (!DEMO_AUTH_ENABLED) throw new Error('Importação indisponível fora do workspace persistente.');
       const importedProjectId = importLegacyBrief(workspaceId, parsed);
       navigate({ to: '/projects/$projectId/overview', params: { projectId: importedProjectId } });
     } catch (error) {

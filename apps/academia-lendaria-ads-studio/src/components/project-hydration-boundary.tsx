@@ -5,6 +5,7 @@ import { useProjectWorkspace, type UseProjectWorkspaceResult } from '@/hooks/use
 /**
  * Ações do controller de workspace expostas para as telas dentro da boundary:
  *   - `createProject`: `ProjectsHome` cria projeto persistente (STORY-8.W2.1).
+ *   - `importProjectBrief`: importa o briefing via controller/repository fora do demo (STORY-9.W1.2).
  *   - `persistSkillRunStart`/`persistSkillRunUpdate`: `ProjectJourney` persiste o
  *     pointer durável do skill run pelo `ProjectRepository` (STORY-8.W2.2 /
  *     QA-W2B1-02), para o run e sua proposta sobreviverem a um reload em modo real.
@@ -13,7 +14,7 @@ import { useProjectWorkspace, type UseProjectWorkspaceResult } from '@/hooks/use
 export type ProjectWorkspaceActions = Pick<
   UseProjectWorkspaceResult,
   'createProject' | 'persistSkillRunStart' | 'persistSkillRunUpdate'
->;
+> & Partial<Pick<UseProjectWorkspaceResult, 'importProjectBrief'>>;
 
 const ProjectWorkspaceActionsContext = createContext<ProjectWorkspaceActions | null>(null);
 
@@ -126,6 +127,7 @@ export function ProjectHydrationBoundary({
     <ProjectWorkspaceActionsProvider
       value={{
         createProject: workspace.createProject,
+        importProjectBrief: workspace.importProjectBrief,
         persistSkillRunStart: workspace.persistSkillRunStart,
         persistSkillRunUpdate: workspace.persistSkillRunUpdate,
       }}
