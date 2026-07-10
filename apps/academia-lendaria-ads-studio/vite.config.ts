@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
   // aqui, no contexto Node do config, para ser injetado server-side no proxy.
   const env = loadEnv(mode, process.cwd(), '')
   const localRunnerToken = env.LOCAL_SKILL_RUNNER_TOKEN ?? process.env.LOCAL_SKILL_RUNNER_TOKEN
+  const localBffUrl = env.LOCAL_BFF_URL ?? process.env.LOCAL_BFF_URL ?? 'http://127.0.0.1:3002'
 
   return {
     plugins: [TanStackRouterVite({ autoCodeSplitting: true }), react(), tailwindcss()],
@@ -25,7 +26,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: 'http://127.0.0.1:3002',
+          target: localBffUrl,
           changeOrigin: false,
           // Injeta o segredo local no lado servidor do dev server (AC3). O
           // browser nunca vê nem envia o token; o header é acrescentado aqui.

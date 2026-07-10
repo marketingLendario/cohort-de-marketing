@@ -6,6 +6,7 @@ import { DEMO_AUTH_ENABLED, signOutDemo } from '@/lib/demo-mode';
 import { supabase } from '@/lib/supabase';
 import { useSpokeStore } from '@/stores/spoke-store';
 import { useProjectStore, type DEMO_PROJECT_ID } from '@/stores/project-store';
+import { SystemReadiness } from './system-readiness';
 
 interface UnifiedShellProps {
   projectId: typeof DEMO_PROJECT_ID | string;
@@ -82,6 +83,7 @@ export function UnifiedShell({ projectId, children }: UnifiedShellProps) {
                 </select>
               </label>
             ) : null}
+            <SystemReadiness />
             <button
               className="asx-iconbtn"
               type="button"
@@ -149,4 +151,3 @@ export function UnifiedShell({ projectId, children }: UnifiedShellProps) {
     </div>
   );
 }
-

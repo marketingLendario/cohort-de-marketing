@@ -66,6 +66,7 @@ import {
 } from './local-runner-security.js'
 import { z } from 'zod'
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { readReadinessSnapshot } from './readiness.js'
 
 export interface BuildAppOptions {
   /** Inject a store (tests); defaults to the in-memory skeleton store. */
@@ -116,6 +117,8 @@ export interface BuildAppOptions {
   artifactApprovalService?: ArtifactApprovalService | null
   /** Raiz do monorepo (para resolver `projetos/`). Default: env/`../..`. */
   cohortRepoRoot?: string
+  /** Snapshot sanitizado produzido pelo launcher local (STORY-8.W3.3). */
+  readinessFile?: string
 }
 
 export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
@@ -259,6 +262,12 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     })
   })
   app.get('/healthz', async (_req, reply) => reply.status(200).send({ status: 'ok' }))
+  app.get('/api/local/readiness', async (_req, reply) => {
+    reply.header('cache-control', 'no-store')
+    return reply.status(200).send(
+      await readReadinessSnapshot(options.readinessFile ?? process.env.MARKETING_STUDIO_READINESS_FILE),
+    )
+  })
 
   const localSkillRunSchema = z.object({
     // Opcional no boundary (compat com callers legados): derivado do projeto abaixo.

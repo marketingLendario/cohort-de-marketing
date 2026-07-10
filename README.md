@@ -80,26 +80,38 @@ Para entender exatamente o que cada skill pode pedir ao usuário, consulte o [Ma
 
 O Marketing Studio unifica Briefing, Jornada de Skills, Artefatos, Ads Studio e Operação Semanal em `apps/academia-lendaria-ads-studio/`.
 
-```bash
-npm --prefix apps/academia-lendaria-ads-studio install
-npm --prefix apps/academia-lendaria-ads-studio run dev
-```
-
-Para executar skills pela interface, inicie também o runner local:
+Para iniciar tudo pela raiz do repositório, use um único comando:
 
 ```bash
-LOCAL_SKILL_RUNNER_ENABLED=true npm --prefix apps/academia-lendaria-ads-studio run dev:server
+node scripts/marketing-studio.mjs start
 ```
 
-O runner chama `codex exec` em sandbox `read-only`, reutiliza a autenticação local
-do Codex CLI e permanece desligado por padrão. Não é necessário configurar
-`OPENAI_API_KEY` para operar as skills pela interface. Confirme antes com
-`codex --version`; se necessário, autentique uma vez com `codex login`.
+O launcher confere Node, autenticação do Codex CLI, portas, permissões, banco,
+migrations e navegador; instala as dependências quando necessário; inicia a
+interface, o BFF e os serviços locais; e abre o Studio. Ele reutiliza a
+autenticação local do Codex CLI e não usa `OPENAI_API_KEY`.
+
+Se o diagnóstico pedir autenticação, rode `codex login` uma vez e repita o
+comando. O ícone de servidor no cabeçalho mostra os estados **pronto**,
+**degradado** ou **bloqueado**, com a recuperação indicada para cada capacidade.
+
+Comandos de apoio:
+
+```bash
+node scripts/marketing-studio.mjs check   # diagnostica sem iniciar
+node scripts/marketing-studio.mjs status  # mostra a sessão atual
+node scripts/marketing-studio.mjs stop    # encerra só o que o launcher iniciou
+```
+
+O shutdown preserva o banco e os artefatos em `projetos/`. Para portas
+alternativas, use `--web-port 5188 --bff-port 3308`. A inicialização manual com
+`npm run dev` e `npm run dev:server` continua disponível para desenvolvimento.
 
 Validação completa do app:
 
 ```bash
 npm --prefix apps/academia-lendaria-ads-studio test
+npm --prefix apps/academia-lendaria-ads-studio run test:launcher
 npm --prefix apps/academia-lendaria-ads-studio run test:visual
 npm --prefix apps/academia-lendaria-ads-studio run lint:db
 npm --prefix apps/academia-lendaria-ads-studio run test:db
