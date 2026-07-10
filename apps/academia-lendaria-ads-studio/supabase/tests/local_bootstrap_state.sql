@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(9);
 
 select has_table(
   'private'::name,
@@ -39,6 +39,11 @@ select is(
   )->>'claimToken',
   '91000000-0000-0000-0000-000000000001',
   'retomada preserva o claim anterior para reconciliar recursos órfãos'
+);
+
+select ok(
+  public.renew_local_bootstrap('90000000-0000-0000-0000-000000000002'),
+  'owner atual renova o lease durante operações externas'
 );
 
 select ok(

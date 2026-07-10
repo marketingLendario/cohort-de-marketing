@@ -118,6 +118,8 @@ touched_paths:
 - A segunda revisão encontrou fencing e conclusão ambígua como P1; ambos foram
   fechados separando `ownerToken` de `claimToken`, verificando lease em toda
   mutação e reconciliando o estado durável antes de qualquer compensação.
+- A terceira revisão exigiu fencing também durante chamadas externas; um
+  heartbeat renova o lease a cada 10 segundos e cada mutação revalida a posse.
 
 ## Change Log
 
@@ -129,7 +131,7 @@ touched_paths:
 
 - Testes focados: 4 arquivos / 12 testes — PASS.
 - `npm test` com `VITE_SUPABASE_URL` e anon key local de teste: 36 arquivos / 280 testes — PASS em duas repetições consecutivas.
-- `npx supabase test db`: 5 arquivos / 51 testes — PASS.
+- `npx supabase test db`: 5 arquivos / 52 testes — PASS.
 - `npm run lint`: PASS.
 - `npm run typecheck`: PASS.
 - `npm run build`: PASS.

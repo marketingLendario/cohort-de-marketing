@@ -21,6 +21,10 @@ function fakeStore(overrides: Partial<LocalBootstrapStore> = {}): LocalBootstrap
       state = { status: 'creating', claimToken, ownerToken: desiredOwnerToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString() }
       return { claimed: true, claimToken, ownerToken: desiredOwnerToken }
     }),
+    renewBootstrap: vi.fn(async (ownerToken) => {
+      if (state?.status !== 'creating' || state.ownerToken !== ownerToken) throw new Error('lease lost')
+      state = { ...state, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString() }
+    }),
     recordBootstrapProgress: vi.fn(async (ownerToken, progress) => {
       state = { status: 'creating', claimToken: state?.claimToken, ownerToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString(), ...progress }
     }),
@@ -50,6 +54,7 @@ describe('local first-run bootstrap', () => {
     expect(store.createUser).toHaveBeenCalledWith(expect.objectContaining(input), expect.any(String))
     const workspaceId = vi.mocked(store.createWorkspace).mock.calls[0]![1]
     expect(store.createMembership).toHaveBeenCalledWith(workspaceId, 'user-id')
+    expect(store.renewBootstrap).toHaveBeenCalled()
     await expect(service.status()).resolves.toEqual({ status: 'closed' })
 
     const closedStore = fakeStore({ countUsers: vi.fn().mockResolvedValue(1) })
@@ -88,6 +93,7 @@ describe('local first-run bootstrap', () => {
     const store = fakeStore({
       readBootstrapState: vi.fn().mockResolvedValue({ status: 'creating', claimToken, ownerToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString() }),
       claimBootstrap: vi.fn().mockResolvedValue({ claimed: true, claimToken, ownerToken, previousUserId: 'recorded-user', previousWorkspaceId: claimToken }),
+      renewBootstrap: vi.fn().mockResolvedValue(undefined),
       findUserIdsByBootstrapClaim: vi.fn().mockResolvedValue(['unrecorded-user']),
     })
 
@@ -119,6 +125,7 @@ describe('local first-run bootstrap', () => {
     const ownerToken = '97000000-0000-0000-0000-000000000001'
     const store = fakeStore({
       claimBootstrap: vi.fn().mockResolvedValue({ claimed: true, claimToken, ownerToken }),
+      renewBootstrap: vi.fn().mockResolvedValue(undefined),
       completeBootstrap: vi.fn().mockRejectedValue(new Error('response lost')),
       readBootstrapState: vi.fn().mockResolvedValue({ status: 'complete', claimToken, ownerToken }),
     })

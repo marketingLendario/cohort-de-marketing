@@ -29,6 +29,7 @@ export interface LocalBootstrapClaim {
 export interface LocalBootstrapStore {
   readBootstrapState(): Promise<LocalBootstrapState | null>
   claimBootstrap(desiredOwnerToken: string, desiredClaimToken: string): Promise<LocalBootstrapClaim>
+  renewBootstrap(ownerToken: string): Promise<void>
   recordBootstrapProgress(ownerToken: string, progress: { userId?: string; workspaceId?: string }): Promise<void>
   completeBootstrap(ownerToken: string): Promise<void>
   releaseBootstrap(ownerToken: string): Promise<void>
@@ -100,17 +101,43 @@ export function createLocalBootstrapService(store: LocalBootstrapStore): LocalBo
       if (!claimed.claimed || !claimed.claimToken || !claimed.ownerToken) throw new LocalBootstrapClosedError()
       const claimToken = claimed.claimToken
       const ownerToken = claimed.ownerToken
+      let leaseLost = false
+      let heartbeatBusy = false
+      const renewLease = async (): Promise<void> => {
+        if (leaseLost) throw new Error('A posse do primeiro acesso expirou.')
+        try {
+          await store.renewBootstrap(ownerToken)
+        } catch (error) {
+          leaseLost = true
+          throw error
+        }
+      }
+      const heartbeat = setInterval(() => {
+        if (heartbeatBusy || leaseLost) return
+        heartbeatBusy = true
+        void store.renewBootstrap(ownerToken)
+          .catch(() => { leaseLost = true })
+          .finally(() => { heartbeatBusy = false })
+      }, 10_000)
       let userId: string | undefined
       const workspaceId = claimToken
       try {
+        await renewLease()
         await cleanupClaim(claimToken, claimed.previousUserId, claimed.previousWorkspaceId)
+        await renewLease()
         if (!await countsAreEmpty()) throw new LocalBootstrapClosedError()
 
+        await renewLease()
         userId = await store.createUser(parsed, claimToken)
+        await renewLease()
         await store.recordBootstrapProgress(ownerToken, { userId })
+        await renewLease()
         await store.createWorkspace(parsed.workspaceName, workspaceId)
+        await renewLease()
         await store.recordBootstrapProgress(ownerToken, { workspaceId })
+        await renewLease()
         await store.createMembership(workspaceId, userId)
+        await renewLease()
         try {
           await store.completeBootstrap(ownerToken)
         } catch {
@@ -139,6 +166,8 @@ export function createLocalBootstrapService(store: LocalBootstrapStore): LocalBo
         }
         if (error instanceof LocalBootstrapClosedError) throw error
         throw new Error('Não foi possível concluir a configuração do primeiro acesso.')
+      } finally {
+        clearInterval(heartbeat)
       }
     },
   }
@@ -184,6 +213,9 @@ export function createSupabaseLocalBootstrapStore(client: SupabaseClient): Local
         ...(typeof row.previousUserId === 'string' ? { previousUserId: row.previousUserId } : {}),
         ...(typeof row.previousWorkspaceId === 'string' ? { previousWorkspaceId: row.previousWorkspaceId } : {}),
       }
+    },
+    renewBootstrap(ownerToken) {
+      return rpcBoolean('renew_local_bootstrap', { p_owner_token: ownerToken })
     },
     recordBootstrapProgress(ownerToken, progress) {
       return rpcBoolean('record_local_bootstrap_progress', {

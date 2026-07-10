@@ -113,6 +113,23 @@ begin
 end;
 $$;
 
+create or replace function public.renew_local_bootstrap(p_owner_token uuid)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  update private.local_bootstrap_state
+     set lease_expires_at = now() + interval '60 seconds', updated_at = now()
+   where singleton = true
+     and status = 'creating'
+     and owner_token = p_owner_token
+     and lease_expires_at > now();
+  return found;
+end;
+$$;
+
 create or replace function public.complete_local_bootstrap(p_owner_token uuid)
 returns boolean
 language plpgsql
@@ -148,11 +165,13 @@ $$;
 revoke all on function public.get_local_bootstrap_state() from public, anon, authenticated;
 revoke all on function public.claim_local_bootstrap(uuid, uuid) from public, anon, authenticated;
 revoke all on function public.record_local_bootstrap_progress(uuid, uuid, uuid) from public, anon, authenticated;
+revoke all on function public.renew_local_bootstrap(uuid) from public, anon, authenticated;
 revoke all on function public.complete_local_bootstrap(uuid) from public, anon, authenticated;
 revoke all on function public.release_local_bootstrap(uuid) from public, anon, authenticated;
 
 grant execute on function public.get_local_bootstrap_state() to service_role;
 grant execute on function public.claim_local_bootstrap(uuid, uuid) to service_role;
 grant execute on function public.record_local_bootstrap_progress(uuid, uuid, uuid) to service_role;
+grant execute on function public.renew_local_bootstrap(uuid) to service_role;
 grant execute on function public.complete_local_bootstrap(uuid) to service_role;
 grant execute on function public.release_local_bootstrap(uuid) to service_role;

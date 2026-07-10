@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label } from '@/lib/lendaria-ds'
+import { Alert, Button, Input, Label } from '@/lib/lendaria-ds'
 import { createLocalBootstrap, getLocalBootstrapStatus } from '@/lib/local-bootstrap'
 import { supabase } from '@/lib/supabase'
 
@@ -36,20 +36,18 @@ export function LocalFirstRun() {
   }
 
   return (
-    <Card className="local-first-run">
-      <CardHeader>
-        <CardTitle>Primeiro acesso local</CardTitle>
-        <CardDescription>Crie seu operador e o workspace inicial para começar.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="local-first-run__form">
-          <div><Label htmlFor="first-run-email">E-mail</Label><Input id="first-run-email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></div>
-          <div><Label htmlFor="first-run-password">Senha</Label><Input id="first-run-password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} /></div>
-          <div><Label htmlFor="first-run-workspace">Nome do workspace</Label><Input id="first-run-workspace" required minLength={2} value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} /></div>
-          {error ? <Alert variant="destructive">{error}</Alert> : null}
-          <Button type="submit" disabled={submitting}>{submitting ? 'Configurando…' : 'Criar acesso local'}</Button>
-        </form>
-      </CardContent>
-    </Card>
+    <section className="local-first-run" aria-labelledby="local-first-run-title">
+      <div className="local-first-run__header">
+        <h2 id="local-first-run-title">Primeiro acesso local</h2>
+        <p>Crie seu operador e o workspace inicial para começar.</p>
+      </div>
+      <form onSubmit={handleSubmit} className="local-first-run__form">
+        <div><Label htmlFor="first-run-email">E-mail</Label><Input id="first-run-email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></div>
+        <div><Label htmlFor="first-run-password">Senha</Label><Input id="first-run-password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(event) => setPassword(event.target.value)} /></div>
+        <div><Label htmlFor="first-run-workspace">Nome do workspace</Label><Input id="first-run-workspace" required minLength={2} value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} /></div>
+        {error ? <Alert variant="destructive">{error}</Alert> : null}
+        <Button type="submit" disabled={submitting}>{submitting ? 'Configurando…' : 'Criar acesso local'}</Button>
+      </form>
+    </section>
   )
 }
