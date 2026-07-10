@@ -23,6 +23,12 @@ Cinco skills do Claude Code que, juntas, formam o seu squad de agentes de tráfe
 3. Copie `painel-da-semana-tmpl.yaml` para a raiz do seu projeto de tráfego e renomeie para `PAINEL-DA-SEMANA.yaml`. Esse arquivo é a memória compartilhada do squad — cada skill lê e escreve nele.
 4. No Claude Code, invoque cada skill digitando `/zelador`, `/briefista`, `/estruturador`, `/leitor-de-metricas` ou `/diagnosticador`.
 
+## Contrato dos artefatos
+
+- Cada caminho representa um único arquivo relativo à raiz do projeto. A interface aceita caminhos antigos prefixados por `projetos/{slug}/` e os normaliza antes de gravar.
+- Quando uma skill preencher várias seções do `PAINEL-DA-SEMANA.yaml`, devolva um único artefato para esse caminho, com todas as seções no mesmo conteúdo. A interface também consolida blocos repetidos do mesmo caminho e formato como proteção de compatibilidade.
+- O mesmo caminho em formatos diferentes é ambíguo e deve ser corrigido antes da aprovação; a revisão rejeita esse caso.
+
 ## A ordem de uso na Aula 3 (ao vivo)
 
 ```
@@ -43,6 +49,10 @@ SEX  /diagnosticador    → aponta 1 alavanca → você decide
 
 Cada toque lê e escreve no `PAINEL-DA-SEMANA.yaml` — é o que faz isso ser um squad com memória, não 5 prompts soltos.
 
+## Estado de validação
+
+O piloto E2E local de 10/07/2026 passou com as cinco skills pela interface, Supabase real, revisão humana, reload, retry, reconciliação DB/filesystem e verificação visual desktop/mobile. A campanha permaneceu `draft` e nenhuma publicação, pausa ou alteração foi enviada à Meta. Isso valida o runtime local do squad; não substitui um teste com credenciais e uma conta Meta real.
+
 ## Amostra pequena na primeira semana
 
 Com R$30/dia × 7 dias você terá poucas conversões (3-7). Isso é normal — o Leitor vai te dizer "amostra insuficiente para CPA" e focar em sinais de topo (CTR, CPM). Não julgue a campanha pelo CPA ainda.
@@ -50,4 +60,4 @@ Com R$30/dia × 7 dias você terá poucas conversões (3-7). Isso é normal — 
 ---
 
 *Squad de Tráfego Lendár[IA] · Aula 3 (Tráfego) · Cohort 1 — Marketing de Receita com IA · Academia Lendária.*
-*Construído a partir de `squads/aiox-ads/` (Sinkra Hub, AIOX) — v1 DRAFT, ainda não testado contra 3 casos reais (P0 pendente do PRD-A3-trafego-v1.md §15).*
+*Construído a partir de `squads/aiox-ads/` (Sinkra Hub, AIOX) — piloto local E2E validado; publicação real na Meta permanece fora do escopo.*

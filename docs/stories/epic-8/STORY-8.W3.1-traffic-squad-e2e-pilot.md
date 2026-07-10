@@ -26,6 +26,14 @@ touched_paths:
   - "apps/academia-lendaria-ads-studio/src/components/project-journey.test.tsx"
   - "apps/academia-lendaria-ads-studio/src/lib/artifact-approval.ts"
   - "apps/academia-lendaria-ads-studio/src/lib/artifact-approval.test.ts"
+  - "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
+  - "apps/academia-lendaria-ads-studio/server/__tests__/artifact-materializer.test.ts"
+  - "apps/academia-lendaria-ads-studio/server/artifact-approval.ts"
+  - "apps/academia-lendaria-ads-studio/server/artifact-approval.test.ts"
+  - ".claude/skills/_shared/squad-trafego/README.md"
+  - ".claude/skills/briefista/SKILL.md"
+  - ".agents/skills/_shared/squad-trafego/README.md"
+  - ".agents/skills/briefista/SKILL.md"
   - "apps/academia-lendaria-ads-studio/src/lib/skill-runtime.ts"
   - "apps/academia-lendaria-ads-studio/src/lib/skill-runtime.test.ts"
   - "apps/academia-lendaria-ads-studio/supabase/migrations/20260710123000_allow_cancelled_skill_retry.sql"
@@ -70,6 +78,14 @@ touched_paths:
 - `apps/academia-lendaria-ads-studio/src/components/project-journey.test.tsx`
 - `apps/academia-lendaria-ads-studio/src/lib/artifact-approval.ts`
 - `apps/academia-lendaria-ads-studio/src/lib/artifact-approval.test.ts`
+- `apps/academia-lendaria-ads-studio/server/artifact-materializer.ts`
+- `apps/academia-lendaria-ads-studio/server/__tests__/artifact-materializer.test.ts`
+- `apps/academia-lendaria-ads-studio/server/artifact-approval.ts`
+- `apps/academia-lendaria-ads-studio/server/artifact-approval.test.ts`
+- `.claude/skills/_shared/squad-trafego/README.md`
+- `.claude/skills/briefista/SKILL.md`
+- `.agents/skills/_shared/squad-trafego/README.md`
+- `.agents/skills/briefista/SKILL.md`
 - `apps/academia-lendaria-ads-studio/src/lib/skill-runtime.ts`
 - `apps/academia-lendaria-ads-studio/src/lib/skill-runtime.test.ts`
 - `apps/academia-lendaria-ads-studio/supabase/migrations/20260710123000_allow_cancelled_skill_retry.sql`
@@ -84,13 +100,14 @@ touched_paths:
 | 2026-07-10 | @qa | Gate independente SHIP; QA-W3.1-P2-001 resolvido, evidência e hashes revalidados. Status InReview → Done. |
 | 2026-07-10 | @dev | Recuperação do QA-W3.1-P2-001: guarda determinística Leitor→Diagnosticador para métricas ausentes, incluindo campos canônicos omitidos e artefatos JSON/YAML; testes unitários e asserção E2E impedem derivação antes da revisão humana. |
 | 2026-07-10 | @dev | Fixture real Supabase, cinco skills via Codex CLI, recusa/retry/cancelamento, reload, reconciliação DB/filesystem, evidência visual desktop/mobile e relatório regenerável. Corrigidos cancelamento persistido, reattach após retry, reconciliação terminal imediata e fallback técnico para path vazio. Status Ready → InReview. |
+| 2026-07-10 | @dev/@qa | Piloto repetido após hardening do contrato de caminhos e consolidação de blocos do painel: 5 skills `done`, 5 aprovações, 1 recusa, retry/cancelamento, 12 reloads, hashes reconciliados, zero erros visuais/rede e campanha `draft`. Status Done confirmado. |
 
 ## Validação executada
 
-- `env -u OPENAI_API_KEY -u CODEX_API_KEY npx playwright test e2e/traffic-squad.spec.ts --workers=1 --timeout=1800000`: PASS, 1 teste em 3,5 min.
+- `npx playwright test e2e/traffic-squad.spec.ts --reporter=line`: PASS, 1 teste em 4,4 min.
 - Cinco skills `done`, cinco aprovações `approve/done`, uma recusa honesta e retry HTTP 202 com tentativa 2 cancelada.
 - 12 reloads, hashes de todos os arquivos reconciliados, campanha fixture preservada em `draft`/etapa 1.
 - CTR, CPM, alcance e frequência ficaram `nao_fornecido`; o Diagnosticador não calculou, estimou ou derivou valor para nenhuma delas.
 - Desktop 1280×900 e mobile 390×844 no Diagnosticador concluído; zero overlaps, erros de console ou falhas de rede não esperadas.
-- `npm test`: 28 arquivos / 244 testes; lint, typecheck, build, build:server, migrations locais e lint do banco: PASS.
+- `npm test`: 32 arquivos / 268 testes; lint, typecheck, build e catálogo (30 skills / 40 edges): PASS.
 - `.aiox/waves/epic-8-wave-3/qa-w3.1.yaml`: `SHIP`, sem findings abertos.
