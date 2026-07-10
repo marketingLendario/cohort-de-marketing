@@ -1,11 +1,17 @@
+/// <reference types="node" />
+
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { RevisionConflictError, type ProjectRepository } from '@/lib/project-repository';
 import {
   PROJECT_BRIEF_SCHEMA_VERSION,
   getPath,
+  validateLegacyBrief,
   type CampaignPlanRevision,
   type MarketingProject,
   type ProjectArtifact,
+  type ProjectBriefData,
   type ProjectBriefRevision,
   type SkillRun,
   type WeeklyPanel,
@@ -222,6 +228,19 @@ function createFakeRepository(): ProjectRepository {
 
 const WORKSPACE_ID = 'ws-1';
 
+function locatePilotBrief(startDirectory = process.cwd()): string {
+  let current = resolve(startDirectory);
+  while (true) {
+    const candidate = join(current, 'data/pilots/academia-lendaria-project-brief.json');
+    if (existsSync(candidate)) return candidate;
+    const parent = dirname(current);
+    if (parent === current) throw new Error('Pacote piloto não encontrado a partir do diretório do teste.');
+    current = parent;
+  }
+}
+
+const PILOT_BRIEF_PATH = locatePilotBrief();
+
 describe('use-project-workspace — hidratação e criação', () => {
   it('hidrata um workspace vazio como empty (sem fixture)', async () => {
     const repository = createFakeRepository();
@@ -375,6 +394,38 @@ describe('use-project-workspace — hidratação e criação', () => {
     expect(store.getState().projects).toHaveLength(0);
     first.destroy();
     second.destroy();
+  });
+
+  it('importa o pacote piloto da Academia Lendária pela jornada W1 sem seed oculto', async () => {
+    const repository = createFakeRepository();
+    const store = createProjectStore({ demoEnabled: false });
+    const controller = createProjectWorkspaceController({ workspaceId: WORKSPACE_ID, repository, store, demoEnabled: false });
+    const input = JSON.parse(readFileSync(PILOT_BRIEF_PATH, 'utf8')) as ProjectBriefData & { artifacts?: Record<string, boolean> };
+
+    expect(validateLegacyBrief(input)).toEqual([]);
+
+    const projectId = await controller.importProjectBrief(input);
+    const project = store.getState().projects.find((candidate) => candidate.id === projectId);
+    const brief = activeBriefFor(projectId, store.getState().briefRevisions);
+    const artifacts = store.getState().artifacts.filter((artifact) => artifact.projectId === projectId);
+
+    expect(project).toMatchObject({
+      workspaceId: WORKSPACE_ID,
+      slug: 'maquina-de-receita-com-ia',
+      name: 'A Máquina de Receita com IA',
+    });
+    expect(brief?.data.project.currentStage).toBe('trafego');
+    expect(brief?.data.integrations).toEqual({
+      apifyStatus: 'unknown',
+      openRouterStatus: 'unknown',
+      activeCampaignStatus: 'unknown',
+      calendarStatus: 'unknown',
+    });
+    expect(new Set(artifacts.map((artifact) => artifact.artifactType))).toEqual(
+      new Set(['curriculum', 'offerbook', 'a3-prd', 'squad-trafego-readme']),
+    );
+
+    controller.destroy();
   });
 });
 
