@@ -18,9 +18,16 @@ consumes_artifacts_of: ["8.W1.3", "8.W2.1", "8.W2.2"]
 file_scope: shared
 touched_paths:
   - "apps/academia-lendaria-ads-studio/server/artifact-approval.ts"
+  - "apps/academia-lendaria-ads-studio/server/artifact-approval.test.ts"
   - "apps/academia-lendaria-ads-studio/server/app.ts"
+  - "apps/academia-lendaria-ads-studio/supabase/migrations/*artifact-approval*"
+  - "apps/academia-lendaria-ads-studio/supabase/tests/artifact_approval.sql"
+  - "apps/academia-lendaria-ads-studio/src/lib/artifact-approval.ts"
+  - "apps/academia-lendaria-ads-studio/src/lib/artifact-approval.test.ts"
   - "apps/academia-lendaria-ads-studio/src/components/project-journey.tsx"
   - "apps/academia-lendaria-ads-studio/src/components/project-artifacts.tsx"
+  - "apps/academia-lendaria-ads-studio/src/components/artifact-approval-review.tsx"
+  - "apps/academia-lendaria-ads-studio/src/components/artifact-approval-review.test.tsx"
 ---
 
 # STORY-8.W2.3 - Aprovação em duas fases: DB e filesystem
@@ -51,7 +58,13 @@ touched_paths:
 ## File List
 
 - `apps/academia-lendaria-ads-studio/server/artifact-approval.ts`
+- `apps/academia-lendaria-ads-studio/server/artifact-approval.test.ts`
 - `apps/academia-lendaria-ads-studio/server/app.ts`
+- `apps/academia-lendaria-ads-studio/supabase/migrations/*artifact-approval*`
+- `apps/academia-lendaria-ads-studio/supabase/tests/artifact_approval.sql`
+- `apps/academia-lendaria-ads-studio/src/lib/artifact-approval.ts`
+- `apps/academia-lendaria-ads-studio/src/lib/artifact-approval.test.ts`
 - `apps/academia-lendaria-ads-studio/src/components/project-journey.tsx`
 - `apps/academia-lendaria-ads-studio/src/components/project-artifacts.tsx`
-
+- `apps/academia-lendaria-ads-studio/src/components/artifact-approval-review.tsx`
+- `apps/academia-lendaria-ads-studio/src/components/artifact-approval-review.test.tsx`
