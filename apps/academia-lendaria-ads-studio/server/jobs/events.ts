@@ -94,3 +94,114 @@ export type AdsJobEvent =
   | AdsJobEventLog
   | AdsJobEventDone
   | AdsJobEventError
+
+// ---------------------------------------------------------------------------
+// Skill-run progress protocol — the SSE/polling vocabulary of the durable Codex
+// runner (STORY-8.W2.2). SSE delivers `snapshot` then `progress|done|error`;
+// polling reads the SAME projection (`SkillRunJobView`) as `snapshot.payload`.
+// ---------------------------------------------------------------------------
+import type {
+  SkillProposal,
+  SkillRunJobError,
+  SkillRunJobStatus,
+  SkillRunJobView,
+  SkillRunLogLine,
+  SkillRunStep,
+} from './types.js'
+
+/** Canonical SSE channel for a skill-run's progress stream. */
+export function skillRunChannel(jobId: string): string {
+  return `skill-run:${jobId}`
+}
+
+/** First event on subscribe — the full current projection (late-subscriber safe). */
+export interface SkillRunEventSnapshot {
+  type: 'snapshot'
+  payload: SkillRunJobView
+}
+
+/** Incremental progress — a step transition and/or a new log line. */
+export interface SkillRunEventProgress {
+  type: 'progress'
+  payload: {
+    jobId: string
+    status: SkillRunJobStatus
+    attempt: number
+    step?: SkillRunStep
+    log?: SkillRunLogLine
+    timestamp: string
+  }
+}
+
+/** Terminal success — the proposal is ready for human review. */
+export interface SkillRunEventDone {
+  type: 'done'
+  payload: {
+    jobId: string
+    status: 'succeeded'
+    proposal: SkillProposal
+    skillHash: string
+    model: string
+    timestamp: string
+  }
+}
+
+/** Terminal failure/cancel — treatable reason (never a mute error). */
+export interface SkillRunEventError {
+  type: 'error'
+  payload: {
+    jobId: string
+    status: 'failed' | 'cancelled'
+    error: SkillRunJobError
+    timestamp: string
+  }
+}
+
+export type SkillRunEvent =
+  | SkillRunEventSnapshot
+  | SkillRunEventProgress
+  | SkillRunEventDone
+  | SkillRunEventError
+
+export type SkillRunEventListener = (event: SkillRunEvent) => void
+
+/**
+ * In-process pub/sub for skill-run progress. Adequate for the MVP single-process
+ * topology (BFF + worker coabit one Fastify process). A multi-replica deployment
+ * swaps this for a Redis/`@sinkra/job-stream` bridge behind the same interface.
+ */
+export interface SkillRunEventBus {
+  publish(jobId: string, event: SkillRunEvent): void
+  subscribe(jobId: string, listener: SkillRunEventListener): () => void
+}
+
+export function createSkillRunEventBus(): SkillRunEventBus {
+  const listeners = new Map<string, Set<SkillRunEventListener>>()
+  return {
+    publish(jobId, event) {
+      const set = listeners.get(jobId)
+      if (!set) return
+      for (const listener of [...set]) {
+        try {
+          listener(event)
+        } catch {
+          // A failing subscriber must never break the publisher or sibling subscribers.
+        }
+      }
+    },
+    subscribe(jobId, listener) {
+      let set = listeners.get(jobId)
+      if (!set) {
+        set = new Set()
+        listeners.set(jobId, set)
+      }
+      set.add(listener)
+      return () => {
+        const current = listeners.get(jobId)
+        if (!current) return
+        current.delete(listener)
+        if (current.size === 0) listeners.delete(jobId)
+      }
+    },
+  }
+}

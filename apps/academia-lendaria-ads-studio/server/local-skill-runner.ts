@@ -40,8 +40,48 @@ export interface LocalSkillRunResult {
   proposal: SkillProposal;
 }
 
+/** Coarse progress phase reported by the runner (mapped to a journal step). */
+export interface LocalSkillRunStep {
+  id: string;
+  label: string;
+  status: 'running' | 'done';
+}
+
+/**
+ * Runtime options for a durable async run (STORY-8.W2.2). All optional so the
+ * synchronous W1.2 call site and the tests keep working unchanged.
+ */
+export interface LocalSkillRunOptions {
+  /**
+   * Cancels the run (AC4). Aborting propagates a SIGTERM→SIGKILL to the Codex
+   * child, cleans temporaries and rejects with an aborted error.
+   */
+  signal?: AbortSignal;
+  /** Progress phase callback (drives the observable timeline). */
+  onStep?: (step: LocalSkillRunStep) => void;
+  /** Scrubbed log-line callback (never carries secrets). */
+  onLog?: (line: { level: 'info' | 'warn' | 'error'; message: string }) => void;
+}
+
 export interface LocalSkillRunner {
-  run(skillId: string, input: LocalSkillRunInput): Promise<LocalSkillRunResult>;
+  run(
+    skillId: string,
+    input: LocalSkillRunInput,
+    options?: LocalSkillRunOptions,
+  ): Promise<LocalSkillRunResult>;
+}
+
+/** Error raised when a run is cancelled via its AbortSignal (AC4). */
+export class LocalSkillRunAbortError extends Error {
+  readonly aborted = true as const;
+  constructor(message = 'Execução da skill cancelada.') {
+    super(message);
+    this.name = 'LocalSkillRunAbortError';
+  }
+}
+
+export function isLocalSkillRunAbortError(error: unknown): error is LocalSkillRunAbortError {
+  return error instanceof LocalSkillRunAbortError || (error instanceof Error && (error as { aborted?: boolean }).aborted === true);
 }
 
 interface CatalogSkill {
@@ -67,6 +107,8 @@ interface CodexExecution {
   killGraceMs: number;
   /** Ambiente já sanitizado (sem OPENAI_API_KEY / CODEX_API_KEY — AC4). */
   env: NodeJS.ProcessEnv;
+  /** Cancela a execução propagando SIGTERM→SIGKILL ao processo filho (AC5/STORY-8.W2.2). */
+  signal?: AbortSignal;
 }
 
 type CodexExecutor = (execution: CodexExecution) => Promise<void>;
@@ -111,7 +153,12 @@ export const skillProposalSchema = {
 } as const;
 
 function defaultCodexExecutor(codexPath: string): CodexExecutor {
-  return ({ args, prompt, cwd, timeoutMs, killGraceMs, env }) => new Promise((resolvePromise, reject) => {
+  return ({ args, prompt, cwd, timeoutMs, killGraceMs, env, signal }) => new Promise((resolvePromise, reject) => {
+    // Cancelamento antes mesmo do spawn (AC4): não inicia o processo filho.
+    if (signal?.aborted) {
+      reject(new LocalSkillRunAbortError());
+      return;
+    }
     // Ambiente já sanitizado (AC4): sem chaves OpenAI/Codex no processo filho.
     const child = spawn(codexPath, args, {
       cwd,
@@ -120,15 +167,27 @@ function defaultCodexExecutor(codexPath: string): CodexExecutor {
     });
     let stderr = '';
     let killTimer: ReturnType<typeof setTimeout> | undefined;
+    let aborted = false;
     // Kill escalonado (AC5): SIGTERM na expiração, SIGKILL após a janela de graça.
-    const timer = setTimeout(() => {
+    const escalateKill = () => {
       child.kill('SIGTERM');
       killTimer = setTimeout(() => child.kill('SIGKILL'), killGraceMs);
+    };
+    const timer = setTimeout(() => {
+      escalateKill();
       reject(new Error(`Codex CLI excedeu o limite de ${Math.round(timeoutMs / 1000)} segundos.`));
     }, timeoutMs);
+    // Cancelamento em voo (AC4/STORY-8.W2.2): mesmo kill escalonado do timeout.
+    const onAbort = () => {
+      aborted = true;
+      escalateKill();
+      reject(new LocalSkillRunAbortError());
+    };
+    if (signal) signal.addEventListener('abort', onAbort, { once: true });
     const clearTimers = () => {
       clearTimeout(timer);
       if (killTimer) clearTimeout(killTimer);
+      if (signal) signal.removeEventListener('abort', onAbort);
     };
 
     child.stderr.on('data', (chunk: Buffer) => {
@@ -136,12 +195,14 @@ function defaultCodexExecutor(codexPath: string): CodexExecutor {
     });
     child.on('error', (error) => {
       clearTimers();
+      if (aborted) return;
       reject(new Error(`Não foi possível iniciar o Codex CLI: ${error.message}`));
     });
-    child.on('close', (code, signal) => {
+    child.on('close', (code, closeSignal) => {
       clearTimers();
+      if (aborted) return;
       if (code === 0) resolvePromise();
-      else reject(new Error(`Codex CLI falhou (${signal ?? `exit ${code}`}): ${stderr.trim() || 'sem detalhes'}`));
+      else reject(new Error(`Codex CLI falhou (${closeSignal ?? `exit ${code}`}): ${stderr.trim() || 'sem detalhes'}`));
     });
     child.stdin.end(prompt);
   });
@@ -169,7 +230,17 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
     this.execute = options.execute ?? defaultCodexExecutor(options.codexPath ?? 'codex');
   }
 
-  async run(skillId: string, input: LocalSkillRunInput): Promise<LocalSkillRunResult> {
+  async run(
+    skillId: string,
+    input: LocalSkillRunInput,
+    options: LocalSkillRunOptions = {},
+  ): Promise<LocalSkillRunResult> {
+    const { signal, onStep, onLog } = options;
+    const ensureLive = () => {
+      if (signal?.aborted) throw new LocalSkillRunAbortError();
+    };
+    ensureLive();
+    onStep?.({ id: 'resolve', label: 'Resolver skill canônica', status: 'running' });
     const catalog = JSON.parse(await readFile(resolve(this.repoRoot, 'data/skill-catalog.json'), 'utf8')) as SkillCatalog;
     const skill = catalog.skills.find((candidate) => candidate.id === skillId);
     if (!skill) throw new Error(`Skill não catalogada: ${skillId}`);
@@ -178,7 +249,9 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
     if (!skillPath.startsWith(`${canonicalRoot}/`)) throw new Error('Caminho de skill fora da raiz canônica.');
     const instructions = await readFile(skillPath, 'utf8');
     const skillHash = createHash('sha256').update(instructions).digest('hex');
+    onStep?.({ id: 'resolve', label: 'Resolver skill canônica', status: 'done' });
     const primaryArtifacts = skill.primaryArtifacts.length ? skill.primaryArtifacts.join(', ') : 'nenhum artefato obrigatório';
+    ensureLive();
     const temporaryDirectory = await mkdtemp(resolve(tmpdir(), 'cohort-codex-skill-'));
     const schemaPath = resolve(temporaryDirectory, 'proposal.schema.json');
     const outputPath = resolve(temporaryDirectory, 'proposal.json');
@@ -221,6 +294,8 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
         }),
       ].filter(Boolean).join('\n');
 
+      onStep?.({ id: 'codex', label: 'Executar Codex CLI', status: 'running' });
+      onLog?.({ level: 'info', message: `Executando skill "${skillId}" no sandbox read-only.` });
       await this.execute({
         args,
         prompt,
@@ -229,8 +304,12 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
         timeoutMs: this.timeoutMs,
         killGraceMs: this.killGraceMs,
         env: sanitizeCodexEnv(process.env),
+        signal,
       });
+      onStep?.({ id: 'codex', label: 'Executar Codex CLI', status: 'done' });
+      onStep?.({ id: 'parse', label: 'Validar proposta estruturada', status: 'running' });
       const proposal = JSON.parse(await readFile(outputPath, 'utf8')) as SkillProposal;
+      onStep?.({ id: 'parse', label: 'Validar proposta estruturada', status: 'done' });
       return {
         skillId,
         skillHash,
@@ -238,6 +317,7 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
         proposal,
       };
     } finally {
+      // Limpa temporários mesmo em cancelamento/timeout (AC4/AC5).
       await rm(temporaryDirectory, { recursive: true, force: true });
     }
   }

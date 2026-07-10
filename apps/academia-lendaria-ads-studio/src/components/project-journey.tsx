@@ -1,10 +1,31 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Button, Icon } from '@/lib/lendaria-ds';
 import { skillCatalog } from '@/generated/skill-catalog';
 import { evaluateProjectSkills, nextProjectAction, type SkillEvaluation } from '@/lib/readiness';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
-import { executeLocalSkill, isSkillProposal } from '@/lib/skill-runtime';
+import type { SkillRun } from '@/lib/project-domain';
+import {
+  cancelSkillRun,
+  isSkillProposal,
+  observeSkillRun,
+  retrySkillRun,
+  startSkillRun,
+  type SkillRunView,
+} from '@/lib/skill-runtime';
+
+/** The backend jobId lives inside the local run's inputSnapshot (survives reload). */
+function jobIdOf(run: SkillRun): string | undefined {
+  const value = (run.inputSnapshot as { jobId?: unknown } | undefined)?.jobId;
+  return typeof value === 'string' ? value : undefined;
+}
+
+/** The step currently in flight (or the latest reported), for the progress line. */
+function currentStepLabel(view: SkillRunView | undefined): string | null {
+  if (!view || view.steps.length === 0) return null;
+  const running = [...view.steps].reverse().find((step) => step.status === 'running');
+  return (running ?? view.steps[view.steps.length - 1]).label;
+}
 
 type ViewMode = 'flow' | 'grid';
 
@@ -65,6 +86,71 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
   const [executing, setExecuting] = useState(false);
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [operatorInput, setOperatorInput] = useState('');
+  // Live progress projection per jobId (SSE/polling). Persisted status/proposal
+  // live in the store; this is the ephemeral timeline rehydrated on reload.
+  const [runViews, setRunViews] = useState<Record<string, SkillRunView>>({});
+  const observedRef = useRef<Set<string>>(new Set());
+  const unsubsRef = useRef<Map<string, () => void>>(new Map());
+
+  const attach = useCallback((runId: string, jobId: string) => {
+    if (observedRef.current.has(jobId)) return;
+    observedRef.current.add(jobId);
+    const release = () => {
+      unsubsRef.current.get(jobId)?.();
+      unsubsRef.current.delete(jobId);
+      observedRef.current.delete(jobId);
+    };
+    const unsubscribe = observeSkillRun(jobId, {
+      onSnapshot: (view) => setRunViews((prev) => ({ ...prev, [jobId]: view })),
+      onProgress: (payload) => setRunViews((prev) => {
+        const current = prev[jobId];
+        if (!current) return prev;
+        const steps = payload.step
+          ? (() => {
+              const idx = current.steps.findIndex((step) => step.id === payload.step!.id);
+              const next = [...current.steps];
+              if (idx >= 0) next[idx] = payload.step!;
+              else next.push(payload.step!);
+              return next;
+            })()
+          : current.steps;
+        const logs = payload.log ? [...current.logs, payload.log] : current.logs;
+        return { ...prev, [jobId]: { ...current, status: payload.status, attempt: payload.attempt, steps, logs } };
+      }),
+      onDone: ({ proposal, skillHash }) => {
+        updateRun(runId, {
+          status: 'needs_review',
+          skillHash,
+          proposal: proposal as unknown as Record<string, unknown>,
+        });
+        release();
+      },
+      onError: (error, status) => {
+        updateRun(runId, { status: status === 'cancelled' ? 'cancelled' : 'failed', error: error.reason });
+        release();
+      },
+    });
+    unsubsRef.current.set(jobId, unsubscribe);
+  }, [updateRun]);
+
+  // Resume non-terminal runs by jobId — no dependency on the original request (AC6).
+  useEffect(() => {
+    for (const run of runs) {
+      if (run.status === 'running' || run.status === 'queued') {
+        const jobId = jobIdOf(run);
+        if (jobId) attach(run.id, jobId);
+      }
+    }
+  }, [runs, attach]);
+
+  // Tear down every stream only on unmount.
+  useEffect(() => {
+    const unsubs = unsubsRef.current;
+    return () => {
+      for (const unsubscribe of unsubs.values()) unsubscribe();
+      unsubs.clear();
+    };
+  }, []);
 
   const evaluations = useMemo(
     () => brief ? evaluateProjectSkills(brief, artifacts, runs) : [],
@@ -92,6 +178,7 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
 
   if (!brief || !selectedEvaluation || !selectedSkill) return null;
   const briefRevisionId = brief.id;
+  const briefWorkspaceId = brief.workspaceId;
   const briefData = brief.data as unknown as Record<string, unknown>;
   const activeSkill = selectedSkill;
 
@@ -100,21 +187,21 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
   const latestRun = [...runs]
     .filter((run) => run.skillId === selectedEvaluation.skillId)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+  const latestJobId = latestRun ? jobIdOf(latestRun) : undefined;
+  const latestLiveView = latestJobId ? runViews[latestJobId] : undefined;
 
   async function executeRun() {
     setRuntimeError(null);
     setExecuting(true);
-    const runId = startRun(projectId, selectedEvaluation.skillId, {
-      briefRevisionId,
-      artifactIds: artifacts.filter((artifact) => artifact.verification === 'confirmed').map((artifact) => artifact.id),
-    });
-    updateRun(runId, { status: 'running' });
     try {
-      const result = await executeLocalSkill(selectedEvaluation.skillId, {
+      const confirmedArtifacts = artifacts.filter((artifact) => artifact.verification === 'confirmed');
+      // Persist + 202 first (AC1): we get a durable jobId before the long run.
+      const start = await startSkillRun(selectedEvaluation.skillId, {
+        workspaceId: briefWorkspaceId,
         projectId,
         brief: briefData,
         context: {
-          artifacts: artifacts.filter((artifact) => artifact.verification === 'confirmed').map((artifact) => ({
+          artifacts: confirmedArtifacts.map((artifact) => ({
             artifactType: artifact.artifactType,
             title: artifact.title,
             path: artifact.path,
@@ -123,17 +210,42 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
         },
         operatorInput: operatorInput.trim() || undefined,
       });
-      updateRun(runId, {
-        status: 'needs_review',
-        skillHash: result.skillHash,
-        proposal: result.proposal as unknown as Record<string, unknown>,
+      const runId = startRun(projectId, selectedEvaluation.skillId, {
+        briefRevisionId,
+        artifactIds: confirmedArtifacts.map((artifact) => artifact.id),
+        jobId: start.jobId,
       });
+      updateRun(runId, { status: 'running' });
+      attach(runId, start.jobId);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Falha ao executar a skill.';
-      updateRun(runId, { status: 'failed', error: message });
       setRuntimeError(message);
     } finally {
       setExecuting(false);
+    }
+  }
+
+  async function cancelRun(run: SkillRun) {
+    const jobId = jobIdOf(run);
+    if (!jobId) return;
+    setRuntimeError(null);
+    try {
+      await cancelSkillRun(jobId);
+    } catch (error) {
+      setRuntimeError(error instanceof Error ? error.message : 'Falha ao cancelar a execução.');
+    }
+  }
+
+  async function retryRun(run: SkillRun) {
+    const jobId = jobIdOf(run);
+    if (!jobId) return;
+    setRuntimeError(null);
+    try {
+      await retrySkillRun(jobId);
+      updateRun(run.id, { status: 'running', error: undefined });
+      attach(run.id, jobId);
+    } catch (error) {
+      setRuntimeError(error instanceof Error ? error.message : 'Falha ao repetir a execução.');
     }
   }
 
@@ -281,6 +393,29 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
             <div className="cms-run-status">
               <span>Execução</span>
               <strong>{STATE_LABELS[latestRun.status] ?? latestRun.status}</strong>
+              {latestLiveView && (latestRun.status === 'running' || latestRun.status === 'queued') ? (
+                <small className="cms-run-progress">
+                  {currentStepLabel(latestLiveView) ?? 'Preparando execução'}
+                  {latestLiveView.attempt > 1 ? ` · tentativa #${latestLiveView.attempt}` : ''}
+                </small>
+              ) : null}
+            </div>
+          ) : null}
+
+          {latestRun && (latestRun.status === 'running' || latestRun.status === 'queued') && latestJobId ? (
+            <div className="cms-run-controls">
+              <Button size="sm" variant="outline" onClick={() => void cancelRun(latestRun)}>
+                <Icon name="cancel" size={12} /> Cancelar
+              </Button>
+            </div>
+          ) : null}
+
+          {latestRun && (latestRun.status === 'failed' || latestRun.status === 'cancelled') && latestJobId ? (
+            <div className="cms-run-controls">
+              {latestRun.error ? <span className="cms-inline-error">{latestRun.error}</span> : null}
+              <Button size="sm" variant="outline" onClick={() => void retryRun(latestRun)}>
+                <Icon name="refresh-double" size={12} /> Repetir
+              </Button>
             </div>
           ) : null}
 
