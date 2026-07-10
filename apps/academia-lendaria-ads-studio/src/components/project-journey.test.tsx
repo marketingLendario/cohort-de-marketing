@@ -4,25 +4,31 @@ import { DEMO_PROJECT_ID, useProjectStore } from '@/stores/project-store';
 import { skillCatalog } from '@/generated/skill-catalog';
 import type { ObserveSkillRunHandlers } from '@/lib/skill-runtime';
 
+type SkillRuntimeModule = typeof import('@/lib/skill-runtime');
+
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <a href="#" className={className}>{children}</a>
   ),
 }));
 
-const observeSkillRun = vi.fn(() => () => {});
-const startSkillRun = vi.fn(async () => ({ jobId: 'job-new', status: 'queued' as const }));
-const cancelSkillRun = vi.fn(async () => {});
-const retrySkillRun = vi.fn(async () => ({ jobId: 'job-1', attempt: 2, status: 'queued' as const }));
+const observeSkillRun = vi.fn<SkillRuntimeModule['observeSkillRun']>(() => () => {});
+const startSkillRun = vi.fn<SkillRuntimeModule['startSkillRun']>(
+  async () => ({ jobId: 'job-new', status: 'queued' as const }),
+);
+const cancelSkillRun = vi.fn<SkillRuntimeModule['cancelSkillRun']>(async () => {});
+const retrySkillRun = vi.fn<SkillRuntimeModule['retrySkillRun']>(
+  async () => ({ jobId: 'job-1', attempt: 2, status: 'queued' as const }),
+);
 
 vi.mock('@/lib/skill-runtime', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/skill-runtime')>();
   return {
     ...actual,
-    observeSkillRun: (...args: [string, ObserveSkillRunHandlers]) => observeSkillRun(...args),
-    startSkillRun: (...args: unknown[]) => startSkillRun(...args),
-    cancelSkillRun: (...args: unknown[]) => cancelSkillRun(...args),
-    retrySkillRun: (...args: unknown[]) => retrySkillRun(...args),
+    observeSkillRun: (...args: Parameters<SkillRuntimeModule['observeSkillRun']>) => observeSkillRun(...args),
+    startSkillRun: (...args: Parameters<SkillRuntimeModule['startSkillRun']>) => startSkillRun(...args),
+    cancelSkillRun: (...args: Parameters<SkillRuntimeModule['cancelSkillRun']>) => cancelSkillRun(...args),
+    retrySkillRun: (...args: Parameters<SkillRuntimeModule['retrySkillRun']>) => retrySkillRun(...args),
   };
 });
 
