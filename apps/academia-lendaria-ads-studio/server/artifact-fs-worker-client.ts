@@ -59,6 +59,10 @@ class ConfinedFilesystemWorker {
     const lines = createInterface({ input: this.child.stdout });
     lines.on('line', (line) => this.handleResponse(line));
     this.child.stderr.on('data', () => {});
+    // `stdin.write(..., callback)` não substitui o listener do stream: quando o
+    // worker encerra sob carga, o pipe também emite `error` (EPIPE). Sem este
+    // handler, a suíte e o processo BFF recebem uma uncaught exception tardia.
+    this.child.stdin.on('error', (error) => this.fail(error));
     this.child.once('error', (error) => this.fail(error));
     this.child.once('exit', (code, signal) => {
       if (!this.closed) this.fail(new Error(`Filesystem worker terminou (${code ?? signal ?? 'unknown'}).`));

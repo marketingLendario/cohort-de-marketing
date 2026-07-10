@@ -14,22 +14,24 @@ export type LocalBootstrapStatus = 'empty' | 'closed'
 export interface LocalBootstrapState {
   status: 'available' | 'creating' | 'complete'
   claimToken?: string
+  ownerToken?: string
   leaseExpiresAt?: string
 }
 
 export interface LocalBootstrapClaim {
   claimed: boolean
   claimToken?: string
+  ownerToken?: string
   previousUserId?: string
   previousWorkspaceId?: string
 }
 
 export interface LocalBootstrapStore {
   readBootstrapState(): Promise<LocalBootstrapState | null>
-  claimBootstrap(desiredClaimToken: string): Promise<LocalBootstrapClaim>
-  recordBootstrapProgress(claimToken: string, progress: { userId?: string; workspaceId?: string }): Promise<void>
-  completeBootstrap(claimToken: string): Promise<void>
-  releaseBootstrap(claimToken: string): Promise<void>
+  claimBootstrap(desiredOwnerToken: string, desiredClaimToken: string): Promise<LocalBootstrapClaim>
+  recordBootstrapProgress(ownerToken: string, progress: { userId?: string; workspaceId?: string }): Promise<void>
+  completeBootstrap(ownerToken: string): Promise<void>
+  releaseBootstrap(ownerToken: string): Promise<void>
   countUsers(): Promise<number>
   countWorkspaces(): Promise<number>
   countMemberships(): Promise<number>
@@ -74,6 +76,13 @@ export function createLocalBootstrapService(store: LocalBootstrapStore): LocalBo
     for (const userId of userIds) await store.deleteUser(userId)
   }
 
+  function ownsLiveClaim(state: LocalBootstrapState | null, ownerToken: string): boolean {
+    return state?.status === 'creating'
+      && state.ownerToken === ownerToken
+      && Boolean(state.leaseExpiresAt)
+      && Date.parse(state.leaseExpiresAt!) > Date.now()
+  }
+
   return {
     async status() {
       const state = await store.readBootstrapState()
@@ -87,9 +96,10 @@ export function createLocalBootstrapService(store: LocalBootstrapStore): LocalBo
 
     async create(input) {
       const parsed = localBootstrapInputSchema.parse(input)
-      const claimed = await store.claimBootstrap(randomUUID())
-      if (!claimed.claimed || !claimed.claimToken) throw new LocalBootstrapClosedError()
+      const claimed = await store.claimBootstrap(randomUUID(), randomUUID())
+      if (!claimed.claimed || !claimed.claimToken || !claimed.ownerToken) throw new LocalBootstrapClosedError()
       const claimToken = claimed.claimToken
+      const ownerToken = claimed.ownerToken
       let userId: string | undefined
       const workspaceId = claimToken
       try {
@@ -97,19 +107,35 @@ export function createLocalBootstrapService(store: LocalBootstrapStore): LocalBo
         if (!await countsAreEmpty()) throw new LocalBootstrapClosedError()
 
         userId = await store.createUser(parsed, claimToken)
-        await store.recordBootstrapProgress(claimToken, { userId })
+        await store.recordBootstrapProgress(ownerToken, { userId })
         await store.createWorkspace(parsed.workspaceName, workspaceId)
-        await store.recordBootstrapProgress(claimToken, { workspaceId })
+        await store.recordBootstrapProgress(ownerToken, { workspaceId })
         await store.createMembership(workspaceId, userId)
-        await store.completeBootstrap(claimToken)
+        try {
+          await store.completeBootstrap(ownerToken)
+        } catch {
+          const completion = await store.readBootstrapState().catch(() => null)
+          if (completion?.status === 'complete' && completion.ownerToken === ownerToken && completion.claimToken === claimToken) {
+            return { status: 'created' }
+          }
+          throw new Error('Não foi possível confirmar a conclusão do primeiro acesso.')
+        }
         return { status: 'created' }
       } catch (error) {
+        const state = await store.readBootstrapState().catch(() => null)
+        if (state?.status === 'complete' && state.ownerToken === ownerToken && state.claimToken === claimToken) {
+          return { status: 'created' }
+        }
+        if (!ownsLiveClaim(state, ownerToken)) {
+          if (error instanceof LocalBootstrapClosedError) throw error
+          throw new Error('Não foi possível concluir a configuração do primeiro acesso.')
+        }
         let cleaned = false
         try {
           await cleanupClaim(claimToken, userId, workspaceId)
           cleaned = true
         } finally {
-          if (cleaned) await store.releaseBootstrap(claimToken)
+          if (cleaned) await store.releaseBootstrap(ownerToken)
         }
         if (error instanceof LocalBootstrapClosedError) throw error
         throw new Error('Não foi possível concluir a configuração do primeiro acesso.')
@@ -140,32 +166,37 @@ export function createSupabaseLocalBootstrapStore(client: SupabaseClient): Local
       return {
         status: row.status,
         ...(typeof row.claimToken === 'string' ? { claimToken: row.claimToken } : {}),
+        ...(typeof row.ownerToken === 'string' ? { ownerToken: row.ownerToken } : {}),
         ...(typeof row.leaseExpiresAt === 'string' ? { leaseExpiresAt: row.leaseExpiresAt } : {}),
       }
     },
-    async claimBootstrap(desiredClaimToken) {
-      const { data, error } = await client.rpc('claim_local_bootstrap', { p_desired_claim_token: desiredClaimToken })
+    async claimBootstrap(desiredOwnerToken, desiredClaimToken) {
+      const { data, error } = await client.rpc('claim_local_bootstrap', {
+        p_desired_owner_token: desiredOwnerToken,
+        p_desired_claim_token: desiredClaimToken,
+      })
       if (error || !data || typeof data !== 'object') throw new Error('Falha ao reservar o primeiro acesso.')
       const row = data as Record<string, unknown>
       return {
         claimed: row.claimed === true,
         ...(typeof row.claimToken === 'string' ? { claimToken: row.claimToken } : {}),
+        ...(typeof row.ownerToken === 'string' ? { ownerToken: row.ownerToken } : {}),
         ...(typeof row.previousUserId === 'string' ? { previousUserId: row.previousUserId } : {}),
         ...(typeof row.previousWorkspaceId === 'string' ? { previousWorkspaceId: row.previousWorkspaceId } : {}),
       }
     },
-    recordBootstrapProgress(claimToken, progress) {
+    recordBootstrapProgress(ownerToken, progress) {
       return rpcBoolean('record_local_bootstrap_progress', {
-        p_claim_token: claimToken,
+        p_owner_token: ownerToken,
         p_user_id: progress.userId ?? null,
         p_workspace_id: progress.workspaceId ?? null,
       })
     },
-    completeBootstrap(claimToken) {
-      return rpcBoolean('complete_local_bootstrap', { p_claim_token: claimToken })
+    completeBootstrap(ownerToken) {
+      return rpcBoolean('complete_local_bootstrap', { p_owner_token: ownerToken })
     },
-    releaseBootstrap(claimToken) {
-      return rpcBoolean('release_local_bootstrap', { p_claim_token: claimToken })
+    releaseBootstrap(ownerToken) {
+      return rpcBoolean('release_local_bootstrap', { p_owner_token: ownerToken })
     },
     async countUsers() {
       let total = 0

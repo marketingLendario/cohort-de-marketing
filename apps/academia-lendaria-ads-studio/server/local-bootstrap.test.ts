@@ -12,19 +12,19 @@ function fakeStore(overrides: Partial<LocalBootstrapStore> = {}): LocalBootstrap
   let state: LocalBootstrapState | null = null
   const store: LocalBootstrapStore = {
     readBootstrapState: vi.fn(async () => state),
-    claimBootstrap: vi.fn(async (desiredClaimToken) => {
+    claimBootstrap: vi.fn(async (desiredOwnerToken, desiredClaimToken) => {
       if (state?.status === 'complete') return { claimed: false }
       if (state?.status === 'creating' && state.leaseExpiresAt && Date.parse(state.leaseExpiresAt) > Date.now()) {
         return { claimed: false }
       }
       const claimToken = state?.status === 'creating' ? state.claimToken! : desiredClaimToken
-      state = { status: 'creating', claimToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString() }
-      return { claimed: true, claimToken }
+      state = { status: 'creating', claimToken, ownerToken: desiredOwnerToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString() }
+      return { claimed: true, claimToken, ownerToken: desiredOwnerToken }
     }),
-    recordBootstrapProgress: vi.fn(async (claimToken, progress) => {
-      state = { status: 'creating', claimToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString(), ...progress }
+    recordBootstrapProgress: vi.fn(async (ownerToken, progress) => {
+      state = { status: 'creating', claimToken: state?.claimToken, ownerToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString(), ...progress }
     }),
-    completeBootstrap: vi.fn(async (claimToken) => { state = { status: 'complete', claimToken } }),
+    completeBootstrap: vi.fn(async (ownerToken) => { state = { status: 'complete', claimToken: state?.claimToken, ownerToken } }),
     releaseBootstrap: vi.fn(async () => { state = { status: 'available' } }),
     countUsers: vi.fn().mockResolvedValue(0), countWorkspaces: vi.fn().mockResolvedValue(0), countMemberships: vi.fn().mockResolvedValue(0),
     findUserIdsByBootstrapClaim: vi.fn().mockResolvedValue([]),
@@ -64,7 +64,8 @@ describe('local first-run bootstrap', () => {
     expect(store.deleteMembership).toHaveBeenCalledWith(workspaceId, 'user-id')
     expect(store.deleteWorkspace).toHaveBeenCalledWith(workspaceId)
     expect(store.deleteUser).toHaveBeenCalledWith('user-id')
-    expect(store.releaseBootstrap).toHaveBeenCalledWith(workspaceId)
+    const ownerToken = vi.mocked(store.claimBootstrap).mock.calls[0]![0]
+    expect(store.releaseBootstrap).toHaveBeenCalledWith(ownerToken)
   })
 
   it('serializes two BFF processes through the durable claim', async () => {
@@ -83,9 +84,10 @@ describe('local first-run bootstrap', () => {
 
   it('reconciles resources from a stale claim before retrying', async () => {
     const claimToken = '93000000-0000-0000-0000-000000000001'
+    const ownerToken = '94000000-0000-0000-0000-000000000001'
     const store = fakeStore({
-      readBootstrapState: vi.fn().mockResolvedValue({ status: 'creating', claimToken, leaseExpiresAt: '2020-01-01T00:00:00.000Z' }),
-      claimBootstrap: vi.fn().mockResolvedValue({ claimed: true, claimToken, previousUserId: 'recorded-user', previousWorkspaceId: claimToken }),
+      readBootstrapState: vi.fn().mockResolvedValue({ status: 'creating', claimToken, ownerToken, leaseExpiresAt: new Date(Date.now() + 60_000).toISOString() }),
+      claimBootstrap: vi.fn().mockResolvedValue({ claimed: true, claimToken, ownerToken, previousUserId: 'recorded-user', previousWorkspaceId: claimToken }),
       findUserIdsByBootstrapClaim: vi.fn().mockResolvedValue(['unrecorded-user']),
     })
 
@@ -94,6 +96,36 @@ describe('local first-run bootstrap', () => {
     expect(store.deleteUser).toHaveBeenCalledWith('unrecorded-user')
     expect(store.deleteWorkspace).toHaveBeenCalledWith(claimToken)
     expect(store.createWorkspace).toHaveBeenCalledWith(input.workspaceName, claimToken)
+  })
+
+  it('does not compensate after losing the fenced owner token', async () => {
+    const store = fakeStore({
+      recordBootstrapProgress: vi.fn().mockRejectedValue(new Error('lease lost')),
+      readBootstrapState: vi.fn().mockResolvedValue({
+        status: 'creating',
+        claimToken: '95000000-0000-0000-0000-000000000001',
+        ownerToken: 'new-owner',
+        leaseExpiresAt: new Date(Date.now() + 60_000).toISOString(),
+      }),
+    })
+
+    await expect(createLocalBootstrapService(store).create(input)).rejects.toThrow('Não foi possível concluir')
+    expect(store.deleteUser).not.toHaveBeenCalledWith('user-id')
+    expect(store.releaseBootstrap).not.toHaveBeenCalled()
+  })
+
+  it('treats an ambiguous completion response as success when durable state is complete', async () => {
+    const claimToken = '96000000-0000-0000-0000-000000000001'
+    const ownerToken = '97000000-0000-0000-0000-000000000001'
+    const store = fakeStore({
+      claimBootstrap: vi.fn().mockResolvedValue({ claimed: true, claimToken, ownerToken }),
+      completeBootstrap: vi.fn().mockRejectedValue(new Error('response lost')),
+      readBootstrapState: vi.fn().mockResolvedValue({ status: 'complete', claimToken, ownerToken }),
+    })
+
+    await expect(createLocalBootstrapService(store).create(input)).resolves.toEqual({ status: 'created' })
+    expect(store.deleteUser).not.toHaveBeenCalledWith('user-id')
+    expect(store.releaseBootstrap).not.toHaveBeenCalled()
   })
 
   it('protects routes with loopback and boundary token and never returns credentials', async () => {
