@@ -35,7 +35,7 @@ internos ao aluno.
 
 ## Evidência executada
 
-- 14 testes focados em primeiro acesso, login, projetos, retries por etapa, conflito de manifesto, próxima ação e estado do sistema: PASS.
+- 15 testes focados em primeiro acesso, login, projetos, retries por etapa, conflito de manifesto, próxima ação e linguagem do estado do sistema: PASS.
 - ESLint: PASS.
 - TypeScript client/server: PASS.
 - Playwright direto em `1280x900` e `390x844`: conteúdo presente, sem overlay,
@@ -53,3 +53,7 @@ recarregava as pastas. O fluxo agora repete o preview ou a confirmação conform
 a etapa que falhou. Conflito de manifesto volta ao preview para obter o hash
 atual usando o código estável `manifest-stale`; falha transitória de confirmação
 mantém a revisão e repete a confirmação, sem inferência pelo texto da mensagem.
+
+A inspeção do launcher integrado também eliminou os últimos nomes de
+infraestrutura do painel de estado. Todos os checks oficiais agora aparecem
+como tarefas do Marketing Studio, inclusive no mobile.

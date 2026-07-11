@@ -42,6 +42,29 @@ describe('SystemReadiness', () => {
     expect(screen.getByRole('button', { name: 'Verificar novamente' })).toBeInTheDocument();
   });
 
+  it('translates every launcher check into task language', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
+      status: 'ready',
+      checkedAt: '2026-07-10T12:00:00.000Z',
+      source: 'launcher',
+      checks: [
+        ['node', 'Node.js'], ['npm', 'Dependências'], ['codex', 'Codex CLI'],
+        ['filesystem', 'Arquivos do projeto'], ['ports', 'Portas locais'],
+        ['supabase', 'Supabase local'], ['migrations', 'Banco atualizado'],
+        ['browser', 'Navegador'], ['bff', 'Motor local'], ['web', 'Interface'],
+      ].map(([id, label]) => ({ id, label, status: 'ready', detail: 'Ativo.', required: true })),
+    }), { status: 200 }));
+
+    render(<SystemReadiness />);
+    const trigger = await screen.findByRole('button', { name: 'Tudo pronto para continuar' });
+    fireEvent.click(trigger);
+    const dialog = screen.getByRole('dialog', { name: 'Estado do Marketing Studio' });
+
+    expect(dialog).toHaveTextContent('Base do Marketing Studio');
+    expect(dialog).toHaveTextContent('Ações do Marketing Studio');
+    expect(dialog).not.toHaveTextContent(/Node\.js|Dependências|Codex|CLI|Supabase|BFF|Portas locais|Motor local/i);
+  });
+
   it('moves focus into the diagnostic and restores it on Escape', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({
       status: 'ready',

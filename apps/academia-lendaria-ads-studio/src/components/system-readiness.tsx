@@ -14,6 +14,14 @@ const STATUS_LABELS: Record<SystemReadinessStatus, string> = {
 };
 
 const FRIENDLY_CHECKS: Record<string, { label: string; recovery: string }> = {
+  node: {
+    label: 'Base do Marketing Studio',
+    recovery: 'Feche e abra novamente o Marketing Studio pelo mesmo atalho usado no início.',
+  },
+  npm: {
+    label: 'Componentes do Marketing Studio',
+    recovery: 'Feche e abra novamente o Marketing Studio. O início prepara esses componentes automaticamente.',
+  },
   codex: {
     label: 'Acesso à inteligência artificial',
     recovery: 'Abra novamente o Marketing Studio pelo atalho de início. Se o aviso continuar, peça ajuda ao suporte da turma para renovar seu acesso.',
@@ -25,6 +33,22 @@ const FRIENDLY_CHECKS: Record<string, { label: string; recovery: string }> = {
   database: {
     label: 'Seus projetos salvos',
     recovery: 'Feche e abra novamente o Marketing Studio. Seus projetos permanecem salvos no computador.',
+  },
+  filesystem: {
+    label: 'Pasta dos seus projetos',
+    recovery: 'Confira se a pasta dos seus projetos continua disponível e escolha “Verificar novamente”.',
+  },
+  ports: {
+    label: 'Comunicação do Marketing Studio',
+    recovery: 'Feche outras janelas do Marketing Studio, abra-o novamente e escolha “Verificar novamente”.',
+  },
+  supabase: {
+    label: 'Seus projetos salvos',
+    recovery: 'Feche e abra novamente o Marketing Studio. Seus projetos permanecem salvos no computador.',
+  },
+  migrations: {
+    label: 'Organização dos projetos salvos',
+    recovery: 'Feche e abra novamente o Marketing Studio para concluir a preparação dos seus projetos.',
   },
   web: {
     label: 'Tela do Marketing Studio',
@@ -38,6 +62,10 @@ const FRIENDLY_CHECKS: Record<string, { label: string; recovery: string }> = {
     label: 'Inicialização do Marketing Studio',
     recovery: 'Feche esta aba e abra novamente o Marketing Studio pelo mesmo atalho usado no início.',
   },
+  bff: {
+    label: 'Ações do Marketing Studio',
+    recovery: 'Feche e abra novamente o Marketing Studio pelo mesmo atalho usado no início.',
+  },
   'readiness-api': {
     label: 'Verificação do Marketing Studio',
     recovery: 'Aguarde alguns segundos e escolha “Verificar novamente”. Se continuar, feche e abra o Marketing Studio.',
@@ -47,7 +75,7 @@ const FRIENDLY_CHECKS: Record<string, { label: string; recovery: string }> = {
 function friendlyCheck(check: SystemReadinessSnapshot['checks'][number]) {
   const copy = FRIENDLY_CHECKS[check.id];
   return {
-    label: copy?.label ?? check.label.replace(/CLI|API|BFF|Supabase|Vite/gi, 'serviço local'),
+    label: copy?.label ?? 'Componente do Marketing Studio',
     detail: check.status === 'ready'
       ? 'Pronto para uso.'
       : check.required
