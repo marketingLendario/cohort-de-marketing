@@ -227,13 +227,34 @@ function collectProposalStrings(value: unknown, depth = 0): string[] {
   return [];
 }
 
+function diagnosticProposalStrings(proposal: SkillProposal): string[] {
+  const { artifacts, ...proposalCopy } = proposal;
+  const strings = collectProposalStrings(proposalCopy);
+
+  for (const artifact of artifacts) {
+    if (artifact.artifactType !== 'trafficDiagnosis') continue;
+    try {
+      const parsed = parseStructuredContent(artifact.content);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && 'diagnosticador' in parsed) {
+        strings.push(...collectProposalStrings((parsed as Record<string, unknown>).diagnosticador));
+        continue;
+      }
+    } catch {
+      // Fall through and inspect the raw diagnostic artifact fail-closed.
+    }
+    strings.push(...collectProposalStrings(artifact.content));
+  }
+
+  return strings;
+}
+
 /**
  * Returns unavailable metrics that received a numeric value in the proposal.
  * Text such as "CTR não fornecido" remains valid; assignments, estimates and
  * derivations such as "CTR aproximado de 0,8%" fail closed.
  */
 export function derivedUnavailableTrafficMetrics(proposal: SkillProposal, unavailableMetrics: string[]): string[] {
-  const texts = collectProposalStrings(proposal).map(normalizeForComparison);
+  const texts = diagnosticProposalStrings(proposal).map(normalizeForComparison);
   const numeric = '(?:r\\$\\s*)?\\d+(?:[.,]\\d+)*(?:\\s*[%x])?';
   return unavailableMetrics.filter((metric) => {
     const name = escapeRegExp(normalizeForComparison(metric));
@@ -390,6 +411,14 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
           'Baseie a alavanca somente nos valores literais e nos estados operacionais presentes nos artefatos.',
         ].join(' ')
       : '';
+    const trafficPanelGuard = ['zelador', 'briefista', 'estruturador', 'leitor-de-metricas', 'diagnosticador'].includes(skillId)
+      ? [
+          'HANDOFF DO SQUAD: context.trafficPanel é a memória compartilhada canônica desta execução.',
+          'Preserve as seções anteriores e acrescente somente a seção da skill atual, sem apagar dados literais já confirmados.',
+          'A saída deve conter um único artefato YAML em PAINEL-DA-SEMANA.yaml quando a skill produzir artefato do squad.',
+          'Não transforme o painel compartilhado em JSON nem troque seu caminho por um arquivo privado da skill.',
+        ].join(' ')
+      : '';
     ensureLive();
     const temporaryDirectory = await mkdtemp(resolve(tmpdir(), 'cohort-codex-skill-'));
     const schemaPath = resolve(temporaryDirectory, 'proposal.schema.json');
@@ -421,6 +450,7 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
         `Tipos de artefato esperados no catálogo: ${primaryArtifacts}.`,
         skill.guard ? `Guarda de produto: ${skill.guard}` : '',
         unavailableMetricGuard,
+        trafficPanelGuard,
         '',
         '--- SKILL.md canônico ---',
         instructions,
@@ -453,6 +483,13 @@ export class CodexCliLocalSkillRunner implements LocalSkillRunner {
       if (derivedMetrics.length > 0) {
         throw new Error(
           `Diagnosticador derivou ${derivedMetrics.join(', ')}, marcado como não fornecido pelo Leitor. Rode novamente sem calcular métricas ausentes.`,
+        );
+      }
+      const producedArtifactTypes = new Set(proposal.artifacts.map((artifact) => artifact.artifactType));
+      const missingPrimaryArtifacts = skill.primaryArtifacts.filter((artifactType) => !producedArtifactTypes.has(artifactType));
+      if (missingPrimaryArtifacts.length > 0) {
+        throw new Error(
+          `${skill.title} não produziu o artefato obrigatório ${missingPrimaryArtifacts.join(', ')}. ${proposal.summary}`,
         );
       }
       onStep?.({ id: 'parse', label: 'Validar proposta estruturada', status: 'done' });

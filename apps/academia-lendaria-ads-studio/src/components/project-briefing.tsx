@@ -36,11 +36,15 @@ function sourceLabel(source?: string, confirmation?: string) {
 }
 
 function FieldControl({
+  id,
+  labelledBy,
   definition,
   value,
   disabled,
   onChange,
 }: {
+  id: string;
+  labelledBy: string;
   definition: BriefFieldDefinition;
   value: unknown;
   disabled: boolean;
@@ -51,7 +55,7 @@ function FieldControl({
   if (schema.type === 'boolean') {
     return (
       <label className="cms-boolean-control">
-        <input type="checkbox" checked={value === true} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
+        <input id={id} type="checkbox" checked={value === true} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
         <span>{value === true ? 'Sim' : 'Não'}</span>
       </label>
     );
@@ -59,7 +63,7 @@ function FieldControl({
 
   if (schema.enum) {
     return (
-      <select className="al-input" value={value == null ? '' : String(value)} disabled={disabled} onChange={(event) => onChange(event.target.value || undefined)}>
+      <select id={id} className="al-input" value={value == null ? '' : String(value)} disabled={disabled} onChange={(event) => onChange(event.target.value || undefined)}>
         <option value="">Selecione</option>
         {schema.enum.map((option) => <option key={String(option)} value={String(option)}>{enumLabel(option)}</option>)}
       </select>
@@ -71,6 +75,7 @@ function FieldControl({
       <div className="cms-number-control">
         {schema['x-unit'] === 'BRL' ? <span>R$</span> : null}
         <input
+          id={id}
           className="al-input"
           type="number"
           step={schema.type === 'integer' ? 1 : 'any'}
@@ -87,7 +92,7 @@ function FieldControl({
   if (schema.type === 'array' && schema.items?.type === 'object') {
     const rows = Array.isArray(value) ? value as Array<Record<string, unknown>> : [];
     return (
-      <div className="cms-array-object">
+      <div id={id} className="cms-array-object" role="group" aria-labelledby={labelledBy}>
         {rows.map((row, index) => (
           <div key={index} className="cms-array-object__row">
             <div className="cms-array-object__fields">
@@ -151,6 +156,7 @@ function FieldControl({
     const text = Array.isArray(value) ? value.join('\n') : '';
     return (
       <textarea
+        id={id}
         className="al-input cms-brief-textarea"
         value={text}
         disabled={disabled}
@@ -163,12 +169,13 @@ function FieldControl({
   const useTextarea = schema['x-control'] === 'textarea' || (schema.maxLength ?? 0) > 180;
   if (useTextarea) {
     return (
-      <textarea className="al-input cms-brief-textarea" value={String(value ?? '')} disabled={disabled} onChange={(event) => onChange(event.target.value)} rows={4} />
+      <textarea id={id} className="al-input cms-brief-textarea" value={String(value ?? '')} disabled={disabled} onChange={(event) => onChange(event.target.value)} rows={4} />
     );
   }
 
   return (
     <input
+      id={id}
       className="al-input"
       type={schema.format === 'uri' ? 'url' : schema.format === 'date' ? 'date' : 'text'}
       value={String(value ?? '')}
@@ -314,12 +321,15 @@ export function ProjectBriefing({ projectId, sectionId }: { projectId: string; s
               const notApplicable = meta?.confirmation === 'not_applicable';
               const error = touched[definition.path] ? validateBriefField(definition, value) : null;
               const previousGroup = fields[index - 1]?.group;
+              const controlId = `field-${definition.path}`;
+              const labelId = `${controlId}-label`;
+              const isObjectArray = definition.schema.type === 'array' && definition.schema.items?.type === 'object';
               return (
                 <div key={definition.path}>
                   {definition.group && definition.group !== previousGroup ? <h2 className="cms-field-group-title">{definition.group}</h2> : null}
                   <div className={`cms-brief-field ${error ? 'has-error' : ''}`}>
                     <div className="cms-brief-field__label">
-                      <label htmlFor={`field-${definition.path}`}>{definition.schema.title ?? enumLabel(definition.path.split('.').at(-1) ?? definition.path)}{definition.required ? ' *' : ''}</label>
+                      <label id={labelId} htmlFor={isObjectArray ? undefined : controlId}>{definition.schema.title ?? enumLabel(definition.path.split('.').at(-1) ?? definition.path)}{definition.required ? ' *' : ''}</label>
                       {!definition.required ? (
                         <label className="cms-na-control">
                           <input
@@ -334,8 +344,8 @@ export function ProjectBriefing({ projectId, sectionId }: { projectId: string; s
                         </label>
                       ) : null}
                     </div>
-                    <div id={`field-${definition.path}`}>
-                      <FieldControl definition={definition} value={value} disabled={notApplicable} onChange={(next) => changeField(definition.path, next)} />
+                    <div>
+                      <FieldControl id={controlId} labelledBy={labelId} definition={definition} value={value} disabled={notApplicable} onChange={(next) => changeField(definition.path, next)} />
                     </div>
                     <div className="cms-field-meta">
                       <span>{sourceLabel(meta?.source, meta?.confirmation)}</span>

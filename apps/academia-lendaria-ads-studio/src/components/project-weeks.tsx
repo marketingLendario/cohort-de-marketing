@@ -1,7 +1,9 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { parse, stringify } from 'yaml';
 import { Button, Icon } from '@/lib/lendaria-ds';
-import { getDemoCampaigns } from '@/lib/demo-mode';
+import { DEMO_AUTH_ENABLED, getDemoCampaigns } from '@/lib/demo-mode';
+import { supabase } from '@/lib/supabase';
+import type { AdsCampaign } from '@/lib/types';
 import { executeLocalSkill, type SkillProposal } from '@/lib/skill-runtime';
 import {
   applyDiagnosis,
@@ -12,6 +14,8 @@ import {
 } from '@/lib/weekly-panel';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
 import type { WeeklyPanel } from '@/lib/project-domain';
+import { TrafficSimulationBanner } from '@/components/traffic-simulation-banner';
+import { buildTrafficPanelContext } from '@/lib/traffic-panel';
 
 function diagnosisFromProposal(proposal: SkillProposal): NonNullable<WeeklyPanel['diagnosis']> {
   const fields = Object.fromEntries(proposal.fields.map((field) => [field.key.toLowerCase(), field.value]));
@@ -30,7 +34,9 @@ export function ProjectWeeks({ projectId }: { projectId: string }) {
   const revisions = useProjectStore((state) => state.briefRevisions);
   const brief = activeBriefFor(projectId, revisions);
   const allPanels = useProjectStore((state) => state.weeklyPanels);
+  const allArtifacts = useProjectStore((state) => state.artifacts);
   const panels = useMemo(() => allPanels.filter((panel) => panel.projectId === projectId), [allPanels, projectId]);
+  const artifacts = useMemo(() => allArtifacts.filter((artifact) => artifact.projectId === projectId && artifact.verification === 'confirmed'), [allArtifacts, projectId]);
   const upsertPanel = useProjectStore((state) => state.upsertWeeklyPanel);
   const addArtifact = useProjectStore((state) => state.addArtifact);
   const [campaignId, setCampaignId] = useState('');
@@ -39,9 +45,42 @@ export function ProjectWeeks({ projectId }: { projectId: string }) {
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [humanAction, setHumanAction] = useState('');
-  const campaigns = useMemo(() => project ? getDemoCampaigns(project.workspaceId).filter((campaign) => !campaign.project_id || campaign.project_id === projectId) : [], [project, projectId]);
+  const [campaigns, setCampaigns] = useState<AdsCampaign[]>([]);
+  const [campaignsLoading, setCampaignsLoading] = useState(true);
+  const [campaignsError, setCampaignsError] = useState<string | null>(null);
   const effectiveCampaignId = campaignId || campaigns[0]?.id || '';
   const selected = panels.find((panel) => panel.id === selectedPanelId) ?? panels.find((panel) => panel.campaignId === effectiveCampaignId) ?? panels[0];
+
+  useEffect(() => {
+    if (!project) return;
+    let active = true;
+    setCampaignsLoading(true);
+    setCampaignsError(null);
+    if (DEMO_AUTH_ENABLED) {
+      setCampaigns(getDemoCampaigns(project.workspaceId).filter((campaign) => !campaign.project_id || campaign.project_id === projectId));
+      setCampaignsLoading(false);
+      return () => { active = false; };
+    }
+    void supabase
+      .from('ads_campaigns')
+      .select('id, workspace_id, project_id, name, status, step_current, created_at')
+      .eq('workspace_id', project.workspaceId)
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .then(({ data, error: queryError }) => {
+        if (!active) return;
+        if (queryError) setCampaignsError(queryError.message);
+        setCampaigns((data ?? []) as AdsCampaign[]);
+        setCampaignsLoading(false);
+      });
+    return () => { active = false; };
+  }, [project, projectId]);
+
+  useEffect(() => {
+    if (selectedPanelId && panels.some((panel) => panel.id === selectedPanelId)) return;
+    const next = panels.find((panel) => panel.campaignId === effectiveCampaignId) ?? panels[0];
+    if (next?.id !== selectedPanelId) setSelectedPanelId(next?.id ?? null);
+  }, [effectiveCampaignId, panels, selectedPanelId]);
 
   if (!project || !brief) return null;
   const workspaceId = project.workspaceId;
@@ -82,10 +121,36 @@ export function ProjectWeeks({ projectId }: { projectId: string }) {
     setError(null);
     setRunning(true);
     try {
+      const trafficPanel = buildTrafficPanelContext(artifacts);
+      const reader = trafficPanel.leitor && typeof trafficPanel.leitor === 'object' && !Array.isArray(trafficPanel.leitor)
+        ? trafficPanel.leitor as Record<string, unknown>
+        : {};
       const result = await executeLocalSkill('diagnosticador', {
         projectId,
         brief: briefData,
-        context: { weeklyPanel: selected },
+        context: {
+          artifacts: artifacts.map((artifact) => ({
+            artifactType: artifact.artifactType,
+            title: artifact.title,
+            path: artifact.path,
+            content: artifact.content,
+          })),
+          weeklyPanel: selected,
+          trafficPanel: {
+            ...trafficPanel,
+            leitor: {
+              ...reader,
+              sinais: selected.metrics.map((metric) => ({
+                metrica: metric.name,
+                valor: metric.value,
+                selo: metric.seal,
+                fonte: metric.source,
+              })),
+              amostra_suficiente_para_cpa: selected.reader.sampleSufficientForCpa,
+              nota_amostra: selected.reader.note,
+            },
+          },
+        },
         operatorInput: 'Retorne exatamente uma alavanca. Em fields use as chaves hypothesis, singleLever, successCriterion, reversalCriterion e circuitBreakerTriggered.',
       });
       setProposal(result.proposal);
@@ -159,10 +224,13 @@ export function ProjectWeeks({ projectId }: { projectId: string }) {
         </div>
       </div>
 
+      <TrafficSimulationBanner />
+
       {error ? <div className="cms-inline-error">{error}</div> : null}
+      {campaignsError ? <div className="cms-inline-error">Não foi possível carregar as campanhas: {campaignsError}</div> : null}
 
       <div className="cms-week-toolbar">
-        <label><span>Campanha</span><select className="al-input" value={effectiveCampaignId} onChange={(event) => { setCampaignId(event.target.value); const panel = panels.find((candidate) => candidate.campaignId === event.target.value); setSelectedPanelId(panel?.id ?? null); }}>{campaigns.map((campaign) => <option key={campaign.id} value={campaign.id}>{campaign.name}</option>)}</select></label>
+        <label><span>Campanha</span><select className="al-input" value={effectiveCampaignId} disabled={campaignsLoading || !campaigns.length} onChange={(event) => { setCampaignId(event.target.value); const panel = panels.find((candidate) => candidate.campaignId === event.target.value); setSelectedPanelId(panel?.id ?? null); }}><option value="">{campaignsLoading ? 'Carregando campanhas...' : 'Selecione uma campanha'}</option>{campaigns.map((campaign) => <option key={campaign.id} value={campaign.id}>{campaign.name}</option>)}</select></label>
         <label><span>Semana</span><select className="al-input" value={selected?.id ?? ''} onChange={(event) => setSelectedPanelId(event.target.value)}><option value="">Nenhuma semana</option>{panels.filter((panel) => panel.campaignId === effectiveCampaignId).map((panel) => <option key={panel.id} value={panel.id}>{new Date(`${panel.weekStart}T12:00:00`).toLocaleDateString('pt-BR')}</option>)}</select></label>
         <Button onClick={createWeek} disabled={!effectiveCampaignId}><Icon name="plus" size={13} /> Nova semana</Button>
       </div>
@@ -200,7 +268,7 @@ export function ProjectWeeks({ projectId }: { projectId: string }) {
             <div className="cms-event-list">{selected.events.map((event) => <div key={event.id}><span>{new Date(event.createdAt).toLocaleString('pt-BR')}</span><strong>{event.type}</strong><small>{event.actor}</small></div>)}</div>
           </section>
         </>
-      ) : <div className="cms-empty-state">Crie a primeira semana para iniciar a leitura.</div>}
+      ) : <div className="cms-empty-state">{campaignsLoading ? 'Carregando campanhas...' : campaigns.length ? 'Crie a primeira semana para iniciar a leitura.' : 'Nenhuma campanha deste projeto está disponível para a operação semanal.'}</div>}
     </div>
   );
 }

@@ -4,6 +4,9 @@ import { Button, Icon } from '@/lib/lendaria-ds';
 import { skillCatalog } from '@/generated/skill-catalog';
 import { evaluateProjectSkills, nextProjectAction, type SkillEvaluation } from '@/lib/readiness';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
+import { buildTrafficPanelContext } from '@/lib/traffic-panel';
+import { trafficApprovalBlockReason, trafficWorkflowBlockReason } from '@/lib/traffic-workflow';
+import { TrafficSimulationBanner } from '@/components/traffic-simulation-banner';
 import type { ProjectArtifact, SkillRun } from '@/lib/project-domain';
 import { useOptionalProjectWorkspaceActions } from '@/components/project-hydration-boundary';
 import { toCacheRunPatch, type PersistSkillRunStartInput } from '@/hooks/use-project-workspace';
@@ -315,6 +318,12 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
     setExecuting(true);
     try {
       const confirmedArtifacts = artifacts.filter((artifact) => artifact.verification === 'confirmed');
+      const workflowBlock = trafficWorkflowBlockReason(selectedEvaluation.skillId, confirmedArtifacts);
+      if (workflowBlock) {
+        setRuntimeError(workflowBlock);
+        return;
+      }
+      const trafficPanel = buildTrafficPanelContext(confirmedArtifacts);
       // Persist + 202 first (AC1): we get a durable jobId before the long run.
       const start = await startSkillRun(selectedEvaluation.skillId, {
         workspaceId: briefWorkspaceId,
@@ -327,6 +336,7 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
             path: artifact.path,
             content: artifact.content,
           })),
+          trafficPanel,
         },
         operatorInput: operatorInput.trim() || undefined,
       });
@@ -408,6 +418,11 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
   async function approveProposal() {
     const run = latestRun;
     if (!run || !reviewProposal || reviewArtifacts.length === 0) return;
+    const workflowBlock = trafficApprovalBlockReason(run.skillId, [...artifacts, ...reviewArtifacts]);
+    if (workflowBlock) {
+      setApprovalError(workflowBlock);
+      return;
+    }
     setApprovalError(null);
     setApprovalBusy(true);
     try {
@@ -440,7 +455,7 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
             content: entry.content,
             createdAt: now,
             updatedAt: now,
-          });
+          }, false);
         }
         updateRun(run.id, { status: 'done', proposalHash: record.proposalHash });
       } else {
@@ -557,6 +572,8 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
           </button>
         </div>
       </div>
+
+      <TrafficSimulationBanner />
 
       <div className="cms-journey-toolbar">
         <label className="cms-search-control">
@@ -679,6 +696,9 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
             <ArtifactApprovalReview
               proposalSummary={reviewProposal.summary}
               artifacts={reviewArtifacts}
+              workflowHint={latestRun.skillId === 'briefista'
+                ? 'Curadoria humana: edite o Painel da Semana e registre 2 a 3 valores em finalistas_curados antes de aprovar.'
+                : undefined}
               plan={approvalPlan}
               planLoading={approvalPlanLoading}
               proposalWarnings={reviewProposal.warnings}

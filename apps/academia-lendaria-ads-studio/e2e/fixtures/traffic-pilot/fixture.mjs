@@ -67,7 +67,7 @@ function dbQuery(sql) {
 
 async function removeExistingUser(admin) {
   const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-  if (error) throw new Error(`Não foi possível listar usuários da fixture: ${error.message}`);
+  if (error) throw new Error(`Não foi possível listar usuários da fixture: ${JSON.stringify(error)}`);
   const existing = data.users.find((user) => user.email === TRAFFIC_PILOT.email);
   if (existing) { const result = await admin.auth.admin.deleteUser(existing.id); if (result.error) throw new Error(`Não foi possível remover usuário anterior: ${result.error.message}`); }
 }
@@ -98,7 +98,7 @@ async function ensureCampaignTable(admin) {
 async function deleteFixtureRows(admin) {
   const workspace = TRAFFIC_PILOT.workspaceId;
   const tables = [['artifact_approval_outbox', 'workspace_id'], ['human_decisions', 'workspace_id'], ['ads_weekly_panel_events', 'workspace_id'], ['ads_weekly_panels', 'workspace_id'], ['campaign_plan_revisions', 'workspace_id'], ['project_artifacts', 'workspace_id'], ['skill_runs', 'workspace_id'], ['skill_run_jobs', 'workspace_id'], ['project_brief_revisions', 'workspace_id'], ['marketing_projects', 'workspace_id'], ['workspace_members', 'workspace_id'], ['workspaces', 'id']];
-  for (const [table, column] of tables) { const { error } = await admin.from(table).delete().eq(column, workspace); if (error && !['PGRST205', '42P01'].includes(error.code)) throw new Error(`Falha limpando ${table}: ${error.message}`); }
+  for (const [table, column] of tables) { const { error } = await admin.from(table).delete().eq(column, workspace); if (error && !['PGRST205', '42P01'].includes(error.code)) throw new Error(`Falha limpando ${table}: ${JSON.stringify(error)}`); }
   const { error: campaignError } = await admin.from('ads_campaigns').delete().eq('id', TRAFFIC_PILOT.campaignId);
   if (campaignError && !['PGRST205', '42P01'].includes(campaignError.code)) throw new Error(`Falha limpando campanha fixture: ${campaignError.message}`);
 }
@@ -122,11 +122,11 @@ export async function createTrafficPilotFixture() {
   const { error: artifactError } = await admin.from('project_artifacts').insert({ id: TRAFFIC_PILOT.copyArtifactId, workspace_id: TRAFFIC_PILOT.workspaceId, project_id: TRAFFIC_PILOT.projectId, artifact_type: 'copy', title: 'Copy e ângulos da Aula 2', path: 'copy.md', format: 'markdown', state: 'confirmed', verification: 'confirmed', source: 'filesystem', content: COPY_CONTENT, content_hash: sha256(COPY_CONTENT), created_at: now, updated_at: now }); if (artifactError) throw new Error(`Falha criando artefato copy: ${artifactError.message}`);
 
   return { ...TRAFFIC_PILOT, appRoot, repoRoot, projectRoot, config, admin, userId: userData.user.id, campaignTableCreated,
-    async latestSkillRun(skillId) { const { data, error } = await admin.from('skill_runs').select('*').eq('project_id', TRAFFIC_PILOT.projectId).eq('skill_id', skillId).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (error) throw new Error(`Falha lendo skill_run ${skillId}: ${error.message}`); return data; },
+    async latestSkillRun(skillId) { const { data, error } = await admin.from('skill_runs').select('*').eq('project_id', TRAFFIC_PILOT.projectId).eq('skill_id', skillId).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (error) throw new Error(`Falha lendo skill_run ${skillId}: ${JSON.stringify(error)}`); return data; },
     async waitForLatestSkillRun(skillId, predicate, timeoutMs = 30_000) { const deadline = Date.now() + timeoutMs; let last = null; while (Date.now() < deadline) { last = await this.latestSkillRun(skillId); if (last && predicate(last)) return last; await new Promise((resolvePromise) => setTimeout(resolvePromise, 250)); } throw new Error(`Timeout aguardando skill_run ${skillId}; último estado: ${JSON.stringify(last)}`); },
-    async approvalFor(runId) { const { data, error } = await admin.from('artifact_approval_outbox').select('*').eq('skill_run_id', runId).order('created_at', { ascending: false }); if (error) throw new Error(`Falha lendo aprovação: ${error.message}`); return data ?? []; },
-    async artifactsFor(runId) { const { data, error } = await admin.from('project_artifacts').select('*').eq('skill_run_id', runId).order('created_at', { ascending: false }); if (error) throw new Error(`Falha lendo artefatos: ${error.message}`); return data ?? []; },
-    async latestJob(skillId) { const { data, error } = await admin.from('skill_run_jobs').select('*').eq('project_id', TRAFFIC_PILOT.projectId).eq('skill_id', skillId).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (error) throw new Error(`Falha lendo job ${skillId}: ${error.message}`); return data; },
+    async approvalFor(runId) { const { data, error } = await admin.from('artifact_approval_outbox').select('*').eq('skill_run_id', runId).order('created_at', { ascending: false }); if (error) throw new Error(`Falha lendo aprovação: ${JSON.stringify(error)}`); return data ?? []; },
+    async artifactsFor(runId) { const { data, error } = await admin.from('project_artifacts').select('*').eq('skill_run_id', runId).order('created_at', { ascending: false }); if (error) throw new Error(`Falha lendo artefatos: ${JSON.stringify(error)}`); return data ?? []; },
+    async latestJob(skillId) { const { data, error } = await admin.from('skill_run_jobs').select('*').eq('project_id', TRAFFIC_PILOT.projectId).eq('skill_id', skillId).order('created_at', { ascending: false }).limit(1).maybeSingle(); if (error) throw new Error(`Falha lendo job ${skillId}: ${JSON.stringify(error)}`); return data; },
     async waitForLatestJob(skillId, predicate, timeoutMs = 10 * 60 * 1000) { const deadline = Date.now() + timeoutMs; let last = null; while (Date.now() < deadline) { last = await this.latestJob(skillId); if (last && predicate(last)) return last; await new Promise((resolvePromise) => setTimeout(resolvePromise, 250)); } throw new Error(`Timeout aguardando job ${skillId}; último estado: ${JSON.stringify(last)}`); },
     async jobsFor() { const { data, error } = await admin.from('skill_run_jobs').select('id, skill_id, status, attempt, attempts, steps, logs, input, updated_at').eq('project_id', TRAFFIC_PILOT.projectId).order('created_at', { ascending: true }); if (error) throw new Error(`Falha lendo jobs: ${error.message}`); return data ?? []; },
     async campaign() { const { data, error } = await admin.from('ads_campaigns').select('*').eq('id', TRAFFIC_PILOT.campaignId).maybeSingle(); if (error) throw new Error(`Falha lendo campanha: ${error.message}`); return data; },

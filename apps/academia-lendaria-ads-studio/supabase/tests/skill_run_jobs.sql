@@ -45,25 +45,19 @@ select results_eq(
   'RLS only exposes skill-run jobs from the active membership'
 );
 
-select lives_ok(
-  $$ update public.skill_run_jobs
-       set status = 'running', lease_owner = 'worker-1', lease_expires_at = now() + interval '30 seconds'
-     where id = '40000000-0000-0000-0000-000000000001' $$,
-  'workspace member can claim (update) a job in its workspace'
+select ok(
+  not has_table_privilege('authenticated', 'public.skill_run_jobs', 'INSERT'),
+  'authenticated users cannot forge durable jobs'
 );
 
-select is(
-  (select status from public.skill_run_jobs where id = '40000000-0000-0000-0000-000000000001'),
-  'running',
-  'the claimed job persisted its running status'
+select ok(
+  not has_table_privilege('authenticated', 'public.skill_run_jobs', 'UPDATE'),
+  'authenticated users cannot claim or rewrite jobs'
 );
 
-select throws_ok(
-  $$ insert into public.skill_run_jobs (workspace_id, project_id, skill_id)
-     values ('20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000002', 'offerbook') $$,
-  '42501',
-  'new row violates row-level security policy for table "skill_run_jobs"',
-  'RLS rejects writes to another workspace'
+select ok(
+  not has_table_privilege('authenticated', 'public.skill_run_jobs', 'DELETE'),
+  'authenticated users cannot delete job history'
 );
 
 select * from finish();

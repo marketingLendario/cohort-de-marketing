@@ -400,6 +400,10 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
    * never holds the secret (AC3/NFR10).
    */
   function guardSkillRunRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!isLoopbackRequest(req)) {
+      reply.status(403).send({ code: 'LOCAL_SKILL_RUNNER_LOOPBACK_ONLY', message: 'Este recurso só está disponível localmente.' })
+      return false
+    }
     if (!skillRunner || !runnerToken || !runnerLimiter || !skillWorker) {
       reply.status(503).send({
         code: 'LOCAL_SKILL_RUNNER_DISABLED',
@@ -426,6 +430,10 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
    * when the capability is off (no Supabase backend), 401/403 on the token.
    */
   function guardApprovalRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!isLoopbackRequest(req)) {
+      reply.status(403).send({ code: 'ARTIFACT_APPROVAL_LOOPBACK_ONLY', message: 'Este recurso só está disponível localmente.' })
+      return false
+    }
     if (!artifactApprovalService || !runnerToken) {
       reply.status(503).send({
         code: 'ARTIFACT_APPROVAL_DISABLED',
@@ -451,6 +459,10 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
    * depende do backend service-role e do scanner confinado em `projetos/`.
    */
   function guardProjectIntakeRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!isLoopbackRequest(req)) {
+      reply.status(403).send({ code: 'PROJECT_INTAKE_LOOPBACK_ONLY', message: 'Este recurso só está disponível localmente.' })
+      return false
+    }
     if (!projectIntakeService || !runnerToken) {
       reply.status(503).send({
         code: 'PROJECT_INTAKE_DISABLED',

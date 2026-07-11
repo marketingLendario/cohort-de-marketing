@@ -105,6 +105,20 @@ describe('local skill runner endpoint', () => {
     expect((done.proposal as { summary: string }).summary).toBe('Proposta pronta');
   });
 
+  it('rejects runner requests that do not originate from loopback', async () => {
+    const app = await buildApp({ campaignRepo: null, skillRunner: stubRunner(), localRunnerToken: TOKEN });
+    apps.push(app);
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/local/skills/offerbook/run',
+      remoteAddress: '192.168.1.20',
+      headers: AUTH,
+      payload: VALID_BODY,
+    });
+    expect(response.statusCode).toBe(403);
+    expect(response.json().code).toBe('LOCAL_SKILL_RUNNER_LOOPBACK_ONLY');
+  });
+
   it('rejects malformed input before persisting or dispatching (authorized)', async () => {
     let called = false;
     const runner = stubRunner({
@@ -432,7 +446,13 @@ describe('local skill runner endpoint', () => {
       await writeFile(outputPath, JSON.stringify({
         summary: 'Proposta local',
         resultMarkdown: '# Resultado',
-        artifacts: [],
+        artifacts: [{
+          artifactType: 'offerbook',
+          title: 'Offerbook',
+          path: 'generated/offerbook.md',
+          format: 'markdown',
+          content: '# Offerbook',
+        }],
         fields: [],
         questions: [],
         warnings: [],
@@ -468,6 +488,26 @@ describe('local skill runner endpoint', () => {
       if (previousCodex === undefined) delete process.env.CODEX_API_KEY;
       else process.env.CODEX_API_KEY = previousCodex;
     }
+  });
+
+  it('fails with an actionable error when a skill omits its required artifact', async () => {
+    const execute = vi.fn(async ({ outputPath }: { outputPath: string }) => {
+      await writeFile(outputPath, JSON.stringify({
+        summary: 'Faltam dados para materializar o Offerbook.',
+        resultMarkdown: 'Preencha os campos pendentes.',
+        artifacts: [],
+        fields: [],
+        questions: ['Qual é a oferta?'],
+        warnings: [],
+      } satisfies SkillProposal));
+    });
+    const runner = new CodexCliLocalSkillRunner({
+      repoRoot: new URL('../../../../', import.meta.url).pathname,
+      execute,
+    });
+
+    await expect(runner.run('offerbook', { projectId: 'project-1', brief: {} }))
+      .rejects.toThrow('não produziu o artefato obrigatório');
   });
 
   it('fails closed when Diagnosticador derives a metric marked as nao_fornecido by Leitor (QA-W3.1-P2-001)', async () => {
@@ -522,7 +562,13 @@ describe('local skill runner endpoint', () => {
     const proposal: SkillProposal = {
       summary: 'A frequência não foi fornecida.',
       resultMarkdown: 'Aprovar 1 finalista em até 1 dia; frequência permanece não fornecida.',
-      artifacts: [],
+      artifacts: [{
+        artifactType: 'trafficDiagnosis',
+        title: 'Painel da Semana',
+        path: 'PAINEL-DA-SEMANA.yaml',
+        format: 'yaml',
+        content: 'diagnosticador:\n  alavanca_unica: "Aguardar dados literais"',
+      }],
       fields: [],
       questions: [],
       warnings: ['Não diagnosticar frequência.'],
@@ -540,6 +586,31 @@ describe('local skill runner endpoint', () => {
     await expect(runner.run('diagnosticador', { projectId: 'project-1', brief: {}, context })).resolves.toMatchObject({
       proposal: { summary: 'A frequência não foi fornecida.' },
     });
+  });
+
+  it('does not attribute unavailable metric thresholds inherited from earlier panel sections to Diagnosticador', () => {
+    const proposal: SkillProposal = {
+      summary: 'Uma alavanca para decisão humana.',
+      resultMarkdown: 'A recomendação usa apenas o CPA literal fornecido.',
+      artifacts: [{
+        artifactType: 'trafficDiagnosis',
+        title: 'Painel da Semana',
+        path: 'PAINEL-DA-SEMANA.yaml',
+        format: 'yaml',
+        content: [
+          'estruturador:',
+          '  circuit_breaker: "interromper se CTR ficar abaixo de 0,5%"',
+          'diagnosticador:',
+          '  alavanca: "manter verba e revisar o criativo"',
+          '  criterio_sucesso: "CPA literal permanece dentro do limite informado"',
+        ].join('\n'),
+      }],
+      fields: [],
+      questions: [],
+      warnings: [],
+    };
+
+    expect(derivedUnavailableTrafficMetrics(proposal, ['CTR'])).toEqual([]);
   });
 
   it('matches English Meta aliases to the Portuguese traffic metric contract', () => {

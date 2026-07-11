@@ -50,10 +50,10 @@ const FORBIDDEN_FILE_NAMES = [
 ]
 
 const SECRET_PATTERNS = [
-  /OPENAI_API_KEY\s*=/,
-  /CODEX_API_KEY\s*=/,
-  /SUPABASE_SERVICE_ROLE_KEY\s*=/,
-  /SUPABASE_DB_URL\s*=/,
+  /(?:OPENAI_API_KEY|CODEX_API_KEY|SUPABASE_SERVICE_ROLE_KEY|SUPABASE_DB_URL|LOCAL_SKILL_RUNNER_TOKEN|META_ACCESS_TOKEN|META_SYSTEM_USER_TOKEN|APIFY_API_TOKEN)\s*[:=]/i,
+  /sb_(?:secret|publishable)_[A-Za-z0-9_-]{20,}/,
+  /(?:EAAB|EAAJ|EAAG)[A-Za-z0-9]{20,}/,
+  /apify_api_[A-Za-z0-9_-]{20,}/i,
   /ghp_[A-Za-z0-9]{20,}/,
   /sk-[A-Za-z0-9]{20,}/,
   /AKIA[0-9A-Z]{16}/,

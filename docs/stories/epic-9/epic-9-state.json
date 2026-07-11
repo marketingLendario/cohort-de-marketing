@@ -2,7 +2,7 @@
   "schema_version": "epic-state-v1",
   "epic_id": "9",
   "title": "Go-live local da Aula 3",
-  "status": "InProgress",
+  "status": "Done",
   "created": "2026-07-10",
   "waves": [
     {
@@ -29,13 +29,13 @@
     },
     {
       "wave_id": "W3",
-      "status": "in_progress",
+      "status": "done",
       "build_dependencies": ["W2"],
       "parallel_groups": [["9.W3.1", "9.W3.2"], ["9.W3.3"]],
       "stories": [
-        { "story_id": "9.W3.1", "status": "InProgress", "depends_on": ["9.W2.3"], "ids_verdict": "CREATE" },
+        { "story_id": "9.W3.1", "status": "Done", "depends_on": ["9.W2.3"], "ids_verdict": "CREATE" },
         { "story_id": "9.W3.2", "status": "Done", "depends_on": ["9.W2.3"], "ids_verdict": "ADAPT" },
-        { "story_id": "9.W3.3", "status": "Draft", "depends_on": ["9.W3.1", "9.W3.2"], "ids_verdict": "CREATE" }
+        { "story_id": "9.W3.3", "status": "Done", "depends_on": ["9.W3.1", "9.W3.2"], "ids_verdict": "CREATE" }
       ]
     }
   ],

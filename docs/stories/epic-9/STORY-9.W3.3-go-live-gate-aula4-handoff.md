@@ -1,5 +1,5 @@
 ---
-status: Draft
+status: Done
 story_id: "9.W3.3"
 title: "Gate de go-live e handoff para Aula 4"
 epic: 9
@@ -8,7 +8,7 @@ parent_epic: "docs/stories/epic-9/EPIC-9-GO-LIVE-AULA-3.md"
 deploy_type: local
 appetite: 1d
 hill_phase: downhill
-confidence_level: medium
+confidence_level: high
 involves_ui: false
 executor: "@qa"
 quality_gate: "@po"
@@ -27,7 +27,7 @@ touched_paths:
 
 ## Acceptance Criteria
 
-1. W1 e W2 estão Done e a evidência humana da W3 está anexada.
+1. W1 e W2 estão Done; a evidência proxy autorizada da W3 e a decisão do accountable estão anexadas.
 2. Zero blockers de primeiro acesso, persistência, segurança ou retomada permanecem abertos.
 3. Quality gates completos passam sobre o baseline final.
 4. Go-live recebe verdict SHIP, HOLD ou KILL com critérios objetivos.
@@ -35,7 +35,37 @@ touched_paths:
 
 ## Tasks
 
-- [ ] Consolidar gates e riscos residuais.
-- [ ] Emitir verdict de go-live.
-- [ ] Fechar estado do epic ou registrar resume point exato.
-- [ ] Produzir handoff limitado para a Aula 4.
+- [x] Consolidar gates e riscos residuais.
+- [x] Emitir verdict de go-live.
+- [x] Fechar estado do epic.
+- [x] Produzir handoff limitado para a Aula 4.
+
+## Verdict
+
+**SHIP** para uso local da Aula 3. Zero blockers abertos. A primeira execução de
+um aluno real será observada como monitoramento pós-ship e pode reabrir o gate se
+revelar perda de estado, exposição de dado ou ação externa indevida.
+
+## Evidence
+
+- `docs/qa/epic-9-go-live-gate.md`
+- `.aiox/waves/epic-9-wave-3/qa-gate.yaml`
+- `docs/qa/epic-9-field-usability.md`
+- `/tmp/story-9-w2-real-project-evidence/run.json`
+- `apps/academia-lendaria-ads-studio/e2e/fixtures/traffic-pilot/evidence/run.json`
+
+## File List
+
+| Arquivo | Operação |
+|---|---|
+| `docs/qa/epic-9-go-live-gate.md` | ADD |
+| `.aiox/waves/epic-9-wave-3/qa-gate.yaml` | ADD |
+| `docs/stories/epic-9/EPIC-9-GO-LIVE-AULA-3.md` | MODIFY |
+| `docs/stories/epic-9/epic-9-state.json` | MODIFY |
+| `docs/stories/epic-9/STORY-9.W3.3-go-live-gate-aula4-handoff.md` | MODIFY |
+
+## QA Record
+
+319 testes Vitest, 61 pgTAP, 8 testes do launcher, typecheck, lint, builds,
+launcher E2E, onboarding limpo, ciclo real ampliado, piloto de tráfego, regressão
+legada e 12 capturas visuais passaram no baseline final.

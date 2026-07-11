@@ -748,6 +748,38 @@
   font-size: 12px;
 }
 
+.cms-simulation-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border: 1px solid hsl(var(--primary-hsl) / 0.55);
+  border-radius: var(--radius-sm);
+  color: var(--foreground);
+  background: hsl(var(--primary-hsl) / 0.08);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.cms-simulation-banner svg {
+  flex: 0 0 auto;
+  color: var(--primary);
+  margin-top: 1px;
+}
+
+.cms-approval-hint {
+  border-left: 2px solid var(--primary);
+  padding-left: 10px;
+}
+
+.cms-approval-hint p {
+  margin: 5px 0 0;
+  color: var(--foreground);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .cms-brief-layout {
   display: grid;
   grid-template-columns: 174px minmax(0, 1fr) 236px;

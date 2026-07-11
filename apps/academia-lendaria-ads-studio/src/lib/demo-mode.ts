@@ -11,6 +11,7 @@ import type { UnitEconomicsForm } from '@/stores/unit-economics-store';
 import { DEMO_PROJECT_ID } from '@/stores/project-store';
 
 export const DEMO_AUTH_ENABLED = import.meta.env.MODE !== 'test' && import.meta.env.VITE_DEMO_AUTH === 'true';
+export const TRAFFIC_SIMULATION_ENABLED = import.meta.env.VITE_TRAFFIC_SIMULATION === 'true';
 export const DEMO_EMAIL = 'demo@academialendaria.local';
 export const DEMO_PASSWORD = 'adsfactory';
 export const DEMO_SPOKE_ID = 'demo-spoke-academia-lendaria';

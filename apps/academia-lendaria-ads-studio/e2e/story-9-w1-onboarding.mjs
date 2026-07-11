@@ -189,11 +189,7 @@ async function waitForText(page, text, timeout = 30_000) {
 }
 
 async function assertFieldValue(page, label, expected) {
-  const field = page
-    .locator('.cms-brief-field')
-    .filter({ hasText: label })
-    .locator('input.al-input, textarea.al-textarea, select.al-select')
-    .first();
+  const field = page.getByLabel(label).first();
   await field.waitFor({ state: 'visible' });
   assert.equal(await field.inputValue(), expected, `${label} não preservou o valor importado.`);
 }
@@ -330,12 +326,12 @@ try {
   attachDiagnostics(page);
 
   await page.goto(`${baseURL}/`);
-  await page.getByRole('heading', { name: 'Primeiro acesso local' }).waitFor();
+  await page.getByRole('heading', { name: 'Seu primeiro acesso' }).waitFor();
   const firstRun = page.locator('.local-first-run');
   await firstRun.getByLabel('E-mail', { exact: true }).fill('operator-story-9-w1-3@example.local');
   await firstRun.getByLabel('Senha', { exact: true }).fill(password);
-  await firstRun.getByLabel('Nome do workspace', { exact: true }).fill('Workspace da instalação limpa');
-  await firstRun.getByRole('button', { name: 'Criar acesso local', exact: true }).click();
+  await firstRun.getByLabel('Nome do seu negócio', { exact: true }).fill('Workspace da instalação limpa');
+  await firstRun.getByRole('button', { name: 'Criar meu acesso', exact: true }).click();
   await page.getByRole('heading', { name: 'Seus projetos' }).waitFor();
   evidence.steps.push('Primeiro operador criado pela interface e autenticado pelo fluxo normal.');
   await capture(page, resolve(evidenceDir, 'projects-desktop.png'), 'projects desktop');
@@ -372,7 +368,7 @@ try {
 
   await page.getByRole('button', { name: 'Sair', exact: true }).click();
   await page.getByLabel('E-mail', { exact: true }).waitFor();
-  assert.equal(await page.getByRole('heading', { name: 'Primeiro acesso local' }).count(), 0);
+  assert.equal(await page.getByRole('heading', { name: 'Seu primeiro acesso' }).count(), 0);
   // `page.request` also uses the web origin, so the Vite proxy adds the
   // boundary token without exposing it to this script or its evidence.
   const secondBootstrap = await page.request.post(`${baseURL}/api/local/bootstrap`, {

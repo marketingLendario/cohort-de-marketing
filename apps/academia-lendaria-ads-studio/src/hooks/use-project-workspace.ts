@@ -5,6 +5,7 @@ import {
   RevisionConflictError,
   createSupabaseProjectRepository,
   type ProjectRepository,
+  type UpsertArtifactInput,
   type UpdateSkillRunInput,
 } from '@/lib/project-repository';
 import {
@@ -111,6 +112,12 @@ export interface ProjectWorkspaceController {
    * repository + cache em modo real; só cache em modo demo.
    */
   persistSkillRunUpdate: (runId: string, patch: UpdateSkillRunInput) => Promise<void>;
+  /** Persiste uma revisão do plano de campanha e atualiza o cache autoritativo. */
+  persistCampaignPlan: (plan: CampaignPlanRevision) => Promise<CampaignPlanRevision>;
+  /** Persiste uma revisão do painel semanal e atualiza o cache autoritativo. */
+  persistWeeklyPanel: (panel: WeeklyPanel) => Promise<WeeklyPanel>;
+  /** Persiste um artefato criado por uma superfície legada/unificada. */
+  persistArtifact: (artifact: ProjectArtifact) => Promise<ProjectArtifact>;
   retry: () => Promise<void>;
   destroy: () => void;
 }
@@ -154,6 +161,12 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
   const { workspaceId } = deps;
 
   const timers = new Map<string, ReturnType<typeof setTimeout>>();
+  const planTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  const panelTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  const pendingPlans = new Map<string, CampaignPlanRevision>();
+  const pendingPanels = new Map<string, WeeklyPanel>();
+  const planPipelines = new Map<string, Promise<void>>();
+  const panelPipelines = new Map<string, Promise<void>>();
   let destroyed = false;
 
   async function loadWorkspaceSnapshot(): Promise<{
@@ -293,7 +306,7 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
       store.getState().applyCreatedProject(updatedProject, brief);
     }
     for (const artifact of declarations) {
-      if (!destroyed) store.getState().upsertArtifact(artifact);
+      if (!destroyed) store.getState().upsertArtifact(artifact, false);
     }
     return updatedProject.id;
   }
@@ -410,6 +423,111 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
     if (!destroyed) store.getState().upsertSkillRun(run);
   }
 
+  async function persistCampaignPlan(plan: CampaignPlanRevision): Promise<CampaignPlanRevision> {
+    if (demoEnabled) return plan;
+    const latest = await repository.getLatestCampaignPlan(workspaceId, plan.campaignId);
+    const now = new Date().toISOString();
+    const persisted = await repository.createCampaignPlanRevision({
+      workspaceId,
+      projectId: plan.projectId,
+      campaignId: plan.campaignId,
+      revision: (latest?.revision ?? 0) + 1,
+      data: { ...plan, updatedAt: now },
+    });
+    if (!destroyed) store.getState().upsertCampaignPlan(persisted, false);
+    return persisted;
+  }
+
+  async function persistWeeklyPanel(panel: WeeklyPanel): Promise<WeeklyPanel> {
+    if (demoEnabled) return panel;
+    const latest = await repository.getLatestWeeklyPanel(workspaceId, panel.campaignId, panel.weekStart);
+    const persisted = await repository.createWeeklyPanelRevision({
+      workspaceId,
+      projectId: panel.projectId,
+      campaignId: panel.campaignId,
+      weekStart: panel.weekStart,
+      revision: (latest?.revision ?? 0) + 1,
+      status: panel.status,
+      data: { ...panel },
+    });
+    if (!destroyed) store.getState().upsertWeeklyPanel(persisted, false);
+    return persisted;
+  }
+
+  async function persistArtifact(artifact: ProjectArtifact): Promise<ProjectArtifact> {
+    if (demoEnabled) return artifact;
+    const input: UpsertArtifactInput = {
+      workspaceId: artifact.workspaceId,
+      projectId: artifact.projectId,
+      artifactType: artifact.artifactType,
+      title: artifact.title,
+      path: artifact.path,
+      format: artifact.format,
+      state: artifact.state,
+      verification: artifact.verification,
+      source: artifact.source,
+      ...(artifact.content !== undefined ? { content: artifact.content } : {}),
+      ...(artifact.hash !== undefined ? { hash: artifact.hash } : {}),
+      ...(artifact.skillRunId !== undefined ? { skillRunId: artifact.skillRunId } : {}),
+    };
+    const persisted = await repository.upsertArtifact(input);
+    if (!destroyed) store.getState().upsertArtifact(persisted, false);
+    return persisted;
+  }
+
+  function reportPersistenceError(error: unknown): void {
+    if (!destroyed) store.getState().setHydrationError(messageFor(error));
+  }
+
+  function schedulePlanPersist(plan: CampaignPlanRevision): void {
+    if (demoEnabled || destroyed) return;
+    const key = plan.campaignId;
+    pendingPlans.set(key, plan);
+    const existing = planTimers.get(key);
+    if (existing) clearTimeout(existing);
+    planTimers.set(key, setTimeout(() => {
+      planTimers.delete(key);
+      const previous = planPipelines.get(key) ?? Promise.resolve();
+      const next = previous
+        .catch(() => undefined)
+        .then(async () => {
+          const latest = pendingPlans.get(key);
+          pendingPlans.delete(key);
+          if (latest) await persistCampaignPlan(latest);
+          if (pendingPlans.has(key)) schedulePlanPersist(pendingPlans.get(key)!);
+        })
+        .catch(reportPersistenceError);
+      planPipelines.set(key, next);
+    }, AUTOSAVE_DEBOUNCE_MS));
+  }
+
+  function schedulePanelPersist(panel: WeeklyPanel): void {
+    if (demoEnabled || destroyed) return;
+    const key = `${panel.campaignId}:${panel.weekStart}`;
+    pendingPanels.set(key, panel);
+    const existing = panelTimers.get(key);
+    if (existing) clearTimeout(existing);
+    panelTimers.set(key, setTimeout(() => {
+      panelTimers.delete(key);
+      const previous = panelPipelines.get(key) ?? Promise.resolve();
+      const next = previous
+        .catch(() => undefined)
+        .then(async () => {
+          const latest = pendingPanels.get(key);
+          pendingPanels.delete(key);
+          if (latest) await persistWeeklyPanel(latest);
+          if (pendingPanels.has(key)) schedulePanelPersist(pendingPanels.get(key)!);
+        })
+        .catch(reportPersistenceError);
+      panelPipelines.set(key, next);
+    }, AUTOSAVE_DEBOUNCE_MS));
+  }
+
+  function scheduleArtifactPersist(artifact: ProjectArtifact): void {
+    if (demoEnabled || destroyed) return;
+    void persistArtifact(artifact).catch(reportPersistenceError);
+  }
+
   async function retry(): Promise<void> {
     await hydrate();
   }
@@ -417,6 +535,9 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
   const sink: ProjectPersistenceSink = {
     onBriefFieldChange: (projectId) => scheduleFlush(projectId),
     onFieldNotApplicable: (projectId) => scheduleFlush(projectId),
+    onCampaignPlanChange: schedulePlanPersist,
+    onWeeklyPanelChange: schedulePanelPersist,
+    onArtifactChange: scheduleArtifactPersist,
   };
   if (!demoEnabled) store.getState().bindPersistence(sink);
 
@@ -424,6 +545,12 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
     destroyed = true;
     for (const timer of timers.values()) clearTimeout(timer);
     timers.clear();
+    for (const timer of planTimers.values()) clearTimeout(timer);
+    planTimers.clear();
+    for (const timer of panelTimers.values()) clearTimeout(timer);
+    panelTimers.clear();
+    pendingPlans.clear();
+    pendingPanels.clear();
     if (!demoEnabled) store.getState().bindPersistence(null);
   }
 
@@ -435,6 +562,9 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
     resolveConflict,
     persistSkillRunStart,
     persistSkillRunUpdate,
+    persistCampaignPlan,
+    persistWeeklyPanel,
+    persistArtifact,
     retry,
     destroy,
   };

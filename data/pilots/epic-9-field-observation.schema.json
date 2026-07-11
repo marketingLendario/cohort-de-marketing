@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://marketinglendario.local/cohort/epic-9-field-observation.schema.json",
   "title": "Epic 9 field usability observation",
-  "description": "Contrato sanitizado para uma observação real da jornada da Aula 3. Não armazena identidade, contato, credenciais, conteúdo privado ou texto livre bruto do participante.",
+  "description": "Contrato sanitizado para observação humana ou proxy explicitamente identificado da jornada da Aula 3. Não armazena identidade, contato, credenciais, conteúdo privado ou texto livre bruto do participante.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "storyId", "status", "privacy", "session", "steps", "findings", "recommendation"],
@@ -29,13 +29,13 @@
       "required": ["sessionId", "operatorProfile", "consent", "developmentAssistance", "startedAt", "endedAt"],
       "properties": {
         "sessionId": { "type": ["string", "null"], "pattern": "^field-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}$" },
-        "operatorProfile": { "enum": ["pending", "target-nontechnical"] },
+        "operatorProfile": { "enum": ["pending", "target-nontechnical", "codex-operator-proxy"] },
         "consent": { "enum": ["pending", "granted"] },
         "developmentAssistance": { "enum": ["not-observed", "none", "provided"] },
         "startedAt": { "type": ["string", "null"], "format": "date-time" },
         "endedAt": { "type": ["string", "null"], "format": "date-time" },
         "environment": { "enum": ["pending", "local-marketing-studio"] },
-        "observerRole": { "enum": ["pending", "non-intervening-observer"] }
+        "observerRole": { "enum": ["pending", "non-intervening-observer", "automated-proxy"] }
       }
     },
     "steps": {
@@ -144,10 +144,10 @@
           "session": {
             "type": "object",
             "properties": {
-              "sessionId": { "type": "string" }, "operatorProfile": { "const": "target-nontechnical" }, "consent": { "const": "granted" },
+              "sessionId": { "type": "string" }, "operatorProfile": { "enum": ["target-nontechnical", "codex-operator-proxy"] }, "consent": { "const": "granted" },
               "developmentAssistance": { "enum": ["none", "provided"] }, "startedAt": { "type": "string", "format": "date-time" },
               "endedAt": { "type": "string", "format": "date-time" }, "environment": { "const": "local-marketing-studio" },
-              "observerRole": { "const": "non-intervening-observer" }
+              "observerRole": { "enum": ["non-intervening-observer", "automated-proxy"] }
             },
             "required": ["environment", "observerRole"]
           },
@@ -187,7 +187,11 @@
               "properties": {
                 "session": {
                   "type": "object",
-                  "properties": { "developmentAssistance": { "const": "none" } }
+                  "properties": {
+                    "operatorProfile": { "const": "target-nontechnical" },
+                    "observerRole": { "const": "non-intervening-observer" },
+                    "developmentAssistance": { "const": "none" }
+                  }
                 },
                 "steps": {
                   "type": "array",
@@ -208,6 +212,34 @@
                       "required": ["classification"]
                     }
                   }
+                }
+              }
+            }
+          }
+        ,
+          {
+            "if": {
+              "properties": {
+                "session": {
+                  "type": "object",
+                  "properties": { "operatorProfile": { "const": "codex-operator-proxy" } },
+                  "required": ["operatorProfile"]
+                }
+              },
+              "required": ["session"]
+            },
+            "then": {
+              "properties": {
+                "session": {
+                  "type": "object",
+                  "properties": {
+                    "observerRole": { "const": "automated-proxy" },
+                    "developmentAssistance": { "const": "provided" }
+                  }
+                },
+                "recommendation": {
+                  "type": "object",
+                  "properties": { "gate": { "enum": ["block", "conditional-go"] } }
                 }
               }
             }

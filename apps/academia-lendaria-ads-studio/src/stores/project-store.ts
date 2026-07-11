@@ -215,6 +215,9 @@ export interface ProjectCacheSnapshot {
 export interface ProjectPersistenceSink {
   onBriefFieldChange: (projectId: string, path: string, value: unknown, source: FieldSourceMeta['source']) => void;
   onFieldNotApplicable: (projectId: string, path: string) => void;
+  onCampaignPlanChange?: (plan: CampaignPlanRevision) => void;
+  onWeeklyPanelChange?: (panel: WeeklyPanel) => void;
+  onArtifactChange?: (artifact: ProjectArtifact) => void;
 }
 
 export interface ProjectState {
@@ -247,9 +250,12 @@ export interface ProjectState {
    * fluxo de aprovação chama isto SÓ após a materialização + escrita real terem
    * sucesso, para o cache espelhar o artefato materializado com o `id` do banco.
    */
-  upsertArtifact: (artifact: ProjectArtifact) => void;
-  upsertCampaignPlan: (plan: CampaignPlanRevision) => void;
-  upsertWeeklyPanel: (panel: WeeklyPanel) => void;
+  /** Atualiza o cache; `persist=false` é usado pelo controller após o write autoritativo. */
+  upsertArtifact: (artifact: ProjectArtifact, persist?: boolean) => void;
+  /** Atualiza o cache; `persist=false` é usado pelo controller após o write autoritativo. */
+  upsertCampaignPlan: (plan: CampaignPlanRevision, persist?: boolean) => void;
+  /** Atualiza o cache; `persist=false` é usado pelo controller após o write autoritativo. */
+  upsertWeeklyPanel: (panel: WeeklyPanel, persist?: boolean) => void;
   resetDemo: () => void;
   // ---- Cache API (STORY-8.W2.1) ----
   /** Liga/desliga o sink de autosave. `null` desliga (usado em modo demo). */
@@ -468,9 +474,11 @@ export function createProjectStore(
         addArtifact: (artifact) => {
           const now = new Date().toISOString();
           const artifactId = id('artifact');
+          const nextArtifact = { ...artifact, id: artifactId, createdAt: now, updatedAt: now };
           set((state) => ({
-            artifacts: [...state.artifacts, { ...artifact, id: artifactId, createdAt: now, updatedAt: now }],
+            artifacts: [...state.artifacts, nextArtifact],
           }));
+          get().persistenceSink?.onArtifactChange?.(nextArtifact);
           return artifactId;
         },
         updateArtifact: (artifactId, patch) => {
@@ -511,15 +519,30 @@ export function createProjectStore(
         upsertSkillRun: (run) => set((state) => ({
           skillRuns: [...state.skillRuns.filter((candidate) => candidate.id !== run.id), run],
         })),
-        upsertArtifact: (artifact) => set((state) => ({
-          artifacts: [...state.artifacts.filter((candidate) => candidate.id !== artifact.id), artifact],
-        })),
-        upsertCampaignPlan: (plan) => set((state) => ({
-          campaignPlans: [...state.campaignPlans.filter((candidate) => candidate.id !== plan.id), plan],
-        })),
-        upsertWeeklyPanel: (panel) => set((state) => ({
-          weeklyPanels: [...state.weeklyPanels.filter((candidate) => candidate.id !== panel.id), panel],
-        })),
+        upsertArtifact: (artifact, persist = true) => {
+          set((state) => ({
+            artifacts: [
+              ...state.artifacts.filter((candidate) => candidate.id !== artifact.id
+                && !(candidate.projectId === artifact.projectId
+                  && candidate.path === artifact.path
+                  && candidate.artifactType === artifact.artifactType)),
+              artifact,
+            ],
+          }));
+          if (persist) get().persistenceSink?.onArtifactChange?.(artifact);
+        },
+        upsertCampaignPlan: (plan, persist = true) => {
+          set((state) => ({
+            campaignPlans: [...state.campaignPlans.filter((candidate) => candidate.id !== plan.id), plan],
+          }));
+          if (persist) get().persistenceSink?.onCampaignPlanChange?.(plan);
+        },
+        upsertWeeklyPanel: (panel, persist = true) => {
+          set((state) => ({
+            weeklyPanels: [...state.weeklyPanels.filter((candidate) => candidate.id !== panel.id), panel],
+          }));
+          if (persist) get().persistenceSink?.onWeeklyPanelChange?.(panel);
+        },
         // Utilitário explícito (usado por testes de componente): sempre repõe o
         // fixture demo, independente do `demoEnabled` da instância — não é o
         // boot automático da store, então não é afetado pelo gate da AC4.

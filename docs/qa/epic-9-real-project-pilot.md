@@ -20,16 +20,17 @@ isolado, Playwright e Codex CLI autenticado localmente. O runner removeu
 | AC4 | Nenhum request Meta/Facebook; logs sem handoff mutativo; campanha permaneceu `draft` | PASS |
 | AC5 | Reloads entre etapas, logout/login em novo contexto e restart do launcher preservaram o estado | PASS |
 | AC6 | CTA `unknown` bloqueou o Zelador; auditoria sem evidência foi rejeitada; métricas ausentes ficaram `null`/`nao_fornecido` | PASS |
+| Operação semanal | Leitura literal, diagnóstico, decisão humana e eventos append-only sobreviveram ao reload | PASS |
 
 ## Execuções
 
 | Skill | Estado | Duração |
 |---|---|---:|
-| Zelador | `done` | 31.918 ms |
-| Briefista | `done` | 79.632 ms |
-| Estruturador | `done` | 14.402 ms |
-| Leitor de Métricas | `done` | 32.837 ms |
-| Diagnosticador | `done` | 27.130 ms |
+| Zelador | `done` | 22.913 ms |
+| Briefista | `done` | 39.001 ms |
+| Estruturador | `done` | 49.687 ms |
+| Leitor de Métricas | `done` | 62.485 ms |
+| Diagnosticador | `done` | 49.255 ms |
 
 Cada artefato aprovado foi materializado e seu hash no filesystem coincidiu com
 o `content_hash` persistido. CTR, CPM, alcance e frequência não foram derivados.
@@ -67,8 +68,9 @@ o `content_hash` persistido. CTR, CPM, alcance e frequência não foram derivado
 4. A prova de ausência de publicação agora exige job durável para todas as skills,
    campanha única em `draft` e zero rotas de publish/Meta recebidas pelo BFF.
 
-## Risco residual
+## Evidência final
 
-O cancelamento imediato de um retry do Codex pode provocar `EPIPE` no BFF. Esse
-fluxo não pertence aos ACs da Story 9.W2.3 e deve ser corrigido em story própria,
-sem misturar a alteração concorrente já existente em `local-skill-runner.ts`.
+- `/tmp/story-9-w2-real-project-evidence/run.json`
+- SHA-256: `671566b48d1632371a9bcd7142d0dd20cdee029b92c8ac4d19816061c6410c56`
+- Retry/cancelamento foi coberto pelo piloto de tráfego sem `EPIPE` no baseline final.
+- A evidência sanitizada não contém caminho absoluto, senha nem input bruto do operador.

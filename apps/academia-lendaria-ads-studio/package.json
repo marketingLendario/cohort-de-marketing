@@ -24,6 +24,8 @@
     "test:e2e": "node e2e/story-8-w3-2.mjs",
     "test:e2e:onboarding": "node e2e/story-9-w1-onboarding.mjs",
     "test:e2e:launcher": "node e2e/story-8-w3-3.mjs",
+    "test:e2e:real-project": "node e2e/story-9-w2-real-project.mjs",
+    "test:e2e:traffic": "playwright test e2e/traffic-squad.spec.ts --reporter=line --workers=1",
     "test:launcher": "node --test ../../scripts/marketing-studio.test.mjs",
     "test:watch": "vitest",
     "test:visual": "node scripts/visual-qa.mjs",

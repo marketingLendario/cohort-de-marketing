@@ -161,6 +161,21 @@ describe('project intake service', () => {
     } satisfies Partial<ProjectIntakeError>)
   })
 
+  it.each([
+    ['LOCAL_SKILL_RUNNER_TOKEN: runner-secret-value-that-must-not-leak', 'markdown'],
+    ['META_ACCESS_TOKEN=EAAB012345678901234567890123456789', 'yaml'],
+    [`{"token":"${'sb_secret_' + '012345678901234567890123456789'}"}`, 'json'],
+    [`APIFY_API_TOKEN=${'apify_api_' + '012345678901234567890123456789'}`, 'markdown'],
+  ])('rejects an embedded %s secret in an allowlisted %s file', async (secret, extension) => {
+    await mkdir(join(projectsRoot, 'academia-lendaria'), { recursive: true })
+    await writeFile(join(projectsRoot, 'academia-lendaria', `notes.${extension === 'markdown' ? 'md' : extension}`), secret)
+
+    const service = createProjectIntakeService({ store: fakeStore().store, projectsRoot })
+    await expect(service.preview({ projectId: PROJECT.id, sourceSlug: 'academia-lendaria' })).rejects.toMatchObject({
+      code: 'secret-rejected',
+    } satisfies Partial<ProjectIntakeError>)
+  })
+
   it('rejects files outside the allowlist', async () => {
     await mkdir(join(projectsRoot, 'academia-lendaria'), { recursive: true })
     await writeFile(join(projectsRoot, 'academia-lendaria', 'script.sh'), 'echo unsafe')
@@ -236,6 +251,15 @@ describe('project intake HTTP boundary', () => {
       })
       expect(allowed.statusCode).toBe(200)
       expect(allowed.json()).toEqual([{ slug: 'academia-lendaria', root: 'projetos/academia-lendaria' }])
+
+      const remote = await app.inject({
+        method: 'GET',
+        url: '/api/local/project-intake/sources',
+        remoteAddress: '192.168.1.20',
+        headers: { [LOCAL_RUNNER_TOKEN_HEADER]: token },
+      })
+      expect(remote.statusCode).toBe(403)
+      expect(remote.json().code).toBe('PROJECT_INTAKE_LOOPBACK_ONLY')
     } finally {
       await rm(projectsRoot, { recursive: true, force: true })
     }

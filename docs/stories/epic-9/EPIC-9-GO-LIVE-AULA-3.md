@@ -2,7 +2,7 @@
 epic_id: 9
 title: "Go-live local da Aula 3"
 state_file: "docs/stories/epic-9/epic-9-state.json"
-status: InProgress
+status: Done
 owner: cohort-marketing
 accountable: "Rafael Costa"
 created: 2026-07-10
@@ -39,6 +39,7 @@ um ciclo do Squad de Tráfego sem terminal e sem mutação na Meta.
 | D5 | Filesystem é canônico para artefatos e a entrada no banco registra path, hash, tipo e proveniência. |
 | D6 | A fonte externa é lida por manifesto versionado e nunca é alterada pelo Studio. |
 | D7 | Meta permanece recommend-only; publicação e decisões continuam humanas. |
+| D8 | Por decisão explícita do accountable, a rodada Codex operator-proxy vale como gate operacional; a primeira observação humana passa a monitoramento pós-ship, sem ser falsamente registrada como já realizada. |
 
 ## Waves
 
@@ -68,9 +69,14 @@ um ciclo do Squad de Tráfego sem terminal e sem mutação na Meta.
 4. Artefatos selecionados do filesystem entram por manifesto, path e hash.
 5. Um projeto real conclui Zelador, Briefista, Curadoria, Estruturador, Leitor e
    Diagnosticador com aprovação humana.
-6. Um operador não técnico conclui o roteiro sem assistência de desenvolvimento.
+6. O accountable aprova a prova operacional proxy e mantém a primeira execução de aluno real como monitoramento pós-ship.
 7. O relatório registra tempo, bloqueios, recuperações e decisões sem PII.
 8. Testes, lint, typecheck, builds, pgTAP e Playwright passam.
+
+## Fechamento
+
+Verdict **SHIP** emitido em 2026-07-11. Evidência e handoff:
+`docs/qa/epic-9-go-live-gate.md`.
 
 ## Fora de escopo
 

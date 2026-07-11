@@ -2,20 +2,85 @@
 
 Story: **9.W3.1**
 
-Status da evidência: **PENDENTE — observação com operador-alvo não realizada**
+Status da evidência: **PROXY CONCLUÍDO E ACEITO PELO ACCOUNTABLE**
 
-Gate atual: **BLOCKED para conclusão da story; infraestrutura pronta para coleta**
+Gate atual: **SHIP operacional; observação humana convertida em monitoramento pós-ship**
 
 ## Estado factual
 
-Nenhum participante ou sessão foi observado neste trabalho. Portanto, não há
-tempos, hesitações, bloqueios, recuperações, achados ou conclusão humana a
-reportar. Os testes técnicos da Story 9.W2.3 não substituem o aceite de campo.
+Uma sessão automatizada foi executada em 2026-07-10 pelo Codex como
+`codex-operator-proxy`, por solicitação do responsável pelo produto. Ela percorreu
+a interface local completa, mas não é uma pessoa do público-alvo e recebeu
+assistência de desenvolvimento. Portanto, produz evidência técnica e achados,
+mas não é apresentada como pessoa do público-alvo. Por decisão explícita do
+accountable, ela substitui apenas o gate operacional pré-ship; a primeira sessão
+humana continua obrigatória como monitoramento pós-ship.
 
 O contrato validável está em
 `data/pilots/epic-9-field-observation.schema.json`. O registro sanitizado da
-sessão só deve ser criado após a observação e deve permanecer fora do git até
-passar pela revisão de privacidade abaixo.
+rodada proxy está em
+`data/pilots/epic-9-field-observation-proxy-2026-07-10-01.json`. O schema impede
+que uma sessão proxy emita `go`: somente `block` ou `conditional-go` são aceitos.
+
+## Resultado da sessão proxy
+
+Instrução executada: “Abra o projeto da Aula 3 e conclua a rotina do Squad de
+Tráfego até chegar a uma recomendação para decisão humana.”
+
+| Etapa | Tempo | Hesitações | Bloqueios | Recuperações | Resultado |
+|---|---:|---:|---:|---:|---|
+| Abrir Studio e projeto | 2 s | 0 | 0 | 0 | success |
+| Zelador | 38 s | 0 | 1 | 1 | success |
+| Briefista e curadoria | 39 s | 0 | 0 | 0 | success |
+| Estruturador | 45 s | 0 | 0 | 0 | success |
+| Reconhecer subida manual | 1 s | 0 | 0 | 0 | success |
+| Leitor de Métricas | 54 s | 0 | 0 | 0 | success |
+| Diagnosticador e decisão | 64 s | 0 | 0 | 0 | success |
+
+A sessão durou 263 segundos no total. Os 243 segundos das etapas excluem parte
+do tempo de navegação, 12 reidratações, aprovações e captura visual. Os zeros de
+hesitação significam ausência de evento detectável na automação; não medem
+comportamento humano.
+
+### Evidências técnicas
+
+- Playwright direto: `1 passed (4.4m)` na rodada definitiva.
+- Cinco skills concluídas, com uma aprovação materializada por skill.
+- Recusa honesta do Zelador sem CAPI/deduplicação confirmadas; retry HTTP 202,
+  cancelamento e recuperação posterior comprovados.
+- Briefista aprovado na revisão 2 após curadoria de dois finalistas.
+- Hash do Painel reconciliado entre banco e filesystem em todas as cinco skills.
+- Campanha final permaneceu `draft`, no passo 1; `noMetaMutation: true`.
+- Desktop 1280x900 e mobile 390x844 no mesmo estado concluído, sem sobreposição,
+  `console.error` ou falha de rede.
+
+Arquivos de suporte:
+
+| Evidência | SHA-256 |
+|---|---|
+| `data/pilots/epic-9-field-observation-proxy-2026-07-10-01.json` | `02a2fce29d9ee73596b48b46481613b4351abb4ea19a9c5b0404651ca84be7dc` |
+| `apps/academia-lendaria-ads-studio/e2e/fixtures/traffic-pilot/evidence/run.json` | `ef522a6c7c1ffda7eba82ff8de1a4ccc4146a5caa3a6c0e6ecef4691ed8878cf` |
+| `apps/academia-lendaria-ads-studio/e2e/fixtures/traffic-pilot/evidence/traffic-pilot-desktop.png` | `f0cc5ca798e5bed1b2a184a3a6d8a7f3a52efa139f26220aec18b388a6a10cbd` |
+| `apps/academia-lendaria-ads-studio/e2e/fixtures/traffic-pilot/evidence/traffic-pilot-mobile.png` | `b8765ef8b75c6ce533abc14c3de4d48da01c60c557181ecbda4dd9e08f442acb` |
+
+### Achados e classificação
+
+| ID | Classe | Achado | Estado |
+|---|---|---|---|
+| F-01 | pre-go-live | `copy.md` era interpretado como YAML ao montar o Painel | corrigido e retestado |
+| F-02 | pre-go-live | limiar de CTR herdado gerava falso positivo no Diagnosticador | corrigido e retestado |
+| F-03 | backlog | captura desktop podia coincidir com reidratação ou perder a seleção | corrigido no harness e retestado |
+
+Não restou blocker aberto na rodada proxy. A recomendação é `conditional-go`
+porque o percurso técnico passou após as correções, mas houve assistência de
+desenvolvimento e não houve operador-alvo humano.
+
+### Revisão de privacidade
+
+O registro sanitizado omite credenciais, IDs internos, caminhos absolutos e o
+conteúdo integral das propostas. Não há PII, segredo, conteúdo privado, áudio,
+vídeo ou gravação bruta. As duas imagens mostram somente a fixture local
+sintética. O JSON foi validado em Draft 2020-12 com `ajv-formats` ativo.
 
 ## Critério de participante
 
@@ -165,22 +230,22 @@ não é promessa de desempenho, adoção ou resultado futuro. O reality-check de
 comparar o achado com o comportamento observado e explicitar a amostra de uma
 sessão, sem extrapolação.
 
-## Passos exatos para fechar a story
+## Monitoramento pós-ship
 
-1. Recrutar um operador-alvo e executar o protocolo acima.
+1. Recrutar o primeiro operador-alvo e executar o protocolo acima durante o uso real.
 2. Preencher e validar o JSON sanitizado como `completed`.
 3. Incorporar neste relatório apenas agregados e achados sanitizados.
 4. Classificar cada achado e registrar o gate humano (`block`,
    `conditional-go` ou `go`) com reality-check.
-5. Marcar as duas tarefas restantes da story somente após essa evidência existir
-   e passar por revisão de privacidade e PO.
+5. Reabrir o gate imediatamente se aparecer blocker de privacidade, persistência,
+   retomada ou mutação externa.
 
 ## Cobertura atual dos critérios
 
 | AC | Estado | Evidência atual |
 |---|---|---|
-| AC1 | PENDENTE | requer operador-alvo real sem assistência de desenvolvimento |
-| AC2 | PRONTO PARA COLETA | schema e protocolo exigem tempo, hesitação, bloqueio, recuperação e resultado por etapa |
-| AC3 | PRONTO PARA COLETA | minimização, consentimento, sanitização e flags fail-closed definidos |
-| AC4 | PRONTO PARA COLETA | taxonomia e regras de gate definidas; nenhum achado foi inventado |
-| AC5 | PRONTO PARA COLETA | `metricsArePromises: false` e reality-check obrigatório no estado concluído |
+| AC1 | WAIVER DO ACCOUNTABLE | proxy assistido aceito como gate operacional; sessão humana permanece pós-ship |
+| AC2 | EVIDENCIADO NO PROXY | sete etapas contêm tempo, hesitação, bloqueio, recuperação e resultado |
+| AC3 | EVIDENCIADO NO PROXY | JSON sanitizado e imagens sintéticas passaram pela revisão de privacidade |
+| AC4 | EVIDENCIADO NO PROXY | dois pre-go-live corrigidos, um backlog corrigido e zero blocker aberto |
+| AC5 | EVIDENCIADO NO PROXY | `metricsArePromises: false` e reality-check limitam a amostra a uma sessão proxy |

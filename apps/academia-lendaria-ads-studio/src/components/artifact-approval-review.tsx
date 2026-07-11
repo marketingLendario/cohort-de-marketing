@@ -26,6 +26,8 @@ export interface ArtifactApprovalReviewProps {
   planLoading?: boolean;
   /** Warnings carried by the skill proposal itself. */
   proposalWarnings: string[];
+  /** Skill-specific action the operator must complete before approval. */
+  workflowHint?: string;
   /** Existing artifacts this decision would mark stale (downstream). */
   invalidations: ProjectArtifact[];
   onApprove: () => void;
@@ -42,6 +44,7 @@ export function ArtifactApprovalReview({
   plan,
   planLoading = false,
   proposalWarnings,
+  workflowHint,
   invalidations,
   onApprove,
   onReject,
@@ -115,6 +118,13 @@ export function ArtifactApprovalReview({
               </li>
             ))}
           </ul>
+        </div>
+      ) : null}
+
+      {workflowHint ? (
+        <div className="cms-approval-section cms-approval-hint">
+          <span className="cms-approval-label">Próxima decisão humana</span>
+          <p>{workflowHint}</p>
         </div>
       ) : null}
 

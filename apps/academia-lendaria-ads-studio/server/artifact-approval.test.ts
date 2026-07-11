@@ -789,6 +789,20 @@ describe('artifact approval endpoints', () => {
     expect(res.statusCode).toBe(401);
   });
 
+  it('rejects approval requests that do not originate from loopback', async () => {
+    const { service } = realService();
+    const app = await buildWith(service);
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/local/artifact-approvals',
+      remoteAddress: '192.168.1.20',
+      headers: AUTH,
+      payload: decideBody('approve'),
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().code).toBe('ARTIFACT_APPROVAL_LOOPBACK_ONLY');
+  });
+
   it('reports the capability off when no approval service is wired (503)', async () => {
     const app = await buildWith(null);
     const res = await app.inject({ method: 'POST', url: '/api/local/artifact-approvals', headers: AUTH, payload: decideBody('approve') });

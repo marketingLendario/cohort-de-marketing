@@ -49,7 +49,7 @@ export function LoginForm() {
           <CardDescription>Entre para continuar seu projeto de marketing.</CardDescription>
         </CardHeader>
         <CardContent>
-          <LocalFirstRun />
+          {!DEMO_AUTH_ENABLED ? <LocalFirstRun /> : null}
           {DEMO_AUTH_ENABLED ? (
             <Alert variant="info" style={{ marginBottom: '1rem' }}>
               Demo local: {DEMO_EMAIL} / {DEMO_PASSWORD}

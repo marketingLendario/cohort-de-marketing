@@ -9,6 +9,8 @@ select has_table(
   'estado durável do bootstrap existe fora da API pública'
 );
 
+delete from private.local_bootstrap_state;
+
 set local role service_role;
 
 select ok(

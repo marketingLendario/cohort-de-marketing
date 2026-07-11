@@ -111,13 +111,16 @@ try {
   await page.getByRole('button', { name: new RegExp(TRAFFIC_PILOT.projectName) }).click();
   await page.getByRole('heading', { name: 'Próximo passo do projeto' }).waitFor();
 
-  const readinessButton = page.getByRole('button', { name: /Ambiente (pronto|degradado)/i });
+  const readinessLabel = readiness.status === 'ready'
+    ? 'Tudo pronto para continuar'
+    : 'Um item precisa de atenção';
+  const readinessButton = page.getByRole('button', { name: readinessLabel });
   await readinessButton.waitFor();
   await readinessButton.click();
-  const panel = page.getByRole('dialog', { name: 'Diagnóstico do ambiente' });
+  const panel = page.getByRole('dialog', { name: 'Estado do Marketing Studio' });
   await panel.waitFor();
-  await panel.getByText('Codex CLI').waitFor();
-  await panel.getByText('Interface', { exact: true }).waitFor();
+  await panel.getByText('Acesso à inteligência artificial', { exact: true }).waitFor();
+  await panel.getByText('Tela do Marketing Studio', { exact: true }).waitFor();
   await page.screenshot({ path: resolve(evidenceDir, 'readiness-desktop.png'), fullPage: true });
 
   await readinessButton.click();

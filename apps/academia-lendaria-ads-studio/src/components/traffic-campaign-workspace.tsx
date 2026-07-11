@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Button, Icon } from '@/lib/lendaria-ds';
-import { getDemoCampaign } from '@/lib/demo-mode';
+import { DEMO_AUTH_ENABLED, getDemoCampaign } from '@/lib/demo-mode';
+import { supabase } from '@/lib/supabase';
+import type { AdsCampaign } from '@/lib/types';
 import { canStructureCampaign, createInitialCampaignPlan, TRACKING_CHECKS, updateTrackingCheck } from '@/lib/campaign-plan';
 import { getPath, type CampaignPlanRevision } from '@/lib/project-domain';
 import { executeLocalSkill, type SkillProposal } from '@/lib/skill-runtime';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
+import { TrafficSimulationBanner } from '@/components/traffic-simulation-banner';
 
 const STAGES = [
   { id: 'foundations', label: 'Fundamentos', icon: 'database' },
@@ -38,13 +41,30 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
   const plans = useProjectStore((state) => state.campaignPlans);
   const upsertPlan = useProjectStore((state) => state.upsertCampaignPlan);
   const addArtifact = useProjectStore((state) => state.addArtifact);
-  const campaign = getDemoCampaign(campaignId);
+  const [campaign, setCampaign] = useState<AdsCampaign | null>(() => getDemoCampaign(campaignId));
   const plan = plans.find((candidate) => candidate.campaignId === campaignId);
   const currentStage = (STAGES.some((stage) => stage.id === stageId) ? stageId : 'foundations') as StageId;
   const [proposal, setProposal] = useState<{ skillId: 'briefista' | 'estruturador'; value: SkillProposal; hash: string } | null>(null);
   const [running, setRunning] = useState(false);
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [draftFinalist, setDraftFinalist] = useState({ hook: '', copy: '', format: 'reels-9x16' as 'feed' | 'reels-9x16' });
+
+  useEffect(() => {
+    if (DEMO_AUTH_ENABLED) {
+      setCampaign(getDemoCampaign(campaignId));
+      return;
+    }
+    let active = true;
+    void supabase
+      .from('ads_campaigns')
+      .select('id, workspace_id, project_id, name, status, step_current, created_at')
+      .eq('id', campaignId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (active) setCampaign((data as AdsCampaign | null) ?? null);
+      });
+    return () => { active = false; };
+  }, [campaignId]);
 
   useEffect(() => {
     if (!plan && brief) upsertPlan(createInitialCampaignPlan(projectId, campaignId, brief));
@@ -215,6 +235,7 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
   return (
     <div className="asx-page cms-page cms-campaign-workspace">
       <div className="asx-page-head"><div><div className="asx-page-head__eyebrow">Campanha · {campaign?.name ?? campaignId}</div><h1 className="asx-page-head__title">Operação de <em>tráfego</em></h1></div><span className="cms-campaign-pill"><span>{plan.manualSubmission.status}</span></span></div>
+      <TrafficSimulationBanner />
       <nav className="cms-campaign-stages" aria-label="Etapas da campanha">{STAGES.map((stage, index) => { const available = stageAvailable(stage.id, plan); return <button key={stage.id} type="button" className={`${stage.id === currentStage ? 'is-active' : ''} ${!available ? 'is-locked' : ''}`} disabled={!available} onClick={() => go(stage.id)}><span>{available ? index + 1 : <Icon name="lock" size={10} />}</span><strong>{stage.label}</strong></button>; })}</nav>
       {runtimeError ? <div className="cms-inline-error">{runtimeError}</div> : null}
       {proposal ? <section className="cms-campaign-proposal"><span className="cms-kicker">Proposta da skill</span><h2>{proposal.value.summary}</h2><pre>{proposal.value.resultMarkdown}</pre><div><Button onClick={approveProposal}><Icon name="check" size={13} /> Aprovar proposta</Button><Button variant="outline" onClick={() => setProposal(null)}>Rejeitar</Button></div></section> : content}

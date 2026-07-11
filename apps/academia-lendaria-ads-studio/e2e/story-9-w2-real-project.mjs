@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { createClient } from '@supabase/supabase-js';
 import { chromium } from 'playwright';
+import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
 
 const execFileAsync = promisify(execFile);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -32,6 +33,7 @@ const launcherArgs = ['--web-port', String(webPort), '--bff-port', String(bffPor
 const password = 'Story9W23!real-project';
 const operatorEmail = 'operator-story-9-w2-3@example.local';
 const campaignName = 'Ciclo real A3 · Story 9.W2.3';
+process.env.CODEX_SKILL_TIMEOUT_MS = process.env.E2E_CODEX_SKILL_TIMEOUT_MS ?? '180000';
 
 const evidence = {
   story: '9.W2.3',
@@ -51,6 +53,7 @@ const evidence = {
   manualSubmission: null,
   metrics: null,
   humanDecision: null,
+  weeklyOperation: null,
   noMetaMutation: { browserRequests: [], backendPublishRequests: [], jobLogMatches: [], campaignStatus: null },
   visual: {
     desktop: '',
@@ -285,11 +288,7 @@ async function waitForText(page, text, timeout = 30_000) {
 }
 
 async function assertFieldValue(page, label, expected) {
-  const field = page
-    .locator('.cms-brief-field')
-    .filter({ hasText: label })
-    .locator('input.al-input, textarea.al-textarea, select.al-select')
-    .first();
+  const field = page.getByLabel(label).first();
   await field.waitFor({ state: 'visible' });
   assert.equal(await field.inputValue(), expected, `${label} não preservou o valor esperado.`);
 }
@@ -299,11 +298,7 @@ async function completeBlockedField(page, skillTitle, fieldLabel, value) {
   const action = page.getByRole('link', { name: 'Completar briefing', exact: true });
   await action.waitFor({ state: 'visible' });
   await action.click();
-  const field = page
-    .locator('.cms-brief-field')
-    .filter({ hasText: fieldLabel })
-    .locator('input.al-input, textarea.al-textarea, select.al-select')
-    .first();
+  const field = page.getByLabel(fieldLabel).first();
   await field.waitFor({ state: 'visible' });
   await field.fill(String(value));
   await page.waitForTimeout(1_500);
@@ -313,9 +308,53 @@ async function completeBlockedField(page, skillTitle, fieldLabel, value) {
   await saveEvidence();
 }
 
+async function fillWeeklyMetric(page, name, value, source, seal = 'Real') {
+  const row = page.locator('.cms-metric-row').filter({ has: page.getByText(name, { exact: true }) });
+  await row.locator('select').selectOption(seal);
+  await row.locator('input[type="number"]').fill(String(value));
+  await row.locator('input.al-input:not([type="number"])').fill(source);
+  await row.getByLabel('Sim', { exact: true }).check();
+}
+
 async function saveEvidence() {
   await mkdir(evidenceDir, { recursive: true });
-  await writeFile(sourceEvidencePath, `${JSON.stringify({ ...evidence, finishedAt: new Date().toISOString() }, null, 2)}\n`, 'utf8');
+  const sanitized = {
+    ...evidence,
+    refusals: evidence.refusals.map((refusal) => ({
+      skillId: refusal.skillId,
+      runId: refusal.runId,
+      durationMs: refusal.durationMs,
+      reason: refusal.reason,
+      action: refusal.action,
+    })),
+    skills: evidence.skills.map(({ proposal, operatorInput, artifacts, job, ...skill }) => ({
+      ...skill,
+      operatorInputHash: createHash('sha256').update(operatorInput).digest('hex'),
+      proposal: proposal && typeof proposal === 'object' ? {
+        summaryHash: createHash('sha256').update(String(proposal.summary ?? '')).digest('hex'),
+        artifactTypes: Array.isArray(proposal.artifacts) ? proposal.artifacts.map((artifact) => artifact.artifactType) : [],
+        fieldKeys: Array.isArray(proposal.fields) ? proposal.fields.map((field) => field.key) : [],
+      } : null,
+      artifacts: artifacts.map((artifact) => ({
+        id: artifact.id,
+        path: artifact.path,
+        artifactType: artifact.artifactType,
+        contentHash: artifact.contentHash,
+        filesystemHash: artifact.filesystemHash,
+        state: artifact.state,
+        verification: artifact.verification,
+      })),
+      job: job && typeof job === 'object' ? {
+        id: job.id,
+        status: job.status,
+        attempt: job.attempt,
+        model: job.model,
+        skillId: job.skill_id,
+      } : null,
+    })),
+    finishedAt: new Date().toISOString(),
+  };
+  await writeFile(sourceEvidencePath, `${JSON.stringify(sanitized, null, 2)}\n`, 'utf8');
 }
 
 async function copyPilotSources() {
@@ -341,8 +380,9 @@ async function copyPilotSources() {
 
 async function selectSkill(page, title) {
   const heading = page.getByRole('heading', { name: title, exact: true });
+  const node = page.getByRole('button', { name: new RegExp(`^${title}`) }).first();
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    await page.getByRole('button', { name: new RegExp(`^${title}`) }).click();
+    await node.click({ force: true, timeout: 5_000 });
     await heading.waitFor({ state: 'visible', timeout: 1_000 }).catch(() => undefined);
     if (!(await heading.isVisible())) continue;
     await page.waitForTimeout(600);
@@ -380,6 +420,26 @@ function proposalStrings(value) {
   return [];
 }
 
+function diagnosticProposalStrings(proposal) {
+  if (!proposal || typeof proposal !== 'object') return [];
+  const { artifacts = [], ...proposalCopy } = proposal;
+  const strings = proposalStrings(proposalCopy);
+  for (const artifact of artifacts) {
+    if (artifact?.artifactType !== 'trafficDiagnosis' || typeof artifact.content !== 'string') continue;
+    try {
+      const parsed = parseYaml(artifact.content);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.diagnosticador) {
+        strings.push(...proposalStrings(parsed.diagnosticador));
+        continue;
+      }
+    } catch {
+      // Inspect malformed proposed artifacts as raw text.
+    }
+    strings.push(...proposalStrings(artifact.content));
+  }
+  return strings;
+}
+
 function unavailableMetricsFromStage(stage) {
   const artifact = stage.artifacts.find((candidate) => candidate.artifactType === 'trafficMetricReading');
   if (!artifact?.content) throw new Error('Leitor não produziu trafficMetricReading.');
@@ -391,15 +451,14 @@ function unavailableMetricsFromStage(stage) {
 }
 
 function derivedUnavailableMetrics(proposal, metrics) {
-  const texts = proposalStrings(proposal).map(normalizeText);
-  const assignment = '(?:valor|aproxim\\w*|calcul\\w*|derivad\\w*|estim\\w*|equival\\w*|result\\w*|seria|foi\\s+de|e\\s+de|[:=])';
+  const texts = diagnosticProposalStrings(proposal).map(normalizeText);
   const numeric = '(?:r\\$\\s*)?\\d+(?:[.,]\\d+)*(?:\\s*[%x])?';
   return metrics.filter((metric) => {
     const name = escapePattern(normalizeText(metric));
-    const forward = new RegExp(`\\b${name}\\b.{0,90}${assignment}.{0,24}${numeric}`, 'i');
-    const reverse = new RegExp(`${numeric}.{0,24}${assignment}.{0,90}\\b${name}\\b`, 'i');
-    const unit = new RegExp(`(?:\\b${name}\\b.{0,36}${numeric}\\s*[%x]|(?:r\\$\\s*)?\\d+(?:[.,]\\d+)*\\s*[%x].{0,36}\\b${name}\\b)`, 'i');
-    return texts.some((text) => forward.test(text) || reverse.test(text) || unit.test(text));
+    const connector = '(?:[:=]|(?:e|foi|foram|ficou|fica|esta|estava|seria)\\s+(?:de\\s+)?|(?:de|em|para|abaixo\\s+de|acima\\s+de)\\s*|(?:(?:aproximad|calculad|derivad|estimad|equival|result)\\w*\\s+de)\\s*)';
+    const metricThenValue = new RegExp(`\\b${name}\\b(?:\\s+(?:alvo|meta|do|da|no|na|gerenciador|valor|media|metrica)){0,4}\\s*${connector}\\s*${numeric}`, 'i');
+    const valueThenMetric = new RegExp(`${numeric}\\s*(?:de|para|em|no|na)?\\s*\\b${name}\\b`, 'i');
+    return texts.some((text) => metricThenValue.test(text) || valueThenMetric.test(text));
   });
 }
 
@@ -446,7 +505,7 @@ async function waitForLatestJob(admin, projectId, skillId, predicate, timeoutMs 
     if (last && predicate(last)) return last;
     await new Promise((resolvePromise) => setTimeout(resolvePromise, 250));
   }
-  throw new Error(`Timeout aguardando job ${skillId}: ${JSON.stringify(last)}`);
+  throw new Error(`Timeout aguardando job ${skillId}: status=${last?.status ?? 'ausente'} attempt=${last?.attempt ?? 'n/a'}`);
 }
 
 async function approveCurrent(page, admin, projectId, projectSlug, title, operatorInput) {
@@ -455,16 +514,62 @@ async function approveCurrent(page, admin, projectId, projectSlug, title, operat
   await selectSkill(page, title);
   await page.getByLabel('Contexto adicional').fill(operatorInput);
   await page.getByRole('button', { name: 'Executar skill', exact: true }).click();
-  await waitForLatestJob(admin, projectId, skillId, (job) => job.status === 'succeeded');
+  let terminalJob = await waitForLatestJob(
+    admin,
+    projectId,
+    skillId,
+    (job) => ['succeeded', 'failed', 'cancelled'].includes(job.status),
+    4 * 60_000,
+  );
+  if (terminalJob.status === 'failed') {
+    const previousAttempt = terminalJob.attempt;
+    evidence.retries.push({ skillId, jobId: terminalJob.id, attempt: previousAttempt, reason: 'terminal_failure', retriedFromUi: true });
+    await reloadAndProve(page, `${title} falhou e ficou disponível para retry`);
+    await selectSkill(page, title);
+    await page.getByRole('button', { name: 'Repetir', exact: true }).click();
+    terminalJob = await waitForLatestJob(
+      admin,
+      projectId,
+      skillId,
+      (job) => job.attempt > previousAttempt && ['succeeded', 'failed', 'cancelled'].includes(job.status),
+      4 * 60_000,
+    );
+  }
+  assert.equal(terminalJob.status, 'succeeded', `${skillId} falhou: ${JSON.stringify(terminalJob.error)}`);
   await reloadAndProve(page, `${title} pronto para revisão`);
   await selectSkill(page, title);
   await waitReview(page);
   const review = page.getByTestId('artifact-approval-review');
+  if (skillId === 'briefista') {
+    await review.getByRole('button', { name: 'Editar', exact: true }).click();
+    const editor = review.getByLabel('Editar proposta (gera nova revisão)');
+    const panel = parseYaml(await editor.inputValue());
+    const candidates = panel?.briefista?.bateria_gerada;
+    assert.equal(Array.isArray(candidates) && candidates.length >= 2, true, 'Briefista não entregou candidatos suficientes para curadoria.');
+    panel.briefista.finalistas_curados = candidates.slice(0, 2).map((candidate) => ({
+      angulo: candidate.angulo,
+      hook: candidate.hook,
+      formato: candidate.formato,
+    }));
+    panel.briefista.curadoria = {
+      ...panel.briefista.curadoria,
+      status: 'aprovada_pelo_operador',
+      quantidade_finalistas: 2,
+    };
+    await editor.fill(stringifyYaml(panel));
+    await review.getByRole('button', { name: 'Salvar edição', exact: true }).click();
+    evidence.steps.push('Operador editou o Painel da Semana e curou dois finalistas antes de aprovar o Briefista.');
+  }
   await review.getByRole('button', { name: 'Aprovar', exact: true }).click();
   await review.waitFor({ state: 'hidden', timeout: 30_000 });
   const run = await waitForLatestSkillRun(admin, projectId, skillId, (candidate) => candidate.status === 'done');
   const approvals = await queryAll(admin, 'artifact_approval_outbox', [['skill_run_id', run.id]]);
   const artifacts = await queryAll(admin, 'project_artifacts', [['skill_run_id', run.id]]);
+  assert.equal(
+    new Set(artifacts.map((artifact) => `${artifact.path}:${artifact.artifact_type}`)).size,
+    artifacts.length,
+    `${skillId} persistiu artefatos canônicos duplicados.`,
+  );
   const jobs = await queryAll(admin, 'skill_run_jobs', [['project_id', projectId]]);
   const reconciledArtifacts = await Promise.all(artifacts.map(async (artifact) => {
     const absolutePath = resolve(repoRoot, 'projetos', projectSlug, artifact.path);
@@ -596,12 +701,12 @@ try {
   attachDiagnostics(page);
 
   await page.goto(`${baseURL}/`);
-  await page.getByRole('heading', { name: 'Primeiro acesso local' }).waitFor();
+  await page.getByRole('heading', { name: 'Seu primeiro acesso' }).waitFor();
   const firstRun = page.locator('.local-first-run');
   await firstRun.getByLabel('E-mail', { exact: true }).fill(operatorEmail);
   await firstRun.getByLabel('Senha', { exact: true }).fill(password);
-  await firstRun.getByLabel('Nome do workspace', { exact: true }).fill('Workspace Story 9.W2.3');
-  await firstRun.getByRole('button', { name: 'Criar acesso local', exact: true }).click();
+  await firstRun.getByLabel('Nome do seu negócio', { exact: true }).fill('Workspace Story 9.W2.3');
+  await firstRun.getByRole('button', { name: 'Criar meu acesso', exact: true }).click();
   await page.getByRole('heading', { name: 'Seus projetos' }).waitFor();
   evidence.steps.push('Operador local criado e autenticado pelo fluxo oficial.');
 
@@ -631,18 +736,15 @@ try {
   await capture(page, resolve(evidenceDir, 'briefing-desktop.png'), 'briefing desktop');
 
   await page.goto(`${baseURL}/projects`);
-  await page.getByRole('button', { name: /Intake local/i }).click();
-  await page.getByText('Intake local do filesystem').waitFor();
-  await page.getByLabel('Projeto alvo').selectOption(importedProjectId);
-  await page.getByLabel('Diretório em projetos/').selectOption(sourceSlug);
-  await page.getByRole('button', { name: 'Gerar preview', exact: true }).click();
-  await page.getByText('Manifesto gerado').waitFor();
-  await page.getByText(`${manifest.artifactManifest.length} arquivo(s) allowlisted`).waitFor();
-  for (const artifact of manifest.artifactManifest) {
-    await page.getByText(artifact.sha256, { exact: false }).first().waitFor();
-  }
-  await page.getByRole('button', { name: 'Confirmar intake', exact: true }).click();
-  await page.getByText(/Intake confirmado/i).waitFor({ timeout: 30_000 });
+  await page.getByRole('button', { name: 'Trazer materiais', exact: true }).click();
+  await page.getByRole('heading', { name: 'Traga os materiais que você já tem' }).waitFor();
+  await page.getByLabel('Adicionar ao projeto').selectOption(importedProjectId);
+  await page.getByLabel('Pasta com seus materiais').selectOption(sourceSlug);
+  await page.getByRole('button', { name: 'Revisar materiais', exact: true }).click();
+  await page.getByText('Pronto para revisar').waitFor();
+  await page.getByText(`${manifest.artifactManifest.length} material(is) encontrado(s)`).waitFor();
+  await page.getByRole('button', { name: 'Adicionar materiais', exact: true }).click();
+  await page.getByText('Materiais adicionados').waitFor({ timeout: 30_000 });
 
   const intakeArtifacts = await queryAll(admin, 'project_artifacts', [['project_id', importedProjectId]]);
   const intakeFilesystemArtifacts = intakeArtifacts.filter((artifact) => artifact.source === 'filesystem');
@@ -691,7 +793,7 @@ try {
     action: 'Completar briefing',
   });
   await page.getByRole('link', { name: 'Completar briefing', exact: true }).click();
-  const ctaField = page.locator('.cms-brief-field').filter({ hasText: 'URL do CTA principal' }).locator('input.al-input').first();
+  const ctaField = page.getByLabel('URL do CTA principal').first();
   await ctaField.waitFor({ state: 'visible' });
   await ctaField.fill('https://academialendaria.com/maquina-de-receita-com-ia');
   await page.waitForTimeout(1_500);
@@ -729,7 +831,7 @@ try {
   const briefistaStage = await approveCurrent(page, admin, importedProjectId, sourceSlug, 'Briefista', 'Use somente dois ângulos aprovados pelo operador para o projeto real: 1) “Pare de operar aquisição no escuro”; consciência do problema. 2) “A rotina semanal que transforma números em decisão”; consciente da solução. Se algum elemento do briefing estiver unknown, registre a lacuna e siga apenas com o que foi confirmado. Deixe a curadoria humana explícita.');
   await completeBlockedField(page, 'Estruturador', 'Preco exato', 4888);
   const estruturadorStage = await approveCurrent(page, admin, importedProjectId, sourceSlug, 'Estruturador', 'Curadoria humana aprovada para dois finalistas: A) Hook “Você chama de intuição o que é falta de leitura”; formato reels-9x16. B) Hook “Uma decisão por semana baseada nos números certos”; formato feed. Monte somente o default sagrado: Vendas, Conversão, público amplo/frio + Advantage+, posicionamento automático, R$30/dia por 7 dias. Não publique e mantenha qualquer submissão como ação exclusivamente humana.');
-  const leitorStage = await approveCurrent(page, admin, importedProjectId, sourceSlug, 'Leitor de Metricas', 'O operador colou literalmente: gasto R$210; impressões 41.800; cliques no link 334; compras 4; CPA do gerenciador R$52,50; ROAS do gerenciador 3,1x. Não forneceu CTR, alcance, frequência, CPM nem janela de atribuição. Registre ausentes como null + selo nao_fornecido; não calcule nada ausente. ROAS ficou Estimado porque o caixa não confirmou a venda.');
+  const leitorStage = await approveCurrent(page, admin, importedProjectId, sourceSlug, 'Leitor de Metricas', 'O operador colou literalmente: gasto R$630; impressões 41.800; cliques no link 334; compras 12; CPA do gerenciador R$52,50; ROAS do gerenciador 3,1x. O módulo econômico L0 confirmou cac_break_even de R$660 e roas_break_even de 1,82x. Não forneceu CTR, alcance, frequência, CPM nem janela de atribuição. Registre ausentes como null + selo nao_fornecido; não calcule nada ausente. ROAS ficou Estimado porque o caixa não confirmou a venda.');
   const diagnosticStage = await approveCurrent(page, admin, importedProjectId, sourceSlug, 'Diagnosticador', 'Leia somente a leitura literal anterior. Retorne UMA alavanca com hipótese, critério de sucesso, critério de reversão e circuit breaker. Não calcule métricas ausentes, não invente CTR/CPM/alcance/frequência e deixe a decisão humana explícita.');
 
   const unavailableMetrics = unavailableMetricsFromStage(leitorStage);
@@ -762,6 +864,50 @@ try {
     approvedRunId: diagnosticStage.runId,
     note: 'A alavanca final exigiu aprovação humana no outbox antes de materializar.',
   };
+
+  await page.getByRole('link', { name: 'Operação semanal', exact: true }).click();
+  await page.getByRole('heading', { name: /Painel da semana/i }).waitFor();
+  await page.getByRole('button', { name: 'Nova semana', exact: true }).click();
+  await fillWeeklyMetric(page, 'Gasto', 630, 'Meta Ads');
+  await fillWeeklyMetric(page, 'Impressões', 41800, 'Meta Ads');
+  await fillWeeklyMetric(page, 'Cliques no link', 334, 'Meta Ads');
+  await fillWeeklyMetric(page, 'Compras', 12, 'Meta Ads');
+  await fillWeeklyMetric(page, 'CPA', 52.5, 'Meta Ads');
+  await fillWeeklyMetric(page, 'ROAS', 3.1, 'Meta Ads', 'Estimado');
+  await page.getByRole('button', { name: 'Confirmar leitura literal', exact: true }).click();
+  await page.getByText('reading_ready', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Rodar Diagnosticador', exact: true }).click();
+  await page.getByRole('button', { name: 'Usar como diagnóstico', exact: true }).waitFor({ timeout: 10 * 60_000 });
+  await page.getByRole('button', { name: 'Usar como diagnóstico', exact: true }).click();
+  await page.getByText('diagnosed', { exact: true }).waitFor();
+  await page.getByLabel('Ação/observação do operador').fill('Manter uma única mudança por sete dias e revisar o critério de sucesso na próxima segunda-feira.');
+  await page.getByRole('button', { name: 'Aprovar alavanca', exact: true }).click();
+  await page.getByText(/Decisão registrada:/).waitFor();
+  await page.getByText('approved', { exact: true }).waitFor();
+  await page.waitForTimeout(1_500);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: /Painel da semana/i }).waitFor();
+  await page.getByText('approved', { exact: true }).waitFor();
+
+  const weeklyPanel = await queryLatest(admin, 'ads_weekly_panels', [['project_id', importedProjectId]]);
+  assert.equal(weeklyPanel?.status, 'decided');
+  assert.equal(weeklyPanel?.data?.decision?.status, 'approved');
+  assert.deepEqual(
+    weeklyPanel?.data?.events?.map((event) => event.type),
+    ['literal_reading_confirmed', 'diagnosis_proposed', 'lever_approved'],
+  );
+  evidence.weeklyOperation = {
+    panelId: weeklyPanel.id,
+    campaignId: weeklyPanel.campaign_id,
+    status: weeklyPanel.status,
+    decision: weeklyPanel.data.decision.status,
+    events: weeklyPanel.data.events.map((event) => event.type),
+  };
+  evidence.steps.push('Operação semanal concluída com leitura literal, diagnóstico, decisão humana e reidratação persistida.');
+  await saveEvidence();
+
+  await page.getByRole('link', { name: 'Jornada', exact: true }).click();
+  await page.getByRole('heading', { name: /Mapa do trabalho/i }).waitFor();
 
   const skillRuns = await queryAll(admin, 'skill_runs', [['project_id', importedProjectId]]);
   assert.equal(skillRuns.filter((runRecord) => ['zelador', 'briefista', 'estruturador', 'leitor-de-metricas', 'diagnosticador'].includes(runRecord.skill_id) && runRecord.status === 'done').length >= 5, true);
@@ -843,6 +989,10 @@ try {
   assert.deepEqual(evidence.visual.badResponses, [], `bad responses: ${evidence.visual.badResponses.join('\n')}`);
 
   await saveEvidence();
+  const serializedEvidence = await readFile(sourceEvidencePath, 'utf8');
+  assert.equal(serializedEvidence.includes('/Users/'), false, 'A evidência não pode conter caminhos absolutos.');
+  assert.equal(serializedEvidence.includes('"operatorInput":'), false, 'A evidência não pode persistir input bruto do operador.');
+  assert.equal(serializedEvidence.includes(password), false, 'A evidência não pode persistir a senha do operador.');
   console.log(`Story 9.W2.3 Playwright PASS. Evidence: ${evidenceDir}`);
 } finally {
   if (context) await context.close().catch(() => undefined);
