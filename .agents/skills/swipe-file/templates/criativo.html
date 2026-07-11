@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ID}} — {{HOOK_CURTO}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --bg-elevated: #121212;
+    --card: #161616;
+    --raised: #262626;
+    --border-strong: #383838;
+    --foreground: #F5F5F5;
+    --foreground-soft: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #BFBFBF;
+    --primary-light: #E5E5E5;
+    --primary-deep: #595959;
+    --accent-winner: #23E169;
+    --accent-promising: #FFC857;
+    --accent-anti: #FF6B6B;
+    --accent-original: #7DD3FC;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, system-ui, sans-serif;
+    --font-display: Inter, system-ui, sans-serif;
+    --font-mono: ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--background); color: var(--foreground);
+    font-family: var(--font-body); font-size: 17px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 32px 96px; }
+
+  /* BACK LINK */
+  .back {
+    font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted-foreground);
+    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: 32px; border: none;
+  }
+  .back:hover { color: var(--primary); }
+
+  /* HEADER */
+  .header {
+    margin-bottom: 40px; padding-bottom: 32px;
+    border-bottom: 1px solid var(--raised);
+  }
+  .header-row {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .id {
+    font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;
+    color: var(--primary); background: var(--bg-elevated);
+    padding: 5px 12px; border-radius: 6px;
+  }
+  .badge {
+    display: inline-block; font-family: var(--font-ui); font-size: 0.72rem;
+    font-weight: 700; padding: 5px 12px; border-radius: 9999px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .badge.winner { background: rgba(35, 225, 105, 0.12); color: var(--accent-winner); border: 1px solid var(--accent-winner); }
+  .badge.promising { background: rgba(255, 200, 87, 0.12); color: var(--accent-promising); border: 1px solid var(--accent-promising); }
+  .badge.anti { background: rgba(255, 107, 107, 0.12); color: var(--accent-anti); border: 1px solid var(--accent-anti); }
+  .badge.original { background: rgba(125, 211, 252, 0.12); color: var(--accent-original); border: 1px solid var(--accent-original); }
+  .header h1 {
+    font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700; letter-spacing: -0.015em; line-height: 1.2;
+    color: var(--foreground); margin: 0;
+  }
+
+  /* META GRID */
+  .meta-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px; margin: 24px 0 0;
+  }
+  .meta-item {
+    background: var(--card); border: 1px solid var(--raised);
+    border-radius: 10px; padding: 14px 18px;
+  }
+  .meta-item .label {
+    font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700;
+    color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .meta-item .val {
+    font-family: var(--font-body); font-size: 0.95rem; color: var(--foreground);
+  }
+
+  /* SECTIONS */
+  .secao { margin: 48px 0 0; }
+  h2 {
+    font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
+    letter-spacing: -0.01em; color: var(--foreground); margin: 0 0 16px;
+  }
+
+  /* HOOK VERBATIM (destaque grande) */
+  .hook-verbatim {
+    background: linear-gradient(135deg, var(--card) 0%, var(--bg-elevated) 100%);
+    border: 1px solid var(--raised); border-left: 4px solid var(--primary);
+    border-radius: 0 16px 16px 0;
+    padding: 32px 36px; margin: 0 0 16px;
+  }
+  .hook-verbatim .label {
+    font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700;
+    color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+  .hook-verbatim .texto {
+    font-family: var(--font-body); font-size: 1.4rem; font-style: italic;
+    color: var(--primary-light); line-height: 1.4; font-weight: 600;
+    margin: 0;
+  }
+
+  /* ESTRUTURA LIST */
+  .estrutura ol {
+    counter-reset: passo; list-style: none; padding: 0; margin: 0;
+  }
+  .estrutura ol li {
+    counter-increment: passo; position: relative;
+    padding: 14px 18px 14px 56px; margin: 8px 0;
+    background: var(--card); border: 1px solid var(--raised);
+    border-radius: 10px;
+    font-family: var(--font-body); color: var(--foreground-soft);
+  }
+  .estrutura ol li::before {
+    content: counter(passo); position: absolute; left: 18px; top: 50%;
+    transform: translateY(-50%); width: 28px; height: 28px;
+    background: var(--primary); color: var(--background);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 0.85rem;
+  }
+
+  /* PADRAO EXTRAIDO (callout primario) */
+  .padrao-extraido {
+    background: var(--card); border: 1px solid var(--raised);
+    border-radius: 14px; padding: 24px 28px;
+  }
+  .padrao-extraido h3 {
+    font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700;
+    color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em;
+    margin: 0 0 12px;
+  }
+  .padrao-extraido p { margin: 0 0 12px; }
+  .padrao-extraido p:last-child { margin-bottom: 0; }
+
+  /* ADAPTACOES (verde sucesso) */
+  .adaptacoes {
+    background: rgba(35, 225, 105, 0.04);
+    border: 1px solid var(--accent-winner); border-radius: 14px;
+    padding: 24px 28px;
+  }
+  .adaptacoes h3 {
+    font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700;
+    color: var(--accent-winner); text-transform: uppercase; letter-spacing: 0.1em;
+    margin: 0 0 14px;
+  }
+  .adaptacoes ol { padding-left: 22px; margin: 0; }
+  .adaptacoes ol li {
+    margin-bottom: 12px; color: var(--foreground-soft);
+    font-family: var(--font-body);
+  }
+  .adaptacoes ol li strong { color: var(--foreground); }
+
+  /* FONTE / LINK */
+  .fonte {
+    margin-top: 24px; padding: 14px 18px;
+    background: var(--bg-elevated); border: 1px dashed var(--raised);
+    border-radius: 8px;
+    font-family: var(--font-mono); font-size: 0.82rem;
+    color: var(--muted-foreground);
+  }
+  .fonte a {
+    color: var(--primary-light); text-decoration: none;
+    border-bottom: 1px solid var(--primary-deep);
+  }
+  .fonte a:hover { color: var(--primary); border-color: var(--primary); }
+
+  /* GERAL */
+  p { margin: 0 0 14px; color: var(--foreground-soft); }
+  strong { color: var(--foreground); font-weight: 600; }
+  em { color: var(--primary-light); font-style: italic; }
+  code { font-family: var(--font-mono); background: var(--bg-elevated); padding: 2px 7px; border-radius: 4px; font-size: 0.88em; color: var(--primary-light); }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 64px; padding: 24px 0 0;
+    border-top: 1px solid var(--raised);
+    font-family: var(--font-ui); font-size: 0.78rem;
+    color: var(--muted-foreground); text-align: center;
+  }
+  .footer .logo {
+    font-family: var(--font-display); font-weight: 800;
+    color: var(--primary); margin-bottom: 4px;
+  }
+
+  @media print {
+    html, body { font-size: 12px; }
+    .wrap { padding: 0 12px; max-width: 100%; }
+    .back { display: none; }
+    .hook-verbatim, .estrutura ol li, .padrao-extraido, .adaptacoes { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Link voltar (relativo ao index) -->
+    <a href="../swipe-file-index.html" class="back">← Voltar ao Index</a>
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-row">
+        <span class="id">{{ID}}</span>
+        <!-- Badge: <span class="badge winner|promising|anti|original">{{STATUS}}</span> -->
+        {{BADGE}}
+      </div>
+      <h1>{{TITULO}}</h1>
+
+      <div class="meta-grid">
+        <!-- Skill preenche os campos reais. Exemplo:
+             <div class="meta-item"><div class="label">Concorrente</div><div class="val">Grupo PBE</div></div>
+             <div class="meta-item"><div class="label">Tipo</div><div class="val">Post orgânico · texto</div></div>
+             <div class="meta-item"><div class="label">Formato</div><div class="val">Texto isolado</div></div>
+             <div class="meta-item"><div class="label">Captura</div><div class="val">26/06/2026</div></div>
+             <div class="meta-item"><div class="label">Engajamento</div><div class="val">604k seguidores</div></div>
+             <div class="meta-item"><div class="label">Dias rodando</div><div class="val">6 anos</div></div>
+        -->
+        {{META}}
+      </div>
+    </div>
+
+    <!-- HOOK VERBATIM -->
+    <div class="secao">
+      <div class="hook-verbatim">
+        <div class="label">Hook verbatim</div>
+        <p class="texto">{{HOOK_VERBATIM}}</p>
+      </div>
+    </div>
+
+    <!-- ESTRUTURA -->
+    <div class="secao estrutura">
+      <h2>Estrutura</h2>
+      <ol>
+        <!-- Skill preenche cada passo. Exemplo:
+             <li>Apresentação direta com nome + título acadêmico</li>
+             <li>Posicionamento de autoridade ("formou mais de X especialistas")</li>
+             <li>Promessa específica ao público-alvo</li>
+             <li>CTA suave (link na bio)</li>
+        -->
+        {{ESTRUTURA}}
+      </ol>
+    </div>
+
+    <!-- CTA original -->
+    <div class="secao">
+      <h2>CTA</h2>
+      <p style="font-family: var(--font-body); font-size: 1.05rem; color: var(--primary-light); font-style: italic;">{{CTA}}</p>
+    </div>
+
+    <!-- PROMESSA -->
+    <div class="secao">
+      <h2>Promessa principal</h2>
+      <p>{{PROMESSA}}</p>
+    </div>
+
+    <!-- EMOÇÃO ALVO -->
+    <div class="secao">
+      <h2>Emoção alvo</h2>
+      <p><strong>{{EMOCAO}}</strong></p>
+    </div>
+
+    <!-- PADRÃO EXTRAÍDO -->
+    <div class="secao">
+      <div class="padrao-extraido">
+        <h3>Padrão extraído (acionável)</h3>
+        <p>{{PADRAO_EXTRAIDO}}</p>
+      </div>
+    </div>
+
+    <!-- ADAPTAÇÕES AO ICP -->
+    <div class="secao">
+      <div class="adaptacoes">
+        <h3>Adaptações sugeridas ao meu ICP</h3>
+        <ol>
+          <!-- Skill preenche pelo menos 2 adaptações. Exemplo:
+               <li><strong>Adaptação A:</strong> "Prazer, [seu nome]. Especialista em [seu nicho], formei [N pessoas]..."</li>
+               <li><strong>Adaptação B:</strong> Trocar autoridade acadêmica por autoridade de resultado: "Já ajudei [N clientes] a [resultado]"</li>
+          -->
+          {{ADAPTACOES}}
+        </ol>
+      </div>
+    </div>
+
+    <!-- FONTE -->
+    <div class="fonte">
+      🔗 Fonte: <a href="{{FONTE_URL}}" target="_blank" rel="noopener">{{FONTE_URL}}</a>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="logo">{{MARCA}}</div>
+      <p>Swipe File · {{DATA}} · Referência para adaptação, não para cópia literal.</p>
+    </div>
+  </div>
+</body>
+</html>

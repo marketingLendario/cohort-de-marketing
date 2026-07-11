@@ -1,0 +1,82 @@
+story: "8.W3.2"
+base: "4f05847f6d172cadf2e83befe69fed0d74d55f6c"
+verdict: SHIP
+findings: []
+resolved_findings:
+  - id: "W3.2-QA-001"
+    priority: P2
+    file: "apps/academia-lendaria-ads-studio/src/components/dashboard.tsx"
+    line: "89-94"
+    title: "Query de campanha inexistente perde contexto e aponta para outra campanha"
+    evidence: "Playwright adversarial em http://127.0.0.1:5192/dashboard?campaignId=qa-unknown-campaign, com reload, retornou href /projects?legacyCampaignId=qa-unknown-campaign; não houve fallback para demo-campaign-001."
+    resolution: "Resolvido: query desconhecida preserva legacyCampaignId no bridge para /projects."
+  - id: "W3.2-QA-002"
+    priority: P2
+    file: "apps/academia-lendaria-ads-studio/src/lib/monitor-alerts.ts"
+    line: "77-99"
+    title: "Diagnóstico persistido incompleto gera alerta e severidade default"
+    evidence: "Playwright adversarial persistiu diagnosis com hypothesis/singleLever/successCriterion/reversalCriterion vazios e circuitBreakerTriggered=false; após reload, monitor-alert-card count=0 e monitor-alerts-empty ficou visível."
+    resolution: "Resolvido: somente diagnóstico persistido completo produz alerta; não há severidade inventada."
+  - id: "W3.2-QA-004"
+    priority: P2
+    file: "apps/academia-lendaria-ads-studio/src/components/wizard/campaign-publication-step.tsx"
+    line: "185-204"
+    title: "Passo legado 7 expõe controles mutáveis de publicação"
+    evidence: "Playwright em /campaigns/demo-campaign-001/7, desktop e mobile, confirmou data-testid=legacy-publication-read-only e ausência de texto/controles Publicar pausado, Publicar campanha, Pausar e Escalar; não houve overlaps, erros de console ou rede."
+    resolution: "Resolvido: passo 7 renderiza o consolidado em modo somente leitura e direciona à campanha unificada."
+  - id: "W3.2-QA-003"
+    priority: P3
+    file: "docs/stories/epic-8/STORY-8.W3.2-legacy-cutover-monitor-alerts.md"
+    line: "19-32,105-119"
+    title: "Story deve pertencer ao próprio escopo administrativo"
+    evidence: "A story está listada tanto em touched_paths quanto no File List da própria story."
+    resolution: "Resolvido: o escopo administrativo registra explicitamente a atualização da story."
+commands:
+  - command: "git diff --check 4f05847f6d172cadf2e83befe69fed0d74d55f6c"
+    exit: 0
+    status: PASS
+  - command: "npm test -- --reporter=dot"
+    exit: 0
+    status: PASS
+    output: "30 test files, 247 tests passed"
+  - command: "npm run lint"
+    exit: 0
+    status: PASS
+  - command: "npm run typecheck"
+    exit: 0
+    status: PASS
+  - command: "npm run build"
+    exit: 0
+    status: PASS
+  - command: "npm run build:server"
+    exit: 0
+    status: PASS
+  - command: "E2E_BASE_URL=http://127.0.0.1:5192 E2E_EVIDENCE_DIR=/tmp/story-8-w3-2-qa-5192 npm run test:e2e"
+    exit: 0
+    status: PASS
+    output: "Deep links 1-8, empty/real alert, reload, query/history/back, desktop/mobile, console/network and overlap checks passed."
+  - command: "Playwright adversarial probes on port 5192"
+    exit: 0
+    status: PASS
+    output: "Unknown campaign preserved legacyCampaignId; incomplete diagnosis and other-campaign artifact produced no alert; legacy step 7 was read-only; deep links, invalid reload, history/back, desktop/mobile, 9:16 copy, overlap and console/network checks passed."
+  - command: "git log --oneline 4f05847f6d172cadf2e83befe69fed0d74d55f6c..HEAD"
+    exit: 0
+    status: PASS
+    output: "No commits after base"
+evidence:
+  server: "Vite dev server started from this worktree at http://127.0.0.1:5192 (not 5177, 3002, 5178 or 3302); stopped after QA."
+  screenshots:
+    - "/tmp/story-8-w3-2-qa-5192/dashboard-desktop.png"
+    - "/tmp/story-8-w3-2-qa-5192/dashboard-alert-desktop.png"
+    - "/tmp/story-8-w3-2-qa-5192/projects-mobile.png"
+    - "/tmp/story-8-w3-2-qa-5192/legacy-step-8-mobile.png"
+    - "/tmp/story-8-w3-2-qa-5192/legacy-step-7-desktop-adversarial.png"
+    - "/tmp/story-8-w3-2-qa-5192/legacy-step-7-mobile-adversarial.png"
+  visual_review: "Imagens inspecionadas; dashboard vazio/alerta, projetos mobile e etapas legadas 7/8 não exibiram overlap aparente. O passo 7 mostrou consolidado e revisão somente leitura em desktop/mobile; viewport 390x844 sem sobreposição."
+  data_integrity: "Unit tests cobriram ausência de diagnosis/evidence/campaign, diagnosis pending, circuit breaker, artefato confirmado e CTA review-only. Probes adversariais confirmaram que diagnosis incompleto não alerta e artefato de outra campanha não cruza."
+  review_only: "Passo legado 7 expõe legacy-publication-read-only; não foram encontrados Publicar pausado, Publicar campanha, Pausar ou Escalar. O alerta aponta somente para Revisar no painel semanal."
+  visible_copy: "Rotas tocadas não exibiram copy de Epic/story futura ou placeholder; o texto Story observado no passo 5 é o formato criativo 9:16, não referência a uma story futura."
+  rules: "AGENTS.md aplicado. .aiox-core/constitution.md e .Codex/rules/ não existem neste checkout; ausência registrada como limitação de contexto."
+residual_risks:
+  - "A validação de browser usou VITE_DEMO_AUTH=true; o ramo Supabase real de hidratação/query não foi exercitado end-to-end."
+timestamp: "2026-07-10T12:32:58-03:00"

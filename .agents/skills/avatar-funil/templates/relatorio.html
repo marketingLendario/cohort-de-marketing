@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesquisa de Avatar — {{TITULO}}</title>
+<!--
+  Estilo NEUTRO, sem marca. Use como está, ou personalize com o visual do seu negócio.
+  Se você usa a skill design-md e tem um DESIGN.md, substitua as variáveis :root abaixo
+  (cores e fontes) pelos tokens da sua marca, e o {{MARCA}} no rodapé pelo nome dela.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --card: #0F0F0F;
+    --raised: #262626;
+    --border: #262626;
+    --foreground: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #BFBFBF;
+    --primary-light: #E5E5E5;
+    --primary-deep: #595959;
+    --status-success: #23E169;
+    --status-warning: #FF9D0A;
+    --status-error: #FF4438;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, system-ui, sans-serif;
+    --font-display: Inter, system-ui, sans-serif;
+    --font-mono: ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 40px 80px; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 16px 0 40px; border-bottom: 1px solid var(--raised); margin-bottom: 44px; }
+  .kicker {
+    display: inline-block; font-family: var(--font-ui); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--primary);
+    padding: 6px 16px; border: 1px solid var(--primary-deep); border-radius: 9999px; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 700;
+    line-height: 1.1; letter-spacing: -0.02em; margin: 0 0 10px;
+  }
+  .hero h1 em { font-family: var(--font-body); font-style: italic; font-weight: 400; color: var(--primary); }
+  .hero .sub { font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); margin: 6px 0 0; }
+
+  /* SECTIONS */
+  h2 {
+    font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--foreground); margin: 48px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--raised);
+  }
+  h3 { font-family: var(--font-ui); font-size: 1.1rem; font-weight: 700; color: var(--primary-light); margin: 28px 0 10px; }
+  p { margin: 0 0 14px; }
+  strong { color: #fff; font-weight: 600; }
+  em { color: var(--primary-light); }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  /* VERBATIM (citação literal do cliente) */
+  blockquote, .verbatim {
+    font-family: var(--font-body); font-style: italic; color: var(--primary-light);
+    background: var(--card); border-left: 3px solid var(--primary-deep);
+    margin: 14px 0; padding: 12px 18px; border-radius: 0 8px 8px 0;
+  }
+
+  /* CALLOUT (aviso de honestidade) */
+  .callout {
+    background: rgba(255,157,10,0.08); border: 1px solid var(--status-warning);
+    border-radius: 10px; padding: 14px 18px; margin: 18px 0;
+    font-family: var(--font-ui); font-size: 0.92rem; color: var(--foreground);
+  }
+
+  /* TABELAS */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-family: var(--font-ui); font-size: 0.9rem; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--raised); }
+  th { color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.72rem; }
+  td.num, th.num { text-align: center; font-family: var(--font-mono); }
+
+  /* FOOTER */
+  .footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--raised);
+    font-family: var(--font-ui); font-size: 0.78rem; color: var(--muted-foreground); text-align: center; }
+  .footer .logo { font-family: var(--font-display); font-weight: 700; color: var(--primary); letter-spacing: 0.02em; }
+
+  @media print {
+    html, body { font-size: 12px; }
+    .wrap { padding: 0 12px; max-width: 100%; }
+    h2 { page-break-after: avoid; }
+    blockquote, .verbatim, table, .callout { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <span class="kicker">Pesquisa de Avatar</span>
+      <h1>{{TITULO}}</h1>
+      <p class="sub">{{SUBTITULO}}</p>
+    </div>
+
+    <!-- CONTEUDO: a skill injeta aqui as seções do relatório (resumo, perfil, dores, vácuo, avatar, focus group, jogadas) em HTML, usando <h2>, <h3>, <table>, <blockquote class="verbatim"> e <div class="callout">. -->
+    {{CONTEUDO}}
+
+    <div class="footer">
+      <div class="logo">{{MARCA}}</div>
+      <p>Pesquisa de avatar · {{DATA}} · Dado declarado, fonte única — usar para calibrar oferta e copy.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,450 @@
+You are a design system extraction expert.
+
+You have been given evidence from a public website. Read the inputs in this order of priority:
+
+1. **CSS variables (GROUND TRUTH — primary source):** {{CSS_VARS_PATH}}
+   This file lists every `--name: value;` declaration with its selector scope. These are CANONICAL tokens declared by the source system. ALWAYS prefer these values over any inference.
+
+2. **@font-face declarations:** {{FONT_FACES_PATH}}
+   Structured list of self-hosted font faces with family + URLs + weight + style + display. This is the exhaustive type system — including italic, bold-italic, variable, and icon fonts.
+
+3. **Token usage graph:** {{USAGE_GRAPH_PATH}}
+   For each `--var`, how many times it's referenced. High `references` = canonical/used token. Low `references` = legacy/decorative. Use this to decide which tokens deserve top-level slots in the YAML frontmatter vs. extended named tokens.
+
+   **CRITICAL — `references` count is a USAGE-FREQUENCY signal, NOT a brand-identity signal.**
+   A color used 200× across links and table headers is a UI accent, not necessarily the brand color. NEVER select `colors.primary` from the highest-references token. See the brand-identity rule under `colors` below.
+
+4. **Per-component properties (CRITICAL for component-accurate output):** {{COMPONENT_PROPS_PATH}}
+   For each component class (button / card / input / badge / link / nav / tab), the parser walks the CSS and extracts every `border-radius`, `padding`, `font-weight`, `font-size`, `border-width`, `background-color`, `color` declaration found inside selectors that match `.btn`, `.button`, `button`, `.card`, `.input`, `input`, `.badge`, etc.
+   - The `most_common` value per property is the SOURCE OF TRUTH for that component's resolved style.
+   - Example: if `summary.button["border-radius"].most_common` is `"0"`, the buttons in this design system are SQUARE — even if `--radius-md: 8px` exists in the var inventory.
+   - **NEVER infer button radius from `rounded.md`. ALWAYS use `summary.button["border-radius"].most_common` when present.**
+   - The same rule applies to `card`, `input`, `badge`.
+   - Reflect this in the `preview_tokens` block: `button_radius`, `card_radius`, `input_radius` — emit them when the component-properties data has clear most_common values.
+   - **Variant matrix:** `summary[component].states` lists all detected interactive states (`default`, `hover`, `focus`, `focus-visible`, `active`, `disabled`). Use these properties to reflect correctly in `preview_tokens` when emitting hover/focus colors, AND emit them as named atoms in the `components:` YAML block (see Components section below).
+   - **Variants:** `summary[component].variants` lists variants detected via BEM (`--primary`, `--ghost`) or attr (`[data-variant]`). When ≥2 variants are found, emit each as a named atom (e.g. `button-primary`, `button-ghost`).
+   - Backward compat: `summary[component][property]` (top level) still exists and is equivalent to `summary[component].states.default[property]`.
+
+5. **Regex token candidates:** {{TOKENS_PATH}}
+   Heuristic pass: hex/rgb/hsl colors, font-sizes, weights, radii, spacing values found anywhere in the CSS.
+
+6. **Concatenated CSS:** {{CSS_PATH}}
+   Everything from `<link rel="stylesheet">`, `<link rel="preload" as="style">`, `@import` (resolved 1 level), inline `<style>` blocks, and `style=""` attrs.
+
+7. **Page markdown:** {{HTML_MD_PATH}}
+   Turndown of the HTML for context (brand name, tone, page copy).
+
+8. **Stack fingerprint:** {{STACK_PATH}}
+   Detected technology stack (frameworks, CSS frameworks, component libraries, design systems).
+   Use this signal to bias **conventions**, not tokens:
+   - Webflow / Wix / Squarespace → builder-proprietary class names, expect auto-generated `.w-` / `wix-` markup.
+   - Next.js + shadcn/ui → Radix primitives + Tailwind utilities preferred.
+   - WordPress → semantic HTML but token system is theme-dependent — verify CSS vars before assuming.
+   - Apple / Anthropic / Vercel design systems → respect the proprietary token namespace (`--sk-`, `--anthropic-`, `--geist-`); do not coerce to Tailwind defaults.
+   Do NOT generate framework-specific code — only align naming conventions and component anatomy with the detected origin.
+
+9. **Style archetype (visual classification):** {{STYLE_FINGERPRINT_PATH}}
+   Detected primary archetype: **{{ARCHETYPE}}**
+   This complements the technical stack signal — it tells you HOW the design feels, not what tools it uses.
+   Possible values: shadcn-neutral, carbon-enterprise, material-elevation, polaris-friendly, apple-glass, brutalist-mono, govuk-conservative, porsche-precision, ant-china-enterprise, marketing-gradient, community-polished, unclassified.
+   Use the archetype to bias **prose voice** in the DESIGN.md narrative sections (Visual Theme, Color rationale, Typography rationale):
+   - shadcn-neutral / brutalist-mono → terse, dev-tooling tone, function-over-form
+   - carbon-enterprise / govuk-conservative → information-density, accessibility-first, civic vocabulary
+   - apple-glass / marketing-gradient → premium consumer voice, generous whitespace narrative
+   - polaris-friendly / community-polished → optimistic e-commerce / open-source warmth
+   - material-elevation → mobile-first, tonal palette vocabulary
+   - porsche-precision / ant-china-enterprise → branded mono-with-accent, technical typography
+   The archetype must NOT change the tokens you extract — only the words you use to describe them.
+   **Archetype must NEVER bias `primary` color selection** — see brand-identity rule below. `polaris-friendly` does NOT mean "default to blue."
+
+Your task: Generate a DESIGN.md file combining Google's open DESIGN.md spec (machine-readable YAML frontmatter) with a richer narrative + agent-prompt-friendly markdown body.
+Reference: https://github.com/google-labs-code/design.md
+Pattern reference (prose body): VoltAgent's awesome-design-md collection (numbered sections, Agent Prompt Guide, brand-specific Don'ts).
+
+The DESIGN.md format = YAML frontmatter (machine) + 9 numbered markdown sections (LLM-friendly narrative).
+
+---
+
+## YAML Frontmatter (between --- delimiters)
+
+Extract these:
+
+- `name`: brand/site name visible on the page
+- `colors`:
+    - `primary`, `secondary`, `tertiary`, `neutral`, `surface`, `text`, `text-muted`, `border`, `error`, `success` — required slots, mapped from CSS vars when possible
+    - Include extended named tokens (clay, lime, olive, ruby, magenta, etc.) as additional keys when they appear as named CSS vars
+    - **CRITICAL — `primary` is the BRAND IDENTITY color, not the most-used UI color.**
+      The brand identity color is the one a person would name when describing the brand: it appears in the **logo**, the **header band**, the **brand mark / favicon**, and the **first hero element**. It is often used SPARINGLY across the rest of the page.
+      The most-used UI color (links, body CTAs, table headers) is frequently a SECONDARY action color — blues are over-represented because every link defaults to blue.
+      Examples of brands where the identity color is NOT the most-used UI color:
+        - **Mercado Livre:** identity = yellow `#ffe600` (logo, header band) · UI-heavy = blue `#3483fa` (links, listings). primary=yellow, secondary=blue.
+        - **McDonald's:** identity = yellow + red. UI links would be a generic blue. primary=yellow.
+        - **IKEA:** identity = blue + yellow. UI = neutrals. primary=blue.
+        - **Spotify:** identity = green `#1DB954` (logo). UI = mostly black/gray. primary=green.
+        - **Stripe:** identity = purple `#635bff` (logo, hero gradient). UI = black/gray. primary=purple.
+        - **Itaú:** identity = orange `#FF6200` (logo). UI links = navy `#000066`. primary=orange, link=navy.
+      How to decide:
+        1. Look at the brand name extracted (`name`) and your prior knowledge of the brand's iconic color. If you know the brand, trust that.
+        2. Look at `<header>` or top-band background colors and `og:image` / favicon hex hints.
+        3. Inspect the LOGO. Even when only the URL is available, the logo typically contains the brand color.
+        4. ONLY if no brand identity signal exists, fall back to the most-prominent CTA color.
+      **NEVER use `references` count or hex usage frequency to decide `primary`** — frequency is a UI-affordance signal, not a brand signal. Brand colors are often used SPARINGLY (logo + hero + 1-2 CTA) precisely because they're meant to anchor, not dominate.
+      If the page archetype is `polaris-friendly`, do NOT default to blue primary by association — Polaris is one specific brand (Shopify), not a license to assume blue. Apply the same identity-not-UI logic.
+- `typography`:
+    - **MINIMUM 12 roles when the source supports it; up to 18 when granular** (per VoltAgent's typography table pattern):
+      - **Display:** `display-hero`, `display-large` (48-72px range, headline weight, often weight 300-400 for premium brands)
+      - **Sections:** `section-heading` (32-40px), `subheading-large` (24-28px), `subheading` (18-22px)
+      - **Body:** `body-large` (17-19px), `body` (15-16px), `body-small` (13-14px)
+      - **UI:** `button` (14-16px), `button-small` (12-14px), `link` (14-16px)
+      - **Captions:** `caption` (12-13px), `caption-small` (10-12px), `caption-tabular` (12px with tnum feature)
+      - **Micro:** `micro` (10-11px), `nano` (8-9px) — only when source uses them
+      - **Code:** `code-body` (12-14px monospace), `code-bold`, `code-label`, `code-micro` — when monospace is present
+    - The legacy 9-role minimum (`h1`, `h2`, `h3`, `h4`, `body-lg`, `body-md`, `body-sm`, `label`, `mono`) is still emitted as aliases for backward compat, but the canonical 12-18 roles above are preferred.
+    - Each entry: `{ fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, features }` — include `features` (e.g. `'ss01', 'tnum'`) when OpenType features are detected on the source.
+    - Use exact font-family from `@font-face.family` or from CSS var `--font--*` declarations.
+- `rounded`: `{ none, sm, md, lg, full }` in px (or in the source's native keying if non-conventional). Add `xs` and `xl` when the source has 6+ radius levels.
+- `spacing`: `{ xs, sm, md, lg, xl }` in px (or native keying). Add `2xs`, `xxl` when source has 7+ levels.
+- `preview_tokens` (REQUIRED — used by the live component preview):
+    A flat map of resolved 6-digit hex values keyed by intent. The preview consumer
+    reads this block FIRST when rendering buttons / cards / inputs, then falls back
+    to CSS var lookup, then to `colors.*`. Filling this block correctly is the
+    single highest-impact thing you can do for visual fidelity of the preview.
+
+    Required keys (emit ALL — use the closest semantic match if a dedicated token
+    is missing):
+
+    ```yaml
+    preview_tokens:
+      button_primary_bg: "#0071e3"        # the fill color of the most prominent CTA
+      button_primary_text: "#ffffff"      # the text color on top of button_primary_bg
+      button_primary_border: "#0071e3"    # usually same as bg unless source has explicit border
+      button_secondary_bg: "transparent"  # most secondary buttons are outlined or ghost
+      button_secondary_text: "#1d1d1f"
+      button_secondary_border: "#d2d2d7"
+      button_tertiary_text: "#0066cc"     # usually the link color (no bg/border)
+      surface_bg: "#ffffff"               # default page background
+      card_bg: "#f5f5f7"                  # card / elevated surface
+      text: "#1d1d1f"                     # default body text
+      text_muted: "#6e6e73"               # secondary text
+      border: "#d2d2d7"                   # default hairline
+      accent: "#0071e3"                   # brand accent (often = primary, sometimes distinct)
+      button_radius: "9999px"             # button border-radius
+      card_radius: "16px"
+      input_radius: "5px"
+    ```
+
+    Resolution priority:
+    1. Source-canonical token (e.g. `--sk-button-background`, `--btn-primary-bg`, `--cta-bg`) — resolve to 6-digit hex.
+    2. Generic --button-* tokens.
+    3. Generic semantic tokens (`--primary`, `--brand`, `--action`).
+    4. The most-prominent visible CTA color (NOT the most-used color overall).
+
+    These values are RESOLVED — convert any `var(...)` chain or `rgb(...)` form to a 6-digit hex string.
+
+- `components` (REQUIRED — REVERSED from prior policy. **YOU MUST EMIT THIS BLOCK.**):
+    Structured atomic components for tooling consumers (DS Detail, render-contract.cjs).
+    Emit AT MINIMUM these 8 atoms when the source supports them. Skip an atom only if the source genuinely does not declare it (then document the absence in `## 4. Components` prose):
+
+    ```yaml
+    components:
+      button-primary:
+        bg: "#533afd"
+        text: "#ffffff"
+        border: "#533afd"        # often = bg; emit "transparent" when no border
+        radius: "4px"
+        padding: "8px 16px"
+        font: "16px sohne-var weight 400"
+        hover_bg: "#4434d4"
+      button-primary-hover:
+        bg: "#4434d4"
+        text: "#ffffff"
+        # ... emit when source declares an explicit hover variant
+      button-secondary:
+        bg: "transparent"
+        text: "#533afd"
+        border: "#b9b9f9"
+        radius: "4px"
+        padding: "8px 16px"
+        font: "16px sohne-var weight 400"
+        hover_bg: "rgba(83,58,253,0.05)"
+      button-ghost:
+        bg: "transparent"
+        text: "#1d1d1f"
+        border: "transparent"
+        radius: "4px"
+        padding: "8px 16px"
+      card:
+        bg: "#ffffff"
+        border: "#e5edf5"
+        radius: "6px"
+        shadow: "rgba(50,50,93,0.25) 0px 30px 45px -30px, rgba(0,0,0,0.1) 0px 18px 36px -18px"
+        padding: "24px"
+      input-text:
+        bg: "#ffffff"
+        text: "#061b31"
+        border: "#e5edf5"
+        radius: "4px"
+        padding: "8px 12px"
+        focus_border: "#533afd"
+      badge-default:
+        bg: "#ffffff"
+        text: "#000000"
+        border: "#f6f9fc"
+        radius: "4px"
+        padding: "0px 6px"
+        font: "11px weight 400"
+      nav-header:
+        bg: "rgba(255,255,255,0.85)"
+        text: "#061b31"
+        border_bottom: "#e5edf5"
+        backdrop_filter: "blur(12px)"
+        height: "56px"
+    ```
+
+    Notes:
+    - All values are 6-digit hex (per spec lint) OR `transparent` OR full CSS expressions for `shadow` / `backdrop_filter`.
+    - **Hex literal in values — do NOT use token reference syntax like `{colors.primary}` or `${primary}`.** The picker pipeline expects literal values; references will render as missing. Validated externally: VoltAgent's 59-brand collection (67k stars) uses hex literals exclusively.
+    - State-specific variants (`button-primary-hover`, `button-primary-disabled`) are EMITTED ONLY when source declares an explicit selector for that state. Do not invent.
+    - The same atom MUST appear in prose form in `## 4. Components` (see Markdown Body section below) — dual emission is intentional: YAML for tooling, prose for LLM-driven UI generation.
+
+---
+
+## Temporary provenance comments (REQUIRED, stripped from final DESIGN.md)
+
+For each top-level token, append a YAML comment at end of line indicating its origin.
+These comments are used only by the extraction pipeline to build `extraction-log.yaml`;
+the final compiled `DESIGN.md` strips them to stay compact for downstream LLM usage.
+
+```yaml
+colors:
+  primary: "#d97757"      # from --swatch--clay
+  secondary: "#141413"    # from --swatch--slate-dark
+  tertiary: "#c6613f"     # inferred from primary darker variant
+typography:
+  display-hero:
+    fontFamily: "Anthropic Serif, Georgia, serif"   # from --font--serif (CSS var)
+    fontSize: 4.5rem                                  # from h1 font-size declaration
+```
+
+Origin categories:
+- `from --var-name` — sourced from a CSS variable in {{CSS_VARS_PATH}}
+- `from @font-face` — sourced from a @font-face declaration in {{FONT_FACES_PATH}}
+- `from <selector> declaration` — sourced from a non-var CSS rule
+- `inferred from <reasoning>` — when no direct CSS source exists; explain briefly
+
+---
+
+## Markdown Body — 9 Numbered Sections (after frontmatter)
+
+Numbered sections aid navigation for both humans and LLM consumers. Numbering is REQUIRED.
+
+### `## 1. Visual Theme & Atmosphere`
+Open with 2-4 paragraphs of narrative prose describing the brand's aesthetic. Cover:
+- Palette anchor (signature color + supporting palette)
+- Typography character (weight choice as personality, OpenType features, tracking philosophy)
+- Surface treatment (flat / layered / glassy)
+- The single most distinctive visual choice (e.g. "blue-tinted shadows", "pixel-precise grid", "weight 300 as luxury")
+
+End with a `**Key Characteristics:**` bullet list of 6-10 single-line claims.
+
+### `## 2. Color Palette & Roles`
+Subsections by role group (NOT by hex value):
+- `### Primary` — brand identity color(s) with semantic role (CTA, link, focus ring)
+- `### Brand & Dark` — dark sections / brand-immersive moments
+- `### Accent Colors` — decorative / gradient ingredients
+- `### Interactive` — hover, active, focus variants
+- `### Neutral Scale` — text, surface, label hierarchy
+- `### Surface & Borders` — divider hierarchy
+- `### Shadow Colors` — when shadows carry hue
+- End with `### Color Philosophy` — 1 paragraph explaining WHY the palette is shaped this way (e.g. "warm headings instead of black", "blue-tinted shadows echo brand")
+
+Format each color line: `- **Color Name** (\`#hex\`): \`--css-var-name\`. Semantic role description.`
+
+### `## 3. Typography Rules`
+Subsections:
+- `### Font Family` — primary font, monospace companion, OpenType features (`ss01`, `tnum`, etc.)
+- `### Hierarchy` — REQUIRED markdown table with these columns: `Role | Font | Size | Weight | Line Height | Letter Spacing | Features | Notes`. Include all 12-18 typography roles from the YAML frontmatter.
+- `### Principles` — 4-6 bulleted typographic claims. Each MUST be brand-specific (see Don'ts directive below).
+
+### `## 4. Components`
+For EACH atom in the YAML `components:` block, write a prose subsection in this format:
+
+```
+### Buttons
+
+**Primary Purple** (`button-primary`)
+- Background: `#533afd`
+- Text: `#ffffff`
+- Padding: 8px 16px
+- Radius: 4px
+- Font: 16px sohne-var weight 400, `"ss01"`
+- Hover: `#4434d4` background
+- Use: Primary CTA ("Start now", "Contact sales")
+```
+
+Group atoms: `### Buttons` (button-* atoms), `### Cards & Containers` (card), `### Inputs & Forms` (input-*), `### Badges / Tags / Pills` (badge-*), `### Navigation` (nav-*).
+
+**Dual emission rule (machine + LLM):**
+- The YAML `components:` block is read by tooling (DS Detail, render-contract.cjs).
+- The prose bullet list is read by LLM agents during code generation.
+- Values MUST match between YAML and prose (if hex is `#533afd` in YAML, hex in prose is the same `#533afd`).
+
+End with `### Decorative Elements` documenting dashed borders, gradient accents, or other non-component motifs.
+
+### `## 5. Layout Principles`
+Subsections:
+- `### Spacing System` — base unit + scale (e.g. "Base 8px. Scale: 4, 8, 12, 16, 24, 32, 48...")
+- `### Grid & Container` — max width, hero pattern, multi-column patterns
+- `### Whitespace Philosophy` — 1-2 paragraph narrative on whitespace as design choice
+- `### Border Radius Scale` — bullet list of radius values with semantic role
+
+### `## 6. Depth & Elevation`
+- REQUIRED markdown table: `Level | Treatment | Use` covering Flat → Ambient → Standard → Elevated → Deep → Ring (focus).
+- End with `### Shadow Philosophy` — 1 paragraph explaining HOW the shadow system relates to the brand (e.g. "blue-tinted to echo navy palette", "intentionally low-elevation to favor surface contrast").
+
+### `## 7. Do's and Don'ts`
+**Do's MUST be brand-specific** — name fonts, weights, colors, treatments unique to THIS brand.
+**Don'ts MUST be brand-specific** — name fonts, weights, colors, treatments forbidden for THIS brand.
+
+GOOD examples (brand-specific):
+- ✅ "Don't use weight 600-700 for sohne-var headlines — weight 300 is Stripe's brand voice"
+- ✅ "Don't use pure black `#000000` for headings — Itaú uses navy `#000066` for warmth"
+- ✅ "Don't apply positive letter-spacing at display sizes — Stripe tracks tight"
+- ✅ "Don't use orange `#FF6200` for body links — orange is brand-presence, navy is action"
+
+BAD examples (generic, FORBIDDEN):
+- ❌ "Don't use too many colors"
+- ❌ "Maintain consistent spacing"
+- ❌ "Use the closest semantic match"
+- ❌ "Avoid clashing fonts"
+
+If you find yourself writing a generic Don't, replace it with a brand-specific one. Generic Don'ts are extraction failures.
+
+### `## 8. Responsive Behavior`
+Subsections:
+- `### Breakpoints` — REQUIRED markdown table: `Name | Width | Key Changes`
+- `### Touch Targets` — minimum sizes
+- `### Collapsing Strategy` — what changes from desktop → mobile (typography downscale, grid columns, nav hamburger, etc.)
+- `### Image Behavior` — how product/dashboard imagery adapts
+
+### `## 9. Agent Prompt Guide`
+**This is the highest-value section for AI consumers.** Write it as if a coding agent will copy-paste pieces into LLM prompts.
+
+Three required subsections:
+
+#### `### Quick Color Reference`
+One-line per role with the canonical hex. Format:
+```
+- Primary CTA: <Brand Name> Purple (`#533afd`)
+- CTA Hover: Purple Dark (`#4434d4`)
+- Background: Pure White (`#ffffff`)
+- Heading text: Deep Navy (`#061b31`)
+- Body text: Slate (`#64748d`)
+- Border: Soft Blue (`#e5edf5`)
+- Link: Stripe Purple (`#533afd`)
+```
+
+#### `### Example Component Prompts`
+5+ ready-to-paste LLM prompts. Each prompt is a single-paragraph imperative with concrete hex values, sizes, fonts, and feature flags. Example:
+> "Create a hero section on white background. Headline at 48px sohne-var weight 300, line-height 1.15, letter-spacing -0.96px, color #061b31, font-feature-settings 'ss01'. Subtitle at 18px weight 300, line-height 1.40, color #64748d. Purple CTA button (#533afd, 4px radius, 8px 16px padding, white text)."
+
+Cover at minimum: hero section, card, badge, navigation, dark/brand section.
+
+#### `### Iteration Guide`
+6-8 numbered tips for iterative UI generation. Each tip is brand-specific (NOT generic). Example:
+1. Always enable `font-feature-settings: "ss01"` on sohne-var text — this is the brand's typographic DNA
+2. Weight 300 is the default; use 400 only for buttons/links/navigation
+3. Shadow formula: `rgba(50,50,93,0.25) 0px Y1 B1 -S1, rgba(0,0,0,0.1) 0px Y2 B2 -S2` ...
+4. Heading color is `#061b31` (deep navy), body is `#64748d` (slate), labels are `#273951`
+5. Border-radius stays in the 4px-8px range — never use pill shapes or large rounding
+...
+
+---
+
+## Rules (NON-NEGOTIABLE)
+
+- Use EXACT hex codes from {{CSS_VARS_PATH}} when available. The CSS variables file is THE GROUND TRUTH.
+- Font families must match `@font-face.family` exactly when self-hosted faces exist.
+- Do NOT invent font names. Do NOT estimate hex values when a CSS var declares them.
+- Every top-level token in the frontmatter MUST carry a provenance comment.
+- You do NOT have a screenshot. The CSS files are the visual evidence.
+- **NEVER use token-reference syntax like `{colors.primary}`, `${primary}`, `var(--primary)` in YAML values.** Always emit literal 6-digit hex (or `transparent` for explicit no-fill). The picker chain in `component-models.ts` only accepts hex/rgb/rgba — references will render as missing pixels.
+- **Numbered markdown sections (`## 1.` through `## 9.`) are REQUIRED.** Numbering is part of the contract.
+- **Don'ts MUST be brand-specific** — see `## 7. Do's and Don'ts` directive. Generic Don'ts are extraction failures.
+- **Components: YAML block is REQUIRED** — emit at minimum 8 atoms (button-primary, button-primary-hover when explicit, button-secondary, button-ghost, card, input-text, badge-default, nav-header). The `@google/design.md` lint v0.1.0 has a known parsing bug with deeply nested components — the pipeline's `runLint` will strip the block on a temp file before invoking lint, then restore it for the canonical output. Do NOT skip the block.
+- Output ONLY the DESIGN.md content. No preamble, no explanation, no markdown code fences around the whole document.
+
+## Spec-clean output (REQUIRED to pass `@google/design.md lint` post-strip)
+
+The `@google/design.md` linter enforces strict types on the YAML frontmatter. Apply these conversions BEFORE writing the file:
+
+### Colors — only 6-digit hex (NO alpha)
+
+- ✅ `"#d97757"` — 6-digit hex
+- ❌ `"#1414131a"` — 8-digit hex (with alpha) is REJECTED
+- ❌ `"rgba(...)"` — RGBA functions are also REJECTED by the lint (in `colors:` only — `components.shadow` accepts full CSS expressions)
+- ❌ `"hsl(...)"` — HSL functions are also REJECTED in `colors:`
+
+If the source CSS uses 8-digit hex (alpha) or rgba/hsl, **drop the alpha component and emit only the 6-digit base hex**:
+- `#1414131a` → `"#141413"`
+- `rgba(20, 20, 19, 0.1)` → `"#141413"`
+
+Document the alpha loss in the provenance comment: `# from --swatch--slate-faded-10 (alpha 0.1 dropped — spec accepts only 6-digit hex)`.
+
+For tokens that conceptually NEED alpha (overlays, focus rings, shadows), document them in `## 6. Depth & Elevation` prose. The `components:` YAML block accepts full CSS expressions in `shadow`, `backdrop_filter`, `outline` fields.
+
+### Dimensions (rounded, spacing, letterSpacing) — must carry a unit
+
+- ✅ `0px`, `4px`, `1rem`, `0.5em`, `-0.02em`
+- ❌ `0` — bare number is REJECTED. Always emit `0px`.
+- ❌ `normal` — keyword REJECTED for `letterSpacing`. Convert to `0em`.
+- ❌ `100vw`, `50vh`, `5%` — viewport / percentage units REJECTED. Convert:
+  - `100vw` (pill / full-round) → emit `9999px` (functionally equivalent for radius)
+  - viewport-based spacing → omit from frontmatter, document in `## 5. Layout` prose instead
+
+### Required slots
+
+`colors:` MUST include all required semantic slots even if the source has no dedicated token:
+- `primary`, `secondary`, `tertiary`, `neutral`, `surface`, `text`, `text-muted`, `border`, `error`, `success`
+
+When the source lacks a dedicated token (e.g., `error`, `success`):
+- Pick the closest semantic match from the available palette
+- Mark the provenance as `# inferred from <reasoning>`
+- Do NOT omit the slot — emit it with an inferred value
+
+### Components block (REVERSED from v0.1.0 workaround)
+
+Prior version of this prompt instructed `DO NOT emit components: YAML`. **That instruction is REVERSED.** The pipeline now handles the v0.1.0 lint bug downstream (in `runLint` via a temp-file strip). You MUST emit the `components:` YAML block per the schema in the YAML Frontmatter section above.
+
+### Default theme — extract the visible theme, not the first :root rule
+
+**Detected default theme: `{{DEFAULT_THEME}}` (confidence: {{THEME_CONFIDENCE}})**
+
+This site renders in `{{DEFAULT_THEME}}` mode by default. When the CSS has BOTH light and dark variants for the same token (e.g. `--bg` defined both in `:root` and `[data-theme="dark"]`):
+
+- ✅ **DO** prefer values from the `{{DEFAULT_THEME}}` scope. If `{{DEFAULT_THEME}}` is `dark`, look for selectors like `[data-theme="dark"]`, `.dark`, `.dark-theme`, `[data-color-mode="dark"]` and use those values for `surface`, `text`, `background`, `border`.
+- ✅ **DO** verify visually: if the site renders dark, `surface` should be a dark hex (luminance < 0.3), `text` should be light. Inverted = wrong theme picked.
+- ❌ **DON'T** default to `:root` values when the site is `dark` — `:root` often holds light defaults that get overridden by JS-applied `data-theme="dark"` at runtime.
+- ❌ **DON'T** invent both — emit ONE canonical value per slot reflecting the default theme. (If you want to document the alternate theme, do it in `## 2. Colors` prose.)
+
+When `{{DEFAULT_THEME}}` is `light`, the standard `:root` extraction is usually correct. When it's `dark`, you must consciously select the dark variant.
+
+### Coverage Notes — communicate intentional absences
+
+Some token categories may be ABSENT from the source CSS. When you detect that the site does NOT use a feature, **state it explicitly in the appropriate prose section** so downstream consumers don't try to invent it:
+
+- **Flat design (no shadows, mostly `box-shadow: none`)** → in `## 6. Depth & Elevation`: *"The system is intentionally low-elevation. Depth is communicated via border + surface contrast, not shadow."* Add to `## 7. Don'ts`: *"Don't add layered shadows."*
+- **No glassmorphism (no `backdrop-filter`)** → in `## 7. Don'ts`: *"Don't add backdrop-blur. The visual language relies on solid surfaces."*
+- **No tooltips/avatars/tabs** → in `## 4. Components`: *"This surface does not define tooltip / avatar / tab tokens. If your context requires them, follow the typography + radius + spacing primitives to derive consistent ones."*
+- **Single button style (no variants)** → in `## 4. Components > Buttons`: *"The system uses a single button style. There is no secondary/ghost/outline variant — emphasis is conveyed by placement and copy."* In YAML `components:`, emit only `button-primary` (skip `-secondary`, `-ghost`).
+- **Marketing-only surface (no forms)** → in `## 4. Components`: *"This is a marketing surface — labels, help-text, and form-error tokens are not defined here. If you ship a form on this brand, infer label sizing from `body-small` and helper from `caption`."* Skip `input-text` in YAML if no input selector is found.
+
+Write these as DESIGN INTENT, not as extraction failures. The reader should understand "the brand chose not to use X" rather than "the extractor missed X".
+
+---
+
+Source URL: {{URL}}
+
+Write the DESIGN.md to: {{OUTPUT_PATH}}
+
+Use the Write tool to create the file. Do not output the content to stdout.

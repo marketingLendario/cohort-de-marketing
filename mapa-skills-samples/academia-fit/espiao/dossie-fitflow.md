@@ -1,0 +1,33 @@
+# Dossiê: FitFlow Academy
+
+Data: 07/07/2026
+Modo: Meta Ad Library (roteiro) + Apify Instagram/TikTok nicho + análise
+
+## Resumo executivo
+
+FitFlow vende programa 12 semanas para mulheres 30+. Força: prova social e hook de erro comum. Brecha principal: **zero narrativa de manutenção** após o programa.
+
+## Anúncios e hooks (padrão do nicho — @emagrecerdevez Apify)
+
+| Métrica | Hook / padrão |
+|---------|---------------|
+| @emagrecerdevez | 4142 likes | "Vitamina B12: você está recebendo o suficiente? 😱💊 Fundamental para energia,..." |
+| @emagrecerdevez | 2069 likes | "🌏🧬 Um anúncio que pode mudar a história da medicina.  A possibilidade de tra..." |
+| @emagrecerdevez | 1447 likes | "Sal de ouro!! Receita no vídeo!!! Salva para fazer essa semana!!!  S1ga nossa p..." |
+| @emagrecerdevez | 1232 likes | "🧬 A ciência confirma: sua mãe está sempre com você! As células dela perman..." |
+| @emagrecerdevez | 1193 likes | "🍞 De Pão a Torrada: O Processo  ➡️ Quando o pão é aquecido e transformado em..." |
+| @emagrecerdevez | 1014 likes | "💖✨ Se você está tentando secar, perder gordura e conquistar um corpo mais def..." |
+| @emagrecerdevez | 402 likes | "Muitas pessoas os ignoram… mas estes são alguns dos alimentos mais completos di..." |
+| @emagrecerdevez | 402 likes | "As embalagens plásticas podem causar danos à saúde e ao meio ambiente. Danos ..." |
+
+## Hook vencedor modelado
+"Descobri o erro que 9 em 10 mulheres cometem na dieta" — Score 8/10
+
+## Brechas para Academia Fit
+- Não fala de Fase 3 (manutenção permanente)
+- Preço só na call (fricção)
+- Ignora menopausa 35+ (oportunidade TikTok 5,2M plays)
+- Não endereça efeito sanfona com verbatim do cliente
+
+## Oportunidade de posicionamento
+Ciclo de 3 Fases com **Manter** como diferencial vs programas de 30 dias.

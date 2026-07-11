@@ -108,7 +108,7 @@ Do mapa mental original:
 ## Ferramentas necessarias
 
 - **Claude Code** com as 5 skills instaladas (este repo)
-- **Apify MCP** (opcional, para scrape de concorrentes e tendencias)
+- **Apify via API REST** (central para coletas; chave `APIFY_API_TOKEN` no `.env`, sem MCP)
 - **Twitter/X** acesso (busca publica)
 - **Figma** ou Notion (organizar swipe file visualmente)
 - **Editor de markdown** (preencher templates das skills ou abrir o offerbook .docx)

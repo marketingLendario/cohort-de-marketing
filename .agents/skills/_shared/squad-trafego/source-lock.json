@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0.0",
+  "promotedAt": "2026-07-09",
+  "source": {
+    "repository": "/Users/rafaelcosta/Projects/AIOX/sinkra-hub",
+    "worktree": "cohort-marketing-aula-3-cbff0b",
+    "branch": "claude/cohort-marketing-aula-3-cbff0b",
+    "head": "7acb4c04c1ce45d7fe67ed51352255b15b30bc09",
+    "bundleHashBeforePromotion": "f7a74b131d63a2f45428b56050ba6e667de4b5d00bf535187f15cf2ee3f531d0"
+  },
+  "policy": {
+    "canonicalRoot": ".claude/skills",
+    "mirrorRoot": ".agents/skills",
+    "prdAuthority": "PRD-A3-trafego-v1.md",
+    "localChange": "leitor-de-metricas reconciled; briefista artifact contract and local pilot status documented"
+  },
+  "files": {
+    "zelador/SKILL.md": "054c1e164e4f8472a296d267d38ef61f6ddad1e2b13995a987feb8480ee5b2ee",
+    "briefista/SKILL.md": "98650ebe1d75ffaa75d4b2b4191a19fb2d1aa80d874507a1492ae04359596058",
+    "estruturador/SKILL.md": "4dbd3cc269caaad9747459bba5d583f0b491027158bb51326e8a0bf507042a77",
+    "leitor-de-metricas/SKILL.md": "ebfb67b8dc29b39cd0f9444bf950f44aad6eab486c03066ba51be8301e5f770d",
+    "diagnosticador/SKILL.md": "dad9021c2fcf44fd27445e98ce653148ba65faa9693fd9a3ffdca49a8aa574cb",
+    "_shared/squad-trafego/README.md": "6ef6a173cdef918898755a288da1a6bf1052385bc7092b4386e4b5d33044aee9",
+    "_shared/squad-trafego/painel-da-semana-tmpl.yaml": "61bc165b9aa707d53b06abe4bb98d1fa7dffc21cac924da55e725a00c9d78adc",
+    "_shared/squad-trafego/CONTRACT-DECISION.md": "cf3ea0a3596f965e86621273d1fa50a47b5a4494f2fb22e01eb1960877691484",
+    "_shared/squad-trafego/teste-e2e/PAINEL-DA-SEMANA-exemplo-preenchido.yaml": "06ef662a48306242f8504139c4b1d616574ad7aaeabf90570d51444f7f68cdb5",
+    "_shared/squad-trafego/teste-e2e/relatorio.md": "80b5d5a0fb00218a076a7b7d34a63bafb6ded02d4698dc4a20728351395f4316"
+  }
+}

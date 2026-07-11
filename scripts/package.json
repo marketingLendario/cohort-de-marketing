@@ -1,0 +1,8 @@
+{
+  "name": "cohort-mapa-validate",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "playwright": "^1.52.0"
+  }
+}

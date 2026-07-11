@@ -12,19 +12,19 @@ Bem-vinda ao material da **Aula 02** do Cohort de Marketing. Este repo contém t
 
 O offerbook que você montou na Aula 01 é o pré-requisito. Se ainda não fez, volte para a Aula 01 antes de continuar.
 
-**Ponto de entrada:**
+**Ponto de entrada da Aula 02:**
 
 ```
-/metodo-funil [nome do seu produto]
+/design-md
 ```
 
-O `/metodo-funil` lê o seu offerbook, identifica o estágio de consciência do seu público e gera o **mapa de execução** — a ordem exata de quais skills rodar e em que sequência.
+O `/design-md` cria ou ativa a identidade visual do projeto em `projetos/{slug}/DESIGN.md`. Depois rode `/metodo-funil`: ele lê o offerbook, identifica o estágio de consciência do público e gera o **mapa de execução** — a ordem exata de quais skills rodar e em que sequência.
 
 ---
 
 ## O que você ganha na Aula 02
 
-18 skills para o Claude Code que montam o squad **Arquiteto de Funil**:
+As skills abaixo montam o squad **Arquiteto de Funil**:
 
 | Skill | O que faz | Output |
 |---|---|---|
@@ -32,7 +32,7 @@ O `/metodo-funil` lê o seu offerbook, identifica o estágio de consciência do 
 | `/avatar-funil` | ICP detalhado, dores, objeções e voz do cliente | Perfil de avatar pronto para copy |
 | `/copy-funil` | Hooks, headline, bullets, CTA e objeções por estágio | Blocos de copy organizados |
 | `/design-md` | Extrai paleta, tipografia e estilo da sua URL | DESIGN.md da sua marca |
-| `/pagina-vendas-funil` | Estrutura completa da página de vendas (15 blocos) | Página pronta para publicar |
+| `/pagina-vendas-funil` | Estrutura completa da página de vendas (15 blocos) | Página estruturada para revisar e publicar |
 | `/vsl-funil` | Roteiro de VSL Direct Response | Script de vídeo de vendas |
 | `/advertorial-funil` | Página editorial de pré-venda pra público frio (nível 5) | Estrutura de advertorial |
 | `/lancamento-funil` | Funil de lançamento/PLF pra público frio com lista (nível 5) | PLCs → carrinho → fechamento |
@@ -74,7 +74,7 @@ cd cohort-de-marketing
 claude
 ```
 
-As 18 skills em `.claude/skills/` são carregadas automaticamente (junto com as da Aula 01).
+As 25 skills em `.claude/skills/` são carregadas automaticamente. No Codex, `.agents/skills/` é um espelho literal da mesma pasta.
 
 **3. Teste que as skills estão instaladas**
 
@@ -88,32 +88,32 @@ Se aparecer o menu da skill, está funcionando.
 
 ## Fluxo da aula
 
-### Passo 1 — Diagnóstico (15 min)
+### Passo 1 — Identidade visual (10 min)
 
 ```
-/metodo-funil [nome do produto]
+/design-md
 ```
 
-Cole seu offerbook quando a skill pedir. Ela retorna:
+Cria ou reaproveita o `DESIGN.md` da marca e salva em `projetos/{slug}/`.
+
+### Passo 2 — Diagnóstico (15 min)
+
+```
+/metodo-funil
+```
+
+Lê o offerbook do projeto e retorna:
 - Estágio de consciência do seu público (1–5)
 - Tipo de funil recomendado
 - Mapa de execução com todas as peças em ordem
 
-### Passo 2 — Copy (20 min)
+### Passo 3 — Copy (20 min)
 
 ```
 /copy-funil [nome do produto]
 ```
 
-Use o mapa de execução do passo 1. A skill gera hooks, headline, bullets, CTA e trata objeções com base no estágio identificado.
-
-### Passo 3 — Identidade visual (10 min)
-
-```
-/design-md [URL do seu site ou landing page]
-```
-
-Extrai paleta, tipografia e estilo da sua marca. Gera o `DESIGN.md` que as próximas skills usam automaticamente.
+Use o mapa de execução do passo 2. A skill gera hooks, headline, bullets, CTA e trata objeções com base no estágio identificado.
 
 ### Passo 4 — Página de vendas (30 min)
 
@@ -121,7 +121,7 @@ Extrai paleta, tipografia e estilo da sua marca. Gera o `DESIGN.md` que as próx
 /pagina-vendas-funil [nome do produto]
 ```
 
-Usa o `DESIGN.md` + copy do passo 2. Gera a estrutura completa em 15 blocos.
+Usa o `DESIGN.md` + copy do passo 3. Gera a estrutura completa em 15 blocos.
 
 ### Passo 5 — Email + Conteúdo (paralelo, 30 min)
 
@@ -154,38 +154,34 @@ Monta a estrutura de upsell, OTO, downsell e janela de 4h.
 ├── .env.example                       template de chaves de API
 ├── .claude/
 │   └── skills/
-│       ├── pesquisa-de-avatar/        aula 01
+│       ├── avatar-funil/              aula 01 + reforço de pesquisa
 │       ├── espiao-do-concorrente/     aula 01
 │       ├── trend-hunting/             aula 01
 │       ├── swipe-file/                aula 01
 │       ├── offerbook/                 aula 01
 │       ├── metodo-funil/              aula 02
-│       ├── avatar-funil/              aula 02
 │       ├── copy-funil/                aula 02
 │       ├── design-md/                 aula 02
-│       ├── pagina-vendas/             aula 02
+│       ├── pagina-vendas-funil/       aula 02
 │       ├── vsl-funil/                 aula 02
 │       ├── email-funil/               aula 02
 │       ├── conteudo-funil/            aula 02
 │       ├── criativos-funil/           aula 02
 │       ├── whatsapp-funil/            aula 02
-│       ├── back-end/                  aula 02
-│       ├── recuperacao/               aula 02
+│       ├── backend-funil/             aula 02
+│       ├── recuperacao-funil/         aula 02
 │       ├── cro-funil/                 aula 02
 │       ├── advertorial-funil/         aula 02
 │       ├── lancamento-funil/          aula 02
 │       ├── webinario-funil/           aula 02
 │       ├── quiz-funil/                aula 02
-│       └── mockup-produto/            aula 02
+│       └── mockup-produto-funil/      aula 02
+├── .agents/
+│   └── skills/                        espelho literal para Codex
 ├── aula-02/
 │   ├── README.md                      este arquivo
-│   ├── DESIGN.md                      exemplo de DESIGN.md (Cohort de Marketing)
-│   └── slides-aula-funil-claude-design.md  slides para Claude Design
-├── templates/
-│   └── Template-Offerbook.docx
-└── docs/
-    ├── workflow.md
-    └── conexao-aula-02.md
+│   └── aula-design-md-GUIA-ALUNO.html guia visual do design-md
+└── projetos/                          nasce quando as skills rodam
 ```
 
 ---
@@ -218,7 +214,7 @@ O mapa de execução do `/metodo-funil` define a ordem por um motivo: cada skill
 
 ### DESIGN.md é a âncora visual
 
-Rode `/design-md` uma vez com a URL real do seu negócio. O arquivo gerado é referenciado por `/pagina-vendas-funil` e `/email-funil` automaticamente — sem ele, as skills usam padrão genérico.
+Rode `/design-md` uma vez e aprove explicitamente a identidade. O arquivo gerado é referenciado por `/pagina-vendas-funil`, `/email-funil`, `/conteudo-funil` e demais peças automaticamente a partir de `projetos/{slug}/DESIGN.md`.
 
 ### Recovery é dinheiro esquecido
 

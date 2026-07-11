@@ -20,7 +20,7 @@ Se preferir markdown puro, o conteúdo está abaixo.
 
 ## O que você ganha na Aula 01
 
-5 skills para o Claude Code que orquestram todo o squad **Research Analyst**:
+As 5 skills da Aula 01 orquestram o squad **Research Analyst** dentro do catálogo completo de 25 skills do repo:
 
 | Skill | O que faz | Output |
 |---|---|---|
@@ -57,7 +57,7 @@ cd cohort-de-marketing
 cp .env.example .env
 ```
 
-Abra o `.env` no editor e preencha as chaves que você quiser usar. **Todas são opcionais** — as skills funcionam sem elas em modo manual (você cola o material, a IA analisa). O `.env.example` explica como pegar cada chave (Meta Ad Library, Apify, OpenAI, etc.) e o que cada uma habilita.
+Abra o `.env` no editor e preencha as chaves que você quiser usar. A chave central é o **Apify** (`APIFY_API_TOKEN`): as skills de coleta usam essa API REST para buscar dados reais. Sem ela, a skill para e ajuda a configurar; modo manual entra como fallback quando a cota estoura ou uma fonte bloqueia. O `.env.example` explica como pegar cada chave.
 
 **3. Abra o Claude Code no diretório**
 
@@ -65,7 +65,7 @@ Abra o `.env` no editor e preencha as chaves que você quiser usar. **Todas são
 claude
 ```
 
-As 5 skills em `.claude/skills/` são carregadas automaticamente.
+As skills em `.claude/skills/` são carregadas automaticamente. A Aula 01 usa 5 delas; a Aula 02 usa as demais.
 
 **4. Teste que as skills estão instaladas**
 
@@ -133,16 +133,18 @@ Consolida pesquisa de avatar + dossiê do concorrente + tendências + swipe file
 ├── GUIA-DO-ALUNO.html              guia visual interativo (leia primeiro)
 ├── .env.example                    template de chaves de API (copie para .env)
 ├── .claude/
-│   └── skills/                     as 5 skills (Claude Code carrega automático)
+│   └── skills/                     as 25 skills (fonte canônica)
+├── .agents/
+│   └── skills/                     espelho literal para Codex
 │       ├── avatar-funil/     dor + avatar + focus group (com scripts)
 │       ├── espiao-do-concorrente/  dossiê multi-fonte (com scripts)
 │       ├── trend-hunting/
 │       ├── swipe-file/
 │       └── offerbook/
-├── templates/
-│   └── Template-Offerbook.docx     template Word oficial
-├── exemplos/                       exemplos preenchidos
-└── docs/
+├── aula-01/
+│   ├── templates/
+│   │   └── Template-Offerbook.docx template Word oficial
+│   └── docs/
     ├── workflow.md                       fluxo completo da Aula 01
     ├── conexao-aula-02.md                handoff para próxima aula
     ├── template-lacunas-aula-01.md       template do artefato manual de fechamento
@@ -191,7 +193,7 @@ Nada de LP, e-mail ou ad antes do offerbook aprovado pelo dono do negócio.
 
 ### Chaves de API ficam no .env
 
-Nunca cole chave de API direto em código ou em prompt. Sempre no `.env` (gitignored). O `.env.example` explica onde pegar cada uma.
+Nunca cole chave de API direto em código ou em prompt. Sempre no `.env` (gitignored). O Apify é central para as skills de coleta (`/espiao-do-concorrente`, `/trend-hunting`, `/conteudo-funil`, `/criativos-funil`): configure `APIFY_API_TOKEN` quando a skill pedir.
 
 ---
 

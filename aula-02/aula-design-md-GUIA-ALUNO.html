@@ -484,8 +484,8 @@
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-content">
-        <h3>Pronto — o DESIGN.md já está na raiz</h3>
-        <p>A skill monta o <code>DESIGN.md</code> (o RG visual da marca) e <strong>já coloca ele na raiz do seu projeto</strong>, ao lado da pasta <code>.claude</code>. Você não move nada nem roda mais nada. E em <strong>qualquer caminho</strong> ela roda o <strong>ciclo de aprovação</strong>: abre o <code>preview.html</code> renderizado, se autocritica, sugere melhorias e itera até VOCÊ aprovar — o design.md nunca chega como fato consumado.</p>
+        <h3>Pronto — o DESIGN.md já está no projeto</h3>
+        <p>A skill monta o <code>DESIGN.md</code> (o RG visual da marca) e, quando existe um projeto ativo, salva em <code>projetos/{slug}/</code> junto com <code>tokens.json</code> e <code>preview.html</code>. Você não move nada nem roda mais nada. E em <strong>qualquer caminho</strong> ela roda o <strong>ciclo de aprovação</strong>: abre o <code>preview.html</code> renderizado, se autocritica, sugere melhorias e itera até VOCÊ aprovar — o design.md nunca chega como fato consumado.</p>
       </div>
     </div>
 
@@ -691,9 +691,9 @@
   <section id="secao-10">
     <div class="section-num">Parte 10</div>
     <h2>Sua tarefa <em>antes de sábado</em></h2>
-    <p>Chegue na Aula 02 com o seu <code>DESIGN.md</code> na raiz do projeto. É ele que vai fazer sua página de vendas e seus criativos saírem com a sua cara, e não com cara de template.</p>
+    <p>Chegue na Aula 02 com o seu <code>DESIGN.md</code> dentro de <code>projetos/{slug}/</code>. É ele que vai fazer sua página de vendas e seus criativos saírem com a sua cara, e não com cara de template.</p>
     <ul style="font-family: var(--font-ui); font-size: 0.98rem; line-height: 1.9;">
-      <li><strong>Tem marca/site?</strong> Rode a <code>/design-md</code> na URL e mova o arquivo pra raiz.</li>
+      <li><strong>Tem marca/site?</strong> Rode a <code>/design-md</code> na URL. Se já existir um projeto ativo, a skill salva o arquivo no lugar certo.</li>
       <li><strong>Não tem?</strong> Escolha uma referência que você ama e rode nela.</li>
       <li><strong>Sem tempo?</strong> Fica no neutro hoje e refina depois — mas chegue com algo.</li>
     </ul>

@@ -2,10 +2,10 @@
 
 A Aula 02 (Arquiteto de Funil) **assume** que voce concluiu a Aula 01 e tem em maos:
 
-1. ICP completo (`icp-{negocio}.md`)
-2. Dossie de concorrentes (`competidores-{nicho}.md`)
-3. Offerbook preenchido (`offerbook-{produto}.md`)
-4. Swipe file com 10+ criativos winners categorizados
+1. Avatar completo (`avatar.md` ou o relatório migrado da Aula 1)
+2. Dossie de concorrentes (`espiao/dossie-*.md` ou `dossie-*.md` antes da migração)
+3. Offerbook preenchido (`offerbook.md` em `projetos/{slug}/`, ou `offerbook-{produto}.md` antes da migração)
+4. Swipe file com 10+ criativos winners categorizados (`swipe/briefing-swipe-file.md`)
 
 Sem esses 4 artefatos, a Aula 02 nao tem matéria-prima para trabalhar.
 
@@ -37,20 +37,22 @@ Sem esses 4 artefatos, a Aula 02 nao tem matéria-prima para trabalhar.
 Voce entrega para o Arquiteto de Funil:
 
 ```
-pacote-aula-01/
-├── icp-{negocio}.md
-├── icp-{negocio}-resumo.md
-├── icp-{negocio}.html
-├── competidores-{nicho}.md
+projetos/{slug}/
+├── avatar.md
+├── avatar.html
+├── avatar.pdf
+├── espiao/
+│   └── dossie-*.md/html/pdf
 ├── trends-{nicho}-{data}.md
+├── trends/
+│   └── trends-*.md/html/pdf
 ├── briefing-swipe-file.md
+├── swipe/
+│   └── briefing-swipe-file.md/html/pdf
 ├── briefing-offerbook.md
-├── offerbook-{produto}.md
-├── swipe-file/
-│   ├── ads-meta/
-│   ├── posts-organicos/
-│   ├── hooks/
-│   └── swipe-file-index.md
+├── offerbook.md
+├── offerbook.html
+├── offerbook.docx
 └── lacunas-aula-01.md     <- importante: o que ficou pendente
 ```
 

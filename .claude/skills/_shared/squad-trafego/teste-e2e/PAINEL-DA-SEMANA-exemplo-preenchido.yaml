@@ -1,0 +1,119 @@
+# Painel da Semana — EXEMPLO PREENCHIDO (teste E2E, aluno fictício "Marcos")
+# Ver teste-e2e/relatorio.md para o passo-a-passo e os achados desta simulação.
+# Isto é material de referência/didático — não é dado real de nenhum aluno.
+
+versao: "1.0.0"
+aula: "A3 — Tráfego (Método O.F.T.R.)"
+aluno: "Marcos (fictício — clínica de estética a laser)"
+gerado_em: "2026-07-09 (simulação)"
+
+insumos_a2:
+  angulos:
+    - nome: "Manchas que voltam depois de qualquer creme"
+      nivel_consciencia: "consciente_do_problema"
+      dor: "já tentou clareador e a mancha volta"
+    - nome: "3 sessões e esquece o clareador pro resto do ano"
+      nivel_consciencia: "consciente_da_solucao"
+      dor: "cansaço de rotina de creme sem fim"
+    - nome: "O erro que trava sua pele há anos"
+      nivel_consciencia: ""   # PROPOSITALMENTE vazio — testa a recusa do Briefista
+      dor: ""
+  pagina_url: "https://exemplo-clinica.com.br/depigmentacao"
+  ticket: 1200.0
+  margem_pct: 0.55
+
+zelador:
+  ultima_checagem: "2026-07-09 (rodada 2, após configurar CAPI)"
+  bm_ativo: true
+  conta_anuncios_ativa: true
+  pixel_disparando: true
+  capi_ativo: true
+  evento_compra_deduplicado: true
+  dominio_verificado: true
+  pagamento_aprovado: true
+  status_geral: "OK"
+  observacoes:
+    - "Rodada 1 bloqueou com CAPI inativa — aluno configurou entre as rodadas."
+
+briefista:
+  gerado_em: "2026-07-09"
+  bateria_gerada:
+    - {angulo: "Manchas que voltam depois de qualquer creme", nivel_consciencia: "consciente_do_problema", hook: "Você já tentou de tudo pra essa mancha sumir?", copy: "Clareador, protetor, mais clareador — e a mancha volta. O problema não é o creme.", formato: "reels 9:16", categoria_hook: "dor"}
+    - {angulo: "Manchas que voltam depois de qualquer creme", nivel_consciencia: "consciente_do_problema", hook: "A coisa sobre manchas que os cremes não te contam", copy: "Se ela some e volta, o creme está tratando o sintoma, não a causa.", formato: "reels 9:16", categoria_hook: "curiosidade"}
+    - {angulo: "Manchas que voltam depois de qualquer creme", nivel_consciencia: "consciente_do_problema", hook: "Mais de 400 pacientes já pararam de comprar clareador todo mês", categoria_hook: "prova_social", formato: "feed"}
+    - {angulo: "Manchas que voltam depois de qualquer creme", nivel_consciencia: "consciente_do_problema", hook: "Pare de comprar clareador. Ele nunca ia resolver.", categoria_hook: "contrarian", formato: "reels 9:16"}
+    - {angulo: "3 sessões e esquece o clareador pro resto do ano", nivel_consciencia: "consciente_da_solucao", hook: "Como parar de comprar clareador em 3 sessões", categoria_hook: "beneficio", formato: "feed"}
+    - {angulo: "3 sessões e esquece o clareador pro resto do ano", nivel_consciencia: "consciente_da_solucao", hook: "Há 1 ano eu comprava clareador todo mês. Hoje não compro mais.", categoria_hook: "historia", formato: "reels 9:16"}
+    - {angulo: "3 sessões e esquece o clareador pro resto do ano", nivel_consciencia: "consciente_da_solucao", hook: "+400 pacientes trocaram a rotina de creme por 3 sessões", categoria_hook: "prova_social", formato: "feed"}
+  finalistas_curados: ["dor-manchas-voltam", "curiosidade-manchas-voltam", "beneficio-3-sessoes"]
+  # nota: ângulo "O erro que trava sua pele há anos" foi RECUSADO — sem nivel_consciencia declarado
+
+estruturador:
+  montado_em: "2026-07-09"
+  tipo_campanha: "Vendas"
+  otimizacao: "Conversao"
+  publico: "amplo_frio_advantage_plus"
+  interesse_guarda_chuva: ""
+  criativos_usados: ["dor-manchas-voltam", "curiosidade-manchas-voltam", "beneficio-3-sessoes"]
+  verba_diaria: 30.0
+  periodo_dias: 7
+  status: "submetida_pelo_humano"
+  submetida_por_humano_em: "2026-07-09"
+
+projecao:
+  roas_break_even: 1.82          # 1 ÷ 0,55
+  cac_break_even: 660.0          # 1200 × 0,55
+  cac: {valor: null, selo: "A definir", premissa: "sem histórico prévio — só existirá após o dia 7"}
+  roas: {valor: null, selo: "A definir", premissa: "sem histórico prévio — só existirá após o dia 7"}
+  gasto_midia_previsto: {valor: 210.0, selo: "Estimado"}
+  plataforma_objetivo: "Meta Ads"
+  nivel_confianca: "baixo (pré-lançamento, tudo hipótese)"
+
+leitor:
+  ultima_leitura: "2026-07-16 (dia 7)"
+  janela_atribuicao: "não fornecido"
+  sinais:
+    - {metrica: "gasto", valor: 210.0, selo: "Real", fonte: "colado pelo aluno em 2026-07-16"}
+    - {metrica: "impressoes", valor: 41800, selo: "Real", fonte: "colado pelo aluno em 2026-07-16"}
+    - {metrica: "cliques_link", valor: 334, selo: "Real", fonte: "colado pelo aluno em 2026-07-16"}
+    - {metrica: "conversoes", valor: 4, selo: "Real", fonte: "colado pelo aluno em 2026-07-16"}
+    - {metrica: "CTR", valor: 0.80, selo: "Real", fonte: "calculado: 334 ÷ 41800 (ambos colados)"}
+    - {metrica: "CPA", valor: 52.50, selo: "Real", fonte: "calculado: 210 ÷ 4 (ambos colados)"}
+    - {metrica: "ROAS", valor: 3.10, selo: "Estimado", fonte: "gerenciador — NÃO confirmado com venda no caixa"}
+    - {metrica: "frequencia", valor: null, selo: "nao_fornecido", fonte: "aluno não colou alcance"}
+  amostra_suficiente_para_cpa: false
+  nota_amostra: "amostra insuficiente para CPA (N=4) — leia com cautela, mesmo o CPA reportado"
+
+diagnosticador:
+  diagnosticado_em: "2026-07-16"
+  hipotese: "CPA de R$52,50 está a 7% do cac_break_even de R$660 mesmo com CTR de 0,80% abaixo do benchmark do setor (~1,6-2%) — com N=4, o sinal econômico pesa mais que o de atenção. Trocar o ângulo agora seria reagir a ruído de amostra pequena."
+  alavanca_unica: "Não trocar o ângulo — deixar a campanha completar mais 7 dias no mesmo default sagrado, pra amostra crescer o suficiente pra confiar no CTR como preditor."
+  criterio_sucesso: "Em 14 dias totais, CPA continua abaixo de R$660 E conversões acumuladas passam de 10."
+  criterio_reversao: "Se em 14 dias o CPA ultrapassar R$400 (60% do cac_break_even) OU CTR continuar <1% com conversões estagnadas, troca o ângulo via Briefista."
+  aprovado_pelo_aluno: true
+  circuit_breaker_acionado: false
+
+rotina_semanal:
+  ciclo_1_datado_para: "2026-07-16"
+  historico:
+    - semana: "2026-W29"
+      seg_briefista: "bateria gerada (7 variações, 2 ângulos válidos)"
+      ter_estruturador: "campanha montada e submetida pelo aluno"
+      qui_leitor: "n/a nesta semana (campanha subiu na terça)"
+      sex_diagnosticador: "n/a — 1º ciclo completo só no dia 7 (próxima terça)"
+      alavanca_decidida: ""
+
+handoff_a4:
+  exportado_em: "2026-07-16"
+  cac: {valor: 52.50, selo: "Real"}
+  roas: {valor: 3.10, selo: "Estimado", premissa: "atribuição da plataforma, não confirmado no caixa"}
+  roas_break_even: 1.82
+  cac_break_even: 660.0
+  gasto_midia_previsto: {valor: 210.0, selo: "Real"}
+  plataforma_objetivo: "Meta Ads"
+  nivel_confianca: "baixo-médio (N=4, CTR abaixo de benchmark, CAC bem dentro do break-even)"
+  invioveis_confirmados:
+    sem_selo_rejeitado: true
+    estimado_tem_premissa: true
+    toda_projecao_tem_janela: true
+    roas_real_so_com_venda_confirmada: true

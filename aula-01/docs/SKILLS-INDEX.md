@@ -27,15 +27,29 @@
 
 ---
 
-## Apoio (brand do entregável, usada na Aula 01)
+## Apoio e Aula 02 — identidade, funil e peças
 
 | Nome canônico | Aliases | O que faz |
 |---|---|---|
-| `/design-md` | `/design`, `/brand`, `/visual` | Design system markdown que renderiza HTML com a brand do aluno (logo + cores + fontes). Opcional — se não rodar, o `/avatar-funil` e o `/offerbook` saem com a brand Academia Lendária. |
-
-## Aula 02 — Funil e Páginas
-
-Skills serão publicadas na semana da Aula 02. Não estão instaladas neste repo ainda.
+| `/design-md` | `/design`, `/brand`, `/visual` | Cria o `DESIGN.md` da marca e salva em `projetos/{slug}/` quando há projeto ativo. |
+| `/metodo-funil` | `/funil`, `/mapa-funil`, `/diagnostico-funil` | Diagnostica estágio de consciência e grava o mapa de execução em `funil.md`. |
+| `/copy-funil` | `/copy`, `/copywriting`, `/big-idea` | Cria a fundação da copy em `copy.md`; as peças aplicam essa copy depois. |
+| `/pagina-vendas-funil` | `/pagina-vendas`, `/sales-page`, `/lp` | Monta a página de vendas em `pagina/` usando `copy.md` + `DESIGN.md`. |
+| `/email-funil` | `/emails`, `/email-marketing` | Gera trilhas de e-mail em HTML copiável na pasta `emails/`. |
+| `/whatsapp-funil` | `/whatsapp`, `/dm-funil` | Gera mensagens de WhatsApp/DM por momento do funil. |
+| `/conteudo-funil` | `/conteudo`, `/reels`, `/carrossel` | Gera roteiros e carrosséis orgânicos na voz da marca. |
+| `/recuperacao-funil` | `/recuperacao`, `/carrinho-abandonado` | Estrutura recuperação por comportamento e canal. |
+| `/backend-funil` | `/back-end`, `/upsell`, `/oto` | Estrutura upsell, OTO, downsell, order bump e LTV. |
+| `/cro-funil` | `/cro`, `/kpis`, `/teste-ab` | Monta KPIs e plano de otimização/testes. |
+| `/quiz-funil` | `/quiz`, `/diagnostico` | Estrutura quiz/diagnóstico segmentado. |
+| `/webinario-funil` | `/webinario`, `/masterclass` | Estrutura webinário/aula ao vivo ou evergreen. |
+| `/vsl-funil` | `/vsl` | Estrutura funil de VSL Direct Response. |
+| `/advertorial-funil` | `/advertorial`, `/pre-venda` | Estrutura advertorial/página editorial de pré-venda. |
+| `/lancamento-funil` | `/lancamento`, `/plf` | Estrutura lançamento estilo PLF. |
+| `/mockup-produto-funil` | `/mockup`, `/produto-visual` | Gera prompts e estrutura de mockups do produto/bônus. |
+| `/bonus-funil` | `/bonus`, `/entregaveis-bonus` | Gera os entregáveis reais dos bônus aprovados no offerbook. |
+| `/criativos-funil` | `/criativos`, `/ads` | Modela criativos pagos a partir de anúncios/concorrentes. |
+| `/status-funil` | `/status`, `/onde-estou` | Lê `projetos/{slug}/` e mostra o próximo passo. |
 
 ---
 
@@ -80,4 +94,4 @@ Suporte: "Esse era bônus da live de vendas, não entra no cohort.
 
 Quando uma skill for renomeada ou descontinuada, **atualizar este arquivo no mesmo PR**. Sem essa atualização, suporte vira telefone-sem-fio.
 
-**Última atualização:** 2026-06-26
+**Última atualização:** 2026-07-07

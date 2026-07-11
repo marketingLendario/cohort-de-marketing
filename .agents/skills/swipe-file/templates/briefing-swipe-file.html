@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefing Swipe File — {{TITULO}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --bg-elevated: #121212;
+    --card: #161616;
+    --card-hover: #1C1C1C;
+    --raised: #262626;
+    --border-strong: #383838;
+    --foreground: #F5F5F5;
+    --foreground-soft: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #BFBFBF;
+    --primary-light: #E5E5E5;
+    --primary-deep: #595959;
+    --accent-copy: #7DD3FC;
+    --accent-media: #FFC857;
+    --accent-winner: #23E169;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, system-ui, sans-serif;
+    --font-display: Inter, system-ui, sans-serif;
+    --font-mono: ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--background); color: var(--foreground);
+    font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 32px 96px; }
+
+  /* HERO */
+  .hero {
+    text-align: center; padding: 24px 0 48px;
+    border-bottom: 1px solid var(--raised); margin-bottom: 56px;
+  }
+  .kicker {
+    display: inline-block; font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary);
+    padding: 7px 16px; border: 1px solid var(--primary-deep); border-radius: 9999px; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: var(--font-display); font-size: clamp(2.2rem, 5.5vw, 3.4rem); font-weight: 800;
+    line-height: 1.05; letter-spacing: -0.025em; margin: 0 0 12px;
+  }
+  .hero .sub {
+    font-family: var(--font-ui); font-size: 1rem; color: var(--muted-foreground); margin: 8px 0 0;
+  }
+
+  /* RESUMO STRIP */
+  .resumo {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px; margin: 36px 0 0;
+  }
+  .resumo-item {
+    background: var(--card); border: 1px solid var(--raised);
+    border-radius: 12px; padding: 18px 20px; text-align: left;
+  }
+  .resumo-item .label {
+    font-family: var(--font-ui); font-size: 0.7rem; font-weight: 700;
+    color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .resumo-item .val {
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 700;
+    color: var(--foreground); line-height: 1.2;
+  }
+
+  /* SEÇÃO */
+  .secao { margin: 72px 0 0; }
+  h2 {
+    font-family: var(--font-display); font-size: 1.7rem; font-weight: 700;
+    letter-spacing: -0.015em; color: var(--foreground); margin: 0 0 8px;
+  }
+  .secao-sub {
+    font-family: var(--font-ui); font-size: 0.92rem; color: var(--muted-foreground); margin: 0 0 28px;
+  }
+
+  /* TOP PADRÃO HERO CARD */
+  .top-padroes-grid {
+    display: grid; gap: 16px;
+  }
+  .top-padrao {
+    background: linear-gradient(135deg, var(--card) 0%, var(--bg-elevated) 100%);
+    border: 1px solid var(--raised);
+    border-left: 4px solid var(--primary);
+    border-radius: 0 16px 16px 0;
+    padding: 24px 28px;
+  }
+  .top-padrao .rank {
+    display: inline-block;
+    background: var(--primary); color: var(--background);
+    font-family: var(--font-display); font-size: 0.72rem; font-weight: 800;
+    padding: 5px 12px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;
+  }
+  .top-padrao h3 {
+    font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
+    color: var(--foreground); margin: 0 0 10px; line-height: 1.25;
+  }
+  .top-padrao .resumo-padrao {
+    font-family: var(--font-body); color: var(--foreground-soft); margin: 0 0 16px;
+  }
+  .top-padrao .exemplo {
+    background: var(--bg-elevated); border-left: 2px solid var(--primary-deep);
+    padding: 12px 16px; border-radius: 0 8px 8px 0;
+    font-family: var(--font-body); font-style: italic;
+    color: var(--primary-light); font-size: 0.95rem;
+    margin: 12px 0;
+  }
+  .top-padrao .meta-padrao {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    font-family: var(--font-ui); font-size: 0.82rem; color: var(--muted-foreground);
+    border-top: 1px solid var(--raised); padding-top: 14px; margin-top: 16px;
+  }
+  .top-padrao .meta-padrao strong { color: var(--primary-light); font-weight: 600; }
+
+  /* DESTINATÁRIOS (Copy / Media Buyer) */
+  .destinatarios-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 20px; margin-top: 8px;
+  }
+  .destinatario {
+    background: var(--card); border: 1px solid var(--raised);
+    border-radius: 16px; padding: 28px 32px;
+    position: relative;
+  }
+  .destinatario.copy { border-top: 4px solid var(--accent-copy); }
+  .destinatario.media { border-top: 4px solid var(--accent-media); }
+  .destinatario .quem {
+    display: inline-block; font-family: var(--font-ui); font-size: 0.72rem;
+    font-weight: 700; padding: 5px 12px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
+  }
+  .destinatario.copy .quem { background: rgba(125, 211, 252, 0.15); color: var(--accent-copy); }
+  .destinatario.media .quem { background: rgba(255, 200, 87, 0.15); color: var(--accent-media); }
+  .destinatario h3 {
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 700;
+    color: var(--foreground); margin: 0 0 16px;
+  }
+  .destinatario ol {
+    padding-left: 22px; margin: 0;
+    font-family: var(--font-body);
+  }
+  .destinatario ol li {
+    margin-bottom: 12px; color: var(--foreground-soft);
+  }
+  .destinatario ol li strong { color: var(--foreground); }
+
+  /* BRIEFINGS POR TIPO */
+  .briefings-tipo {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .briefing-tipo {
+    background: var(--card); border: 1px solid var(--raised);
+    border-radius: 10px; padding: 18px 22px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    transition: all 0.2s;
+  }
+  .briefing-tipo:hover { border-color: var(--border-strong); background: var(--card-hover); }
+  .briefing-tipo .nome {
+    font-family: var(--font-ui); font-weight: 600; color: var(--foreground);
+    font-size: 0.95rem;
+  }
+  .briefing-tipo .qtd {
+    font-family: var(--font-mono); font-size: 0.82rem;
+    color: var(--primary); background: var(--bg-elevated);
+    padding: 3px 10px; border-radius: 4px;
+  }
+
+  /* PRÓXIMO PASSO CTA */
+  .proximo-passo {
+    background: linear-gradient(135deg, rgba(35, 225, 105, 0.05) 0%, var(--bg-elevated) 100%);
+    border: 1px solid var(--accent-winner);
+    border-radius: 16px; padding: 28px 32px; margin: 48px 0 0;
+    text-align: center;
+  }
+  .proximo-passo h2 {
+    color: var(--accent-winner); margin: 0 0 8px;
+  }
+  .proximo-passo p {
+    font-family: var(--font-ui); color: var(--foreground-soft); margin: 0 0 16px;
+  }
+  .proximo-passo code {
+    display: inline-block; padding: 10px 20px;
+    background: var(--background); border: 1px solid var(--accent-winner);
+    color: var(--accent-winner); border-radius: 8px;
+    font-family: var(--font-mono); font-size: 1rem; font-weight: 600;
+  }
+
+  /* GERAL */
+  p { margin: 0 0 14px; }
+  strong { color: var(--foreground); font-weight: 600; }
+  em { color: var(--primary-light); font-style: italic; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  code { font-family: var(--font-mono); background: var(--bg-elevated); padding: 2px 7px; border-radius: 4px; font-size: 0.88em; color: var(--primary-light); }
+  a { color: var(--primary); text-decoration: none; border-bottom: 1px solid var(--primary-deep); }
+  a:hover { color: var(--primary-light); border-color: var(--primary); }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 80px; padding: 28px 0 0;
+    border-top: 1px solid var(--raised);
+    font-family: var(--font-ui); font-size: 0.78rem;
+    color: var(--muted-foreground); text-align: center;
+  }
+  .footer .logo {
+    font-family: var(--font-display); font-weight: 800;
+    color: var(--primary); letter-spacing: 0.02em; margin-bottom: 6px;
+  }
+
+  @media print {
+    html, body { font-size: 12px; }
+    .wrap { padding: 0 12px; max-width: 100%; }
+    h2 { page-break-after: avoid; }
+    .top-padrao, .destinatario, .briefing-tipo, .proximo-passo { page-break-inside: avoid; }
+    .destinatarios-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .wrap { padding: 32px 18px 60px; }
+    .hero h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- HERO -->
+    <div class="hero">
+      <span class="kicker">Briefing · Handoff</span>
+      <h1>{{TITULO}}</h1>
+      <p class="sub">{{SUBTITULO}}</p>
+
+      <!-- Resumo strip: skill preenche com os números reais.
+           Exemplo:
+           <div class="resumo-item"><div class="label">Atualizado</div><div class="val">26/06/2026</div></div>
+           <div class="resumo-item"><div class="label">Briefings ativos</div><div class="val">3</div></div>
+           <div class="resumo-item"><div class="label">Referências totais</div><div class="val">47</div></div>
+           <div class="resumo-item"><div class="label">Top padrão</div><div class="val">Narrativa pessoal</div></div>
+      -->
+      <div class="resumo">
+        {{RESUMO}}
+      </div>
+    </div>
+
+    <!-- TOP 3 PADRÕES VENCEDORES -->
+    <div class="secao">
+      <h2>Top 3 padrões vencedores (cross-tipo)</h2>
+      <p class="secao-sub">Os padrões que aparecem em vários criativos de alta performance. São esses que viram base das adaptações.</p>
+      <div class="top-padroes-grid">
+        <!-- Skill preenche.
+             Exemplo:
+             <div class="top-padrao">
+               <span class="rank">#1 Padrão</span>
+               <h3>Narrativa pessoal + autoridade acadêmica</h3>
+               <p class="resumo-padrao">Funciona porque dá identificação rápida pelo "eu também" + credibilidade técnica que justifica o preço. Aparece em 4 dos 10 criativos winners.</p>
+               <div class="exemplo">"Prazer, Fernanda Landeiro. PhD em Psicologia, 6 anos formando especialistas..."</div>
+               <div class="meta-padrao">
+                 <div><strong>Usado em:</strong> 4 criativos</div>
+                 <div><strong>Performance:</strong> 3 winners + 1 promissor</div>
+                 <div><strong>Tipos:</strong> Posts, LP, Vídeo curto</div>
+               </div>
+             </div>
+        -->
+        {{TOP_PADROES}}
+      </div>
+    </div>
+
+    <!-- BRIEFINGS POR TIPO -->
+    <div class="secao">
+      <h2>Briefings ativos por tipo</h2>
+      <p class="secao-sub">Cada briefing tem 10-20 referências organizadas por tipo de criativo.</p>
+      <div class="briefings-tipo">
+        <!-- Skill preenche.
+             Exemplo: <div class="briefing-tipo"><div class="nome">hooks-vsl</div><div class="qtd">18 refs</div></div> -->
+        {{BRIEFINGS_TIPO}}
+      </div>
+    </div>
+
+    <!-- DESTINATÁRIOS (Copy + Media Buyer) -->
+    <div class="secao">
+      <h2>Pra quem isso vai</h2>
+      <p class="secao-sub">Os dois times que consomem esse briefing. Cada um pega o que precisa.</p>
+      <div class="destinatarios-grid">
+        <!-- Skill preenche os 2 blocos:
+             <div class="destinatario copy">
+               <span class="quem">Para Copy</span>
+               <h3>Top 5 hooks adaptáveis ao ICP</h3>
+               <ol>
+                 <li><strong>Narrativa pessoal:</strong> "Prazer, [seu nome]..." — adaptar pro especialista da pós</li>
+                 <li>... etc</li>
+               </ol>
+             </div>
+             <div class="destinatario media">
+               <span class="quem">Para Media Buyer</span>
+               <h3>Top 5 ângulos validados pelo algoritmo</h3>
+               <ol>
+                 <li><strong>Tensão cultural + dado:</strong> formato Reel, primeiros 3s...</li>
+                 <li>... etc</li>
+               </ol>
+             </div>
+        -->
+        {{DESTINATARIOS}}
+      </div>
+    </div>
+
+    <!-- PRÓXIMO PASSO -->
+    <div class="proximo-passo">
+      <h2>Próximo passo</h2>
+      <p>Esse briefing alimenta o offerbook. Bora rodar a última skill da Aula 01.</p>
+      <code>/offerbook [nome-do-produto]</code>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="logo">{{MARCA}}</div>
+      <p>Briefing swipe file · {{DATA}} · Handoff oficial para Copy e Media Buyer.</p>
+    </div>
+  </div>
+</body>
+</html>

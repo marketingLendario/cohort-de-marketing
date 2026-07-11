@@ -1,0 +1,156 @@
+# Painel da Semana — Squad de Tráfego Lendár[IA]
+# O estado compartilhado que o Briefista, Estruturador, Leitor, Diagnosticador e Zelador
+# leem ao começar e escrevem ao terminar. É o que transforma 5 skills soltas num squad.
+#
+# Como usar: copie este arquivo para PAINEL-DA-SEMANA.yaml na raiz do seu projeto/pasta
+# de tráfego e preencha os campos conforme cada skill roda. Nunca apague o histórico —
+# a rotina semanal (SEG-SEX) faz append em vez de sobrescrever.
+#
+# Origem: adaptado de squads/aiox-ads/templates/campaign-state.yaml (Sinkra Hub, AIOX)
+# para o contexto do aluno do Cohort 1 — Marketing de Receita com IA (Aula 3, Tráfego).
+
+versao: "1.0.0"
+aula: "A3 — Tráfego (Método O.F.T.R.)"
+aluno: ""                      # seu nome
+gerado_em: ""                  # data que você criou este painel
+
+# ═══════════════════════════════════════════════════════════════
+# 1. INSUMOS HERDADOS DA AULA 2 (não editar aqui — só referenciar)
+# ═══════════════════════════════════════════════════════════════
+
+insumos_a2:
+  angulos: []
+    # cada ângulo: {nome: "", nivel_consciencia: "inconsciente|consciente_do_problema|consciente_da_solucao|consciente_do_produto|mais_consciente", dor: ""}
+  pagina_url: ""
+  ticket: 0.0                  # vem da A1
+  margem_pct: 0.0               # vem da A1 — usado no break-even
+
+# ═══════════════════════════════════════════════════════════════
+# 2. ZELADOR — saúde de conta/tracking (roda ANTES do resto)
+# ═══════════════════════════════════════════════════════════════
+
+zelador:
+  ultima_checagem: ""
+  bm_ativo: null                # true/false
+  conta_anuncios_ativa: null
+  pixel_disparando: null
+  capi_ativo: null
+  evento_compra_deduplicado: null
+  dominio_verificado: null
+  pagamento_aprovado: null
+  status_geral: ""              # "OK" | "PARCIAL" | "CRITICO" — nunca "OK" sem os 7 campos true
+  observacoes: []
+
+# ═══════════════════════════════════════════════════════════════
+# 3. BRIEFISTA — criativos/copy em escala
+# ═══════════════════════════════════════════════════════════════
+
+briefista:
+  gerado_em: ""
+  bateria_gerada: []
+    # cada item: {angulo: "", hook: "", copy: "", formato: "", nivel_consciencia: ""}
+  finalistas_curados: []        # 2-3 ids escolhidos pelo aluno após curadoria crítica
+
+# ═══════════════════════════════════════════════════════════════
+# 4. ESTRUTURADOR — campanha no default sagrado (pronta p/ submit)
+# ═══════════════════════════════════════════════════════════════
+
+estruturador:
+  montado_em: ""
+  tipo_campanha: ""              # DEVE ser "Vendas" ou "Cadastro" — NUNCA "Impulsionar"
+  otimizacao: ""                 # DEVE ser "Conversao" (pixel Compra|Lead)
+  publico: "amplo_frio_advantage_plus"
+  interesse_guarda_chuva: ""     # no máx. 1
+  criativos_usados: []           # refere finalistas_curados do Briefista (2-3)
+  verba_diaria: 0.0              # piso R$30/dia; abaixo de R$20/dia não sobe
+  periodo_dias: 7                # ou alternativa: 1 ângulo + R$70/dia × 3 dias
+  status: "rascunho"             # "rascunho" | "pronta_para_submit" | "submetida_pelo_humano"
+  submetida_por_humano_em: ""    # só preenche quando o ALUNO clicou publicar — nunca a skill
+
+# ═══════════════════════════════════════════════════════════════
+# 5. PROJEÇÃO — break-even + CAC/ROAS (hipótese, não promessa)
+# ═══════════════════════════════════════════════════════════════
+
+projecao:
+  roas_break_even: null          # 1 ÷ margem_pct — SEMPRE selo "Real" (mecânico, vem da A1). É uma RAZÃO (ex.: 1.82x), não um valor em R$.
+  cac_break_even: null           # ticket × margem_pct, em R$ — SEMPRE selo "Real" (mecânico, vem da A1). É o teto de CAC/CPA que ainda empata a conta.
+  cac:
+    valor: null
+    selo: ""                     # "Estimado" | "Real" | "A definir"
+    premissa: ""                 # obrigatória se Estimado: CTR%, conv_pagina%, conv_checkout%
+  roas:
+    valor: null
+    selo: ""
+    premissa: ""                 # obrigatória se Estimado: clientes_esperados, ticket, verba
+  gasto_midia_previsto:
+    valor: null
+    selo: ""
+  plataforma_objetivo: "Meta Ads"
+  nivel_confianca: ""            # derivado da proporção Real vs Estimado
+
+# ═══════════════════════════════════════════════════════════════
+# 6. LEITOR DE MÉTRICAS — traduz o gerenciador (contrato não-inferir)
+# ═══════════════════════════════════════════════════════════════
+# REGRA: só reporta número que está LITERALMENTE no bloco colado pelo aluno.
+# Ausente = "não fornecido". Nunca calcula, estima ou completa lacuna.
+
+leitor:
+  ultima_leitura: ""
+  janela_atribuicao: ""          # ex.: "7 dias clique / 1 dia view"
+  sinais: []
+    # cada sinal: {metrica: "", valor: null, selo: "Real|nao_fornecido", fonte: "colado pelo aluno em <data>"}
+  amostra_suficiente_para_cpa: null   # false na semana 1 (R$30×7 = 3-7 conversões) — ler sinal de topo
+  nota_amostra: ""               # ex.: "amostra insuficiente para CPA — leia CTR/CPM/hook rate"
+
+# ═══════════════════════════════════════════════════════════════
+# 7. DIAGNOSTICADOR — 1 alavanca por vez (contrato hipótese+reversão)
+# ═══════════════════════════════════════════════════════════════
+
+diagnosticador:
+  diagnosticado_em: ""
+  hipotese: ""                   # por quê o gargalo está aí
+  alavanca_unica: ""             # UMA ação, nunca uma lista
+  criterio_sucesso: ""           # métrica + janela (ex.: "CTR > 1% em 3 dias")
+  criterio_reversao: ""          # "se piorar / não mexer em N dias, reverta"
+  aprovado_pelo_aluno: null      # true só depois que o humano decidiu
+  circuit_breaker_acionado: null # true se furou a regra "não mexer 7 dias" (gasto≥2×CPA-alvo E CTR<0,5%)
+
+# ═══════════════════════════════════════════════════════════════
+# 8. ROTINA SEMANAL (append-only — nunca sobrescreve semanas anteriores)
+# ═══════════════════════════════════════════════════════════════
+
+rotina_semanal:
+  ciclo_1_datado_para: ""        # data do 1º ciclo completo (compromisso do gate de saída)
+  historico: []
+    # cada semana: {semana: "2026-WW", seg_briefista: "", ter_estruturador: "", qui_leitor: "", sex_diagnosticador: "", alavanca_decidida: ""}
+
+# ═══════════════════════════════════════════════════════════════
+# 9. HANDOFF → PAINEL DA AULA 4 (regra-mãe: nunca número limpo)
+# ═══════════════════════════════════════════════════════════════
+
+handoff_a4:
+  exportado_em: ""
+  cac: null                      # copia projecao.cac com selo+premissa OU leitor.sinais Real
+  roas: null
+  roas_break_even: null          # sempre Real
+  gasto_midia_previsto: null
+  plataforma_objetivo: "Meta Ads"
+  nivel_confianca: ""
+  invioveis_confirmados:
+    sem_selo_rejeitado: null           # true = ok
+    estimado_tem_premissa: null
+    toda_projecao_tem_janela: null
+    roas_real_so_com_venda_confirmada: null
+
+# ═══════════════════════════════════════════════════════════════
+# NOTAS DE USO — descobertas no teste E2E (ver teste-e2e/relatorio.md)
+# ═══════════════════════════════════════════════════════════════
+# 1. "break-even" tem DUAS unidades diferentes, não confundir:
+#    - roas_break_even = razão (ex.: 1.82x) — compare contra o ROAS do Leitor.
+#    - cac_break_even = R$ (ex.: R$660) — compare contra o CPA/CAC do Leitor.
+#    O roteiro-execucao.md usa "break-even R$50" no exemplo de fala, ou seja,
+#    fala do CAC break-even em R$, não do ROAS break-even em razão. Os dois
+#    agora têm campo próprio pra não misturar as unidades.
+# 2. Diagnosticador: quando CTR está ruim mas CAC/CPA já está bem dentro do
+#    cac_break_even, o sinal econômico (CPA) pesa mais que o sinal de atenção
+#    (CTR) — ver "ordem de prioridade dos sinais" em diagnosticador/SKILL.md.

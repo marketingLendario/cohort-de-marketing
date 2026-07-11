@@ -1,0 +1,48 @@
+wave: "9.W2"
+base: "story-9-w2-real-project"
+verdict: PASS
+stories:
+  - story_id: "9.W2.1"
+    status: Done
+  - story_id: "9.W2.2"
+    status: Done
+  - story_id: "9.W2.3"
+    status: Done
+findings: []
+resolved_findings:
+  - id: "W2-QA-001"
+    priority: P0
+    title: "Sandbox do worker sem Docker"
+    resolution: "O orquestrador executou o mesmo runner com Docker local e concluiu o ciclo."
+  - id: "W2-QA-002"
+    priority: P1
+    title: "Tabela ads_campaigns ausente"
+    resolution: "Migration com RLS adicionada e criação draft comprovada pela UI."
+  - id: "W2-QA-003"
+    priority: P1
+    title: "Fundação copy ausente do pacote"
+    resolution: "Fonte real aula3-live-copy-corpo.md incorporada ao manifesto com SHA-256."
+commands:
+  - command: "node e2e/story-9-w2-real-project.mjs"
+    status: PASS
+  - command: "npm run lint -- e2e/story-9-w2-real-project.mjs"
+    status: PASS
+  - command: "npm run typecheck"
+    status: PASS
+  - command: "npm test -- use-project-workspace.test.ts"
+    status: PASS
+  - command: "supabase test db"
+    status: PASS
+  - command: "node scripts/validate-pilot-manifest.mjs"
+    status: PASS
+  - command: "node --test scripts/validate-pilot-manifest.test.mjs"
+    status: PASS
+evidence:
+  qa_report: "docs/qa/epic-9-real-project-pilot.md"
+  runner: "apps/academia-lendaria-ads-studio/e2e/story-9-w2-real-project.mjs"
+  runtime_json: "/tmp/story-9-w2-real-project-evidence/run.json"
+  desktop: "/tmp/story-9-w2-real-project-evidence/journey-desktop.png"
+  mobile: "/tmp/story-9-w2-real-project-evidence/journey-mobile.png"
+residual_risks:
+  - "Retry seguido de cancelamento imediato pode derrubar o BFF por EPIPE; fora do escopo dos ACs desta story."
+timestamp: "2026-07-10T20:25:03-03:00"

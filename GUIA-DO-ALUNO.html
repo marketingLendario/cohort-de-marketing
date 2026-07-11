@@ -653,7 +653,7 @@
         <h3>Abra o Claude na pasta</h3>
         <p>Dentro da pasta <code>cohort-de-marketing</code>, rode:</p>
         <div class="command-block plain">claude</div>
-        <p>As skills em <code>.claude/skills/</code> carregam automaticamente. (No Codex, abra com <code>codex</code>.)</p>
+        <p>As skills em <code>.claude/skills/</code> carregam automaticamente. No Codex, abra com <code>codex</code>: ele usa <code>.agents/skills/</code>, que é o espelho literal das mesmas skills.</p>
       </div>
     </div>
 
@@ -892,7 +892,7 @@
     <!-- Convenção de pasta -->
     <div class="alerta">
       <div class="alerta-label">Onde tudo fica: uma pasta por projeto</div>
-      <p>Todo o trabalho de um nicho vive em <code>projetos/{slug}/</code> — o slug é o nome do nicho em minúsculas com hifens (ex.: <code>curso-de-ingles</code>). A Aula 1 salvou os arquivos na <strong>raiz</strong>; a <strong>primeira skill da Aula 2 (<code>/design-md</code>) migra o pack inteiro pra <code>projetos/{slug}/</code> sozinha</strong> — você não move nada à mão. Daqui pra frente cada skill só lê e grava dentro dessa pasta.</p>
+      <p>Todo o trabalho de um nicho vive em <code>projetos/{slug}/</code> — o slug é o nome do nicho em minúsculas com hifens (ex.: <code>curso-de-ingles</code>). Se a Aula 1 ainda estiver com arquivos soltos na <strong>raiz</strong>, a primeira skill da Aula 2 que precisar do projeto (<code>/design-md</code> ou <code>/metodo-funil</code>) migra o pack inteiro para <code>projetos/{slug}/</code> antes de continuar — você não move nada à mão. Daqui pra frente cada skill só lê e grava dentro dessa pasta.</p>
     </div>
 
     <!-- /design-md -->
@@ -902,7 +902,7 @@
         <span class="bloco-time">Identidade visual</span>
       </div>
       <h3>/design-md — a identidade da sua marca</h3>
-      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">A <strong>primeira</strong> skill da Aula 2. Cria o <code>DESIGN.md</code> — cores, fontes, logo — que toda skill de HTML/PDF usa depois. Começa perguntando <strong>qual dos 5 caminhos</strong>: usar um design pronto · extrair de um site (URL) · criar do zero pelo seu nicho/avatar · a partir de referências (prints do Pinterest, mood board) · ou neutro. Mostra o preview, se autocritica e itera até o seu ok. Ela também <strong>migra o pack da Aula 1 pra <code>projetos/{slug}/</code></strong> e salva o <code>DESIGN.md</code> no lugar certo — você não move nada.</p>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">A <strong>primeira</strong> skill da Aula 2. Cria o <code>DESIGN.md</code> — cores, fontes, logo — que toda skill de HTML/PDF usa depois. Começa perguntando <strong>qual dos 5 caminhos</strong>: usar um design pronto · extrair de um site (URL) · criar do zero pelo seu nicho/avatar · a partir de referências (prints do Pinterest, mood board) · ou neutro. Mostra o preview, se autocritica e itera até o seu ok. Se a Aula 1 ainda estiver solta na raiz, ela migra o pack pra <code>projetos/{slug}/</code>; quando o projeto já existe, salva o <code>DESIGN.md</code>, <code>tokens.json</code> e <code>preview.html</code> direto no lugar certo.</p>
       <div class="bloco-action">/design-md</div>
       <p class="bloco-result"><strong>Você recebe:</strong> <code>DESIGN.md</code> + <code>tokens.json</code> + <code>preview.html</code> em <code>projetos/{slug}/</code>. Guia completo dos 5 caminhos: <a href="aula-02/aula-design-md-GUIA-ALUNO.html" style="color: var(--primary);">aula-02/aula-design-md-GUIA-ALUNO.html</a>.</p>
     </div>
@@ -1044,7 +1044,7 @@
 
     <div class="alerta">
       <div class="alerta-label">As skills não aparecem quando digito <code>/</code></div>
-      <p>No <strong>Claude Code</strong> as skills ficam em <code>.claude/skills</code> e carregam sozinhas — confira que você abriu o <code>claude</code> <strong>dentro</strong> da pasta <code>cohort-de-marketing</code> (e rodou <code>git pull</code> para as skills novas da Aula 2). No <strong>Codex</strong> é diferente: peça a ele para copiar as skills de <code>.claude/skills</code> para <code>.agents/skills</code>. O conteúdo é o mesmo; muda só onde a ferramenta procura.</p>
+      <p>No <strong>Claude Code</strong> as skills ficam em <code>.claude/skills</code> e carregam sozinhas — confira que você abriu o <code>claude</code> <strong>dentro</strong> da pasta <code>cohort-de-marketing</code> (e rodou <code>git pull</code> para as skills novas da Aula 2). No <strong>Codex</strong>, <code>.agents/skills</code> já vem como espelho literal de <code>.claude/skills</code>. Se não aparecer, rode <code>/comecar</code> ou peça ao Codex para reespelhar a pasta e reabrir a sessão.</p>
     </div>
 
     <div class="alerta warn">

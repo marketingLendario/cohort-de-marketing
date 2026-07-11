@@ -1,0 +1,41 @@
+{
+  "name": "design-md-skill",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone Claude Code skill — extract Google-spec DESIGN.md from any URL via static HTML/CSS analysis (no headless browser).",
+  "author": {
+    "name": "Alan Nicolas",
+    "url": "https://github.com/oalanicolas"
+  },
+  "homepage": "https://github.com/oalanicolas",
+  "main": "run.cjs",
+  "bin": {
+    "design-md": "run.cjs"
+  },
+  "scripts": {
+    "test": "node --test lib/*.test.cjs lib/providers/*.test.cjs",
+    "extract": "node run.cjs",
+    "organize": "node scripts/organize.cjs",
+    "enrich-existing": "node scripts/enrich-existing.cjs",
+    "backfill-render-contract": "node scripts/backfill-render-contract.cjs",
+    "refresh-imported-theme": "node scripts/refresh-imported-theme.cjs"
+  },
+  "dependencies": {
+    "axios": "^1.15.2",
+    "cheerio": "^1.2.0",
+    "js-yaml": "^4.1.0",
+    "turndown": "^7.2.2",
+    "yaml": "^2.8.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "design-system",
+    "design.md",
+    "tokens",
+    "css-extraction",
+    "claude-code-skill"
+  ],
+  "license": "MIT"
+}

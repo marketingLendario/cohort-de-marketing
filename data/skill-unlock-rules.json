@@ -1,0 +1,489 @@
+{
+  "schemaVersion": "0.1.0",
+  "source": "docs/skill-inputs.md",
+  "states": ["available", "recommended", "almost", "blocked", "not_applicable", "done"],
+  "fieldSemantics": {
+    "requiredFields": "Campos que devem estar preenchidos ou marcados como not_applicable quando a regra permitir.",
+    "recommendedFields": "Campos que aumentam qualidade, mas nao bloqueiam uso.",
+    "requiredArtifacts": "Arquivos que precisam existir em projetos/{slug}/ para a skill estar realmente liberada.",
+    "recommendedArtifacts": "Arquivos que melhoram qualidade ou reduzem perguntas.",
+    "anyOf": "Pelo menos um grupo precisa ser satisfeito.",
+    "notApplicableWhen": "Condicoes que transformam a skill em nao aplicavel."
+  },
+  "artifactGlobs": {
+    "projectBrief": ["project-brief.json"],
+    "avatar": ["avatar.md", "relatorio-avatar.md"],
+    "competitorDossier": ["espiao/dossie-*.md", "dossie-*.md"],
+    "trendReport": ["trends-*.md"],
+    "swipeBrief": ["swipe/briefing-swipe-file.md", "briefing-swipe-file.md"],
+    "offerbook": ["offerbook.md"],
+    "design": ["DESIGN.md"],
+    "funnel": ["funil.md"],
+    "copy": ["copy.md"],
+    "salesPage": ["pagina/pagina-vendas.md", "pagina/index.html"],
+    "quiz": ["quiz.md", "pagina/quiz.html"],
+    "webinar": ["webinario.md"],
+    "vsl": ["vsl.md", "pagina/vsl.html"],
+    "advertorial": ["advertorial.md", "pagina/advertorial.html"],
+    "launch": ["lancamento.md", "lancamento.html"],
+    "emails": ["emails/sequencia.md"],
+    "whatsapp": ["whatsapp.md"],
+    "content": ["conteudo/roteiros.md", "conteudo/calendario-editorial.md"],
+    "creatives": ["criativos/roteiros.md", "criativos/banners/*"],
+    "mockups": ["mockups/prompts.md"],
+    "bonuses": ["bonus/index.md", "bonus/*.md"],
+    "backend": ["back-end.md", "backend.md"],
+    "recovery": ["recuperacao.md"],
+    "cro": ["cro.md"],
+    "trafficTrackingAudit": ["squad-trafego/tracking-audit.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficCreativeBattery": ["squad-trafego/creative-battery.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficCampaignPlan": ["squad-trafego/campaign-plan.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficMetricReading": ["squad-trafego/metric-reading.json", "PAINEL-DA-SEMANA.yaml"],
+    "trafficDiagnosis": ["squad-trafego/diagnosis.json", "PAINEL-DA-SEMANA.yaml"]
+  },
+  "skills": {
+    "comecar": {
+      "type": "utility",
+      "command": "/comecar",
+      "primaryArtifacts": [],
+      "requiredFields": [],
+      "recommendedFields": ["project.slug", "project.currentStage", "integrations.apifyStatus"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": [],
+      "availableWhen": "Sempre disponivel; usar quando ambiente ou etapa estiverem incertos.",
+      "panelHint": "Primeiro passo e rota de recuperacao quando algo travar."
+    },
+    "avatar-funil": {
+      "type": "research",
+      "command": "/avatar-funil",
+      "primaryArtifacts": ["avatar"],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": [
+        "market.niche",
+        "market.productCategory",
+        "market.targetAudience",
+        "market.researchMode",
+        "market.userResearchMaterials",
+        "offer.affiliate.producerProductName"
+      ],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": [],
+      "anyOf": [
+        {
+          "label": "Projeto com alvo definido",
+          "fields": ["market.niche"]
+        },
+        {
+          "label": "Afiliado",
+          "fields": ["offer.affiliate.producerProductName"]
+        },
+        {
+          "label": "Research-first",
+          "fields": ["project.startingPoint"],
+          "matches": { "project.startingPoint": "sem-projeto" }
+        }
+      ],
+      "panelHint": "Desbloqueia a pesquisa inicial e alimenta offerbook."
+    },
+    "espiao-do-concorrente": {
+      "type": "research",
+      "command": "/espiao-do-concorrente",
+      "primaryArtifacts": ["competitorDossier"],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": ["market.competitors", "market.avatarSummary", "project.offerType", "integrations.apifyStatus"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["avatar"],
+      "anyOf": [
+        {
+          "label": "Concorrente informado",
+          "fields": ["market.competitors"]
+        },
+        {
+          "label": "Seguir sem concorrente predefinido",
+          "fields": ["market.niche"]
+        }
+      ],
+      "panelHint": "Pode rodar com concorrente explicito ou nicho claro; avatar aumenta a qualidade."
+    },
+    "trend-hunting": {
+      "type": "research",
+      "command": "/trend-hunting",
+      "primaryArtifacts": ["trendReport"],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": ["market.niche", "market.trendSearchTerms", "market.competitors", "integrations.apifyStatus"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["avatar"],
+      "anyOf": [
+        {
+          "label": "Nicho informado",
+          "fields": ["market.niche"]
+        },
+        {
+          "label": "Termos de busca informados",
+          "fields": ["market.trendSearchTerms"]
+        }
+      ],
+      "panelHint": "Caca tendencias a partir do nicho ou de termos de busca."
+    },
+    "swipe-file": {
+      "type": "research",
+      "command": "/swipe-file",
+      "primaryArtifacts": ["swipeBrief"],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": ["channels.swipePatterns", "project.offerType", "market.targetAudience"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["competitorDossier", "trendReport"],
+      "anyOf": [
+        {
+          "label": "Dossie ou trends existem",
+          "artifacts": ["competitorDossier", "trendReport"]
+        },
+        {
+          "label": "Captura manual registrada",
+          "fields": ["channels.swipePatterns"]
+        }
+      ],
+      "panelHint": "Organiza padroes de criativos; nao deve copiar literal."
+    },
+    "offerbook": {
+      "type": "strategy",
+      "command": "/offerbook",
+      "primaryArtifacts": ["offerbook"],
+      "requiredFields": ["project.slug", "project.startingPoint", "offer.name"],
+      "recommendedFields": [
+        "project.offerType",
+        "project.operator",
+        "project.regulatedNiche",
+        "project.voice",
+        "project.ticketRange",
+        "market.avatarSummary",
+        "market.dominantPain",
+        "offer.promise",
+        "offer.uniqueMechanism",
+        "offer.exactPrice",
+        "offer.guarantee",
+        "offer.bonuses"
+      ],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["avatar", "competitorDossier", "swipeBrief"],
+      "notApplicableWhen": [
+        {
+          "field": "project.startingPoint",
+          "equals": "sem-projeto",
+          "reason": "Sem projeto definido, voltar para avatar-funil research-first."
+        }
+      ],
+      "panelHint": "Gate central. Sem offerbook, Aula 2 nao deve prescrever funil."
+    },
+    "design-md": {
+      "type": "foundation",
+      "command": "/design-md",
+      "primaryArtifacts": ["design"],
+      "requiredFields": ["project.slug", "brand.designMode"],
+      "recommendedFields": ["offer.name", "market.targetAudience", "brand.approvedDirection"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["offerbook"],
+      "anyOf": [
+        {
+          "label": "Usar DESIGN.md existente",
+          "fields": ["brand.designMode"],
+          "matches": { "brand.designMode": "existing-design-md" }
+        },
+        {
+          "label": "Extrair de URL",
+          "fields": ["brand.designMode", "brand.sourceUrl"],
+          "matches": { "brand.designMode": "extract-url" }
+        },
+        {
+          "label": "Criar do zero",
+          "fields": ["brand.designMode", "brand.vibeWords", "brand.colors", "market.targetAudience"],
+          "matches": { "brand.designMode": "from-scratch" }
+        },
+        {
+          "label": "Criar por referencias",
+          "fields": ["brand.designMode", "brand.referenceImages"],
+          "matches": { "brand.designMode": "references" }
+        },
+        {
+          "label": "Neutro temporario",
+          "fields": ["brand.designMode"],
+          "matches": { "brand.designMode": "neutral" }
+        }
+      ],
+      "panelHint": "Primeira peca visual da Aula 2."
+    },
+    "metodo-funil": {
+      "type": "foundation",
+      "command": "/metodo-funil",
+      "primaryArtifacts": ["funnel"],
+      "requiredFields": ["project.slug", "project.offerType", "market.trafficSource", "project.ticketRange"],
+      "recommendedFields": ["offer.proofAssets", "market.awarenessLevel", "offer.exactPrice", "offer.deliverables"],
+      "requiredArtifacts": ["offerbook"],
+      "recommendedArtifacts": ["avatar", "competitorDossier", "swipeBrief", "design"],
+      "panelHint": "Prescreve a sequencia de execucao; depende de offerbook."
+    },
+    "copy-funil": {
+      "type": "foundation",
+      "command": "/copy-funil",
+      "primaryArtifacts": ["copy"],
+      "requiredFields": [
+        "project.slug",
+        "market.awarenessLevel",
+        "market.marketSophistication",
+        "project.ticketRange",
+        "market.trafficTemperature",
+        "funnel.recommendedFormat"
+      ],
+      "recommendedFields": ["offer.name", "market.targetAudience", "offer.uniqueMechanism", "market.dominantPain"],
+      "requiredArtifacts": ["offerbook"],
+      "recommendedArtifacts": ["funnel", "avatar", "competitorDossier", "swipeBrief"],
+      "panelHint": "Base de mensagem para as pecas do funil."
+    },
+    "quiz-funil": {
+      "type": "funnel",
+      "command": "/quiz-funil",
+      "primaryArtifacts": ["quiz"],
+      "requiredFields": ["project.slug", "market.awarenessLevel", "funnel.segmentationAxis", "funnel.closingDestination", "funnel.captureMoment"],
+      "recommendedFields": ["funnel.quizResultCount", "market.avatarSummary", "market.dominantPain", "offer.exactPrice"],
+      "requiredArtifacts": ["offerbook"],
+      "recommendedArtifacts": ["copy", "funnel", "design"],
+      "notApplicableWhen": [
+        {
+          "field": "market.awarenessLevel",
+          "in": [1, 2],
+          "reason": "Quiz e vetado como formato principal em N1/N2."
+        }
+      ],
+      "panelHint": "Ideal quando o funil esta em nivel 4 e precisa segmentar lead."
+    },
+    "webinario-funil": {
+      "type": "funnel",
+      "command": "/webinario-funil",
+      "primaryArtifacts": ["webinar"],
+      "requiredFields": ["project.slug", "market.awarenessLevel", "funnel.bigDomino", "funnel.webinarSecrets", "funnel.webinarFormat", "funnel.closingDestination"],
+      "recommendedFields": ["funnel.originStory", "offer.proofAssets", "funnel.presenterModel", "offer.bonuses"],
+      "requiredArtifacts": ["offerbook", "copy"],
+      "recommendedArtifacts": ["funnel", "design"],
+      "panelHint": "Requer offerbook e copy; bom para N4/N3 quando precisa mudar crenca."
+    },
+    "vsl-funil": {
+      "type": "funnel",
+      "command": "/vsl-funil",
+      "primaryArtifacts": ["vsl"],
+      "requiredFields": ["project.slug", "market.dominantPain", "offer.problemMechanism", "offer.solutionMechanism"],
+      "recommendedFields": ["offer.upsell", "offer.exactPrice", "market.awarenessLevel", "offer.affiliate.affiliateLink"],
+      "requiredArtifacts": ["offerbook", "copy"],
+      "recommendedArtifacts": ["funnel", "design"],
+      "anyOf": [
+        {
+          "label": "Oferta propria",
+          "fields": ["offer.name", "offer.promise"]
+        },
+        {
+          "label": "Afiliado",
+          "fields": ["offer.affiliate.producerProductName", "offer.affiliate.producerPageUrl", "offer.affiliate.affiliateLink"],
+          "matches": { "project.startingPoint": "afiliado" }
+        }
+      ],
+      "panelHint": "VSL pede mecanismos claros e, para oferta propria, upsell definido ou pendente."
+    },
+    "advertorial-funil": {
+      "type": "funnel",
+      "command": "/advertorial-funil",
+      "primaryArtifacts": ["advertorial"],
+      "requiredFields": ["project.slug", "market.awarenessLevel", "market.dominantPain", "funnel.recommendedFormat"],
+      "recommendedFields": ["market.trafficTemperature", "offer.promise", "offer.affiliate.affiliateLink"],
+      "requiredArtifacts": ["offerbook", "copy"],
+      "recommendedArtifacts": ["funnel", "design"],
+      "panelHint": "Formato para publico frio/N5 levando para VSL, pagina ou webinar."
+    },
+    "lancamento-funil": {
+      "type": "funnel",
+      "command": "/lancamento-funil",
+      "primaryArtifacts": ["launch"],
+      "requiredFields": ["project.slug", "market.awarenessLevel", "funnel.audienceListSize", "funnel.cartTargetDate", "funnel.launchType"],
+      "recommendedFields": ["offer.deliverables", "offer.exactPrice", "offer.bonuses", "offer.guarantee", "offer.affiliate.cartOpenAt", "offer.affiliate.cartCloseAt"],
+      "requiredArtifacts": ["offerbook", "copy"],
+      "recommendedArtifacts": ["funnel", "design"],
+      "panelHint": "Exige lista/audiencia e datas de carrinho."
+    },
+    "pagina-vendas-funil": {
+      "type": "asset",
+      "command": "/pagina-vendas-funil",
+      "primaryArtifacts": ["salesPage"],
+      "requiredFields": ["project.slug", "market.targetAudience", "market.awarenessLevel", "market.trafficSource", "offer.deliverables", "offer.exactPrice"],
+      "recommendedFields": ["offer.bonuses", "offer.guarantee", "project.ownerName", "offer.proofAssets", "funnel.closingDestination"],
+      "requiredArtifacts": ["copy", "design"],
+      "recommendedArtifacts": ["offerbook", "funnel"],
+      "panelHint": "Pagina final exige copy e DESIGN.md."
+    },
+    "email-funil": {
+      "type": "asset",
+      "command": "/email-funil",
+      "primaryArtifacts": ["emails"],
+      "requiredFields": ["project.slug", "channels.emailTypes", "channels.primaryCtaText"],
+      "recommendedFields": ["channels.primaryCtaUrl", "channels.eventUrl", "channels.thankYouPageUrl", "funnel.closingDestination"],
+      "requiredArtifacts": ["offerbook", "design"],
+      "recommendedArtifacts": ["copy", "funnel"],
+      "panelHint": "E-mails dependem de oferta, identidade e CTA."
+    },
+    "whatsapp-funil": {
+      "type": "asset",
+      "command": "/whatsapp-funil",
+      "primaryArtifacts": ["whatsapp"],
+      "requiredFields": ["project.slug", "channels.automationMode", "channels.detectableEvents"],
+      "recommendedFields": ["channels.whatsappTool", "market.trafficTemperature", "channels.eventUrl", "channels.primaryCtaUrl"],
+      "requiredArtifacts": ["offerbook", "copy"],
+      "recommendedArtifacts": ["funnel", "design"],
+      "panelHint": "Sequencia muda conforme eventos detectaveis e modo manual/automacao."
+    },
+    "conteudo-funil": {
+      "type": "asset",
+      "command": "/conteudo-funil",
+      "primaryArtifacts": ["content"],
+      "requiredFields": ["project.slug", "channels.contentPlatforms", "channels.contentFormats"],
+      "recommendedFields": ["project.voice", "channels.voiceMaterials", "channels.referenceCreators", "market.avatarSummary", "offer.name"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["offerbook", "copy", "design", "swipeBrief", "trendReport"],
+      "panelHint": "Texto pode seguir com briefing; carrossel visual exige DESIGN.md."
+    },
+    "criativos-funil": {
+      "type": "asset",
+      "command": "/criativos-funil",
+      "primaryArtifacts": ["creatives"],
+      "requiredFields": ["project.slug", "channels.adChannels", "channels.adFormats", "channels.creativeScope"],
+      "recommendedFields": ["market.competitors", "project.voice", "channels.voiceMaterials", "integrations.apifyStatus"],
+      "requiredArtifacts": ["offerbook", "design"],
+      "recommendedArtifacts": ["copy", "swipeBrief", "competitorDossier", "trendReport"],
+      "panelHint": "Gera criativos por canal/formato; exige oferta e identidade."
+    },
+    "mockup-produto-funil": {
+      "type": "asset",
+      "command": "/mockup-produto-funil",
+      "primaryArtifacts": ["mockups"],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": ["offer.deliverables", "offer.bonuses", "brand.brandAssets"],
+      "requiredArtifacts": ["offerbook", "design"],
+      "recommendedArtifacts": [],
+      "panelHint": "Mockups saem da lista de produtos/bonus e dos tokens de marca."
+    },
+    "bonus-funil": {
+      "type": "asset",
+      "command": "/bonus-funil",
+      "primaryArtifacts": ["bonuses"],
+      "requiredFields": ["project.slug", "offer.bonuses"],
+      "recommendedFields": ["offer.promise", "market.dominantPain"],
+      "requiredArtifacts": ["offerbook", "design"],
+      "recommendedArtifacts": ["copy"],
+      "panelHint": "Produz apenas bonus escolhidos/aprovados."
+    },
+    "backend-funil": {
+      "type": "asset",
+      "command": "/backend-funil",
+      "primaryArtifacts": ["backend"],
+      "requiredFields": ["project.slug", "offer.backendOffer", "offer.downsell"],
+      "recommendedFields": ["offer.exactPrice", "market.trafficTemperature", "funnel.closingDestination"],
+      "requiredArtifacts": ["offerbook", "funnel"],
+      "recommendedArtifacts": ["copy"],
+      "notApplicableWhen": [
+        {
+          "field": "project.startingPoint",
+          "equals": "afiliado",
+          "reason": "Afiliado puro nao cria backend proprio."
+        }
+      ],
+      "panelHint": "Exige produto de backend e downsell; afiliado normalmente nao aplica."
+    },
+    "recuperacao-funil": {
+      "type": "asset",
+      "command": "/recuperacao-funil",
+      "primaryArtifacts": ["recovery"],
+      "requiredFields": ["project.slug", "channels.detectableEvents"],
+      "recommendedFields": ["offer.downsell", "channels.primaryCtaUrl", "channels.whatsappTool", "market.trafficTemperature"],
+      "requiredArtifacts": ["offerbook", "copy"],
+      "recommendedArtifacts": ["funnel", "design"],
+      "panelHint": "Recuperacao depende do que o checkout/CRM consegue detectar."
+    },
+    "cro-funil": {
+      "type": "optimization",
+      "command": "/cro-funil",
+      "primaryArtifacts": ["cro"],
+      "requiredFields": ["project.slug", "data.analyticsVariant"],
+      "recommendedFields": [
+        "data.visitors",
+        "data.leads",
+        "data.checkoutStarts",
+        "data.purchases",
+        "data.meetingsScheduled",
+        "data.meetingsHeld",
+        "data.dataSourceNotes",
+        "integrations.activeCampaignStatus",
+        "integrations.calendarStatus"
+      ],
+      "requiredArtifacts": ["funnel"],
+      "recommendedArtifacts": ["copy", "salesPage", "offerbook"],
+      "panelHint": "Nao inventa numeros; pre-lancamento vira plano de instrumentacao."
+    },
+    "status-funil": {
+      "type": "utility",
+      "command": "/status-funil",
+      "primaryArtifacts": [],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": [],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": [],
+      "availableWhen": "Disponivel quando ha projeto para inspecionar.",
+      "panelHint": "Le arquivos e pendencias; nao cria conteudo."
+    },
+    "zelador": {
+      "type": "traffic",
+      "command": "/zelador",
+      "primaryArtifacts": ["trafficTrackingAudit"],
+      "requiredFields": ["project.slug", "channels.primaryCtaUrl"],
+      "recommendedFields": ["channels.thankYouPageUrl", "project.regulatedNiche"],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": ["funnel", "salesPage"],
+      "panelHint": "Confirma conta e tracking item a item antes da campanha."
+    },
+    "briefista": {
+      "type": "traffic",
+      "command": "/briefista",
+      "primaryArtifacts": ["trafficCreativeBattery"],
+      "requiredFields": ["project.slug", "market.awarenessLevel", "market.dominantPain"],
+      "recommendedFields": ["market.avatarSummary", "offer.proofAssets", "project.voice", "channels.adFormats"],
+      "requiredArtifacts": ["copy"],
+      "recommendedArtifacts": ["offerbook", "funnel", "trafficTrackingAudit"],
+      "panelHint": "Gera bateria a partir de angulos e aguarda curadoria humana."
+    },
+    "estruturador": {
+      "type": "traffic",
+      "command": "/estruturador",
+      "primaryArtifacts": ["trafficCampaignPlan"],
+      "requiredFields": ["project.slug", "offer.exactPrice"],
+      "recommendedFields": ["channels.primaryCtaUrl", "market.trafficTemperature"],
+      "requiredArtifacts": ["trafficTrackingAudit", "trafficCreativeBattery"],
+      "recommendedArtifacts": ["funnel"],
+      "panelHint": "Monta o default sagrado somente apos tracking e curadoria."
+    },
+    "leitor-de-metricas": {
+      "type": "traffic",
+      "command": "/leitor-de-metricas",
+      "primaryArtifacts": ["trafficMetricReading"],
+      "requiredFields": ["project.slug"],
+      "recommendedFields": ["data.dataSourceNotes"],
+      "requiredArtifacts": ["trafficCampaignPlan"],
+      "recommendedArtifacts": [],
+      "panelHint": "Rotula apenas metricas literais confirmadas; ausente fica nao fornecido."
+    },
+    "diagnosticador": {
+      "type": "traffic",
+      "command": "/diagnosticador",
+      "primaryArtifacts": ["trafficDiagnosis"],
+      "requiredFields": ["project.slug", "offer.exactPrice"],
+      "recommendedFields": ["data.dataSourceNotes"],
+      "requiredArtifacts": ["trafficMetricReading"],
+      "recommendedArtifacts": ["trafficCampaignPlan"],
+      "panelHint": "Recomenda uma alavanca com sucesso e reversao; nunca executa."
+    }
+  }
+}

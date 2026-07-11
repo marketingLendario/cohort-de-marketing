@@ -1,0 +1,28 @@
+{
+  "name": "@sinkra/meta-ads",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Meta Ads CLI adapter — multi-spoke wrapper sobre meta-ads v1.0.1 (Marketing API)",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "check": "node index.js --check",
+    "list-spokes": "node index.js --list-spokes",
+    "test": "node --test tests/*.test.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "meta-ads",
+    "marketing-api",
+    "cli-wrapper",
+    "multi-spoke",
+    "sinkra-l4-service"
+  ],
+  "author": "Sinkra Hub",
+  "license": "UNLICENSED"
+}

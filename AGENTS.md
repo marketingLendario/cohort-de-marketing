@@ -4,7 +4,7 @@ Este repositório é o material do Cohort de Marketing (Academia Lendária). O t
 
 ## Onde as skills vivem
 
-Todas as skills estão em **`.claude/skills/{nome}/SKILL.md`** (uma pasta por skill, com scripts e KBs dentro). Elas funcionam em QUALQUER agente: quando o usuário digitar `@{nome}`, `/{nome}` ou pedir pela skill por extenso (ex.: "roda o comecar", "quero o offerbook"), **leia o arquivo `.claude/skills/{nome}/SKILL.md` e execute-o fielmente**, incluindo os arquivos compartilhados que ele referencia em `.claude/skills/_shared/`.
+Todas as skills canônicas estão em **`.claude/skills/{nome}/SKILL.md`** (uma pasta por skill, com scripts e KBs dentro). A pasta **`.agents/skills/` é um espelho literal** para o Codex carregar as mesmas skills; não edite divergindo dela. Quando o usuário digitar `@{nome}`, `/{nome}` ou pedir pela skill por extenso (ex.: "roda o comecar", "quero o offerbook"), **leia o arquivo `.claude/skills/{nome}/SKILL.md` e execute-o fielmente**, incluindo os arquivos compartilhados que ele referencia em `.claude/skills/_shared/`.
 
 ## O primeiro comando
 
@@ -12,7 +12,7 @@ O aluno sempre começa por **`comecar`** (`.claude/skills/comecar/SKILL.md`): pr
 
 ## Skills disponíveis
 
-`comecar` · `avatar-funil` · `espiao-do-concorrente` · `trend-hunting` · `swipe-file` · `offerbook` · `design-md` · `metodo-funil` · `copy-funil` · `quiz-funil` · `webinario-funil` · `vsl-funil` · `advertorial-funil` · `lancamento-funil` · `pagina-vendas-funil` · `email-funil` · `whatsapp-funil` · `conteudo-funil` · `criativos-funil` · `mockup-produto-funil` · `bonus-funil` · `backend-funil` · `recuperacao-funil` · `cro-funil` · `status-funil`
+`comecar` · `avatar-funil` · `espiao-do-concorrente` · `trend-hunting` · `swipe-file` · `offerbook` · `design-md` · `metodo-funil` · `copy-funil` · `quiz-funil` · `webinario-funil` · `vsl-funil` · `advertorial-funil` · `lancamento-funil` · `pagina-vendas-funil` · `email-funil` · `whatsapp-funil` · `conteudo-funil` · `criativos-funil` · `mockup-produto-funil` · `bonus-funil` · `backend-funil` · `recuperacao-funil` · `cro-funil` · `status-funil` · `zelador` · `briefista` · `estruturador` · `leitor-de-metricas` · `diagnosticador`
 
 ## Regras gerais (valem em qualquer agente)
 

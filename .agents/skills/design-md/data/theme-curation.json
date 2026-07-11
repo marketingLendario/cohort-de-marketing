@@ -1,0 +1,10 @@
+{
+  "cursor": {
+    "default": "dark",
+    "confidence": "high",
+    "signals": [
+      "curated visual QA 2026-04-29: current Cursor marketing surface should render dark in gallery/detail"
+    ],
+    "source": "manual-visual-qa"
+  }
+}
