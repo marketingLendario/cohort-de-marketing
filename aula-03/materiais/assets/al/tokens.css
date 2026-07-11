@@ -1,0 +1,142 @@
+/* Lendár[IA] hub tokens — Ads Studio DS v2 (editorial flat, cantos quase retos) */
+:root,
+.dark {
+  color-scheme: dark;
+
+  /* ---- Core semantic (Noite) ---- */
+  --background-hsl: 0 0% 4%;
+  --foreground-hsl: 0 0% 93%;
+  --card-hsl: 0 0% 7%;
+  --card-foreground-hsl: 0 0% 93%;
+  --popover-hsl: 0 0% 8%;
+  --popover-foreground-hsl: 0 0% 93%;
+  --primary-hsl: 32 27% 69%;
+  --primary-light-hsl: 32 27% 85%;
+  --primary-foreground-hsl: 0 0% 10%;
+  --secondary-hsl: 0 0% 9%;
+  --secondary-foreground-hsl: 0 0% 93%;
+  --muted-hsl: 0 0% 12%;
+  --muted-foreground-hsl: 0 0% 55%;
+  --accent-hsl: 32 27% 69%;
+  --accent-foreground-hsl: 0 0% 10%;
+  --destructive-hsl: 356 72% 58%;
+  --success-hsl: 96 22% 50%;
+  --warning-hsl: 40 60% 54%;
+  --info-hsl: 210 24% 56%;
+  --border-hsl: 0 0% 14%;
+  --input-hsl: 0 0% 18%;
+  --ring-hsl: 32 27% 69%;
+
+  --background: hsl(var(--background-hsl));
+  --foreground: hsl(var(--foreground-hsl));
+  --card: hsl(var(--card-hsl));
+  --card-foreground: hsl(var(--card-foreground-hsl));
+  --popover: hsl(var(--popover-hsl));
+  --popover-foreground: hsl(var(--popover-foreground-hsl));
+  --primary: hsl(var(--primary-hsl));
+  --primary-light: hsl(var(--primary-light-hsl));
+  --primary-foreground: hsl(var(--primary-foreground-hsl));
+  --secondary: hsl(var(--secondary-hsl));
+  --secondary-foreground: hsl(var(--secondary-foreground-hsl));
+  --muted: hsl(var(--muted-hsl));
+  --muted-foreground: hsl(var(--muted-foreground-hsl));
+  --border: hsl(var(--border-hsl));
+  --input: hsl(var(--input-hsl));
+  --ring: hsl(var(--ring-hsl));
+
+  --hairline: hsl(var(--primary-hsl) / 0.16);
+  --hairline-strong: hsl(var(--primary-hsl) / 0.45);
+
+  /* ---- Radius (flat editorial) ---- */
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.125rem;
+  --radius-base: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.625rem;
+  --radius-3xl: 0.75rem;
+  --radius-full: 9999px;
+  --radius: var(--radius-base);
+  --radius-pill: var(--radius-full);
+
+  /* ---- Shadows (rare; no glow) ---- */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-base: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-levitate: 0 24px 48px rgba(0, 0, 0, 0.55);
+  --shadow-modal: 0 40px 90px rgba(0, 0, 0, 0.7);
+  --shadow-panel: var(--shadow-modal);
+
+  /* ---- Motion ---- */
+  --duration-fast: 150ms;
+  --duration-normal: 240ms;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --transition-fast: 150ms var(--ease-out);
+  --transition-normal: 240ms var(--ease-out);
+
+  /* ---- Semantic map (upstream mint / downstream gold) ---- */
+  --mint-hsl: 192 58% 48%;
+  --mint: hsl(var(--mint-hsl));
+  --mint-soft: hsl(var(--mint-hsl) / 0.12);
+  --mint-border: hsl(var(--mint-hsl) / 0.4);
+
+  --green: hsl(var(--success-hsl));
+  --green-soft: hsl(var(--success-hsl) / 0.12);
+  --green-border: hsl(var(--success-hsl) / 0.35);
+
+  --amber: hsl(var(--warning-hsl));
+  --amber-soft: hsl(var(--warning-hsl) / 0.12);
+  --red: hsl(var(--destructive-hsl));
+
+  /* ---- Legacy aliases (mapa + guia) ---- */
+  --al-bg: var(--background);
+  --al-card: var(--card);
+  --al-card-raised: var(--popover);
+  --al-muted-surface: var(--muted);
+  --al-fg: var(--foreground);
+  --al-fg-soft: var(--foreground);
+  --al-fg-muted: var(--muted-foreground);
+  --al-border: var(--border);
+  --al-border-glass: hsl(var(--foreground-hsl) / 0.07);
+  --al-border-strong: hsl(var(--foreground-hsl) / 0.14);
+
+  --bg: var(--background);
+  --surface: var(--card);
+  --surface-2: var(--popover);
+  --surface-3: var(--muted);
+  --surface-header: var(--card);
+  --text: var(--foreground);
+  --muted: var(--muted-foreground);
+  --border-soft: var(--hairline);
+  --gold: var(--primary);
+  --gold-soft: hsl(var(--primary-hsl) / 0.1);
+  --gold-wash-6: hsl(var(--primary-hsl) / 0.07);
+  --gold-wash-8: hsl(var(--primary-hsl) / 0.08);
+  --gold-border-soft: var(--hairline);
+  --gold-border: var(--hairline-strong);
+  --gold-ring: var(--ring);
+  --surface-wash-3: hsl(var(--foreground-hsl) / 0.05);
+
+  --al-gold-50: #FEF5EC;
+  --al-gold-100: #F4E9DD;
+  --al-gold-300: #DCCBB6;
+  --al-gold-500: #C9B298;
+  --al-gold-600: #AA967F;
+  --al-gold-800: #615445;
+  --al-gold-950: #1A1A1A;
+
+  --font-sans: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-display: var(--font-serif);
+  --font-ui: var(--font-sans);
+  --font-reading: var(--font-serif);
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

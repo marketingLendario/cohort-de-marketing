@@ -1,0 +1,54 @@
+versao: "1.0.0"
+aula: "A3 - Trafego"
+projeto: "<slug-do-projeto>"
+campanha: "<nome-da-campanha>"
+semana: "<YYYY-MM-DD a YYYY-MM-DD>"
+fonte: "<Meta Ads, Google Ads ou outra fonte confirmada>"
+janela_atribuicao: "nao fornecido"
+
+sinais:
+  - metrica: "Gasto"
+    valor: null
+    moeda: "BRL"
+    selo: "nao_fornecido"
+    fonte: ""
+  - metrica: "Impressoes"
+    valor: null
+    selo: "nao_fornecido"
+    fonte: ""
+  - metrica: "Cliques"
+    valor: null
+    selo: "nao_fornecido"
+    fonte: ""
+  - metrica: "CTR"
+    valor: null
+    selo: "nao_fornecido"
+    fonte: ""
+  - metrica: "CPM"
+    valor: null
+    selo: "nao_fornecido"
+    fonte: ""
+  - metrica: "Conversoes"
+    valor: null
+    selo: "nao_fornecido"
+    fonte: ""
+
+leitura:
+  status: "aguardando_dados"
+  amostra_suficiente_para_cpa: false
+  nota_amostra: ""
+
+diagnostico:
+  status: "aguardando_leitura"
+  alavanca: ""
+  hipotese: ""
+  criterio_sucesso: ""
+  criterio_reversao: ""
+  circuit_breaker: ""
+
+decisao_humana:
+  status: "pendente"
+  decisao: ""
+  decidido_por: ""
+  decidido_em: ""
+  observacao: ""

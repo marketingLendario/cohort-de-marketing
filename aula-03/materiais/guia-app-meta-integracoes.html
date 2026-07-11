@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia do Aluno — Criando e Aprovando seu App Meta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #0A0A0A;
+    --card: #0F0F0F;
+    --raised: #262626;
+    --border: #262626;
+    --foreground: #E5E5E5;
+    --muted-foreground: #999999;
+    --primary: #C9B298;
+    --primary-light: #D9CBB9;
+    --primary-deep: #8D7556;
+    --primary-foreground: #1A1A1A;
+    --status-success: #23E169;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-ui: Inter, 'Source Sans Pro', system-ui, sans-serif;
+    --font-display: Rajdhani, Inter, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 19px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0;
+    background: var(--primary);
+    box-shadow: 0 0 15px rgba(201, 178, 152, 0.6);
+    z-index: 100;
+  }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 64px 32px 96px; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 32px 0 56px;
+    border-bottom: 1px solid var(--raised);
+    margin-bottom: 56px;
+  }
+  .hero .kicker {
+    display: inline-block;
+    font-family: var(--font-ui); font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary);
+    padding: 6px 16px;
+    border: 1px solid var(--primary-deep);
+    border-radius: 9999px;
+    margin-bottom: 32px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+  }
+  .hero h1 em {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-weight: 400;
+    color: var(--primary);
+  }
+  .hero .subtitle {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    color: var(--muted-foreground);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 24px;
+  }
+  .hero .lead {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: 1.3rem;
+    color: var(--foreground);
+    max-width: 65ch;
+    margin: 0 auto;
+  }
+
+  /* Sumário */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 0.75rem;
+    padding: 20px 24px;
+    margin: 48px auto;
+    max-width: 720px;
+  }
+  .toc-label {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    margin-bottom: 12px;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 20px;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    line-height: 1.9;
+  }
+  .toc ol li { color: var(--muted-foreground); }
+  .toc ol li a {
+    color: var(--foreground);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .toc ol li a:hover { color: var(--primary); }
+  .toc ol li .toc-sub {
+    font-size: 0.82rem;
+    color: var(--muted-foreground);
+  }
+
+  /* Section */
+  section {
+    margin: 80px 0;
+    scroll-margin-top: 32px;
+  }
+  .section-num {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px;
+  }
+  section h2 em {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-weight: 400;
+    color: var(--primary);
+  }
+  section h3 {
+    font-family: var(--font-ui);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+  section p { margin: 16px 0; }
+  section strong { color: var(--primary-light); font-weight: 600; }
+  section code {
+    font-family: var(--font-mono);
+    background: var(--raised);
+    color: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+  }
+
+  /* Steps */
+  .step {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    margin: 32px 0;
+    padding: 24px;
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 1rem;
+    transition: border-color 0.2s ease;
+  }
+  .step:hover { border-color: var(--primary-deep); }
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .step-content h3 { margin-top: 0; margin-bottom: 8px; }
+  .step-content p {
+    margin: 8px 0;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--muted-foreground);
+  }
+  .step-content code {
+    font-family: var(--font-mono);
+    background: var(--raised);
+    color: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+  }
+
+  /* Command */
+  .command-block {
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 0.75rem;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--foreground);
+    overflow-x: auto;
+    position: relative;
+  }
+  .command-block::before {
+    content: "$";
+    color: var(--primary);
+    margin-right: 12px;
+    font-weight: 700;
+  }
+  .command-block.slash::before { content: "/"; }
+  .command-block.plain::before { content: ""; margin-right: 0; }
+
+  /* Cards de skill */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-left: 2px solid var(--primary);
+    border-radius: 0.75rem;
+    padding: 24px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .skill-card:hover { transform: translateY(-2px); border-color: var(--primary-light); }
+  .skill-card .skill-name {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .skill-card .skill-what {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--foreground);
+    margin: 0 0 12px;
+    line-height: 1.5;
+  }
+  .skill-card .skill-what code { font-family: var(--font-mono); font-size: 0.85em; }
+  .skill-card .skill-out {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+    padding-top: 12px;
+    border-top: 1px solid var(--raised);
+    margin: 0;
+  }
+  .skill-card .skill-out strong { color: var(--primary); font-weight: 600; }
+  .skill-card .skill-out code { font-family: var(--font-mono); }
+  .skill-card .skill-out a { color: inherit; }
+  .skill-card.alt { border-left-color: var(--raised); opacity: 0.85; }
+  .skill-card.alt:hover { border-left-color: var(--primary-deep); opacity: 1; }
+
+  /* Blocos */
+  .bloco {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 28px;
+    margin: 24px 0;
+  }
+  .bloco .bloco-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--raised);
+  }
+  .bloco .bloco-num {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .bloco .bloco-time {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--muted-foreground);
+    letter-spacing: 0.06em;
+  }
+  .bloco h3 { margin: 0 0 16px; font-size: 1.4rem; }
+  .bloco .bloco-action {
+    background: rgba(201, 178, 152, 0.06);
+    border: 1px solid var(--primary-deep);
+    border-radius: 0.5rem;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+  .bloco .bloco-result {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--muted-foreground);
+    margin: 12px 0 0;
+  }
+  .bloco .bloco-result strong { color: var(--primary); }
+  .bloco .bloco-result code { font-family: var(--font-mono); }
+
+  /* Skill passo */
+  .skill-step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: 0.75rem;
+    padding: 28px;
+    margin: 28px 0;
+  }
+  .skill-step .ss-tag {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .skill-step h3 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--foreground);
+  }
+  .skill-step h3 code { font-family: var(--font-mono); color: var(--primary); font-size: 1.3rem; background: none; padding: 0; }
+  .skill-step .ss-what {
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    color: var(--muted-foreground);
+    margin: 0 0 16px;
+  }
+  .skill-step ul, .skill-step ol {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--muted-foreground);
+    padding-left: 20px;
+    margin: 8px 0;
+  }
+  .skill-step ul ul, .skill-step ol ol, .skill-step ol ul, .skill-step ul ol {
+    margin: 6px 0;
+    font-size: 0.88rem;
+  }
+  .skill-step li { margin: 6px 0; }
+  .skill-step li strong { color: var(--foreground); }
+  .skill-step .ss-files { list-style: none; padding: 0; margin: 8px 0; line-height: 1.9; }
+  .skill-step .ss-files code { font-family: var(--font-mono); color: var(--primary); }
+  .skill-step .ss-label { font-family: var(--font-ui); font-weight: 600; color: var(--foreground); font-size: 0.95rem; margin: 20px 0 6px; }
+  .skill-step .ss-gate { color: var(--status-success); }
+  .skill-step code { font-family: var(--font-mono); background: var(--raised); color: var(--primary-light); padding: 2px 8px; border-radius: 0.25rem; font-size: 0.85em; }
+
+  /* Regras */
+  .rule {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+    background: var(--card);
+    border-left: 2px solid var(--primary);
+    border-radius: 0.5rem;
+    margin: 16px 0;
+  }
+  .rule-icon {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .rule h3 {
+    margin: 0 0 4px;
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .rule p {
+    margin: 4px 0 0;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--muted-foreground);
+    line-height: 1.5;
+  }
+  .rule code { font-family: var(--font-mono); }
+
+  /* Mapa */
+  .cohort-map {
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 1rem;
+    padding: 28px;
+    margin: 32px 0;
+  }
+  .cohort-map .aula {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border-radius: 0.5rem;
+    margin: 6px 0;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    transition: background 0.2s ease;
+  }
+  .cohort-map .aula.atual {
+    background: rgba(201, 178, 152, 0.08);
+    border: 1px solid var(--primary-deep);
+  }
+  .cohort-map .aula-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 60px;
+  }
+  .cohort-map .aula-name { flex: 1; color: var(--foreground); font-weight: 600; }
+  .cohort-map .aula-status {
+    font-size: 0.7rem;
+    color: var(--muted-foreground);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .cohort-map .aula.atual .aula-status { color: var(--primary); font-weight: 700; }
+
+  /* Convenção */
+  .convention-box {
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 1rem;
+    padding: 28px;
+    margin: 32px 0;
+  }
+  .convention-box h3 { margin: 0 0 16px; font-family: var(--font-ui); font-size: 1.1rem; font-weight: 700; }
+  .convention-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 12px 24px;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    margin: 8px 0;
+    align-items: start;
+  }
+  .convention-row .cr-label {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--primary);
+    padding-top: 2px;
+  }
+  .convention-row .cr-desc { color: var(--muted-foreground); line-height: 1.5; }
+  .convention-row .cr-desc code { font-family: var(--font-mono); font-size: 0.9em; }
+
+  /* Tabela */
+  .skill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-ui);
+    font-size: 0.88rem;
+    margin: 24px 0;
+  }
+  .skill-table th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    border-bottom: 1px solid var(--raised);
+  }
+  .skill-table td {
+    padding: 12px 16px;
+    vertical-align: top;
+    border-bottom: 1px solid rgba(38, 38, 38, 0.5);
+    color: var(--muted-foreground);
+    line-height: 1.5;
+  }
+  .skill-table td:first-child {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .skill-table td strong { color: var(--foreground); font-weight: 600; }
+  .skill-table td code { font-family: var(--font-mono); }
+  .skill-table tr:last-child td { border-bottom: none; }
+
+  /* Alerta */
+  .alerta {
+    background: rgba(201, 178, 152, 0.07);
+    border: 1px solid var(--primary-deep);
+    border-radius: 0.75rem;
+    padding: 20px 24px;
+    margin: 24px 0;
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+  }
+  .alerta-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .alerta p { margin: 8px 0 0; color: var(--foreground); line-height: 1.6; }
+  .alerta code { font-family: var(--font-mono); background: var(--raised); color: var(--primary-light); padding: 2px 8px; border-radius: 0.25rem; font-size: 0.85em; }
+  .alerta.warn { border-color: #d97706; background: rgba(217, 119, 6, 0.08); }
+  .alerta.warn .alerta-label { color: #f0a34a; }
+
+  /* Glossário */
+  .gloss-item {
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--raised);
+    border-radius: 0.5rem;
+  }
+  .gloss-item .gloss-term {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--primary);
+    margin: 0 0 4px;
+  }
+  .gloss-item .gloss-def {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    margin: 0;
+    color: var(--muted-foreground);
+    line-height: 1.55;
+  }
+
+  /* CTA final */
+  .cta-final {
+    text-align: center;
+    margin: 96px 0 32px;
+    padding: 48px 32px;
+    background: var(--card);
+    border: 1px solid var(--primary-deep);
+    border-radius: 1.5rem;
+  }
+  .cta-final h2 { font-family: var(--font-display); font-size: 2.2rem; margin: 0 0 16px; }
+  .cta-final h2 em {
+    font-family: var(--font-body);
+    font-style: normal;
+    color: var(--primary);
+    font-weight: 400;
+  }
+  .cta-final p {
+    font-family: var(--font-body);
+    font-style: normal;
+    color: var(--muted-foreground);
+    max-width: 50ch;
+    margin: 16px auto 24px;
+  }
+  .cta-final .command-block { max-width: 480px; margin: 0 auto; text-align: left; }
+
+  @media (max-width: 640px) {
+    .convention-row { grid-template-columns: 1fr; gap: 4px; }
+    .skill-table { font-size: 0.82rem; }
+    .skill-table th, .skill-table td { padding: 10px 10px; }
+    .step { grid-template-columns: 48px 1fr; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <header class="hero">
+    <span class="kicker">Guia Técnico · Integrações Oficiais Meta</span>
+    <h1>Criando e <em>Aprovando</em><br>seu App Meta</h1>
+    <p class="subtitle">WhatsApp · Instagram · Messenger · Páginas</p>
+    <p class="lead">Do zero até o app publicado em produção. Cada parte diz exatamente <strong>onde clicar</strong> e <strong>o que preencher</strong> — em menus, campos e botões. Este guia vale para qualquer SaaS, sistema de automação ou multiatendimento que precise da integração oficial da Meta.</p>
+  </header>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-label">As 6 partes deste guia</div>
+    <ol>
+      <li><a href="#parte-0">Parte 0 — Antes de tudo</a> <span class="toc-sub">· conta de desenvolvedor, requisitos, os 3 selos</span></li>
+      <li><a href="#parte-1">Parte 1 — Criando o app</a> <span class="toc-sub">· nome, casos de uso, empresa associada</span></li>
+      <li><a href="#parte-2">Parte 2 — Configuração base</a> <span class="toc-sub">· configurações básicas, instruções ao revisor, login incorporado</span></li>
+      <li><a href="#parte-3">Parte 3 — Os 4 casos de uso</a> <span class="toc-sub">· WhatsApp, Instagram, Messenger, Gerenciamento de Página</span></li>
+      <li><a href="#parte-4">Parte 4 — Token, Análise e Publicação</a> <span class="toc-sub">· usuário do sistema, App Review, publicar</span></li>
+      <li><a href="#parte-5">Parte 5 — Deu errado? (socorro)</a> <span class="toc-sub">· os travamentos mais comuns e a saída</span></li>
+      <li><a href="#glossario">Glossário — todos os termos num lugar</a></li>
+    </ol>
+  </nav>
+
+
+  <!-- ==================== PARTE 0 ==================== -->
+  <section id="parte-0">
+    <div class="section-num">Parte 0</div>
+    <h2>Antes de tudo</h2>
+    <p>Este bloco você faz <strong>uma vez</strong>. Ele garante que sua conta de desenvolvedor existe de verdade e que você já sabe quais são os 3 selos de verificação que vão condicionar tudo o que vem depois. Não pule — a maioria dos travamentos na Análise do App nasce de um selo que ficou pendente aqui atrás.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>O que ter em mãos antes de começar</h3>
+        <p>Separe estes itens antes de abrir o navegador:</p>
+        <ul style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); line-height: 1.8; padding-left: 20px;">
+          <li>Uma <strong>conta pessoal do Facebook</strong> (pode ser a que você já usa)</li>
+          <li>Acesso a um <strong>Gerenciador de Negócios / Business Manager (BM)</strong> — se não tiver um, crie em <code>business.facebook.com</code> antes de continuar</li>
+          <li>O <strong>documento de registro empresarial</strong> da sua empresa (CNPJ no Brasil, ou equivalente no seu país)</li>
+          <li>Um <strong>domínio ou subdomínio</strong> onde sua aplicação roda (ex.: <code>app.seusistema.com</code>)</li>
+          <li>URLs publicadas de <strong>Política de Privacidade</strong> e <strong>Termos de Uso</strong></li>
+          <li>Um <strong>ícone quadrado 512×512px</strong> para o app</li>
+          <li>Um <strong>ambiente de teste</strong> da sua plataforma, com login e senha que não sejam de um cliente real</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Acesse o Meta for Developers e registre sua conta</h3>
+        <p><strong>2.1.</strong> No navegador, acesse <code>developers.facebook.com</code>.</p>
+        <p><strong>2.2.</strong> Se você não estiver logado, aparece a tela <em>"Comece a usar o Meta for Developers"</em>, com um painel à direita <em>"Entrar no Meta for Developers"</em>. Clique no botão <strong>"Continuar com o Facebook"</strong> (usa a sessão do Facebook em que você já está logado no navegador — não digite senha de novo se já estiver logado).</p>
+        <p><strong>2.3.</strong> Você cai na home do Meta for Developers ("Social technologies"). Repare que essa página pode aparecer em <strong>inglês</strong> mesmo com a tela de login em português — depende do idioma configurado na sua conta, não é motivo de preocupação.</p>
+        <p><strong>2.4.</strong> No canto superior direito, clique em <strong>"Get Started"</strong> (ou <strong>"Comece agora"</strong>, se sua conta estiver em português).</p>
+        <p><strong>2.5.</strong> Abre o assistente <em>"Create a Meta for Developers account"</em> (Criar conta do Meta for Developers), com 4 etapas na coluna da esquerda:</p>
+        <ul style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground); line-height: 1.8; padding-left: 20px;">
+          <li><strong>Register</strong> — geralmente já vem marcada automaticamente com os dados da sua conta do Facebook</li>
+          <li><strong>Verify account</strong> — a Meta envia um <strong>código de 6 dígitos por SMS</strong> para o celular associado à sua conta (aparece mascarado, ex.: "(16) 99224-4404"). Digite o código recebido no campo e clique em <strong>Continue</strong>. Se não chegar em ~30 segundos, use o botão <strong>"Update Mobile Number"</strong> para reenviar ou trocar o número</li>
+          <li><strong>Contact info</strong> — confirme ou preencha o e-mail de contato do desenvolvedor</li>
+          <li><strong>About you</strong> — perguntas rápidas sobre você/sua empresa (função, se já desenvolve apps, etc.)</li>
+        </ul>
+        <p><strong>2.6.</strong> Ao concluir as 4 etapas, sua conta de desenvolvedor está registrada — você já pode navegar até <strong>"Meus Apps"</strong> (My Apps).</p>
+      </div>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-label">Por que essa etapa existe</div>
+      <p>Ter uma conta pessoal do Facebook <strong>não</strong> equivale a ter uma conta de desenvolvedor. São dois cadastros diferentes: o primeiro é você como usuário da rede social, o segundo é você como desenvolvedor de apps. Sem concluir o registro (com a verificação por SMS), o Meta redireciona <code>/apps/</code> de volta para a home institucional em vez de mostrar o painel de apps.</p>
+    </div>
+
+    <!-- Os 3 selos -->
+    <h3>Os 3 selos de verificação</h3>
+    <p>Todo app usado em produção depende de 3 verificações. Elas não acontecem todas no mesmo lugar — memorize a tabela antes de seguir:</p>
+
+    <table class="skill-table">
+      <tr><th>Selo</th><th>Onde é feito</th><th>O que exige</th><th>O que libera</th></tr>
+      <tr>
+        <td>Verificação de Atividade / Acesso</td>
+        <td>Dentro do próprio app, na tela "Verificação de Acesso"</td>
+        <td>Formulário declarando que você é um provedor de tecnologia (SaaS), qual serviço presta e que nenhuma outra empresa está conectada ao app além da sua</td>
+        <td>Uso completo dos casos de uso de mensageria em produção</td>
+      </tr>
+      <tr>
+        <td>Verificação de Empresa</td>
+        <td>Gerenciador de Negócios (Business Manager) → Dados da empresa</td>
+        <td>Documento de registro empresarial (CNPJ no Brasil ou equivalente)</td>
+        <td>Cadastro Incorporado do WhatsApp (Embedded Signup / coexistência)</td>
+      </tr>
+      <tr>
+        <td>Análise do App (App Review)</td>
+        <td>Dentro do app, aba "Análise do App"</td>
+        <td>Descrição de uso + vídeo (screencast) para cada permissão, e em alguns casos uma chamada de API de teste</td>
+        <td>Uso do app por usuários externos reais (fora do modo desenvolvimento)</td>
+      </tr>
+    </table>
+
+    <div class="alerta">
+      <div class="alerta-label">Ordem recomendada</div>
+      <p>Resolva os dois primeiros selos (Atividade/Acesso e Empresa) <strong>antes</strong> de configurar o Cadastro Incorporado do WhatsApp — sem eles, essa tela fica bloqueada e mostra exatamente o que falta. A Análise do App (3º selo) só é submetida depois que os 5 níveis de configuração (Partes 2 e 3 deste guia) estiverem prontos.</p>
+    </div>
+  </section>
+
+
+  <!-- ==================== PARTE 1 ==================== -->
+  <section id="parte-1">
+    <div class="section-num">Parte 1</div>
+    <h2>Criando o <em>app</em></h2>
+    <p>Com a conta de desenvolvedor registrada, você já pode criar o app. É um assistente de poucas telas — o que importa é preencher cada campo com atenção, porque alguns (como os casos de uso) não dá para adicionar depois sem retrabalho.</p>
+
+    <div class="skill-step">
+      <div class="ss-tag">Passo a passo · Assistente de criação</div>
+      <h3>Meus Apps → Criar App</h3>
+      <p class="ss-what">Sequência completa, do clique inicial até o app aparecer no seu painel.</p>
+      <ol>
+        <li><strong>Acesse "Meus Apps"</strong> — no menu do Meta for Developers, clique em <code>Meus Apps</code> (My Apps). Se for a primeira vez, a lista aparece vazia.</li>
+        <li><strong>Clique em "Criar App"</strong> (Create App) — geralmente um botão verde/destacado no canto superior direito da tela de Meus Apps.</li>
+        <li><strong>Nome do app</strong> — digite um nome identificável. Ele aparece para os usuários finais nas telas de onboarding (ex.: popup de conexão de WhatsApp), então evite nomes genéricos como "Teste" ou "App 1".
+          <ul>
+            <li>Sugestão de padrão: <code>Nome da Plataforma — Integração Oficial</code></li>
+          </ul>
+        </li>
+        <li><strong>E-mail de contato do app</strong> — o e-mail do responsável técnico/administrativo por esse app. É para onde a Meta manda avisos sobre o status da Análise do App.</li>
+        <li><strong>Selecione os casos de uso</strong> — aparece uma lista de cartões clicáveis. Marque:
+          <ul>
+            <li><strong>Interação de Messenger</strong> — se você vai trocar mensagens via Facebook Messenger</li>
+            <li><strong>Interação de Instagram</strong> — se você vai trocar mensagens/gerenciar conteúdo no Instagram</li>
+            <li><strong>Interação de WhatsApp</strong> — se você vai enviar/receber mensagens via WhatsApp Cloud API</li>
+            <li><strong>Gerenciamento de Conteúdo</strong> — dentro dela, marque a opção <strong>"Gerenciar tudo na sua página"</strong>, se você for administrar posts/comentários/metadados de página</li>
+          </ul>
+          Marque apenas os casos de uso que o seu produto realmente vai usar — cada um adicionado aqui vira, mais adiante, uma seção obrigatória na Análise do App.
+        </li>
+        <li><strong>Escolha a empresa (Business Manager) associada</strong> — uma tela lista as BMs às quais sua conta tem acesso. Selecione a BM correta. Se ela já tiver os selos de Verificação de Empresa e de Acesso concluídos, o texto ao lado mostra algo como <em>"Verificação de empresa e de acesso concluída"</em>. Se não tiver, não é bloqueante nesta etapa — mas os requisitos pendentes vão aparecer destacados assim que você entrar na configuração do WhatsApp (Parte 3).</li>
+        <li><strong>Clique em "Avançar"</strong> e revise o resumo (nome, casos de uso, empresa).</li>
+        <li><strong>Clique em "Criar App"</strong> — pode ser solicitada uma segunda etapa de autenticação (código do seu aplicativo autenticador / 2FA, se você tiver essa proteção ativada na conta). Informe o código.</li>
+        <li><strong>Aguarde a criação</strong> — a tela demora alguns segundos; ao concluir, você é redirecionado automaticamente para o <strong>painel do app recém-criado</strong>.</li>
+      </ol>
+      <p class="ss-label ss-gate">Antes de avançar, confira:</p>
+      <ul>
+        <li>O nome do app é o que você quer que os usuários finais vejam?</li>
+        <li>Todos os casos de uso que seu produto precisa foram marcados (evita retrabalho depois)?</li>
+        <li>A BM associada é a correta — a mesma onde você fez ou vai fazer a Verificação de Empresa?</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- ==================== PARTE 2 ==================== -->
+  <section id="parte-2">
+    <div class="section-num">Parte 2</div>
+    <h2>Configuração <em>base</em></h2>
+    <p>Antes de entrar nos casos de uso propriamente ditos, duas coisas precisam estar prontas: as <strong>Configurações Básicas</strong> do app (obrigatórias para liberar o botão de publicar mais tarde) e o <strong>Login Incorporado do Facebook</strong> — a base de autenticação usada por todos os fluxos de onboarding.</p>
+
+    <div class="cohort-map">
+      <div class="aula atual">
+        <span class="aula-num">Nível 1</span>
+        <span class="aula-name">Login Incorporado do Facebook</span>
+        <span class="aula-status">Base de tudo</span>
+      </div>
+      <div class="aula">
+        <span class="aula-num">Nível 2</span>
+        <span class="aula-name">WhatsApp</span>
+        <span class="aula-status">Parte 3</span>
+      </div>
+      <div class="aula">
+        <span class="aula-num">Nível 3</span>
+        <span class="aula-name">Instagram</span>
+        <span class="aula-status">Parte 3</span>
+      </div>
+      <div class="aula">
+        <span class="aula-num">Nível 4</span>
+        <span class="aula-name">Messenger</span>
+        <span class="aula-status">Parte 3</span>
+      </div>
+      <div class="aula">
+        <span class="aula-num">Nível 5</span>
+        <span class="aula-name">Gerenciamento de Página</span>
+        <span class="aula-status">Parte 3</span>
+      </div>
+    </div>
+
+    <!-- Bloco: Configurações Básicas -->
+    <div class="bloco">
+      <div class="bloco-header">
+        <span class="bloco-num">Passo 1</span>
+        <span class="bloco-time">~15 min · campo a campo</span>
+      </div>
+      <h3>Configurações → Básico</h3>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">No menu lateral esquerdo do painel do app, clique em <strong>Configurações → Básico</strong>. Preencha cada campo nesta ordem:</p>
+      <ol style="font-family: var(--font-ui); font-size: 0.92rem; color: var(--muted-foreground); line-height: 1.9; padding-left: 20px;">
+        <li><strong>Domínios do app</strong> — clique no campo, digite seu domínio de produção (ex.: <code>seusistema.com</code>) e pressione Enter. Pode adicionar mais de um domínio se necessário.</li>
+        <li><strong>Política de Privacidade — URL</strong> — cole o link público da sua política de privacidade.</li>
+        <li><strong>Termos de Serviço — URL</strong> — cole o link público dos seus termos e condições de uso.</li>
+        <li><strong>Categoria</strong> — clique no menu suspenso e escolha a categoria mais próxima do seu produto (ex.: "Negócios" ou "Mensagens", dependendo das opções exibidas para o seu tipo de app).</li>
+        <li><strong>Ícone do App</strong> — clique no espaço do ícone (geralmente um quadrado com um ícone de câmera/upload) e envie uma imagem <strong>512×512px</strong>. Esse ícone aparece para o usuário final nas telas de onboarding (ex.: no popup de conexão de WhatsApp).</li>
+        <li><strong>Adicionar Plataforma</strong> — role até o final da página e clique no botão <strong>"+ Adicionar Plataforma"</strong>. Na lista que abre, selecione <strong>Website</strong>. Um novo campo aparece: <strong>URL do Site</strong> — preencha com a URL onde sua aplicação/login roda (ex.: <code>app.seusistema.com/login</code>).</li>
+      </ol>
+    </div>
+
+    <!-- Bloco: Instruções para o revisor -->
+    <div class="bloco">
+      <div class="bloco-header">
+        <span class="bloco-num">Passo 2</span>
+        <span class="bloco-time">~10 min · texto para copiar e adaptar</span>
+      </div>
+      <h3>Instruções de acesso para o revisor da Meta</h3>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">Ainda dentro de Configurações Básicas, mais abaixo na página, existe uma seção específica pedindo instruções de acesso — é o que o time de revisão da Meta vai usar para validar seu app. Preencha os 3 campos:</p>
+      <p class="ss-label" style="font-family: var(--font-ui); font-weight: 600; color: var(--foreground); margin: 16px 0 6px;">Campo 1 — Onde e como fazer login:</p>
+      <div class="command-block plain">Acesse https://app.seusistema.com/login
+E-mail: meta-review@seusistema.com
+Senha: [defina uma senha só para este ambiente de teste]
+Após o login, o onboarding de WhatsApp/Instagram/Messenger fica disponível no menu "Integrações".</div>
+      <p class="ss-label" style="font-family: var(--font-ui); font-weight: 600; color: var(--foreground); margin: 16px 0 6px;">Campo 2 — Exige pagamento/assinatura?</p>
+      <div class="command-block plain">Não exige pagamento. O ambiente de teste tem acesso completo sem necessidade de assinatura.</div>
+      <p style="font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted-foreground); margin: 4px 0 16px;">Se o seu produto exigir pagamento para acessar as funções revisadas, você precisa fornecer um código de bypass em vez de declarar "não exige".</p>
+      <p class="ss-label" style="font-family: var(--font-ui); font-weight: 600; color: var(--foreground); margin: 16px 0 6px;">Campo 3 — Restrição de geolocalização?</p>
+      <div class="command-block plain">Não há restrição de geolocalização para acessar este ambiente.</div>
+      <div class="alerta">
+        <div class="alerta-label">Nunca use uma conta de cliente real</div>
+        <p>Crie um ambiente/tenant exclusivo para a revisão, com um login que não pertence a nenhum cliente da sua base. Essas mesmas instruções são reaproveitadas na etapa final de Análise do App (Parte 4).</p>
+      </div>
+      <p style="font-family: var(--font-ui); font-size: 0.9rem; color: var(--muted-foreground);">Ao final, clique em <strong>Salvar Alterações</strong> no rodapé da página.</p>
+    </div>
+
+    <!-- Skill-step Login Incorporado -->
+    <div class="skill-step">
+      <div class="ss-tag">Nível 1 de 5</div>
+      <h3>Login Incorporado do Facebook</h3>
+      <p class="ss-what">É o popup de autenticação que conecta a conta do Facebook do usuário final ao seu app — escolha de página, conta de WhatsApp Business, conta de Instagram. Todos os outros 4 níveis dependem dele estar bem configurado.</p>
+      <p class="ss-label">No menu lateral, clique em "Login Incorporado do Facebook" → "Configurações":</p>
+      <ol>
+        <li><strong>Login/logout no navegador incorporado</strong> — dois toggles (Sim/Não). Ative conforme a estratégia do seu produto; se não tiver certeza, ative os dois.</li>
+        <li><strong>Domínio/subdomínio do app válido para OAuth</strong> — informe onde sua aplicação roda (o mesmo domínio da Parte 2, Passo 1).</li>
+        <li><strong>URIs de redirecionamento OAuth válidos</strong> — este é o campo mais importante do nível 1. Clique no campo de texto e adicione, <strong>uma por linha</strong>, todas as URLs de callback usadas pelos seus fluxos de onboarding. Exemplos de formato:
+          <ul>
+            <li><code>https://app.seusistema.com/onboarding/whatsapp/callback</code></li>
+            <li><code>https://app.seusistema.com/onboarding/instagram/callback</code></li>
+            <li><code>https://app.seusistema.com/onboarding/manual/callback</code></li>
+          </ul>
+          Cada fluxo de login/onboarding que abre o popup e depois redireciona de volta para sua aplicação <strong>precisa</strong> estar nessa lista — se faltar uma, o redirecionamento falha silenciosamente ao final do onboarding daquele fluxo específico.
+        </li>
+        <li>Clique em <strong>Salvar Alterações</strong> no canto inferior direito.</li>
+      </ol>
+      <p class="ss-label ss-gate">Antes de avançar, confira:</p>
+      <ul>
+        <li>Toda URL de callback que seu backend usa está na lista de redirecionamento?</li>
+        <li>O domínio informado bate exatamente com o domínio de produção (sem barra final divergente, sem erro de digitação)?</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <!-- ==================== PARTE 3 ==================== -->
+  <section id="parte-3">
+    <div class="section-num">Parte 3</div>
+    <h2>Os 4 <em>casos de uso</em></h2>
+    <p>Cada caso de uso ativado no painel lateral tem sua própria configuração. WhatsApp, Instagram e Messenger seguem o mesmo padrão de duas abas — <strong>Permissões e Recursos</strong>, depois <strong>Configuração</strong> (webhook e, no caso do WhatsApp, Cadastro Incorporado). Gerenciamento de Página é mais simples: só permissões.</p>
+
+    <!-- WHATSAPP -->
+    <div class="skill-step">
+      <div class="ss-tag">Nível 2 de 5</div>
+      <h3>WhatsApp</h3>
+      <p class="ss-what">No menu lateral, clique em "WhatsApp" → "Personalizar" (ou "Configuração da API"). Existem 3 blocos a configurar dentro dele.</p>
+
+      <p class="ss-label">3.1 — Permissões e Recursos</p>
+      <ol>
+        <li>Clique na aba <strong>"Permissões e Recursos"</strong>.</li>
+        <li>Você já encontra pré-marcadas, para envio à Análise do App: <code>whatsapp_business_messaging</code>, <code>whatsapp_business_management</code> e <code>public_profile</code>.</li>
+        <li>Para adicionar outra permissão, clique no botão <strong>"+ Adicionar"</strong> ao lado da lista, busque pelo nome da permissão e confirme. Cada permissão adicionada aqui entra automaticamente na lista da Análise do App (Parte 4).</li>
+      </ol>
+
+      <p class="ss-label">3.2 — Configuração → Webhooks</p>
+      <ol>
+        <li>Clique na aba <strong>"Configuração"</strong>, seção <strong>Webhooks</strong>, botão <strong>"Editar"</strong>.</li>
+        <li><strong>Callback URL</strong> — cole o endpoint do seu backend que vai receber os eventos, ex.: <code>https://api.seusistema.com/webhooks/whatsapp</code>.</li>
+        <li><strong>Verify Token</strong> — crie uma string secreta só sua (não use algo óbvio como "123456" em produção — isso serve só para o teste inicial de handshake). Exemplo de formato: <code>wh_verify_8f3a1c9d2e</code>.</li>
+        <li>Clique em <strong>"Verificar e Salvar"</strong> — a Meta faz uma chamada GET ao seu Callback URL para confirmar o Verify Token. Se aparecer uma mensagem de sucesso, o webhook está autenticado; se falhar, confira se seu endpoint está publicamente acessível (não atrás de VPN/firewall) e se ele responde ao desafio de verificação corretamente.</li>
+        <li><strong>Campos do Webhook (Webhook Fields)</strong> — uma lista de checkboxes aparece (ex.: <code>messages</code>, <code>message_deliveries</code>, <code>message_reads</code>, <code>calls</code>, <code>history</code>). Marque os que seu produto vai consumir:
+          <ul>
+            <li><strong>messages</strong> — mensagens recebidas</li>
+            <li><strong>message_deliveries / message_reads</strong> — status de entrega e leitura</li>
+            <li><strong>calls</strong> e <strong>history</strong> — se seu produto lida com chamadas e histórico de sincronização</li>
+            <li>Se você usa <strong>coexistência</strong> (recebe também as mensagens trocadas pelo aplicativo/aparelho oficial, não só pela API), ative o campo específico de coexistência que aparece na lista</li>
+          </ul>
+        </li>
+      </ol>
+      <div class="alerta">
+        <div class="alerta-label">Alguns campos podem recusar assinatura</div>
+        <p>Em certas contas, marcar um campo específico retorna "falha ao assinar". Isso pode acontecer para alguns campos dependendo do tipo de conta/produto e não indica necessariamente um erro de configuração da sua parte — prossiga com os campos que assinaram com sucesso.</p>
+      </div>
+
+      <p class="ss-label">3.3 — Cadastro Incorporado (Embedded Signup / Coexistência)</p>
+      <p style="font-family: var(--font-ui); font-size: 0.9rem; color: var(--muted-foreground);">É o fluxo que permite ao seu cliente final conectar a própria conta do WhatsApp Business dentro do seu produto (QR code, código, ou ativação de número novo). <strong>Pré-requisito:</strong> os selos de Verificação de Empresa e de Acesso (Parte 0) precisam estar com check verde — sem eles, esta seção mostra os requisitos pendentes em vez do formulário de configuração.</p>
+      <ol>
+        <li>Role até a seção <strong>"Comece a usar o Cadastro Incorporado"</strong> e clique em <strong>"Criar Configuração"</strong>.</li>
+        <li><strong>Nome da configuração</strong> — dê um nome identificável, ex.: <code>onboarding-whatsapp-producao</code>.</li>
+        <li>O sistema pré-preenche os parâmetros padrão da API — revise e clique em <strong>Salvar</strong>.</li>
+        <li>Ao salvar, você recebe um <strong>Config ID</strong> — copie e guarde; é o identificador que seu backend usa para abrir o fluxo de cadastro incorporado para cada cliente.</li>
+        <li>Para integrar ao seu backend, você também vai precisar de:
+          <ul>
+            <li><strong>App ID</strong> — visível em Configurações → Básico</li>
+            <li><strong>Token de acesso permanente</strong> — gerado na Parte 4 (Usuário do Sistema)</li>
+            <li><strong>Versão da API</strong> — a mesma usada no teste do webhook (ex.: v21.0, verifique a versão mais recente disponível no seletor)</li>
+          </ul>
+        </li>
+        <li>Clique em <strong>"Gerenciar Domínios"</strong> (ou "Gerenciar Lista de Permissões") dentro dessa mesma configuração, e adicione o domínio de redirecionamento configurado no Login Incorporado (Parte 2, Nível 1) — precisa estar presente aqui também.</li>
+        <li>Salve. Com os 3 selos concluídos (Empresa, Acesso e, mais adiante, Análise do App), o Cadastro Incorporado/coexistência fica liberado em produção.</li>
+      </ol>
+
+      <p class="ss-label ss-gate">Antes de avançar, confira:</p>
+      <ul>
+        <li>O webhook foi verificado com sucesso (mensagem de confirmação, não de erro)?</li>
+        <li>Os campos de webhook que seu backend realmente consome estão marcados?</li>
+        <li>Se você usa coexistência: os 2 selos de verificação (Empresa + Acesso) já estão verdes?</li>
+      </ul>
+    </div>
+
+    <!-- INSTAGRAM -->
+    <div class="skill-step">
+      <div class="ss-tag">Nível 3 de 5</div>
+      <h3>Instagram</h3>
+      <p class="ss-what">Mesma lógica do WhatsApp: menu lateral → "Instagram" → duas abas, Permissões e Configuração.</p>
+
+      <p class="ss-label">4.1 — Permissões</p>
+      <ol>
+        <li>Clique em <strong>"+ Adicionar"</strong> para cada permissão que seu produto vai usar — por exemplo <code>instagram_basic</code>, <code>instagram_business_basic</code>, ou outras conforme sua integração (comentários, mensagens diretas, publicação).</li>
+        <li>Cada permissão adicionada entra automaticamente na lista da Análise do App.</li>
+      </ol>
+
+      <p class="ss-label">4.2 — Configuração da API com Login</p>
+      <ol>
+        <li><strong>App Secret</strong> — o segredo geral do app fica em Configurações → Básico, ao lado do App ID. Dependendo de como você estrutura a integração, o caso de uso de Instagram pode ter um par próprio de App ID/App Secret dedicado — confira o que sua arquitetura de backend espera antes de decidir qual usar.</li>
+        <li><strong>Conta de teste (opcional, mas recomendado)</strong> — clique em <strong>"Adicionar Conta de Instagram"</strong> para conectar uma conta de teste. Algumas permissões exigem uma chamada de API real (criar comentário, editar comentário, trocar mensagens, conectar conta) para serem aprovadas — ter uma conta de teste conectada facilita gerar essa evidência.
+          <ul>
+            <li><strong>Alternativa sem testes ao vivo:</strong> use uma ferramenta de chamadas (curl, Postman, ou peça a uma IA para montar a chamada) disparando a requisição equivalente via Graph API, usando seu token e o ID da conta/página.</li>
+          </ul>
+        </li>
+        <li><strong>Webhook</strong> — mesmo processo do WhatsApp: Callback URL + Verify Token → <strong>"Verificar e Salvar"</strong> → marcar os campos relevantes (ex.: <code>comments</code>, <code>mentions</code>, <code>messages</code>, <code>message_reactions</code>).</li>
+        <li><strong>URI de redirecionamento do Instagram Signup</strong> — nesta mesma seção de configuração, adicione a URL de callback específica do seu fluxo de onboarding de Instagram (pode ser diferente da lista geral do Login Incorporado).</li>
+      </ol>
+      <p class="ss-label ss-gate">Antes de avançar, confira:</p>
+      <ul>
+        <li>As permissões que exigem chamada de API já têm uma evidência de uso gerada (real ou via ferramenta)?</li>
+        <li>A URI de redirecionamento do Instagram está cadastrada tanto aqui quanto na lista geral do Login Incorporado?</li>
+      </ul>
+    </div>
+
+    <!-- MESSENGER -->
+    <div class="skill-step">
+      <div class="ss-tag">Nível 4 de 5</div>
+      <h3>Messenger</h3>
+      <p class="ss-what">Mesma estrutura de novo: menu lateral → "Messenger" → Permissões e Configuração.</p>
+      <ol>
+        <li><strong>Permissões</strong> — adicione as que seu produto vai usar: mensagens, confirmação de leitura, menções, edição de mensagem, entre outras disponíveis na lista.</li>
+        <li><strong>Webhook</strong> — Callback URL + Verify Token → <strong>"Verificar e Salvar"</strong> → marque os campos desejados (ex.: <code>messages</code>, <code>message_reads</code>, <code>message_mentions</code>, <code>message_edits</code>).</li>
+        <li><strong>Teste com conta real</strong> — você pode conectar uma página/conta de Facebook de teste e disparar uma mensagem real para verificar se o evento chega no seu Callback URL.</li>
+        <li><strong>URI de redirecionamento</strong> — normalmente reaproveita a mesma lista já cadastrada no Login Incorporado (Parte 2, Nível 1); não costuma ser necessária uma URL adicional específica só para o Messenger.</li>
+      </ol>
+      <p class="ss-label ss-gate">Antes de avançar, confira:</p>
+      <ul>
+        <li>O teste com página real chegou no seu backend (log do webhook mostra o evento)?</li>
+      </ul>
+    </div>
+
+    <!-- PÁGINA -->
+    <div class="skill-step">
+      <div class="ss-tag">Nível 5 de 5</div>
+      <h3>Gerenciamento de Página</h3>
+      <p class="ss-what">O mais simples dos 5 níveis — não tem webhook, apenas permissões.</p>
+      <ol>
+        <li>Menu lateral → "Gerenciamento de Página" (ou "Gerenciamento de Conteúdo").</li>
+        <li>Marque o que seu produto vai gerenciar: <strong>engajamento</strong> (comentários/curtidas), <strong>metadados</strong> e <strong>posts</strong>.</li>
+        <li>Cada item marcado entra na lista da Análise do App.</li>
+      </ol>
+    </div>
+  </section>
+
+
+  <!-- ==================== PARTE 4 ==================== -->
+  <section id="parte-4">
+    <div class="section-num">Parte 4</div>
+    <h2>Token, <em>Análise</em> e Publicação</h2>
+    <p>As três últimas peças: gerar a credencial que sua aplicação vai usar para chamar a API, submeter o app para revisão da Meta, e finalmente publicar.</p>
+
+    <!-- Bloco Token -->
+    <div class="bloco">
+      <div class="bloco-header">
+        <span class="bloco-num">Passo 1</span>
+        <span class="bloco-time">~10 min · atenção à ordem dos cliques</span>
+      </div>
+      <h3>Gerando o token de acesso permanente (Usuário do Sistema)</h3>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">Este token é diferente do "Verify Token" dos webhooks — é a credencial que autentica as chamadas da sua aplicação à Graph API (enviar mensagens, gerenciar páginas, etc). Ele é gerado dentro do Gerenciador de Negócios, não dentro do app.</p>
+      <ol style="font-family: var(--font-ui); font-size: 0.92rem; color: var(--muted-foreground); line-height: 1.9; padding-left: 20px;">
+        <li>Acesse <code>business.facebook.com/settings</code> (ou, dentro do app, o atalho "Configurações do Negócio").</li>
+        <li>No menu lateral, clique em <strong>Usuários → Usuários do Sistema</strong>.</li>
+        <li>Clique em <strong>"+ Adicionar"</strong>.
+          <ul>
+            <li><strong>Nome</strong> — algo identificável, ex.: <code>token-integracao</code></li>
+            <li><strong>Função</strong> — selecione <strong>Admin</strong></li>
+          </ul>
+          Clique em <strong>Criar Usuário do Sistema</strong>.
+        </li>
+        <li><strong style="color: var(--primary-light);">Antes de gerar o token</strong>, atribua o app a esse usuário do sistema:
+          <ol type="a">
+            <li>Com o usuário do sistema selecionado, clique em <strong>"Atribuir Ativos"</strong>.</li>
+            <li>Na aba <strong>Apps</strong>, selecione o seu app na lista.</li>
+            <li>Marque o papel <strong>"Gerenciar App"</strong> (Manage App).</li>
+            <li>Clique em <strong>Salvar Alterações</strong>.</li>
+          </ol>
+        </li>
+        <li>Agora sim, clique em <strong>"Gerar Novo Token"</strong>.
+          <ul>
+            <li>Selecione o app na lista</li>
+            <li>Marque as permissões/escopos que seu produto vai usar (as mesmas configuradas nos níveis 2 a 5 da Parte 3)</li>
+            <li>Clique em <strong>Gerar Token</strong></li>
+          </ul>
+        </li>
+        <li>Copie o token exibido e <strong>guarde com o mesmo cuidado de uma senha</strong> — trate como segredo/credencial, nunca em texto plano em repositório versionado.</li>
+      </ol>
+      <div class="alerta warn">
+        <div class="alerta-label">O erro mais comum desta etapa</div>
+        <p>Se você tentar gerar o token <strong>antes</strong> de atribuir o app como ativo do usuário do sistema (passo 4 acima), a lista de permissões aparece vazia e o fluxo trava sem explicação clara. Sempre atribua o ativo primeiro.</p>
+      </div>
+    </div>
+
+    <!-- Bloco Análise do App -->
+    <div class="bloco">
+      <div class="bloco-header">
+        <span class="bloco-num">Passo 2</span>
+        <span class="bloco-time">A etapa mais delicada</span>
+      </div>
+      <h3>Análise do App (App Review)</h3>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">No menu lateral, clique em <strong>"Análise do App"</strong>. Todas as permissões adicionadas nos 5 níveis (Partes 2 e 3) aparecem juntas aqui. Clique em <strong>"Começar"</strong> ao lado de cada permissão e preencha:</p>
+      <ol style="font-family: var(--font-ui); font-size: 0.92rem; color: var(--muted-foreground); line-height: 1.9; padding-left: 20px;">
+        <li><strong>Uso Permitido</strong> — um campo de texto onde você descreve exatamente como e por que seu produto usa aquela permissão específica. Seja concreto: descreva a tela, a ação do usuário, o resultado.</li>
+        <li><strong>Screencast</strong> — clique em <strong>"Fazer upload de vídeo"</strong> e envie uma gravação curta, feita dentro da sua própria plataforma, demonstrando o uso real da permissão de ponta a ponta.</li>
+        <li><strong>Chamada de API obrigatória</strong> (aparece só para algumas permissões) — a Meta exige evidência de que a chamada correspondente da Graph API foi executada de fato. Gere essa evidência realizando a ação de verdade dentro do seu produto (conectado ao app em revisão) ou disparando a chamada equivalente via ferramenta/IA, usando seu token e o ID de página/conta.</li>
+      </ol>
+
+      <p class="ss-label" style="font-family: var(--font-ui); font-weight: 600; color: var(--foreground); margin: 20px 0 6px;">Depois de preencher todas as permissões — Tratamento de Dados:</p>
+      <ol style="font-family: var(--font-ui); font-size: 0.92rem; color: var(--muted-foreground); line-height: 1.9; padding-left: 20px;">
+        <li><strong>Há operadores de dados/terceiros com acesso às informações?</strong> Normalmente "Não", se tudo fica interno à sua empresa.</li>
+        <li><strong>Quem é o responsável pelo tratamento de dados?</strong> Nome completo, documento (CPF ou equivalente), país.</li>
+        <li><strong>Você forneceu dados pessoais de usuários a pedidos de segurança nacional nos últimos 12 meses?</strong> Responda com honestidade conforme sua realidade.</li>
+        <li><strong>Quais processos você aplica caso seja exigido fornecer dados pessoais?</strong> Descreva sua política (análise de legitimidade, direito de contestação, minimização de dados).</li>
+      </ol>
+
+      <p class="ss-label" style="font-family: var(--font-ui); font-weight: 600; color: var(--foreground); margin: 20px 0 6px;">Última etapa — Instruções para o analista:</p>
+      <p style="font-family: var(--font-ui); font-size: 0.92rem; color: var(--muted-foreground);">Reaproveite (ou detalhe ainda mais) o texto já preparado na Parte 2, Passo 2: URL de login, credenciais de teste, se exige pagamento, se há restrição geográfica. Vale a pena complementar com um vídeo curto mostrando só o passo a passo do login.</p>
+
+      <div class="alerta">
+        <div class="alerta-label">Só é possível enviar quando tudo estiver verde</div>
+        <p>O sistema não libera o envio enquanto qualquer permissão estiver sem descrição ou sem vídeo. Revise a lista completa, clique em <strong>"Enviar para Análise"</strong> e aguarde — o prazo médio de retorno da Meta é de aproximadamente <strong>10 dias úteis</strong>, com aprovação total, parcial, ou pedido de ajustes.</p>
+      </div>
+    </div>
+
+    <!-- Bloco Publicação -->
+    <div class="bloco">
+      <div class="bloco-header">
+        <span class="bloco-num">Passo 3</span>
+        <span class="bloco-time">O último clique</span>
+      </div>
+      <h3>Publicando o app</h3>
+      <p style="font-family: var(--font-ui); font-size: 0.95rem; color: var(--muted-foreground);">Com as Configurações Básicas completas (Parte 2) e a Análise do App aprovada, vá até <strong>"Publicação"</strong> no menu lateral. O botão <strong>"Publicar App"</strong> (antes desativado/cinza) fica disponível. Clique nele para tirar o app do modo Desenvolvimento e colocá-lo em produção, disponível para uso real por usuários externos.</p>
+    </div>
+  </section>
+
+
+  <!-- ==================== PARTE 5 ==================== -->
+  <section id="parte-5">
+    <div class="section-num">Parte 5</div>
+    <h2>Deu errado? <em>(socorro)</em></h2>
+    <p>Os travamentos mais comuns e a saída de cada um.</p>
+
+    <div class="alerta warn">
+      <div class="alerta-label">"/apps/" redireciona de volta para a home institucional</div>
+      <p>Isso significa que sua conta de desenvolvedor ainda <strong>não foi registrada</strong> — ter uma conta pessoal do Facebook logada não é suficiente. Volte à Parte 0, Passo 2, clique em "Get Started" e complete as 4 etapas do assistente (Register → Verify account → Contact info → About you), incluindo o código SMS.</p>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-label">Pular a Verificação de Empresa ou de Acesso</div>
+      <p>Sem esses dois selos, o Cadastro Incorporado (coexistência) do WhatsApp simplesmente não ativa — a tela mostra os requisitos pendentes em vez do formulário. Resolva os dois antes de tudo (Parte 0).</p>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-label">Onboarding não redireciona de volta ao final</div>
+      <p>Falta uma URI na lista de redirecionamento OAuth do Login Incorporado (Parte 2, Nível 1). Cada fluxo (WhatsApp, Instagram, login manual) tem sua própria URL de callback — confira se todas estão cadastradas, exatamente como seu backend as usa (protocolo, domínio, caminho, sem barra final divergente).</p>
+    </div>
+
+    <div class="alerta warn">
+      <div class="alerta-label">Lista de permissões vazia ao gerar o token</div>
+      <p>Você tentou gerar o token do Usuário do Sistema antes de atribuir o app como ativo dele. Volte à Parte 4, Passo 1, item 4, e atribua o ativo primeiro.</p>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-label">Campo de webhook recusa assinatura ("falha ao assinar")</div>
+      <p>Pode acontecer para campos específicos em certas contas — não indica necessariamente um erro de configuração. Prossiga com os campos que assinaram com sucesso e revise a documentação oficial se aquele campo específico for essencial para o seu produto.</p>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-label">Não consigo enviar a Análise do App</div>
+      <p>O sistema bloqueia o envio enquanto qualquer permissão dos casos de uso ativados estiver sem descrição de uso ou sem vídeo. Volte à Parte 4, Passo 2, e confira item por item — nenhum pode ficar pendente.</p>
+    </div>
+
+    <div class="alerta">
+      <div class="alerta-label">Usei conta de cliente real para o acesso do revisor</div>
+      <p>Evite — crie sempre um ambiente/tenant de teste isolado (Parte 2, Passo 2), especialmente para permissões que exigem chamadas de API ao vivo durante a revisão.</p>
+    </div>
+  </section>
+
+
+  <!-- ==================== GLOSSÁRIO ==================== -->
+  <section id="glossario">
+    <div class="section-num">Referência</div>
+    <h2>Glossário — <em>todos os termos</em></h2>
+    <p>Volte aqui sempre que esbarrar com um termo no resto do guia.</p>
+
+    <div style="display: grid; gap: 12px; margin-top: 24px;">
+      <div class="gloss-item"><p class="gloss-term">App ID / App Secret</p><p class="gloss-def">Identificador único e chave secreta do seu app, encontrados em Configurações → Básico.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Config ID</p><p class="gloss-def">Identificador gerado ao criar uma configuração de Cadastro Incorporado do WhatsApp.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Verify Token</p><p class="gloss-def">String que você define para autenticar seu endpoint de webhook junto à Meta, usada só no handshake inicial.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Callback URL</p><p class="gloss-def">Endpoint do seu backend que recebe os eventos enviados pelo webhook (mensagens, status, comentários).</p></div>
+      <div class="gloss-item"><p class="gloss-term">Usuário do Sistema</p><p class="gloss-def">Identidade não-humana dentro do Gerenciador de Negócios usada para gerar o token de acesso permanente da API.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Coexistência</p><p class="gloss-def">Modo da API do WhatsApp em que o aplicativo/aparelho oficial e a API operam simultaneamente no mesmo número.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Cadastro Incorporado (Embedded Signup)</p><p class="gloss-def">Fluxo de onboarding que permite ao cliente final conectar a própria conta de WhatsApp Business dentro do seu produto.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Gerenciador de Negócios (Business Manager / BM)</p><p class="gloss-def">Central de contas da Meta que administra ativos do negócio: páginas, apps, contas de anúncio, contas de WhatsApp.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Análise do App (App Review)</p><p class="gloss-def">Processo de submissão e aprovação das permissões que o app usa em produção — o 3º selo de verificação.</p></div>
+      <div class="gloss-item"><p class="gloss-term">Login Incorporado do Facebook</p><p class="gloss-def">O popup OAuth que autentica o usuário final e alimenta os fluxos de onboarding de WhatsApp, Instagram, Messenger e Página.</p></div>
+    </div>
+  </section>
+
+
+  <!-- CTA Final -->
+  <div class="cta-final">
+    <h2>Assim que o <em>SMS</em> chegar</h2>
+    <p>Termine o registro da conta de desenvolvedor (Parte 0, Passo 2) e me avisa. Eu retomo a navegação real e substituo cada etapa abaixo por prints da sua própria tela, na mesma estrutura deste guia.</p>
+    <div class="command-block plain">Me avisa quando estiver na tela "Meus Apps"</div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress');
+    const h = document.documentElement;
+    const st = window.scrollY;
+    const sh = h.scrollHeight - h.clientHeight;
+    el.style.width = (sh > 0 ? (st / sh) * 100 : 0) + '%';
+  });
+</script>
+</body>
+</html>

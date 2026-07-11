@@ -48,7 +48,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ### Aula 3 · Tráfego
 
-**Status:** operacional em piloto no Marketing Studio. As cinco skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/leitor-de-metricas` → `/diagnosticador` — já executam via Codex CLI local, com persistência, revisão humana e artefatos no projeto. O modo Cohort prepara e recomenda; publicação e decisões continuam humanas.
+**Status:** operacional em piloto no Marketing Studio. [Material da Aula 3](./aula-03/README.md). As cinco skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/leitor-de-metricas` → `/diagnosticador` — já executam via Codex CLI local, com persistência, revisão humana e artefatos no projeto. O modo Cohort prepara e recomenda; publicação e decisões continuam humanas.
 
 ### Aula 4 · Dados
 
@@ -150,6 +150,7 @@ cohort-de-marketing/
 │   └── design/mocks/              mocks visuais importados
 ├── aula-01/                      docs e templates da Aula 1
 ├── aula-02/                      material de apoio da Aula 2
+├── aula-03/                      material didático e runtime empacotado da Aula 3
 └── projetos/                     nasce quando você roda as skills (só seu, fora do git)
 ```
 

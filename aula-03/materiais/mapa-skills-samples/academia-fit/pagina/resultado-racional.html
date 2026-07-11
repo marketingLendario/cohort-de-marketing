@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultado — Racional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #7C3AED;
+  --secondary: #22C7B1;
+  --surface: #0A0A0F;
+  --elevated: #121218;
+  --border: #27272A;
+  --text: #F5F0FF;
+  --muted: #A1A1AA;
+  --warm: #F59E0B;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 48px 32px 64px; }
+.wrap-wide { max-width: 960px; margin: 0 auto; padding: 48px 32px 64px; }
+.kicker {
+  display: inline-block;
+  font: 600 0.68rem/1 Inter, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  border: 1px solid color-mix(in srgb, var(--secondary) 35%, transparent);
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+h1, h2, h3 {
+  font-family: 'Space Grotesk', Inter, sans-serif;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+h1 { font-size: 2rem; color: var(--text); }
+h2 { font-size: 1.25rem; color: var(--secondary); margin-top: 32px; }
+h3 { font-size: 1.05rem; color: var(--primary); margin-top: 24px; }
+p { margin: 0 0 14px; color: var(--text); }
+.lead { font-size: 1.1rem; color: var(--muted); margin-bottom: 24px; }
+.card {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 14px 0;
+}
+.card-accent { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+blockquote {
+  margin: 18px 0;
+  padding: 14px 18px;
+  border-left: 3px solid var(--primary);
+  background: var(--elevated);
+  border-radius: 0 12px 12px 0;
+  color: #d4d4d8;
+  font-style: italic;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 0.9rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #1a1a22;
+  color: var(--secondary);
+  font-weight: 600;
+}
+tr:nth-child(even) td { background: color-mix(in srgb, var(--elevated) 80%, transparent); }
+ul, ol { margin: 0 0 16px; padding-left: 1.4rem; }
+li { margin: 6px 0; }
+li.check { list-style: none; position: relative; padding-left: 4px; }
+li.check::before { content: '☐'; color: var(--secondary); margin-right: 8px; }
+code {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.88em;
+  background: #1a1a22;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+a { color: var(--secondary); }
+.btn {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--text);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font: 600 1rem/1 Inter, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 8px 0;
+}
+.btn-block { display: block; text-align: center; width: 100%; }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.price-old { color: var(--muted); text-decoration: line-through; margin-right: 8px; }
+.price-now { color: var(--warm); font-size: 1.6rem; font-weight: 700; }
+.badge-warm {
+  display: inline-block;
+  background: color-mix(in srgb, var(--warm) 18%, transparent);
+  color: var(--warm);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.hero {
+  padding: 40px 0 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.stack-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.stack-row:last-child { border-bottom: none; font-weight: 700; }
+.email-shell { max-width: 560px; margin: 0 auto; background: var(--elevated); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+.email-head { background: var(--primary); padding: 22px; text-align: center; font-weight: 700; }
+.email-body { padding: 28px 32px 36px; }
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #0d0d12;
+  color: var(--text);
+  font-size: 1rem;
+  margin: 8px 0 16px;
+}
+.vsl-slot {
+  aspect-ratio: 16/9;
+  background: linear-gradient(145deg, #0d0d12, #1a1035);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 20px 0;
+}
+.foot {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+@media print {
+  @page { margin: 1.4cm; size: A4; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap, .wrap-wide { max-width: 100%; padding: 0; }
+  .btn, .input { display: none; }
+  h2 { break-after: avoid; }
+  .card, table, blockquote { break-inside: avoid; }
+}
+@media (max-width: 640px) {
+  .wrap, .wrap-wide { padding: 32px 20px 48px; }
+  h1 { font-size: 1.6rem; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap-wide">
+<div class="wrap">
+  <span class="kicker">Seu diagnóstico</span>
+  <h1>Perfil Racional</h1>
+  <p class="lead">Você quer método claro com marcos. O protocolo em 3 fases foi feito para você.</p>
+  <div class="card card-accent"><strong>Oferta recomendada:</strong> Método Consistência 90 · R$ 497</div>
+  <input class="input" placeholder="Seu melhor e-mail" type="email">
+  <a class="btn btn-block" href="index.html">VER PROTOCOLO COMPLETO</a>
+</div></div>
+</body>
+</html>

@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Trackeamento · Atribuição Determinística de Funil — Lendár[IA]</title>
+<meta name="description" content="Manual completo de rastreamento e atribuição: uma chave determinística única atravessando Meta/Google/YouTube → Landing Page → Hotmart → Meta CAPI → BI. Academia Lendár[IA].">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/tomorrow-night.min.css">
+<style>
+  :root{
+    /* Lendár[IA] dark-first */
+    --bg:#0A0A0B; --card:#141415; --card-2:#101011; --muted:#262626; --hairline:#292929;
+    --fg:#ECEAE6; --fg-dim:#9A958C; --fg-faint:#6B665E;
+    /* Gold ramp */
+    --gold:#C9B298; --gold-300:#DCCBB6; --gold-600:#AA967F; --gold-800:#615445; --gold-950:#1E170F;
+    --red:#FF3B30; --orange:#FF9500; --green:#34C759; --blue:#007AFF; --teal:#30B0C7;
+    --glow:0 0 15px rgba(201,178,152,.30); --glow-h:0 0 25px rgba(201,178,152,.5);
+    --serif:'Source Serif 4',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+    --disp:'Rajdhani',sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:24px}
+  body{font-family:var(--serif);font-size:19px;background:var(--bg);color:var(--fg);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 82% -8%,rgba(201,178,152,.06),transparent 42%),
+      radial-gradient(circle at 0% 100%,rgba(48,176,199,.04),transparent 40%)}
+  a{color:var(--gold);text-decoration:none}
+
+  /* ===== LAYOUT SHELL ===== */
+  .shell{display:grid;grid-template-columns:288px minmax(0,1fr);max-width:1320px;margin:0 auto;gap:0}
+  /* TOC */
+  .toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+    border-right:1px solid var(--hairline);padding:30px 22px 60px;background:linear-gradient(180deg,rgba(20,20,21,.5),transparent 30%)}
+  .toc::-webkit-scrollbar{width:7px}.toc::-webkit-scrollbar-thumb{background:var(--muted);border-radius:7px}
+  .toc .mark{font-family:var(--disp);font-weight:700;letter-spacing:.04em;font-size:16px;color:var(--gold);text-transform:uppercase;line-height:1.1}
+  .toc .mark b{color:var(--fg)}
+  .toc .mark-sub{font-family:var(--disp);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint);margin-top:6px;font-weight:600}
+  .toc nav{margin-top:24px}
+  .toc .part{font-family:var(--disp);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-600);font-weight:700;
+    margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--hairline)}
+  .toc a{display:flex;gap:9px;align-items:baseline;font-family:var(--sans);font-size:13px;color:var(--fg-dim);padding:5px 8px;border-radius:7px;
+    border-left:2px solid transparent;transition:.16s;line-height:1.3}
+  .toc a:hover{color:var(--fg);background:rgba(201,178,152,.05)}
+  .toc a.active{color:var(--gold);background:rgba(201,178,152,.08);border-left-color:var(--gold);box-shadow:var(--glow)}
+  .toc a .ix{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);flex-shrink:0;width:20px}
+  .toc a.active .ix{color:var(--gold-600)}
+
+  /* content */
+  .doc{padding:52px 48px 120px;min-width:0;max-width:1000px}
+
+  /* ===== HERO ===== */
+  header.hero{border-bottom:1px solid var(--hairline);padding-bottom:34px;margin-bottom:14px}
+  .brand{font-family:var(--disp);font-weight:700;letter-spacing:.04em;font-size:15px;color:var(--gold);text-transform:uppercase}
+  .brand b{color:var(--fg)}
+  .kicker{font-family:var(--disp);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-dim);font-weight:600;margin-top:18px}
+  h1{font-family:var(--disp);font-size:clamp(2.5rem,6vw,4rem);line-height:1.05;font-weight:700;margin:10px 0 16px;letter-spacing:-.02em}
+  h1 .au{font-family:var(--serif);font-style:normal;font-weight:400;color:var(--gold);background:none;-webkit-text-fill-color:initial}
+  .sub{font-family:var(--serif);font-size:1.3rem;color:var(--fg);max-width:65ch}
+  .sub em{font-family:var(--serif);font-style:italic;color:var(--gold-300)}
+  .pills{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+  .pill{display:inline-block;border:1px solid var(--gold-800);color:var(--gold);font-family:var(--disp);
+    font-weight:600;letter-spacing:.05em;font-size:12px;text-transform:uppercase;padding:6px 13px;border-radius:999px}
+  .pill.glow{box-shadow:var(--glow)}
+  .pill.dim{border-color:var(--hairline);color:var(--fg-dim)}
+
+  /* ===== SECTIONS ===== */
+  section{margin:64px 0;scroll-margin-top:24px}
+  h2{font-family:var(--disp);font-size:clamp(2rem,4vw,2.8rem);letter-spacing:-.01em;color:var(--fg);font-weight:600;line-height:1.1;
+    border-bottom:1px solid var(--hairline);padding-bottom:12px;margin-bottom:24px;display:flex;align-items:center;gap:11px}
+  h2::before{content:"";width:7px;height:7px;background:var(--gold);border-radius:50%;box-shadow:var(--glow);flex-shrink:0}
+  h2 .num{font-family:var(--mono);font-size:12px;color:var(--fg-faint);font-weight:500}
+  h3{font-family:var(--sans);font-size:1.25rem;font-weight:600;margin:30px 0 8px;color:var(--fg);line-height:1.2}
+  h4{font-family:var(--sans);font-size:1rem;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-600);font-weight:600;margin:24px 0 10px}
+  p{margin:12px 0;color:var(--fg);max-width:74ch}
+  p.lead{font-family:var(--serif);font-size:1.3rem;color:var(--fg);max-width:72ch}
+  em{font-family:var(--serif);font-style:italic;color:var(--gold-300)}
+  strong{color:var(--fg);font-weight:600}
+  .note{font-family:var(--sans);font-size:.9rem;color:var(--fg-dim);max-width:74ch}
+  .note b{color:var(--fg)}
+  ul,ol{margin:12px 0 12px 4px;padding-left:22px;color:var(--fg-dim);max-width:74ch}
+  li{margin:7px 0}li::marker{color:var(--gold-800)}
+  li b{color:var(--fg)}
+  code.kbd{font-family:var(--mono);font-size:.86em;background:var(--muted);color:var(--gold-300);
+    border:1px solid var(--hairline);border-radius:5px;padding:1px 6px}
+
+  /* ===== STATS ===== */
+  .grid{display:grid;gap:16px}
+  .g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  .stat{background:var(--card);border:1px solid var(--hairline);border-radius:14px;padding:20px}
+  .stat .n{font-family:var(--disp);font-size:34px;font-weight:700;line-height:1;color:var(--gold)}
+  .stat .l{font-family:var(--sans);font-size:13px;color:var(--fg-dim);margin-top:8px}
+
+  /* ===== CALLOUTS ===== */
+  .callout{border-radius:12px;padding:16px 18px;margin:18px 0;font-family:var(--sans);font-size:.95rem;border:1px solid var(--hairline);background:var(--card);position:relative;padding-left:46px}
+  .callout::before{position:absolute;left:16px;top:16px;font-family:var(--disp);font-weight:700;font-size:15px}
+  .callout .ct{font-family:var(--disp);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:12px;display:block;margin-bottom:4px}
+  .callout p{margin:4px 0;max-width:none}
+  .callout.tip{border-color:var(--gold-800);box-shadow:var(--glow)}
+  .callout.tip::before{content:"★";color:var(--gold)} .callout.tip .ct{color:var(--gold)}
+  .callout.warn{border-color:rgba(255,149,0,.35);background:rgba(255,149,0,.05)}
+  .callout.warn::before{content:"▲";color:var(--orange)} .callout.warn .ct{color:var(--orange)}
+  .callout.danger{border-color:rgba(255,59,48,.35);background:rgba(255,59,48,.05)}
+  .callout.danger::before{content:"●";color:var(--red)} .callout.danger .ct{color:#FF8A82}
+  .callout.info{border-color:rgba(48,176,199,.3);background:rgba(48,176,199,.04)}
+  .callout.info::before{content:"i";color:var(--teal);font-style:italic} .callout.info .ct{color:var(--teal)}
+
+  /* ===== TABLES ===== */
+  .tbl-wrap{overflow-x:auto;margin:16px 0;border:1px solid var(--hairline);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.88rem;min-width:520px}
+  th{font-family:var(--disp);text-align:left;color:var(--gold);font-weight:600;font-size:11.5px;letter-spacing:.08em;
+    text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--hairline);background:var(--card-2);position:sticky;top:0}
+  td{padding:11px 14px;border-bottom:1px solid rgba(41,41,41,.6);color:var(--fg-dim);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:rgba(201,178,152,.03)}
+  td:first-child{color:var(--fg);font-weight:500}
+  td b,th b{color:var(--gold-300)}
+  .pri{font-family:var(--mono);font-size:11px;font-weight:600;border-radius:5px;padding:2px 7px;white-space:nowrap}
+  .pri.det{background:rgba(52,199,89,.12);color:var(--green)}
+  .pri.strong{background:rgba(201,178,152,.14);color:var(--gold)}
+  .pri.med{background:rgba(255,149,0,.12);color:var(--orange)}
+  .pri.weak{background:rgba(107,102,94,.18);color:var(--fg-dim)}
+  .pri.none{background:rgba(255,59,48,.1);color:#FF8A82}
+
+  /* ===== CODE ===== */
+  .code{background:var(--card-2);border:1px solid var(--hairline);border-radius:12px;margin:16px 0;overflow:hidden}
+  .code-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:9px 14px;border-bottom:1px solid var(--hairline);background:linear-gradient(90deg,rgba(201,178,152,.05),transparent)}
+  .code-head .fn{font-family:var(--mono);font-size:12px;color:var(--gold-300);font-weight:500}
+  .code-head .lang{font-family:var(--disp);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-faint);font-weight:600}
+  pre{margin:0;padding:16px 18px;overflow-x:auto}
+  pre code,code{font-family:var(--mono);font-size:12.8px;line-height:1.65}
+  pre::-webkit-scrollbar{height:8px}pre::-webkit-scrollbar-thumb{background:var(--muted);border-radius:8px}
+  /* on-brand highlight overrides */
+  .hljs{color:var(--fg);background:transparent}
+  .hljs-comment,.hljs-quote{color:var(--fg-faint);font-style:italic}
+  .hljs-keyword,.hljs-selector-tag,.hljs-literal,.hljs-section,.hljs-link{color:var(--gold)}
+  .hljs-built_in,.hljs-name,.hljs-title.function_,.hljs-title{color:var(--gold-300)}
+  .hljs-string,.hljs-attr,.hljs-template-tag,.hljs-template-variable,.hljs-addition,.hljs-meta-string{color:#9CC8A0}
+  .hljs-number,.hljs-meta{color:var(--teal)}
+  .hljs-attribute,.hljs-variable,.hljs-tag{color:#DCCBB6}
+  .hljs-type,.hljs-class .hljs-title{color:var(--gold)}
+  .hljs-deletion{color:var(--orange)}
+  .hljs-symbol,.hljs-bullet{color:var(--gold-600)}
+
+  /* ===== MERMAID ===== */
+  .diagram{background:var(--card-2);border:1px solid var(--hairline);border-radius:14px;padding:22px;margin:18px 0;text-align:center;overflow-x:auto}
+  .mermaid{display:inline-block;min-width:100%}
+  .dcap{font-size:12.5px;color:var(--fg-faint);margin-top:10px;font-family:var(--disp);letter-spacing:.04em;text-transform:uppercase}
+
+  /* ===== KEYCHAIN visual ===== */
+  .chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:18px 0;font-family:var(--disp);font-size:12.5px;font-weight:600}
+  .chain .node{background:var(--card);border:1px solid var(--hairline);border-radius:8px;padding:8px 13px;color:var(--fg-dim)}
+  .chain .node.hot{border-color:var(--gold);color:var(--gold);box-shadow:var(--glow)}
+  .chain .arr{color:var(--gold-800);font-size:16px}
+
+  /* ===== PHASE cards ===== */
+  .phase{background:var(--card);border:1px solid var(--hairline);border-radius:14px;padding:22px 24px;margin:14px 0;position:relative}
+  .phase::before{content:"";position:absolute;top:0;left:24px;right:24px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.45}
+  .phase .pn{font-family:var(--disp);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+  .phase .pt{font-family:var(--sans);font-size:1.4rem;font-weight:600;color:var(--fg);margin:3px 0 4px}
+  .phase .obj{font-family:var(--sans);font-size:.9rem;color:var(--fg-dim);margin-bottom:10px}
+  .dod{font-family:var(--sans);font-size:.8rem;color:var(--green);background:rgba(52,199,89,.06);border:1px solid rgba(52,199,89,.18);border-radius:9px;padding:10px 12px;margin-top:12px}
+  .dod b{color:var(--green)}
+
+  /* ===== CLASS badges ===== */
+  .cls{display:grid;grid-template-columns:60px 1fr;gap:14px;align-items:center;background:var(--card);border:1px solid var(--hairline);border-radius:12px;padding:16px 18px;margin:10px 0}
+  .cls .lt{font-family:var(--disp);font-weight:700;font-size:34px;line-height:1;text-align:center;color:var(--gold)}
+  .cls.a .lt{color:var(--green)} .cls.b .lt{color:var(--gold)} .cls.c .lt{color:var(--gold-600)} .cls.d .lt{color:var(--orange)} .cls.e .lt{color:#FF8A82}
+  .cls .ct{font-family:var(--disp);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:13px;color:var(--fg)}
+  .cls .cd{font-family:var(--sans);font-size:.9rem;color:var(--fg-dim);margin-top:2px}
+  .cls code{font-family:var(--mono);font-size:11.5px;color:var(--gold-300)}
+
+  footer{margin-top:70px;border-top:1px solid var(--hairline);padding-top:22px;font-size:12.5px;color:var(--fg-faint);max-width:80ch}
+  footer code{font-family:var(--mono);color:var(--gold-300);font-size:11.5px}
+  footer b{color:var(--fg-dim)}
+  .src-ref{font-size:12px;color:var(--fg-faint);font-style:italic;margin-top:4px}
+
+  /* mobile */
+  .menu-btn{display:none;position:fixed;top:14px;right:14px;z-index:50;background:var(--card);border:1px solid var(--gold-800);
+    color:var(--gold);font-family:var(--disp);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+    padding:9px 14px;border-radius:10px;box-shadow:var(--glow);cursor:pointer}
+  @media(max-width:980px){
+    .shell{grid-template-columns:1fr}
+    .toc{position:fixed;left:0;top:0;z-index:40;width:300px;height:100vh;transform:translateX(-105%);transition:.25s;
+      background:var(--bg);box-shadow:0 0 40px rgba(0,0,0,.6)}
+    .toc.open{transform:translateX(0)}
+    .menu-btn{display:block}
+    .doc{padding:64px 22px 100px}
+    .g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){.g4{grid-template-columns:1fr}.chain{font-size:11px}}
+</style>
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn">☰ Índice</button>
+
+<div class="shell">
+
+  <!-- ===================== TOC ===================== -->
+  <aside class="toc" id="toc">
+    <div class="mark">Lendár<b>[IA]</b></div>
+    <div class="mark-sub">Manual de Trackeamento</div>
+    <nav>
+      <div class="part">Parte I · Diagnóstico</div>
+      <a href="#problema"><span class="ix">00</span><span>O funil quebrado</span></a>
+      <a href="#gaps"><span class="ix">01</span><span>Mapa dos gaps</span></a>
+      <a href="#principio"><span class="ix">02</span><span>O princípio central</span></a>
+
+      <div class="part">Parte II · Arquitetura</div>
+      <a href="#arquitetura"><span class="ix">03</span><span>Arquitetura-alvo</span></a>
+      <a href="#verdades"><span class="ix">04</span><span>As três verdades</span></a>
+      <a href="#ledger"><span class="ix">05</span><span>Tracking Ledger</span></a>
+      <a href="#ids"><span class="ix">06</span><span>Hierarquia de IDs</span></a>
+
+      <div class="part">Parte III · Implementação</div>
+      <a href="#tracker"><span class="ix">07</span><span>Tracker first-party</span></a>
+      <a href="#checkout"><span class="ix">08</span><span>Decoração de checkout</span></a>
+      <a href="#clique"><span class="ix">09</span><span>Instrumentar o clique</span></a>
+      <a href="#webhook"><span class="ix">10</span><span>Webhook Hotmart</span></a>
+      <a href="#resolver"><span class="ix">11</span><span>Attribution Resolver</span></a>
+      <a href="#capi"><span class="ix">12</span><span>Meta CAPI + dedup</span></a>
+
+      <div class="part">Parte IV · Operação</div>
+      <a href="#classes"><span class="ix">13</span><span>As 5 classes de venda</span></a>
+      <a href="#dashboard"><span class="ix">14</span><span>Dashboard de gaps</span></a>
+      <a href="#matriz"><span class="ix">15</span><span>Matriz gap → correção</span></a>
+      <a href="#plano"><span class="ix">16</span><span>Plano de execução</span></a>
+      <a href="#testes"><span class="ix">17</span><span>Testes obrigatórios</span></a>
+      <a href="#inevitavel"><span class="ix">18</span><span>Gaps inevitáveis</span></a>
+      <a href="#glossario"><span class="ix">19</span><span>Glossário</span></a>
+    </nav>
+  </aside>
+
+  <!-- ===================== DOC ===================== -->
+  <main class="doc">
+
+  <header class="hero">
+    <div class="brand">Lendár<b>[IA]</b> · Academia Lendária</div>
+    <div class="kicker">Manual técnico · Atribuição determinística de funil · v1.0</div>
+    <h1>Uma chave única atravessando <span class="au">do anúncio à venda</span></h1>
+    <p class="sub">O problema nunca foi só <em>"a UTM não chega"</em>. É o funil de dados quebrando em sete transições — da mídia à landing, da landing ao checkout, do checkout ao webhook, do webhook ao banco, do banco ao Meta. Este manual ensina a costurar tudo com <strong>um ID curto e determinístico</strong> que sobrevive a todas elas. Clareza é uma arma: depois daqui, cada venda sem origem passa a ter um motivo técnico — não uma sensação.</p>
+    <div class="pills">
+      <span class="pill glow">7 transições mapeadas</span>
+      <span class="pill">chave: <code class="kbd" style="border:0;background:transparent;color:inherit;padding:0">sck</code> curto</span>
+      <span class="pill">Hotmart · Meta CAPI · BI</span>
+      <span class="pill dim">de ~15–20% → quase tudo determinístico</span>
+    </div>
+  </header>
+
+  <!-- ============ 00 PROBLEMA ============ -->
+  <section id="problema">
+    <h2><span class="num">00</span> O funil quebrado</h2>
+    <p class="lead">A venda atravessa sete fronteiras. Em cada uma, um dado pode cair. Hoje parte da captura funciona — mas falta uma chave determinística única costurando o caminho inteiro até a compra.</p>
+
+    <p>O sintoma que você descreveu funciona <strong>no cenário controlado</strong>: usuário entra na landing com UTM → fecha → volta no mesmo navegador → compra → a UTM é recuperada. Isso prova que o tracker já <strong>persiste o first touch no mesmo ambiente</strong>. O problema aparece quando o usuário muda de caminho, muda de plano, clica em links diferentes, chega ao checkout sem os parâmetros, compra fora da janela do Meta — ou quando a Hotmart não devolve a origem do jeito esperado.</p>
+
+    <h4>As 7 transições onde o dado pode cair</h4>
+    <div class="chain">
+      <span class="node hot">Mídia</span><span class="arr">→</span>
+      <span class="node">Landing Page</span><span class="arr">→</span>
+      <span class="node">Banco próprio</span><span class="arr">→</span>
+      <span class="node">Checkout Hotmart</span><span class="arr">→</span>
+      <span class="node">Webhook/API</span><span class="arr">→</span>
+      <span class="node">Banco</span><span class="arr">→</span>
+      <span class="node hot">Meta CAPI</span><span class="arr">→</span>
+      <span class="node">BI / decisão de mídia</span>
+    </div>
+
+    <div class="grid g4" style="margin-top:24px">
+      <div class="stat"><div class="n">7</div><div class="l">transições onde o dado quebra hoje</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">chave determinística que falta atravessar tudo</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">verdades distintas a separar (BI · Hotmart · Meta)</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">classes de venda no final (A → E)</div></div>
+    </div>
+
+    <div class="callout tip">
+      <span class="ct">A tese deste manual</span>
+      <p>Trate a Hotmart menos como <em>"a fonte final da verdade de UTM"</em> e mais como uma camada que carrega um <strong>ID curto de rastreio</strong> até a venda. A inteligência completa da campanha mora no seu banco; a Hotmart só precisa devolver a chave que reabre essa porta.</p>
+    </div>
+  </section>
+
+  <!-- ============ 01 GAPS ============ -->
+  <section id="gaps">
+    <h2><span class="num">01</span> Mapa dos gaps prováveis</h2>
+    <p class="note">Onde o funil provavelmente está vazando hoje — sintoma observável e causa-raiz técnica. Use como checklist de auditoria inicial.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:24%">Gap</th><th style="width:34%">Sintoma</th><th>Causa provável</th></tr></thead>
+      <tbody>
+        <tr><td>UTM na LP, ausente na Hotmart</td><td>Banco interno tem origem; Hotmart não</td><td>Link de checkout não decorado no clique, ou um CTA/plano usa link diferente</td></tr>
+        <tr><td>Venda trimestral sem origem</td><td>Anúncio/LP vende o trimestral, origem fica desconhecida</td><td>Link do trimestral não passa os mesmos parâmetros do anual</td></tr>
+        <tr><td>Meta não aprende</td><td>Há indício interno de venda, mas o Ads Manager não registra</td><td>Purchase não chega via Pixel/CAPI com identificadores fortes, ou está fora da janela</td></tr>
+        <tr><td>Hotmart recebe parcialmente</td><td>Algumas vendas têm origem, outras não</td><td><code class="kbd">sck</code> inválido, longo, com caractere proibido, ou perda em redirecionamento</td></tr>
+        <tr><td>Tracker funciona "às vezes"</td><td>Dados bons em alguns períodos, ruins em outros</td><td>Falta auditoria por etapa: visita → clique → URL final → webhook → CAPI</td></tr>
+        <tr><td>Compra multitoque</td><td>Veio do Meta, comprou depois via Google/orgânico</td><td>Jornada sem modelo interno separado do modelo do Meta</td></tr>
+        <tr><td>Compra cross-device</td><td>Clicou no celular, comprou no desktop</td><td>Sem e-mail/login antes do checkout — não há match determinístico</td></tr>
+        <tr><td>iOS / Safari / adblock</td><td>Perda de cookies, click IDs e eventos browser-side</td><td>ITP no WebKit, bloqueio de terceiros, expiração de storage</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout warn">
+      <span class="ct">Limite honesto de privacidade</span>
+      <p>A Apple mantém prevenção de tracking (ITP) no WebKit/Safari por padrão, e o App Tracking Transparency exige permissão em apps. Parte da perda <strong>nunca será 100% recuperável só com script client-side</strong>. A resposta é mover o peso para o server-side (webhook → CAPI) — não brigar com o browser.</p>
+    </div>
+  </section>
+
+  <!-- ============ 02 PRINCÍPIO ============ -->
+  <section id="principio">
+    <h2><span class="num">02</span> O princípio central da correção</h2>
+    <p class="lead">A Hotmart não deve carregar a UTM inteira. Ela deve carregar um ID curto.</p>
+    <p>O erro comum é tentar enfiar toda a inteligência da campanha dentro do <code class="kbd">sck</code>. Isso é frágil — e a própria Hotmart impõe limites que derrubam essa abordagem:</p>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">❌ anti-pattern — frágil, estoura o limite</span><span class="lang">text</span></div>
+<pre><code class="language-plaintext">sck=facebook_cpc_campanha_x_conjunto_y_criativo_z_publico_abc</code></pre>
+    </div>
+
+    <div class="callout danger">
+      <span class="ct">Restrições da Hotmart para código de campanha</span>
+      <p><strong>Máximo 30 caracteres</strong> · pipe <code class="kbd">|</code> permitido como separador · underscore <code class="kbd">_</code> <strong>NÃO permitido</strong> (reservado para uso interno). Um nome longo de campanha viola todas as três.</p>
+    </div>
+
+    <p>O desenho correto: o <code class="kbd">sck</code> é apenas uma <strong>chave de busca curta</strong>. Toda a inteligência fica no seu banco, indexada por essa chave.</p>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">✓ o sck é só a chave</span><span class="lang">text</span></div>
+<pre><code class="language-plaintext">sck=la26fb7k92        ← 10 chars, sem underscore, determinístico
+
+la26fb7k92  →  { anon_id, session_id, first_touch, last_touch,
+                 utm_source, utm_medium, utm_campaign, utm_content, utm_term,
+                 fbclid, fbc, fbp, gclid, landing_page, checkout_button,
+                 plano, oferta, timestamp }</code></pre>
+    </div>
+
+    <p>Mesmo que a Hotmart nunca mostre a UTM completa no dashboard, basta ela devolver o <code class="kbd">sck</code> no webhook ou no histórico para você <strong>reconstruir a origem internamente</strong>. A documentação de webhook da Hotmart expõe um objeto <code class="kbd">origin</code> com campos como <code class="kbd">sck</code>, <code class="kbd">src</code> e <code class="kbd">xcode</code> — e é o webhook que notifica sua estrutura nos eventos de produto (pagamento confirmado, reembolso, recorrência).</p>
+
+    <div class="callout info">
+      <span class="ct">SCK vs SRC vs UTM — qual usar</span>
+      <p>Para links diretos de checkout <code class="kbd">pay.hotmart.com</code>, a Hotmart orienta <strong>SCK ou UTM</strong>. Para HotLinks, afiliados ou páginas alternativas (<code class="kbd">go.hotmart.com</code>), o parâmetro adequado é <strong>SRC</strong>. Evite <code class="kbd">SCR</code> — não existe no material oficial (UTM, SRC e SCK); se aparecer no vocabulário interno, trate como ruído/erro de nomenclatura.</p>
+    </div>
+  </section>
+
+  <!-- ============ 03 ARQUITETURA ============ -->
+  <section id="arquitetura">
+    <h2><span class="num">03</span> Arquitetura-alvo</h2>
+    <p class="note">O mapa completo. Cada aresta é uma transição onde a chave determinística precisa sobreviver. Note os dois caminhos para o Meta: <strong>InitiateCheckout no clique</strong> (browser) e <strong>Purchase no webhook aprovado</strong> (server).</p>
+
+    <div class="diagram">
+      <div class="mermaid">
+flowchart TD
+    A["Anúncio · Orgânico · Search · YouTube"] --> B["Landing Page"]
+    B --> C["Tracker first-party"]
+    C --> D[("Banco · touchpoints + identidade")]
+    B --> E["Clique no botão de compra"]
+    E --> F["Gera checkout_click_id"]
+    F --> G["URL Hotmart · sck + UTMs sanitizadas"]
+    G --> H["Checkout Hotmart"]
+    H --> I["Webhook Hotmart · venda/status/origem"]
+    I --> J["Attribution Resolver interno"]
+    J --> K["BI · first/last/paid/assist · plano · canal"]
+    I --> L["Meta CAPI · Purchase"]
+    E --> M["Pixel/CAPI · InitiateCheckout"]
+    L --> N["Meta Events Manager / Ads Manager"]
+    M --> N
+    F --> D
+      </div>
+      <div class="dcap">Fig. 1 — Funil determinístico de ponta a ponta</div>
+    </div>
+
+    <p>Três princípios de leitura desta arquitetura:</p>
+    <ul>
+      <li><strong>O banco é a fonte de verdade</strong>, não a Hotmart nem o Meta. Eles são camadas que carregam ou recebem a chave.</li>
+      <li><strong>A venda nasce do webhook</strong> (server-side), não do Pixel do browser. O Pixel alimenta os eventos <em>anteriores</em> à compra.</li>
+      <li><strong>O Meta recebe dois sinais</strong>: InitiateCheckout no clique real (browser) e Purchase no pagamento aprovado (server). Isso desenha a trilha "viu LP → clicou → comprou" para o algoritmo.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 04 VERDADES ============ -->
+  <section id="verdades">
+    <h2><span class="num">04</span> Separe três verdades diferentes</h2>
+    <p class="lead">Hoje você tenta usar uma leitura única para tudo. Esse é o erro de fundo. São três sistemas com perguntas diferentes — e respostas que <em>não precisam coincidir</em>.</p>
+
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Camada</th><th>Pergunta que responde</th><th>Fonte principal</th></tr></thead>
+      <tbody>
+        <tr><td><b>BI interno</b></td><td>De onde as vendas vieram <em>de verdade</em>?</td><td>Banco próprio + webhook Hotmart + touchpoints</td></tr>
+        <tr><td><b>Hotmart Analytics</b></td><td>O que a Hotmart <em>recebeu</em> como origem?</td><td>SCK / SRC / UTM no checkout</td></tr>
+        <tr><td><b>Meta Ads</b></td><td>O que o Meta consegue <em>atribuir e otimizar</em>?</td><td>Pixel + CAPI + janela de atribuição</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout tip">
+      <span class="ct">Por que isso muda o jogo</span>
+      <p>Uma venda pode ser atribuída internamente ao Meta como <strong>first paid touch</strong> e <em>não</em> aparecer no Ads Manager — porque ficou fora da janela (1 ou 7 dias click-through, no padrão Meta), sem match suficiente, ou sem o sinal correto. Os dois fatos coexistem. O KPI nunca deve ser <code class="kbd">Meta Ads Manager == BI interno</code>.</p>
+    </div>
+    <p>O KPI correto: <strong>eventos elegíveis enviados ao Meta com sucesso</strong> + alta qualidade de match + deduplicação correta + BI interno explicando a jornada completa.</p>
+  </section>
+
+  <!-- ============ 05 LEDGER ============ -->
+  <section id="ledger">
+    <h2><span class="num">05</span> O Tracking Ledger</h2>
+    <p>Você precisa de um <strong>livro-razão de tracking</strong> — não uma tabela solta de UTMs. Cinco tabelas costuram identidade, toque, clique, venda e atribuição. Schema mínimo em PostgreSQL:</p>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">visitors · touchpoints — identidade e toque</span><span class="lang">sql</span></div>
+<pre><code class="language-sql">CREATE TABLE visitors (
+  anon_id          TEXT PRIMARY KEY,           -- cookie first-party
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_seen_at     TIMESTAMPTZ,
+  first_user_agent TEXT,
+  first_ip_hash    TEXT,                        -- SHA-256, nunca IP cru
+  current_fbp      TEXT,
+  current_fbc      TEXT,
+  consent_status   TEXT                         -- granted | denied | unknown
+);
+
+CREATE TABLE touchpoints (
+  touch_id            BIGSERIAL PRIMARY KEY,
+  anon_id             TEXT REFERENCES visitors(anon_id),
+  ts                  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  landing_url         TEXT,
+  referrer            TEXT,
+  source_type         TEXT,                     -- paid|organic|direct|referral|email|unknown
+  utm_source          TEXT, utm_medium   TEXT,
+  utm_campaign        TEXT, utm_content  TEXT, utm_term TEXT,
+  fbclid              TEXT, gclid TEXT, ttclid TEXT,
+  fbc                 TEXT, fbp   TEXT,
+  first_touch_flag    BOOLEAN DEFAULT false,
+  last_paid_touch_flag BOOLEAN DEFAULT false
+);
+CREATE INDEX ON touchpoints (anon_id, ts);</code></pre>
+    </div>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">checkout_clicks — o elo que vira o sck</span><span class="lang">sql</span></div>
+<pre><code class="language-sql">CREATE TABLE checkout_clicks (
+  checkout_click_id   TEXT PRIMARY KEY,         -- ESTE valor vai no sck
+  anon_id             TEXT REFERENCES visitors(anon_id),
+  touch_id_at_click   BIGINT REFERENCES touchpoints(touch_id),
+  first_touch_id      BIGINT,
+  last_paid_touch_id  BIGINT,
+  plan_id             TEXT, offer_id TEXT, product_id TEXT,
+  button_id           TEXT, page_id  TEXT,
+  original_checkout_url TEXT,
+  final_checkout_url    TEXT,                    -- prova da URL que saiu
+  sck_sent            TEXT,
+  utms_sent           JSONB,
+  clicked_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+  user_agent          TEXT
+);</code></pre>
+    </div>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">hotmart_orders · attribution_results — venda e veredito</span><span class="lang">sql</span></div>
+<pre><code class="language-sql">CREATE TABLE hotmart_orders (
+  hotmart_transaction_id TEXT PRIMARY KEY,
+  buyer_email_hash    TEXT, buyer_phone_hash TEXT,   -- SHA-256
+  product_id          TEXT, plan_id TEXT, offer_id TEXT,
+  status              TEXT,                     -- normalizado (ver §10)
+  payment_method      TEXT,
+  approved_at         TIMESTAMPTZ,
+  value               NUMERIC(12,2), currency TEXT,
+  origin_sck          TEXT, origin_src TEXT, origin_xcode TEXT,
+  utm_received        JSONB,
+  raw_payload         JSONB NOT NULL            -- payload bruto, sempre
+);
+
+CREATE TABLE attribution_results (
+  hotmart_transaction_id TEXT PRIMARY KEY REFERENCES hotmart_orders,
+  attribution_status  TEXT,
+  match_method        TEXT,                     -- sck|email|anon|fbc|probabilistic|...
+  confidence          TEXT,                     -- deterministic|strong|medium|weak|unmatched
+  first_touch_source  TEXT,
+  last_touch_source   TEXT,
+  last_paid_source    TEXT,
+  assisted_sources    TEXT[],
+  attributed_plan     TEXT, attributed_campaign TEXT,
+  attributed_adset    TEXT, attributed_ad TEXT,
+  resolved_at         TIMESTAMPTZ DEFAULT now()
+);</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="ct">A virada de chave conceitual</span>
+      <p>Você para de perguntar <em>"a Hotmart tem a UTM?"</em> e passa a perguntar <strong>"a Hotmart devolveu alguma chave que me permite reencontrar a sessão e o clique no meu banco?"</strong>. A primeira pergunta depende da Hotmart; a segunda depende só de você.</p>
+    </div>
+  </section>
+
+  <!-- ============ 06 IDS ============ -->
+  <section id="ids">
+    <h2><span class="num">06</span> Hierarquia de IDs</h2>
+    <p class="note">IDs diferentes para problemas diferentes. Não tente resolver tudo com um. O elo crítico: <code class="kbd">checkout_click_id == valor enviado no sck</code>.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>ID</th><th>Função</th><th>Onde existe</th></tr></thead>
+      <tbody>
+        <tr><td><code class="kbd">anon_id</code></td><td>Identifica o visitante no domínio próprio</td><td>Cookie first-party + banco</td></tr>
+        <tr><td><code class="kbd">session_id</code></td><td>Identifica uma sessão</td><td>Browser + banco</td></tr>
+        <tr><td><code class="kbd">touch_id</code></td><td>Identifica uma entrada com UTM/referrer/click ID</td><td>Banco</td></tr>
+        <tr><td><b><code class="kbd">checkout_click_id</code></b></td><td><b>O clique que mandou para a Hotmart</b></td><td><b>Banco + <code class="kbd">sck</code></b></td></tr>
+        <tr><td><code class="kbd">hotmart_transaction_id</code></td><td>Identifica a venda</td><td>Hotmart + banco</td></tr>
+        <tr><td><code class="kbd">meta_event_id</code></td><td>Deduplica evento Pixel/CAPI</td><td>Pixel/CAPI</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>Exemplo de URL final bem-formada, com a chave determinística e UTMs sanitizadas convivendo com parâmetros próprios do checkout:</p>
+    <div class="code">
+      <div class="code-head"><span class="fn">URL de checkout decorada</span><span class="lang">text</span></div>
+<pre><code class="language-plaintext">https://pay.hotmart.com/XYZ?checkoutMode=10&amp;sck=la26fb7k92&amp;utm_source=facebook&amp;utm_medium=paid-social&amp;utm_campaign=campanha-a</code></pre>
+    </div>
+    <div class="callout warn">
+      <span class="ct">Nunca concatene strings de URL à mão</span>
+      <p>A Hotmart orienta <code class="kbd">?</code> para o primeiro parâmetro e <code class="kbd">&amp;</code> para os seguintes. Isso é trabalho de um <strong>URL builder</strong> (§08) — concatenação manual é a origem clássica do bug <code class="kbd">?sck=</code> em link que já tinha <code class="kbd">?</code>.</p>
+    </div>
+  </section>
+
+  <!-- ============ 07 TRACKER ============ -->
+  <section id="tracker">
+    <h2><span class="num">07</span> Tracker first-party na Landing</h2>
+    <p>Carregado o mais cedo possível no <code class="kbd">&lt;head&gt;</code>. Persiste o <code class="kbd">anon_id</code>, lê todos os parâmetros, deriva o <code class="kbd">fbc</code> a partir do <code class="kbd">fbclid</code> quando o Pixel ainda não o setou, e grava o toque no ledger via <code class="kbd">sendBeacon</code> (sobrevive à navegação).</p>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">tracker.js · first-party</span><span class="lang">javascript</span></div>
+<pre><code class="language-javascript">(function () {
+  const LEDGER = '/api/track';
+  const YEAR = 365;
+
+  const uid = (p) =&gt; p + Date.now().toString(36) +
+    Math.abs((crypto.getRandomValues(new Uint32Array(1))[0])).toString(36);
+  const getCookie = (n) =&gt; (document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)')||[])[2];
+  const setCookie = (n,v,d) =&gt; { const e=new Date(Date.now()+d*864e5).toUTCString();
+    document.cookie = `${n}=${v}; expires=${e}; path=/; SameSite=Lax`; };
+
+  // 1) identidade persistente (1ª-party — sobrevive a ITP melhor que 3rd-party)
+  let anon = getCookie('al_anon');
+  if (!anon) { anon = uid('an_'); setCookie('al_anon', anon, YEAR); }
+  let sid = sessionStorage.getItem('al_sid') || uid('ses_');
+  sessionStorage.setItem('al_sid', sid);
+
+  // 2) lê TODOS os parâmetros relevantes da URL
+  const p = new URLSearchParams(location.search);
+  const touch = {
+    type: 'touch', anon_id: anon, session_id: sid,
+    landing_url: location.href, referrer: document.referrer,
+    utm_source: p.get('utm_source'),   utm_medium: p.get('utm_medium'),
+    utm_campaign: p.get('utm_campaign'), utm_content: p.get('utm_content'),
+    utm_term: p.get('utm_term'),
+    fbclid: p.get('fbclid'), gclid: p.get('gclid'), ttclid: p.get('ttclid'),
+    fbc: getCookie('_fbc'), fbp: getCookie('_fbp'),
+    ts: Date.now(), user_agent: navigator.userAgent
+  };
+
+  // 3) deriva fbc do fbclid se o Pixel ainda não escreveu o cookie _fbc
+  if (!touch.fbc && touch.fbclid)
+    touch.fbc = `fb.1.${Date.now()}.${touch.fbclid}`;
+
+  // 4) grava o toque (server classifica source_type e devolve touch_id)
+  navigator.sendBeacon(LEDGER, JSON.stringify(touch));
+})();</code></pre>
+    </div>
+
+    <p>No servidor, classifique o <code class="kbd">source_type</code> de forma determinística — isso garante que "Direct" vire <em>direct</em> e não <em>unknown</em>:</p>
+    <div class="code">
+      <div class="code-head"><span class="fn">classifySource() · server-side</span><span class="lang">javascript</span></div>
+<pre><code class="language-javascript">function classifySource(t) {
+  const paidMedium = /cpc|ppc|paid|paid[-_]?social|display|video/i;
+  if (t.fbclid || t.gclid || t.ttclid) return 'paid';
+  if (t.utm_medium && paidMedium.test(t.utm_medium)) return 'paid';
+  if (t.utm_medium && /email|newsletter|crm/i.test(t.utm_medium)) return 'email';
+  if (t.utm_source || t.utm_medium) return 'referral';
+  if (!t.referrer) return 'direct';                 // sem referrer = direct, não unknown
+  const host = (() =&gt; { try { return new URL(t.referrer).hostname; } catch { return ''; } })();
+  if (/google\.|bing\.|duckduckgo|search\.yahoo/.test(host)) return 'organic';
+  if (/instagram|facebook|youtube|tiktok|t\.co/.test(host)) return 'referral';
+  return 'referral';
+}</code></pre>
+    </div>
+    <div class="callout info">
+      <span class="ct">First touch é sagrado</span>
+      <p>O server grava cada toque, mas <strong>nunca sobrescreve o first touch</strong>. Se o visitante volta sem UTM (digitou o domínio), o toque atual é <em>direct</em>, mas o <code class="kbd">first_touch_flag</code> do toque pago original permanece. É isso que resolve o cenário "entrou com UTM → fechou → voltou direto → comprou".</p>
+    </div>
+  </section>
+
+  <!-- ============ 08 CHECKOUT ============ -->
+  <section id="checkout">
+    <h2><span class="num">08</span> Decoração de checkout</h2>
+    <p class="lead">Provavelmente o maior gap. Todo botão precisa passar pelo mesmo pipeline — nenhum link hardcoded direto para a Hotmart.</p>
+
+    <h4>1 · Link Registry — declare todos os CTAs</h4>
+    <p>Um registro interno de todos os botões e ofertas. Sem isso, o plano trimestral escapa.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>button_id</th><th>página</th><th>plano</th><th>oferta</th><th>hotmart_base_url</th><th>ativo?</th></tr></thead>
+      <tbody>
+        <tr><td>hero_anual</td><td>/lp-principal</td><td>anual</td><td>offer_1</td><td>pay.hotmart.com/AAA</td><td>sim</td></tr>
+        <tr><td>hero_trimestral</td><td>/lp-principal</td><td>trimestral</td><td>offer_2</td><td>pay.hotmart.com/BBB</td><td>sim</td></tr>
+        <tr><td>footer_anual</td><td>/lp-principal</td><td>anual</td><td>offer_1</td><td>pay.hotmart.com/AAA</td><td>sim</td></tr>
+        <tr><td>modal_trimestral</td><td>/lp-principal</td><td>trimestral</td><td>offer_2</td><td>pay.hotmart.com/BBB</td><td>sim</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>2 · Declare o plano no botão — o script não adivinha</h4>
+    <div class="code">
+      <div class="code-head"><span class="fn">CTA com data-* — toda informação declarada</span><span class="lang">html</span></div>
+<pre><code class="language-html">&lt;a href="https://pay.hotmart.com/XYZ?checkoutMode=10"
+   data-checkout="hotmart"
+   data-product-id="academia-lendaria"
+   data-plan-id="trimestral"
+   data-offer-id="offer-tri-001"
+   data-button-id="hero-trimestral"&gt;
+  Assinar trimestral
+&lt;/a&gt;</code></pre>
+    </div>
+
+    <h4>3 · URL builder + sanitização — uma função única</h4>
+    <p>Preserva os parâmetros existentes (<code class="kbd">checkoutMode</code>, <code class="kbd">off</code>, <code class="kbd">split</code>, cupom), injeta o <code class="kbd">sck</code> curto e as UTMs sanitizadas, e deixa o <code class="kbd">URLSearchParams</code> resolver <code class="kbd">?</code> vs <code class="kbd">&amp;</code> e o encoding automaticamente.</p>
+    <div class="code">
+      <div class="code-head"><span class="fn">checkout-url.js</span><span class="lang">javascript</span></div>
+<pre><code class="language-javascript">const MAX_SCK = 30;
+
+// sck: só [a-zA-Z0-9-|], sem underscore, ≤ 30 chars
+export const sanitizeSck = (id) =&gt;
+  String(id).replace(/_/g, '-').replace(/[^a-zA-Z0-9\-|]/g, '').slice(0, MAX_SCK);
+
+// utm: minúsculas, sem underscore, URL-safe (set() já faz o encode final)
+const sanitizeUtm = (v) =&gt;
+  v == null ? null : String(v).trim().toLowerCase().replace(/_/g, '-');
+
+export function buildHotmartUrl(baseUrl, { checkoutClickId, utms = {} }) {
+  const url = new URL(baseUrl);                 // preserva checkoutMode, off, split...
+  url.searchParams.set('sck', sanitizeSck(checkoutClickId));   // a chave determinística
+  for (const k of ['source','medium','campaign','content','term']) {
+    const val = sanitizeUtm(utms[k]);
+    if (val) url.searchParams.set(`utm_${k}`, val);
+  }
+  return url.toString();   // ? vs & e encoding: responsabilidade do URLSearchParams
+}</code></pre>
+    </div>
+    <div class="callout danger">
+      <span class="ct">Regras de sanitização — não negociáveis</span>
+      <p>Sem underscore em <code class="kbd">sck</code>/<code class="kbd">src</code> · <code class="kbd">sck</code> ≤ 30 chars · só letras, números, hífen ou pipe · URL-encode em todos os valores · nunca concatene <code class="kbd">?</code> e <code class="kbd">&amp;</code> manualmente · preserve parâmetros existentes · não duplique <code class="kbd">utm_source</code> · nunca sobrescreva <code class="kbd">checkoutMode</code>, <code class="kbd">split</code>, cupom ou oferta. <strong>O nome inteiro da campanha NUNCA entra no <code class="kbd">sck</code>.</strong></p>
+    </div>
+
+    <h4>4 · Regra de roteamento SCK vs SRC</h4>
+    <div class="code">
+      <div class="code-head"><span class="fn">qual parâmetro usar por destino</span><span class="lang">text</span></div>
+<pre><code class="language-plaintext">Destino pay.hotmart.com (checkout direto):
+  → sck = {{checkout_click_id}}
+  → opcionalmente utm_source/medium/campaign/content/term
+
+Destino go.hotmart.com / HotLink / afiliado / página alternativa:
+  → src = {{codigo_curto}}
+  → e, se aplicável, UTMs sanitizadas</code></pre>
+    </div>
+  </section>
+
+  <!-- ============ 09 CLIQUE ============ -->
+  <section id="clique">
+    <h2><span class="num">09</span> Instrumentar o clique</h2>
+    <p>Você sabe que a LP capturou a UTM. Falta <strong>provar que a URL final enviada à Hotmart estava correta</strong>. Delegação de evento (funciona para botões em modal/popup/render tardio) + gravação do clique antes de redirecionar.</p>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">checkout-click.js · delegação + ledger + InitiateCheckout</span><span class="lang">javascript</span></div>
+<pre><code class="language-javascript">import { buildHotmartUrl } from './checkout-url.js';
+
+// delegação no document: pega botões que ainda nem existiam no load (modais, render tardio)
+document.addEventListener('click', async (e) =&gt; {
+  const a = e.target.closest('a[data-checkout="hotmart"]');
+  if (!a) return;
+  e.preventDefault();
+
+  const ctx = {
+    anon_id:    getCookie('al_anon'),
+    session_id: sessionStorage.getItem('al_sid'),
+    button_id:  a.dataset.buttonId,
+    plan_id:    a.dataset.planId,
+    offer_id:   a.dataset.offerId,
+    product_id: a.dataset.productId,
+    base_url:   a.getAttribute('href'),
+    fbc: getCookie('_fbc'), fbp: getCookie('_fbp'),
+    user_agent: navigator.userAgent
+  };
+
+  // server gera checkout_click_id, grava o clique e devolve as UTMs do touch
+  const { checkout_click_id, utms } = await fetch('/api/checkout-click', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(ctx)
+  }).then((r) =&gt; r.json());
+
+  const finalUrl = buildHotmartUrl(ctx.base_url, { checkoutClickId: checkout_click_id, utms });
+
+  // grava a URL final ANTES de sair (prova de auditoria) — beacon não bloqueia o redirect
+  navigator.sendBeacon('/api/checkout-final',
+    JSON.stringify({ checkout_click_id, final_url: finalUrl }));
+
+  // InitiateCheckout — event_id = checkout_click_id (dedup com a CAPI, §12)
+  if (window.fbq) fbq('track', 'InitiateCheckout', {
+    content_ids: [ctx.product_id], content_type: 'product'
+  }, { eventID: checkout_click_id });
+
+  location.href = finalUrl;
+});</code></pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="ct">A auditoria que fecha o diagnóstico</span>
+      <p>Com <code class="kbd">final_checkout_url</code> gravada, quando uma venda chega sem origem você responde mecanicamente: a venda veio de um clique nosso? O clique tinha <code class="kbd">sck</code>? A URL final tinha <code class="kbd">sck</code>? Se <strong>tinha e a Hotmart não devolveu</strong> → problema depois da LP. Se <strong>não tinha</strong> → problema de implementação da página/botão/script. O gap deixa de ser sensação.</p>
+    </div>
+    <div class="callout warn">
+      <span class="ct">Clique antes do script carregar</span>
+      <p>Se o JS pode não ter carregado no momento do clique, o link base deve apontar para uma <strong>rota interna de redirect</strong> (ex.: <code class="kbd">/go?b=hero_trimestral</code>) que decora server-side e faz <code class="kbd">302</code> para a Hotmart — em vez de depender 100% do JS client-side. Robustez &gt; elegância.</p>
+    </div>
+  </section>
+
+  <!-- ============ 10 WEBHOOK ============ -->
+  <section id="webhook">
+    <h2><span class="num">10</span> Webhook Hotmart como fonte de venda</h2>
+    <p class="lead">A venda não pode depender do Pixel do browser. A Hotmart envia o webhook ao seu servidor; o servidor grava o payload bruto <em>antes</em> de qualquer tratamento.</p>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">POST /webhooks/hotmart · Node/Express</span><span class="lang">javascript</span></div>
+<pre><code class="language-javascript">app.post('/webhooks/hotmart', express.json(), async (req, res) =&gt; {
+  // 1) valida autenticidade (hottok / assinatura — confirme o esquema da sua versão de API)
+  if (req.headers['x-hotmart-hottok'] !== process.env.HOTMART_HOTTOK)
+    return res.sendStatus(401);
+
+  const raw = req.body;
+  await db.insert('hotmart_orders_raw', { payload: raw, received_at: new Date() }); // bruto SEMPRE
+
+  // 2) extrai os campos (caminhos exatos variam por versão — valide no payload real)
+  const d = raw.data ?? raw;
+  const purchase = d.purchase ?? {};
+  const order = {
+    hotmart_transaction_id: purchase.transaction,
+    status:           normalizeStatus(purchase.status),       // ver tabela abaixo
+    payment_method:   purchase.payment?.type,
+    value:            purchase.price?.value,
+    currency:         purchase.price?.currency_value ?? 'BRL',
+    approved_at:      purchase.approved_date ? new Date(purchase.approved_date) : null,
+    origin_sck:       purchase.origin?.sck,                    // ← a chave de volta
+    origin_src:       purchase.origin?.src,
+    origin_xcode:     purchase.origin?.xcode,
+    product_id:       d.product?.id,
+    plan_id:          d.subscription?.plan?.name ?? d.purchase?.offer?.code,
+    buyer_email_hash: sha256(normalizeEmail(d.buyer?.email)),
+    buyer_phone_hash: sha256(normalizePhone(d.buyer?.checkout_phone)),
+    raw_payload:      raw
+  };
+  await db.upsert('hotmart_orders', order, 'hotmart_transaction_id');
+
+  // 3) reconcilia (sck → checkout_click_id → touchpoint) e resolve atribuição
+  const attribution = await resolveAttribution(order);
+  await db.upsert('attribution_results', attribution, 'hotmart_transaction_id');
+
+  // 4) só dispara Purchase para o Meta em status elegível
+  if (['APPROVED', 'COMPLETE'].includes(order.status))
+    await sendCapiPurchase(order, attribution);
+
+  res.sendStatus(200);
+});</code></pre>
+    </div>
+
+    <h4>Normalização de status — regra de ouro</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Status Hotmart</th><th>Ação</th></tr></thead>
+      <tbody>
+        <tr><td>Aprovado / Complete / Paid</td><td><b>Pode virar Purchase</b> (CAPI)</td></tr>
+        <tr><td>Pendente / Boleto / Pix aguardando</td><td>NÃO virar Purchase ainda</td></tr>
+        <tr><td>Refund / Chargeback</td><td>Evento separado ou ajuste de receita — nunca aquisição</td></tr>
+        <tr><td>Recorrência / Renovação</td><td>Separar de aquisição — não contar como nova venda</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout danger">
+      <span class="ct">Pix/boleto pendente nunca dispara Purchase</span>
+      <p>Disparar Purchase em pagamento não-aprovado infla o Meta com vendas que podem não acontecer, polui o aprendizado e quebra a conciliação de receita. O Purchase nasce <strong>só</strong> no evento aprovado.</p>
+    </div>
+    <p class="src-ref">Os caminhos de campo (<code>purchase.origin.sck</code> etc.) são o padrão de referência da documentação Hotmart — valide a estrutura exata contra um payload real da sua conta/versão de API antes de ir a produção (Princípio: No Invention).</p>
+  </section>
+
+  <!-- ============ 11 RESOLVER ============ -->
+  <section id="resolver">
+    <h2><span class="num">11</span> Attribution Resolver interno</h2>
+    <p>Não use só first touch. Você precisa de quatro leituras simultâneas — mais um score de confiança em camadas.</p>
+
+    <div class="grid g2">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Modelo</th><th>Para que serve</th></tr></thead>
+        <tbody>
+          <tr><td><b>First touch</b></td><td>Qual canal trouxe o 1º contato</td></tr>
+          <tr><td><b>Last non-direct</b></td><td>Última visita relevante</td></tr>
+          <tr><td><b>Last paid touch</b></td><td>Mídia paga mais próxima da compra</td></tr>
+          <tr><td><b>Assisted</b></td><td>Quais canais participaram</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout info" style="margin:0">
+        <span class="ct">O caso multitoque clássico</span>
+        <p>Dia 1: Facebook Ads → LP. Dia 4: pesquisa no Google → volta. Dia 5: compra.<br>
+        <b>first_touch</b> = facebook/paid · <b>last_non_direct</b> = google/organic · <b>last_paid</b> = facebook/paid · <b>assisted</b> = [facebook, google]. A resposta de negócio não é <em>uma</em> coluna.</p>
+      </div>
+    </div>
+
+    <h4>Match por confiança — hierarquia de reconciliação</h4>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:8%">#</th><th>Match</th><th>Confiança</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code class="kbd">origin.sck</code> = <code class="kbd">checkout_click_id</code></td><td><span class="pri det">DETERMINÍSTICO</span></td></tr>
+        <tr><td>2</td><td><code class="kbd">transaction_id</code> já vinculado a um clique</td><td><span class="pri det">DETERMINÍSTICO</span></td></tr>
+        <tr><td>3</td><td><code class="kbd">buyer_email_hash</code> = lead capturado antes do checkout</td><td><span class="pri det">DETERMINÍSTICO</span></td></tr>
+        <tr><td>4</td><td><code class="kbd">anon_id</code> do tracker = <code class="kbd">external_id</code></td><td><span class="pri strong">FORTE</span></td></tr>
+        <tr><td>5</td><td><code class="kbd">fbc/fbp</code> compatível com touchpoint</td><td><span class="pri med">FORTE / MÉDIO</span></td></tr>
+        <tr><td>6</td><td>User-agent + IP hash + janela curta</td><td><span class="pri med">PROBABILÍSTICO</span></td></tr>
+        <tr><td>7</td><td>Referrer/UTM agregado por período</td><td><span class="pri weak">FRACO</span></td></tr>
+        <tr><td>8</td><td>Sem dados suficientes</td><td><span class="pri none">UNMATCHED</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">resolveAttribution() · cascata de confiança</span><span class="lang">javascript</span></div>
+<pre><code class="language-javascript">async function resolveAttribution(order) {
+  let click = null, method = null, confidence = null;
+
+  // 1) determinístico via sck
+  if (order.origin_sck) {
+    click = await db.one('SELECT * FROM checkout_clicks WHERE checkout_click_id=$1', order.origin_sck);
+    if (click) { method = 'sck'; confidence = 'deterministic'; }
+  }
+  // 3) determinístico via e-mail do comprador = lead capturado antes
+  if (!click && order.buyer_email_hash) {
+    click = await db.oneOrNone(`SELECT cc.* FROM leads l
+        JOIN checkout_clicks cc ON cc.anon_id = l.anon_id
+        WHERE l.email_hash=$1 ORDER BY cc.clicked_at DESC LIMIT 1`, order.buyer_email_hash);
+    if (click) { method = 'email'; confidence = 'deterministic'; }
+  }
+  // 5) forte via fbc/fbp recentes
+  if (!click) {
+    click = await matchByFbcFbp(order);                 // janela curta + identificadores
+    if (click) { method = 'fbc'; confidence = 'strong'; }
+  }
+  if (!click) return { hotmart_transaction_id: order.hotmart_transaction_id,
+                       attribution_status: 'unmatched', confidence: 'unmatched' };
+
+  const touches = await db.many('SELECT * FROM touchpoints WHERE anon_id=$1 ORDER BY ts', click.anon_id);
+  const paid = touches.filter((t) =&gt; t.source_type === 'paid');
+  const nonDirect = touches.filter((t) =&gt; t.source_type !== 'direct');
+
+  return {
+    hotmart_transaction_id: order.hotmart_transaction_id,
+    attribution_status: 'matched', match_method: method, confidence,
+    first_touch_source:  srcLabel(touches[0]),
+    last_touch_source:   srcLabel(touches.at(-1)),
+    last_paid_source:    paid.length ? srcLabel(paid.at(-1)) : null,
+    assisted_sources:    [...new Set(nonDirect.map(srcLabel))],
+    attributed_plan:     click.plan_id,
+    attributed_campaign: (paid.at(-1) ?? touches[0])?.utm_campaign
+  };
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- ============ 12 CAPI ============ -->
+  <section id="capi">
+    <h2><span class="num">12</span> Meta CAPI + deduplicação</h2>
+    <p>Para o problema <em>"o Facebook acha que a campanha não vende"</em>, o evento mais importante é o <strong>Purchase server-side</strong>, vindo do webhook aprovado e enriquecido com os dados capturados na LP.</p>
+
+    <div class="code">
+      <div class="code-head"><span class="fn">Purchase · Conversions API payload</span><span class="lang">json</span></div>
+<pre><code class="language-json">{
+  "event_name": "Purchase",
+  "event_time": 1780000000,
+  "event_id": "hotmart_transaction_id",
+  "action_source": "website",
+  "event_source_url": "https://sua-landing.com/pagina-original-ou-checkout",
+  "user_data": {
+    "em": "sha256_email_comprador",
+    "ph": "sha256_telefone_comprador",
+    "external_id": "sha256_anon_id_ou_customer_id",
+    "fbc": "fb.1.timestamp.fbclid",
+    "fbp": "fb.1.timestamp.random",
+    "client_ip_address": "ip_do_evento_quando_disponivel",
+    "client_user_agent": "user_agent_capturado"
+  },
+  "custom_data": {
+    "currency": "BRL",
+    "value": 997.00,
+    "content_ids": ["academia-lendaria-trimestral"],
+    "content_type": "product",
+    "order_id": "hotmart_transaction_id"
+  }
+}</code></pre>
+    </div>
+    <p class="note">Eventos web na CAPI exigem <code class="kbd">client_user_agent</code>, <code class="kbd">action_source</code> e <code class="kbd">event_source_url</code>. Envie <code class="kbd">_fbc</code> e <code class="kbd">_fbp</code> sempre que disponíveis — eles elevam o Event Match Quality, que mede a capacidade do Meta de associar o evento a uma conta.</p>
+
+    <h4>Deduplicação Pixel ↔ CAPI</h4>
+    <div class="callout tip">
+      <span class="ct">A regra do event_id</span>
+      <p>O <code class="kbd">eventID</code> do Pixel precisa bater com o <code class="kbd">event_id</code> do evento correspondente na CAPI. Adote: <strong>InitiateCheckout → <code class="kbd">event_id = checkout_click_id</code></strong> · <strong>Purchase → <code class="kbd">event_id = hotmart_transaction_id</code></strong>.</p>
+    </div>
+    <div class="callout warn">
+      <span class="ct">Cuidado com o Pixel de Purchase da Hotmart</span>
+      <p>Se a Hotmart também dispara Pixel de Purchase e você dispara CAPI própria sem o mesmo <code class="kbd">event_id</code>, há duplicidade. Para Hotmart, a estratégia mais limpa é <strong>Purchase só via CAPI própria</strong> (você controla o webhook → consistência total) e usar o browser apenas para os eventos anteriores: <code class="kbd">PageView</code>, <code class="kbd">ViewContent</code>, <code class="kbd">Lead</code>, <code class="kbd">InitiateCheckout</code>.</p>
+    </div>
+
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Estratégia</th><th>Quando usar</th></tr></thead>
+      <tbody>
+        <tr><td><b>Purchase só via CAPI própria</b></td><td>Você controla o webhook e quer consistência — <b>recomendado p/ Hotmart</b></td></tr>
+        <tr><td>Pixel Hotmart + CAPI própria com dedup</td><td>Só se garantir o <em>mesmo</em> <code class="kbd">event_id</code> nos dois</td></tr>
+        <tr><td>Pixel próprio na página de obrigado + CAPI</td><td>Só se a thank-you page for confiável e sempre acessada</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout danger">
+      <span class="ct">A CAPI não derruba a janela de atribuição</span>
+      <p>A CAPI melhora entrega, match e consistência — mas <strong>não transforma toda venda em venda atribuída no Ads Manager</strong>. Compra fora da janela, em outro device sem match, ou sem identificadores suficientes pode não ser creditada, mesmo que o BI interno consiga inferir. Por isso a Camada 04 separa as três verdades.</p>
+    </div>
+  </section>
+
+  <!-- ============ 13 CLASSES ============ -->
+  <section id="classes">
+    <h2><span class="num">13</span> As 5 classes de venda</h2>
+    <p class="lead">Depois da correção, toda venda cai numa destas classes. "Unknown" deixa de ser um balde único e vira um motivo técnico nomeado.</p>
+
+    <div class="cls a"><div class="lt">A</div><div><div class="ct">Determinística por SCK</div><div class="cd">Venda → <code>origin.sck</code> → <code>checkout_click_id</code> → touchpoint. O caso ideal.</div></div></div>
+    <div class="cls b"><div class="lt">B</div><div><div class="ct">Determinística por e-mail / lead</div><div class="cd">Venda → <code>buyer_email_hash</code> → lead capturado antes → touchpoint.</div></div></div>
+    <div class="cls c"><div class="lt">C</div><div><div class="ct">Forte por anon_id / fbc / fbp</div><div class="cd">Venda → identificadores capturados → touchpoint provável.</div></div></div>
+    <div class="cls d"><div class="lt">D</div><div><div class="ct">Agregada</div><div class="cd">Sem ID, mas com plano, data, origem parcial ou canal agregado.</div></div></div>
+    <div class="cls e"><div class="lt">E</div><div><div class="ct">Unmatched real</div><div class="cd">Sem evidência suficiente. O gap honesto e residual.</div></div></div>
+
+    <div class="callout tip" style="margin-top:20px">
+      <span class="ct">O ganho real</span>
+      <p>Hoje muitas vendas viram "unknown" porque a arquitetura não distingue <strong>falha de coleta</strong>, <strong>falha de envio para a Hotmart</strong>, <strong>falha de retorno da Hotmart</strong>, <strong>falha de match</strong> e <strong>limitação real de atribuição</strong>. Com as 5 classes, cada venda sem origem passa a ter um motivo — e os gaps viram uma fila objetiva de correção, não uma sensação.</p>
+    </div>
+  </section>
+
+  <!-- ============ 14 DASHBOARD ============ -->
+  <section id="dashboard">
+    <h2><span class="num">14</span> Dashboard de gaps (funil técnico)</h2>
+    <p class="note">Um funil <em>técnico</em>, não de vendas. Cada etapa abaixo é uma contagem; cada razão é um sinal de saúde. A taxa que mais importa para engenharia: <code class="kbd">checkout_decoration_rate</code>.</p>
+
+    <h4>15 contagens por etapa</h4>
+    <ol>
+      <li>Sessões com UTM capturada · 2. Sessões com <code class="kbd">fbclid</code> · 3. Sessões com <code class="kbd">fbc/fbp</code></li>
+      <li style="list-style:none;margin:0">4. Cliques em checkout · 5. Cliques com <code class="kbd">checkout_click_id</code> · 6. Cliques com <code class="kbd">sck</code> na URL final</li>
+      <li style="list-style:none;margin:0">7. Vendas Hotmart totais · 8. Vendas com <code class="kbd">origin.sck</code> · 9. Reconciliadas deterministicamente</li>
+      <li style="list-style:none;margin:0">10. Reconciliadas por e-mail/hash · 11. Sem match · 12. Purchases enviados via CAPI</li>
+      <li style="list-style:none;margin:0">13. Purchases aceitos pelo Meta · 14. Deduplicados corretamente · 15. Atribuídos no Meta</li>
+    </ol>
+
+    <h4>As 6 taxas que precisam aparecer</h4>
+    <div class="code">
+      <div class="code-head"><span class="fn">queries de saúde do funil</span><span class="lang">sql</span></div>
+<pre><code class="language-sql">-- a mais importante p/ ENGENHARIA: deve estar perto de 100% nos CTAs da LP
+checkout_decoration_rate = cliques_com_sck / cliques_totais_checkout
+
+capture_rate             = sessoes_com_utm_salva / sessoes_com_utm_na_url
+hotmart_origin_rate      = vendas_com_sck_ou_src / vendas_totais_hotmart
+
+-- a mais importante p/ DECISÃO DE MÍDIA (quebre por canal/campanha/plano/oferta):
+internal_match_rate      = vendas_com_match / vendas_totais_hotmart
+
+capi_success_rate        = purchases_capi_aceitos / purchases_capi_enviados
+meta_reported_rate       = purchases_meta_ads / purchases_capi_aceitos</code></pre>
+    </div>
+
+    <div class="grid g3">
+      <div class="stat"><div class="n" style="font-size:22px">checkout_<br>decoration_rate</div><div class="l">→ Engenharia. Se &lt; 100% nos CTAs da LP, o problema ainda está dentro de casa.</div></div>
+      <div class="stat"><div class="n" style="font-size:22px">internal_<br>match_rate</div><div class="l">→ Mídia. Por canal, campanha, plano e oferta. É o que decide investimento.</div></div>
+      <div class="stat"><div class="n" style="font-size:22px">capi_<br>success_rate</div><div class="l">→ Meta. Mais Event Match Quality e status de deduplicação.</div></div>
+    </div>
+  </section>
+
+  <!-- ============ 15 MATRIZ ============ -->
+  <section id="matriz">
+    <h2><span class="num">15</span> Matriz gap → correção</h2>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:40%">Gap</th><th>Como fechar</th></tr></thead>
+      <tbody>
+        <tr><td>Hotmart não recebe UTM</td><td><code class="kbd">sck={{checkout_click_id}}</code> curto + URL builder robusto + auditoria da URL final</td></tr>
+        <tr><td>SCK inválido</td><td>Máx. 30 chars, sem underscore, valores sanitizados e URL-encoded</td></tr>
+        <tr><td>Plano trimestral sem origem</td><td>Link Registry para todos os CTAs, planos e ofertas</td></tr>
+        <tr><td>Botão dinâmico sem tracking</td><td>Delegação de evento / MutationObserver / render server-side com <code class="kbd">data-*</code></td></tr>
+        <tr><td>Clique antes do script carregar</td><td>Link base por rota interna de redirect, não só JS</td></tr>
+        <tr><td>Redirect limpa query string</td><td>Testar cada redirect e gravar <code class="kbd">final_checkout_url</code> antes da saída</td></tr>
+        <tr><td>Usuário volta sem UTM</td><td>Persistir first/last/last-paid touch no banco server-side</td></tr>
+        <tr><td>Usuário muda de device</td><td>Captura de e-mail/login/lead antes do checkout — ou aceitar gap não-determinístico</td></tr>
+        <tr><td>Hotmart tem venda mas não origem</td><td>Reconciliar por e-mail hash, plano, horário, valor e touchpoints próximos</td></tr>
+        <tr><td>Meta não registra compra</td><td>Webhook → CAPI Purchase com <code class="kbd">fbc/fbp</code>, e-mail hash, external_id, UA</td></tr>
+        <tr><td>Duplicidade no Meta</td><td>Mesmo <code class="kbd">event_id</code> em Pixel e CAPI, ou Purchase só via CAPI</td></tr>
+        <tr><td>Pendente vira Purchase indevido</td><td>Só disparar Purchase em pagamento aprovado</td></tr>
+        <tr><td>Recorrência infla aquisição</td><td>Separar aquisição, renovação, upgrade, chargeback, refund</td></tr>
+        <tr><td>BI confunde aquisição com fechamento</td><td>Relatórios separados: first / last non-direct / last paid / assisted</td></tr>
+        <tr><td>Meta fora da janela</td><td>Classificar como "internamente atribuída, não reportável pelo Meta"</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ============ 16 PLANO ============ -->
+  <section id="plano">
+    <h2><span class="num">16</span> Plano de execução (5 fases)</h2>
+    <p class="note">Ordem deliberada: primeiro prove <em>onde</em> está o gap (antes ou depois da Hotmart), só então construa para frente.</p>
+
+    <div class="phase">
+      <div class="pn">Fase 1</div>
+      <div class="pt">Auditoria da saída para a Hotmart</div>
+      <div class="obj">Provar se o gap está antes ou depois da Hotmart.</div>
+      <ul>
+        <li>Mapear todos os botões, planos e links Hotmart (Link Registry)</li>
+        <li>Gravar todo clique de checkout + a URL final enviada</li>
+        <li>Adicionar <code class="kbd">checkout_click_id</code> curto no <code class="kbd">sck</code>; parar de usar campanha longa</li>
+        <li>Validar anual e trimestral <strong>separadamente</strong></li>
+      </ul>
+      <div class="dod"><b>Pronto quando:</b> 100% dos cliques de checkout vindos da LP têm <code class="kbd">checkout_click_id</code> · 100% dos links saem com <code class="kbd">sck</code> válido · todo plano vendido tem <code class="kbd">plan_id/offer_id</code> no banco.</div>
+    </div>
+
+    <div class="phase">
+      <div class="pn">Fase 2</div>
+      <div class="pt">Webhook Hotmart completo</div>
+      <div class="obj">Transformar a Hotmart em evento de venda confiável.</div>
+      <ul>
+        <li>Receber compra, aprovação, reembolso, chargeback e recorrência</li>
+        <li>Salvar raw payload; extrair transaction/status/produto/plano/valor/comprador/origem</li>
+        <li>Reconciliar <code class="kbd">origin.sck</code> com <code class="kbd">checkout_click_id</code>; criar <code class="kbd">hotmart_orders</code></li>
+      </ul>
+      <div class="dod"><b>Pronto quando:</b> toda venda aparece no banco com status normalizado e, se tem <code class="kbd">sck</code>, está ligada ao clique original.</div>
+    </div>
+
+    <div class="phase">
+      <div class="pn">Fase 3</div>
+      <div class="pt">Attribution Resolver</div>
+      <div class="obj">Parar de depender de uma única UTM.</div>
+      <ul>
+        <li>Implementar first / last / last-non-direct / last-paid / assisted</li>
+        <li>Adicionar confidence score (cascata da §11)</li>
+      </ul>
+      <div class="dod"><b>Pronto quando:</b> toda venda recebe origem first touch, last non-direct, last paid (quando houver) e status de confiança.</div>
+    </div>
+
+    <div class="phase">
+      <div class="pn">Fase 4</div>
+      <div class="pt">Meta CAPI</div>
+      <div class="obj">Alimentar o Meta com vendas reais da Hotmart.</div>
+      <ul>
+        <li>InitiateCheckout no clique · Purchase no pagamento aprovado</li>
+        <li><code class="kbd">event_id</code>: <code class="kbd">hotmart_transaction_id</code> (Purchase) / <code class="kbd">checkout_click_id</code> (IC)</li>
+        <li>Enviar <code class="kbd">fbc/fbp</code>, e-mail/telefone hash, external_id; monitorar EMQ + dedup</li>
+      </ul>
+      <div class="dod"><b>Pronto quando:</b> Purchase chega ao Events Manager · CAPI retorna sucesso · eventos não duplicam · qualidade de match melhora.</div>
+    </div>
+
+    <div class="phase">
+      <div class="pn">Fase 5</div>
+      <div class="pt">BI de mídia</div>
+      <div class="obj">Decidir investimento com dados melhores que o Ads Manager sozinho.</div>
+      <ul>
+        <li>Receita por first paid touch · last non-direct · assistida · campanha · criativo · plano (anual vs trimestral)</li>
+        <li>Receita por fonte reportável no Meta <strong>vs</strong> receita interna não reportável no Meta</li>
+      </ul>
+      <div class="dod"><b>A visão crucial:</b> vendas atribuídas internamente ao Meta, mas não reportadas pelo Ads Manager — o tamanho real do gap entre performance de negócio e performance de plataforma.</div>
+    </div>
+  </section>
+
+  <!-- ============ 17 TESTES ============ -->
+  <section id="testes">
+    <h2><span class="num">17</span> Testes obrigatórios</h2>
+    <p class="note">Dashboard de QA com <code class="kbd">test_run_id</code> por linha. Mapeie todos os caminhos de compra — não só o ideal.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Teste</th><th>Esperado</th></tr></thead>
+      <tbody>
+        <tr><td>Meta UTM → LP → anual → aprovada</td><td>Hotmart recebe <code class="kbd">sck</code>; banco reconcilia; CAPI Purchase enviado</td></tr>
+        <tr><td>Meta UTM → LP → trimestral → aprovada</td><td>Mesmo resultado do anual</td></tr>
+        <tr><td>LP c/ UTM → fechar → voltar direto → comprar</td><td>First touch preservado</td></tr>
+        <tr><td>LP c/ UTM → voltar via Google → comprar</td><td>First paid = Meta; last non-direct = Google</td></tr>
+        <tr><td>Checkout com <code class="kbd">checkoutMode</code> existente</td><td>URL usa <code class="kbd">&amp;sck=</code>, não <code class="kbd">?sck=</code></td></tr>
+        <tr><td>SCK com campanha longa</td><td>SCK usa ID curto, nunca a campanha</td></tr>
+        <tr><td>Botão em modal</td><td>URL final recebe <code class="kbd">sck</code></td></tr>
+        <tr><td>Safari / iOS</td><td>Evento server-side aparece mesmo se o browser-side falhar</td></tr>
+        <tr><td>Adblock</td><td>Clique e webhook ainda aparecem no banco</td></tr>
+        <tr><td>Boleto / Pix pendente</td><td>Não dispara Purchase até aprovação</td></tr>
+        <tr><td>Reembolso</td><td>Revenue ajustado ou evento separado</td></tr>
+        <tr><td>Compra sem passar pela LP</td><td>Classificar direct/unknown/marketplace — não forçar atribuição</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ============ 18 INEVITÁVEL ============ -->
+  <section id="inevitavel">
+    <h2><span class="num">18</span> Onde aceitar gap inevitável</h2>
+    <p class="lead">O objetivo não é prometer 100%. É sair de ~15–20% rastreado para uma estrutura em que quase tudo que passou pela LP e clicou no checkout seja rastreável de forma determinística — e o resto, nomeado.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Caso</th><th>O que fazer</th></tr></thead>
+      <tbody>
+        <tr><td>Clicou no celular, comprou no desktop sem e-mail prévio</td><td>Só match probabilístico ou unmatched</td></tr>
+        <tr><td>Comprou dias depois, fora da janela do Meta</td><td>BI interno pode atribuir; Meta pode não reportar</td></tr>
+        <tr><td>Navegação privada / incógnita</td><td>Perda esperada</td></tr>
+        <tr><td>Bloqueia scripts/cookies e não clica em link decorado</td><td>Só server logs e webhook</td></tr>
+        <tr><td>Compra dentro da Hotmart/marketplace sem passar pela LP</td><td>Classificar como Hotmart/direct/unknown</td></tr>
+        <tr><td>Link compartilhado por WhatsApp sem UTM</td><td>Criar links próprios por canal ou aceitar unknown</td></tr>
+        <tr><td>Checkout aberto em aba antiga com URL antiga</td><td>Reduzir com IDs por clique + expiração lógica</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ============ 19 GLOSSÁRIO ============ -->
+  <section id="glossario">
+    <h2><span class="num">19</span> Glossário</h2>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Termo</th><th>Definição</th></tr></thead>
+      <tbody>
+        <tr><td><code class="kbd">sck</code></td><td>Parâmetro Hotmart para checkout direto (<code class="kbd">pay.hotmart.com</code>). Aqui carrega o <code class="kbd">checkout_click_id</code> curto. Máx. 30 chars, sem underscore.</td></tr>
+        <tr><td><code class="kbd">src</code></td><td>Parâmetro Hotmart para HotLinks, afiliados e páginas alternativas (<code class="kbd">go.hotmart.com</code>).</td></tr>
+        <tr><td><code class="kbd">xcode</code></td><td>Campo de origem adicional exposto no objeto <code class="kbd">origin</code> do webhook Hotmart.</td></tr>
+        <tr><td><code class="kbd">fbc</code></td><td>Cookie/parâmetro Meta derivado do <code class="kbd">fbclid</code> (<code class="kbd">fb.1.timestamp.fbclid</code>). Eleva o match.</td></tr>
+        <tr><td><code class="kbd">fbp</code></td><td>Cookie first-party do Pixel que identifica o browser (<code class="kbd">fb.1.timestamp.random</code>).</td></tr>
+        <tr><td>CAPI</td><td>Conversions API — canal server-to-server do Meta para enviar eventos direto do seu servidor.</td></tr>
+        <tr><td>EMQ</td><td>Event Match Quality — nota do Meta para a qualidade dos identificadores enviados.</td></tr>
+        <tr><td>Dedup</td><td>Deduplicação Pixel ↔ CAPI via <code class="kbd">event_id</code> idêntico nos dois canais.</td></tr>
+        <tr><td>ITP</td><td>Intelligent Tracking Prevention (WebKit/Safari) — limita cookies e storage; motiva o server-side.</td></tr>
+        <tr><td>First / Last paid / Assisted</td><td>Modelos de atribuição: primeiro contato · última mídia paga · canais que participaram.</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <footer>
+    <b>Manual de Trackeamento · Atribuição Determinística de Funil — Academia Lendár[IA]</b> · v1.0.<br>
+    Princípio-mestre: a Hotmart carrega um <code>sck</code> curto, não a UTM inteira; o banco é a fonte de verdade; a venda nasce do webhook aprovado; o Meta recebe dois sinais (<code>InitiateCheckout</code> no clique, <code>Purchase</code> server-side). Três verdades distintas — BI · Hotmart · Meta — nunca devem coincidir por decreto.<br>
+    <span class="src-ref">Referências externas (Hotmart Help Center: SCK/SRC/UTM e limites de campanha · Hotmart Developers: webhook + objeto <code>origin</code> · Meta for Developers: CAPI, parâmetros web, EMQ, deduplicação por event_id · WebKit/Apple: ITP &amp; ATT) são padrões de plataforma — valide a estrutura exata de campos/janelas contra sua conta e a versão vigente da API antes de produção. Nenhuma estrutura de payload aqui substitui a verificação no payload real (Princípio: No Invention).</span><br>
+    Visual: Lendár[IA] Gold · regra dos 8% · dark-first · Source Serif 4 + Inter + Rajdhani + JetBrains Mono.
+  </footer>
+
+  </main>
+</div>
+
+<!-- ===================== SCRIPTS (CDN · degradação graciosa) ===================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  // syntax highlight (se o CDN falhar, os <pre> ainda ficam legíveis com o CSS próprio)
+  try { if (window.hljs) hljs.highlightAll(); } catch (e) {}
+
+  // mermaid com tema dark on-brand (gold)
+  try {
+    if (window.mermaid) mermaid.initialize({
+      startOnLoad: true, theme: 'base', securityLevel: 'loose',
+      themeVariables: {
+        background: '#141415', primaryColor: '#1E170F', primaryBorderColor: '#615445',
+        primaryTextColor: '#ECEAE6', secondaryColor: '#1a1a1c', tertiaryColor: '#0A0A0B',
+        lineColor: '#AA967F', fontFamily: 'Inter, sans-serif', fontSize: '14px',
+        clusterBkg: '#101011', edgeLabelBackground: '#141415'
+      }
+    });
+  } catch (e) {}
+
+  // scroll-spy: destaca a seção ativa no índice
+  (function () {
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map((a) =&gt; [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver((entries) =&gt; {
+      entries.forEach((en) =&gt; {
+        if (en.isIntersecting) {
+          links.forEach((l) =&gt; l.classList.remove('active'));
+          const a = map.get(en.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-12% 0px -75% 0px', threshold: 0 });
+    document.querySelectorAll('section[id]').forEach((s) =&gt; obs.observe(s));
+  })();
+
+  // menu mobile
+  (function () {
+    const btn = document.getElementById('menuBtn');
+    const toc = document.getElementById('toc');
+    if (!btn || !toc) return;
+    btn.addEventListener('click', () =&gt; toc.classList.toggle('open'));
+    toc.addEventListener('click', (e) =&gt; { if (e.target.closest('a')) toc.classList.remove('open'); });
+  })();
+</script>
+</body>
+</html>

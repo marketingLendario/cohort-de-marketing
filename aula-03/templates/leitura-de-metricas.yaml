@@ -1,0 +1,23 @@
+leitor:
+  ultima_leitura: "<YYYY-MM-DD>"
+  fonte: "<fonte literal>"
+  janela_atribuicao: "nao fornecido"
+  sinais:
+    - metrica: "CTR"
+      valor: null
+      selo: "nao_fornecido"
+      fonte: ""
+    - metrica: "CPM"
+      valor: null
+      selo: "nao_fornecido"
+      fonte: ""
+    - metrica: "CPA"
+      valor: null
+      selo: "nao_fornecido"
+      fonte: ""
+    - metrica: "ROAS"
+      valor: null
+      selo: "nao_fornecido"
+      fonte: ""
+  amostra_suficiente_para_cpa: false
+  nota_amostra: ""

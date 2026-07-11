@@ -1,0 +1,12 @@
+trafficDiagnosis:
+  status: "pendente"
+  resumo: ""
+  alavanca: ""
+  hipotese: ""
+  criterio_sucesso: ""
+  criterio_reversao: ""
+  circuit_breaker: ""
+  metricas_nao_fornecidas: []
+  decisao_humana:
+    status: "pendente"
+    observacao: ""

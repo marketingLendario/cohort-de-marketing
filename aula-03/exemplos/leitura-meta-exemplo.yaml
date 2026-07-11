@@ -1,0 +1,26 @@
+leitor:
+  ultima_leitura: "2026-07-10"
+  janela_atribuicao: "nao fornecido"
+  sinais:
+    - metrica: "Gasto"
+      valor: 210
+      selo: "Real"
+      fonte: "colado pelo aluno em 2026-07-10"
+    - metrica: "Impressoes"
+      valor: 41800
+      selo: "Real"
+      fonte: "colado pelo aluno em 2026-07-10"
+    - metrica: "Conversoes"
+      valor: 4
+      selo: "Real"
+      fonte: "colado pelo aluno em 2026-07-10"
+    - metrica: "CPA"
+      valor: 52.5
+      selo: "Real"
+      fonte: "colado pelo aluno em 2026-07-10"
+    - metrica: "CTR"
+      valor: null
+      selo: "nao_fornecido"
+      fonte: ""
+  amostra_suficiente_para_cpa: false
+  nota_amostra: "amostra insuficiente para CPA — leia sinais de topo"

@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa de Skills • Lendár[IA] · Cohort de Marketing</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/iconoir@7.11.0/css/iconoir.css">
+  <link rel="stylesheet" href="assets/al/hub-brand.css">
+  <link rel="stylesheet" href="assets/al/mapa-skills.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="mapa-skills-artifacts.js"></script>
+</head>
+<body>
+
+  <header class="hub-header">
+    <div class="hub-header__inner">
+      <div class="hub-brand">
+        <div class="hub-lockup">
+          <img class="hub-lockup__mark" src="assets/al/logo/silhueta-al.svg" alt="Academia Lendária" width="42" height="42">
+          <div>
+            <div class="hub-lockup__wordmark">Lendár<em>[IA]</em></div>
+            <div class="hub-lockup__subtitle">Mapa de Skills · Cohort de Marketing</div>
+          </div>
+        </div>
+        <div class="hub-status-pill">
+          <span class="hub-status-pill__dot"></span>
+          <span>31 skills · N12 + Tráfego (Aula 3)</span>
+        </div>
+      </div>
+
+      <div class="hub-toolbar">
+        <div class="hub-segment">
+          <button type="button" onclick="setViewMode('flow')" id="view-flow" class="hub-segment__btn view-btn view-active">
+            <i class="iconoir-network-right"></i>
+            <span class="label-sm">Fluxo</span>
+          </button>
+          <button type="button" onclick="setViewMode('grid')" id="view-grid" class="hub-segment__btn view-btn">
+            <i class="iconoir-view-grid"></i>
+            <span class="label-sm">Grid</span>
+          </button>
+          <button type="button" onclick="setViewMode('mermaid')" id="view-mermaid" class="hub-segment__btn view-btn">
+            <i class="iconoir-network"></i>
+            <span class="label-sm">Mermaid</span>
+          </button>
+        </div>
+        <a href="briefing.html" class="hub-btn">
+          <i class="iconoir-notes"></i>
+          <span class="label-sm">Briefing</span>
+        </a>
+        <button type="button" onclick="resetFilters()" class="hub-btn">
+          <i class="iconoir-undo"></i>
+          <span class="label-sm">Reset</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="hub-shell">
+    <div class="hub-filters">
+      <div class="hub-search">
+        <input id="search-input" onkeyup="filterNodes()" type="search"
+               placeholder="Buscar skill, artefato ou fase..."
+               class="hub-search__input" autocomplete="off">
+        <i class="iconoir-search hub-search__icon"></i>
+      </div>
+
+      <div class="hub-chip-group">
+        <span class="hub-chip-group__label">Camadas:</span>
+        <label class="hub-chip">
+          <input type="checkbox" id="toggle-connections" checked onchange="applyFilters()">
+          <span>Conexões</span>
+        </label>
+        <label class="hub-chip">
+          <input type="checkbox" id="toggle-guards" checked onchange="applyFilters()">
+          <span>Guards</span>
+        </label>
+        <label class="hub-chip">
+          <input type="checkbox" id="toggle-hubs" checked onchange="applyFilters()">
+          <span>Hubs</span>
+        </label>
+      </div>
+
+      <button type="button" onclick="showLegend()" class="hub-link-btn">
+        <i class="iconoir-info-circle"></i> Legenda
+      </button>
+    </div>
+
+    <!-- FLOW CANVAS (principal) -->
+    <div id="flow-container">
+      <div id="tour-bar">
+        <button type="button" onclick="toggleTour()" id="tour-btn" class="hub-btn hub-btn--ghost">
+          <i class="iconoir-play" id="tour-icon"></i>
+          <span id="tour-label">Tour N12</span>
+        </button>
+        <button type="button" onclick="tourPrev()" class="hub-btn hub-btn--ghost" title="Anterior">
+          <i class="iconoir-nav-arrow-left"></i>
+        </button>
+        <button type="button" onclick="tourNext()" class="hub-btn hub-btn--ghost" title="Próximo">
+          <i class="iconoir-nav-arrow-right"></i>
+        </button>
+        <div class="flex-1 min-w-0">
+          <div id="tour-progress">Percorra a sequência canônica N12 nó a nó</div>
+        </div>
+        <div id="tour-step">—</div>
+      </div>
+      <div id="flow-viewport">
+        <div class="flow-hint">
+          <i class="iconoir-hand-drag mr-1"></i> Arraste · Scroll zoom · Minimap · Tour N12
+        </div>
+        <div id="flow-canvas">
+          <svg id="flow-svg"></svg>
+          <div id="flow-nodes"></div>
+        </div>
+        <div class="flow-toolbar">
+          <button onclick="flowZoom(0.15)" title="Zoom in"><i class="iconoir-plus"></i></button>
+          <button onclick="flowZoom(-0.15)" title="Zoom out"><i class="iconoir-minus"></i></button>
+          <button onclick="flowFit()" title="Ajustar à tela"><i class="iconoir-expand"></i></button>
+          <button onclick="flowReset()" title="Reset"><i class="iconoir-refresh"></i></button>
+          <button id="flow-orientation-horizontal" class="flow-orientation-btn is-active" onclick="setFlowOrientation('horizontal')" title="Diagrama horizontal">H</button>
+          <button id="flow-orientation-vertical" class="flow-orientation-btn" onclick="setFlowOrientation('vertical')" title="Diagrama vertical">V</button>
+        </div>
+        <div id="flow-minimap" title="Clique para navegar">
+          <span id="minimap-label">Minimap</span>
+          <canvas id="minimap-canvas" width="200" height="120"></canvas>
+          <div id="minimap-viewport"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div id="grid-container" class="hidden">
+      <div id="cluster-view"></div>
+    </div>
+
+    <!-- MERMAID VIEW -->
+    <div id="mermaid-container" class="hidden">
+      <div class="mermaid" id="mermaid-flow"></div>
+      <script type="text/plain" id="mermaid-source">flowchart LR
+    A[comecar] --> B[avatar-funil]
+    B --> C[espiao-do-concorrente]
+    C --> D[trend-hunting]
+    D --> E[swipe-file]
+    E --> F[offerbook]
+    F --> G[design-md]
+    G --> H[metodo-funil]
+    H --> I[copy-funil]
+    I --> J5[vsl / advertorial / lancamento]
+    I --> J43[webinario / quiz]
+    I --> J21[pagina-vendas]
+    J5 & J43 & J21 --> K[conteudo + criativos]
+    K --> L[email + whatsapp]
+    L --> M[recuperacao + backend]
+    M --> N[cro-funil]
+    P[status-funil] -.-> N
+    K --> Q[zelador]
+    Q --> R[briefista / estruturador]
+    R --> S[leitor-de-metricas / diagnosticador]
+    S -.-> R
+    R --> T[ads-creative-factory]</script>
+    </div>
+
+    <!-- Detail Panel -->
+    <div id="detail-panel" class="hub-panel hidden">
+      <div class="hub-panel__head">
+        <div class="hub-panel__title-group">
+          <div id="detail-icon" class="hub-panel__icon"></div>
+          <div class="hub-panel__title-copy">
+            <div id="detail-name" class="hub-panel__title truncate"></div>
+            <div id="detail-phase" class="hub-panel__subtitle muted"></div>
+          </div>
+        </div>
+        <button type="button" onclick="closeDetail()" class="hub-icon-btn" aria-label="Fechar">
+          <i class="iconoir-xmark"></i>
+        </button>
+      </div>
+      <div class="hub-panel__body" id="detail-content"></div>
+      <div class="hub-panel__foot">
+        <div class="hub-panel__actions">
+          <button type="button" onclick="highlightInMap()" class="hub-btn hub-btn--primary">
+            <i class="iconoir-target"></i> Destacar
+          </button>
+          <button type="button" onclick="copySkillCommand()" class="hub-btn">
+            <i class="iconoir-copy"></i> /comando
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Artifact Preview Modal -->
+    <div id="artifact-modal" class="hub-modal-backdrop hidden">
+      <div class="hub-modal">
+        <div class="hub-modal__head">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span id="am-label" class="font-mono truncate" style="font-weight:650"></span>
+              <span id="am-badge" class="hub-badge">exemplo ilustrativo</span>
+            </div>
+            <div id="am-path" class="muted font-mono truncate" style="font-size:12px;margin-top:4px"></div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="copyArtifactPath()" class="hub-btn hub-btn--ghost">
+              <i class="iconoir-copy"></i> Caminho
+            </button>
+            <button type="button" onclick="closeArtifactModal()" class="hub-icon-btn" aria-label="Fechar">
+              <i class="iconoir-xmark"></i>
+            </button>
+          </div>
+        </div>
+        <div class="hub-modal__tabs" id="am-tabs"></div>
+        <div class="hub-modal__body" id="am-body">
+          <div id="am-preview-md" class="md-preview hidden"></div>
+          <iframe id="am-preview-html" class="hidden preview-frame preview-frame--md" title="Preview HTML"></iframe>
+          <div id="am-preview-pdf-wrap" class="hidden">
+            <div id="am-pdf-banner" class="pdf-banner"></div>
+            <canvas id="am-preview-pdf-canvas" class="hidden preview-frame" style="max-width:100%"></canvas>
+            <iframe id="am-preview-pdf" class="preview-frame preview-frame--tall hidden" title="PDF fallback"></iframe>
+            <div id="am-preview-pdf-fallback" class="hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="hub-stat-grid">
+      <div class="hub-stat">
+        <div class="hub-stat__label">Skills totais</div>
+        <div class="hub-stat__value">31</div>
+      </div>
+      <div class="hub-stat">
+        <div class="hub-stat__label">Ordem canônica</div>
+        <div class="hub-stat__value">N12</div>
+      </div>
+      <div class="hub-stat">
+        <div class="hub-stat__label">Entrega padrão</div>
+        <div class="hub-stat__value hub-stat__value--sm">.md + .html + .pdf</div>
+      </div>
+      <div class="hub-stat">
+        <div class="hub-stat__label">Fonte da verdade</div>
+        <div class="hub-stat__value hub-stat__value--sm">/status-funil + funil.md</div>
+      </div>
+    </div>
+  </main>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SKILLS DATABASE
+// ═══════════════════════════════════════════════════════════
+const SKILLS = [
+  { id:"comecar", name:"comecar", phase:"Setup", phaseColor:"#64748b", order:0, type:"utility",
+    description:"Primeiro comando. Prepara ambiente (git, Apify, Node, skills), detecta SO e aponta o próximo passo único.",
+    prerequisites:[], outputs:[], feeds:["avatar-funil"], guards:"Sempre o primeiro passo. Nunca pule.", level:"Setup", artifacts:"Nenhum (configuração)" },
+  { id:"avatar-funil", name:"avatar-funil", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:1, type:"research",
+    description:"Mineração de dor real (verbatims) + avatar em 7 dimensões + focus group sintético.",
+    prerequisites:["comecar"], outputs:["avatar.md","relatorio-avatar.html","relatorio-avatar.pdf","pesquisa-avatar-*/"],
+    feeds:["espiao-do-concorrente","offerbook"], guards:"Sem avatar, offerbook vira ficção.", level:"Aula 1", artifacts:"3 formatos (md/html/pdf)" },
+  { id:"espiao-do-concorrente", name:"espiao-do-concorrente", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:2, type:"research",
+    description:"Dossiê completo de concorrente (ads + orgânico + site + reputação + brechas).",
+    prerequisites:["avatar-funil (recomendado)"], outputs:["espiao/dossie-{concorrente}.md","espiao/dossie-{concorrente}.html","espiao/dossie-{concorrente}.pdf"],
+    feeds:["swipe-file","offerbook"], guards:"Leia Perfil antes (B2B/local/regulado muda frentes).", level:"Aula 1", artifacts:"3 formatos por concorrente" },
+  { id:"trend-hunting", name:"trend-hunting", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:3, type:"research",
+    description:"Identifica tendências emergentes + variações de hook virais antes da saturação.",
+    prerequisites:["espiao-do-concorrente"], outputs:["trends-{data}.md","trends-{data}.html","variacoes-{data}.md"],
+    feeds:["swipe-file","offerbook"], guards:"", level:"Aula 1", artifacts:"2+ conjuntos" },
+  { id:"swipe-file", name:"swipe-file", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:4, type:"research",
+    description:"Organiza winners de espião + trends em biblioteca categorizada. Gera briefing para Copy.",
+    prerequisites:["espiao-do-concorrente","trend-hunting"], outputs:["swipe/briefing-swipe-file.md","swipe/briefing-swipe-file.html","swipe-file-index.html"],
+    feeds:["offerbook","copy-funil"], guards:"Nunca copie literalmente. Extraia padrão + adapte ao ICP.", level:"Aula 1", artifacts:"Index + briefings" },
+  { id:"offerbook", name:"offerbook", phase:"Oferta (Aula 1)", phaseColor:"#f59e0b", order:5, type:"strategy",
+    description:"Livro da Oferta (7 blocos). Consolida avatar + espião + swipe. Contém o Perfil do Projeto.",
+    prerequisites:["avatar-funil","espiao-do-concorrente","swipe-file"], outputs:["offerbook.md","offerbook.html","offerbook.docx","briefing-offerbook.md"],
+    feeds:["design-md","metodo-funil","copy-funil"], guards:"Gate duro. Sem offerbook não se faz funil.", level:"Aula 1", artifacts:"4 arquivos" },
+  { id:"design-md", name:"design-md", phase:"Fundação", phaseColor:"#8b5cf6", order:6, type:"foundation",
+    description:"Gera ou extrai DESIGN.md (Google-spec) com tokens da marca. Usado por todas as peças visuais.",
+    prerequisites:["offerbook (recomendado)"], outputs:["DESIGN.md","tokens.json","preview.html"],
+    feeds:["metodo-funil","pagina-vendas-funil","email-funil","criativos-funil"], guards:"Aula 2 começa aqui.", level:"Aula 2", artifacts:"DESIGN.md + preview" },
+  { id:"metodo-funil", name:"metodo-funil", phase:"Diagnóstico", phaseColor:"#8b5cf6", order:7, type:"foundation",
+    description:"Diagnostica estágio de consciência (1-5) e entrega o mapa de execução N12 adaptado ao Perfil.",
+    prerequisites:["offerbook","design-md (recomendado)"], outputs:["funil.md","funil.html","funil.pdf"],
+    feeds:["copy-funil"], guards:"Lê offerbook obrigatoriamente. Prescreve o formato correto.", level:"Aula 2", artifacts:"Mapa de execução" },
+  { id:"copy-funil", name:"copy-funil", phase:"Copy", phaseColor:"#ec4899", order:8, type:"foundation",
+    description:"Fundação da mensagem. Big Idea, mecanismos, banco de headlines/bullets. Fonte única.",
+    prerequisites:["metodo-funil","offerbook"], outputs:["copy.md"],
+    feeds:["todas as peças"], guards:"Copy aplicada nasce dentro de cada peça.", level:"Aula 2", artifacts:"copy.md" },
+  { id:"vsl-funil", name:"vsl-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
+    description:"Funil VSL Direct Response (nível 5). Roteiro + página + escala + ticket.",
+    prerequisites:["copy-funil","DESIGN.md"], outputs:["vsl.md","pagina/vsl-roteiro.html","pagina/vsl.html"],
+    feeds:["email-funil","recuperacao-funil"], guards:"Nível 5 + ticket baixo.", level:"Nível 5", artifacts:"vsl.md + página" },
+  { id:"advertorial-funil", name:"advertorial-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
+    description:"Página editorial de pré-venda para público frio (nível 5).",
+    prerequisites:["copy-funil","funil.md"], outputs:["advertorial.md","pagina/advertorial.html"],
+    feeds:["vsl-funil"], guards:"Nível 5.", level:"Nível 5", artifacts:"advertorial + página" },
+  { id:"lancamento-funil", name:"lancamento-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
+    description:"Lançamento estilo PLF. Sequência de aquecimento para lista (nível 5).",
+    prerequisites:["copy-funil","funil.md"], outputs:["lancamento.md","lancamento.html"],
+    feeds:["email-funil"], guards:"Exige lista.", level:"Nível 5", artifacts:"lancamento.md" },
+  { id:"webinario-funil", name:"webinario-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
+    description:"Funil de webinário/aula ao vivo ou evergreen (níveis 4-3).",
+    prerequisites:["copy-funil","funil.md"], outputs:["webinario.md","pagina/registro.html","pagina/roteiro-webinario.html"],
+    feeds:["backend-funil"], guards:"Níveis 4-3.", level:"Nível 4-3", artifacts:"webinario completo" },
+  { id:"quiz-funil", name:"quiz-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
+    description:"Quiz/diagnóstico que segmenta e casa a oferta ao resultado (nível 4).",
+    prerequisites:["copy-funil","funil.md"], outputs:["quiz.md","pagina/quiz.html","pagina/resultado-*.html"],
+    feeds:["pagina-vendas-funil","email-funil"], guards:"Nível 4.", level:"Nível 4", artifacts:"quiz + resultados" },
+  { id:"pagina-vendas-funil", name:"pagina-vendas-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
+    description:"Página de vendas de alta conversão (16 elementos) com copy aplicada + DESIGN.md.",
+    prerequisites:["copy-funil","DESIGN.md"], outputs:["pagina/index.html","pagina/pagina-vendas.md"],
+    feeds:["email-funil","recuperacao-funil"], guards:"Níveis 2-1.", level:"Nível 2-1", artifacts:"pasta pagina/" },
+  { id:"conteudo-funil", name:"conteudo-funil", phase:"Aquisição & Conteúdo", phaseColor:"#06b67f", order:10, type:"acquisition",
+    description:"Roteiros de conteúdo orgânico (Reels, carrosséis) modelados na voz da marca.",
+    prerequisites:["copy-funil"], outputs:["conteudo/roteiros.md","conteudo/carrosseis.html"],
+    feeds:["tráfego orgânico"], guards:"Voz = marca ou pessoa conforme Perfil.", level:"Suporte", artifacts:"pasta conteudo/" },
+  { id:"criativos-funil", name:"criativos-funil", phase:"Aquisição & Conteúdo", phaseColor:"#06b67f", order:10, type:"acquisition",
+    description:"Transforma ads vencedores em criativos (roteiros vídeo + banners) na identidade da marca.",
+    prerequisites:["offerbook","DESIGN.md","copy-funil"], outputs:["criativos/roteiros.md","criativos/banners/"],
+    feeds:["tráfego pago"], guards:"Formatos: 4:5, 9:16, 1:1.", level:"Suporte", artifacts:"criativos/ + galeria" },
+  { id:"email-funil", name:"email-funil", phase:"Comunicação", phaseColor:"#3b82f6", order:11, type:"communication",
+    description:"Sequências completas de e-mail com HTML pronto e identidade visual.",
+    prerequisites:["copy-funil","DESIGN.md"], outputs:["emails/nutricao.html","emails/venda.html","emails/recuperacao.html"],
+    feeds:["recuperacao-funil"], guards:"Gera copy aplicada do copy.md.", level:"Suporte", artifacts:"pasta emails/" },
+  { id:"whatsapp-funil", name:"whatsapp-funil", phase:"Comunicação", phaseColor:"#3b82f6", order:11, type:"communication",
+    description:"Sequências de WhatsApp/DM por momento do funil.",
+    prerequisites:["copy-funil","offerbook"], outputs:["whatsapp.md","whatsapp/sequencia.md"],
+    feeds:["recuperacao-funil"], guards:"Prioridade em negócios locais e B2B.", level:"Suporte", artifacts:"sequência WhatsApp" },
+  { id:"mockup-produto-funil", name:"mockup-produto-funil", phase:"Suporte Visual", phaseColor:"#64748b", order:12, type:"support",
+    description:"Gera prompts de mockups (capa, bundle, device) na identidade visual da marca.",
+    prerequisites:["offerbook","DESIGN.md"], outputs:["mockups/prompts.md","mockups/imagens/"],
+    feeds:["valor percebido"], guards:"Tardio. Não fura fila do núcleo.", level:"Suporte", artifacts:"mockups/" },
+  { id:"bonus-funil", name:"bonus-funil", phase:"Suporte Visual", phaseColor:"#64748b", order:12, type:"support",
+    description:"Gera os entregáveis reais dos bônus curados no offerbook.",
+    prerequisites:["offerbook","DESIGN.md"], outputs:["bonus/checklist.md","bonus/ebook.html","bonus/workbook.pdf"],
+    feeds:["oferta"], guards:"Só bônus confirmados.", level:"Suporte", artifacts:"entregáveis de bônus" },
+  { id:"recuperacao-funil", name:"recuperacao-funil", phase:"Back-end & Recuperação", phaseColor:"#f59e0b", order:13, type:"backend",
+    description:"Sequências de recuperação (carrinho abandonado, cartão recusado, boleto).",
+    prerequisites:["pagina / vsl","copy-funil"], outputs:["recuperacao.md","recuperacao.html"],
+    feeds:["cro-funil"], guards:"Recuperar é mais barato que adquirir.", level:"N12", artifacts:"recuperacao.md" },
+  { id:"backend-funil", name:"backend-funil", phase:"Back-end & Recuperação", phaseColor:"#f59e0b", order:14, type:"backend",
+    description:"Maximização de ticket: upsell, OTO, downsell, janela de 4h, LTV.",
+    prerequisites:["copy-funil","offerbook"], outputs:["back-end.md","pagina/upsell.html","pagina/downsell.html"],
+    feeds:["cro-funil"], guards:"Lucro está no back-end.", level:"N12", artifacts:"back-end.md" },
+  { id:"cro-funil", name:"cro-funil", phase:"Otimização", phaseColor:"#ef4444", order:15, type:"optimization",
+    description:"KPIs por etapa + plano de testes A/B + quando escalar.",
+    prerequisites:["tudo anterior + dados"], outputs:["cro.md","cro.html"],
+    feeds:["iteração contínua"], guards:"1 teste por vez. Mín. 1.000 views.", level:"N12", artifacts:"cro.md" },
+  { id:"status-funil", name:"status-funil", phase:"Utilitários", phaseColor:"#64748b", order:99, type:"utility",
+    description:"Mostra estado atual do funil lendo a pasta do projeto. Checklist + próximo passo único.",
+    prerequisites:["qualquer momento"], outputs:["(leitura — sem arquivo novo)"],
+    feeds:["orienta o aluno"], guards:"Lê Perfil do Projeto. Respeita ordem N12.", level:"Sempre", artifacts:"Checklist vivo" },
+  { id:"zelador", name:"zelador", phase:"Tráfego", phaseColor:"#22c55e", order:26, type:"traffic",
+    description:"Confere saúde da conta e tracking com confirmação humana. Roda primeiro, sempre.",
+    prerequisites:["project-brief","pagina/funil"], outputs:["weekly-panel.trackingAudit"],
+    feeds:["briefista","estruturador"], guards:"Nunca confirma tracking sem evidência literal do operador.", level:"Aula 3", artifacts:"Auditoria de tracking" },
+  { id:"briefista", name:"briefista", phase:"Tráfego", phaseColor:"#22c55e", order:27, type:"traffic",
+    description:"Transforma ângulos validados em bateria de anúncios para curadoria humana.",
+    prerequisites:["zelador","angulos com nivel de consciencia"], outputs:["weekly-panel.creativeBattery"],
+    feeds:["estruturador","ads-creative-factory"], guards:"Não cria ângulo nem escolhe finalista sozinho.", level:"Aula 3", artifacts:"Bateria e finalistas" },
+  { id:"estruturador", name:"estruturador", phase:"Tráfego", phaseColor:"#22c55e", order:28, type:"traffic",
+    description:"Monta a configuração de campanha no default sagrado (Vendas, não Impulsionar), sem publicar.",
+    prerequisites:["zelador nao critico","finalistas curados"], outputs:["campaign-plan.structure"],
+    feeds:["leitor-de-metricas","ads-creative-factory"], guards:"Nunca publica e nunca monta abaixo do piso de verba.", level:"Aula 3", artifacts:"Plano de campanha" },
+  { id:"leitor-de-metricas", name:"leitor-de-metricas", phase:"Tráfego", phaseColor:"#22c55e", order:29, type:"traffic",
+    description:"Traduz o que o gerenciador realmente diz, rotulando apenas números confirmados pelo operador.",
+    prerequisites:["campanha submetida pelo humano","metricas nomeadas"], outputs:["weekly-panel.metricReading"],
+    feeds:["diagnosticador"], guards:"Campo ausente é não fornecido; ROAS real exige venda confirmada.", level:"Aula 3", artifacts:"Leitura de métricas" },
+  { id:"diagnosticador", name:"diagnosticador", phase:"Tráfego", phaseColor:"#22c55e", order:30, type:"traffic",
+    description:"Aponta 1 alavanca falseável por vez, a partir da leitura confirmada, pra você decidir.",
+    prerequisites:["leitor-de-metricas"], outputs:["weekly-panel.diagnosis"],
+    feeds:["briefista","estruturador"], guards:"Uma alavanca por vez; nunca executa a mudança.", level:"Aula 3", artifacts:"Diagnóstico e decisão" },
+  { id:"ads-creative-factory", name:"ads-creative-factory", phase:"Tráfego", phaseColor:"#c9b298", order:31, type:"traffic",
+    description:"Produz lotes reais de imagens e legendas a partir dos finalistas curados, com arquétipos, formatos e gate visual.",
+    prerequisites:["briefista","estruturador","curadoria humana"], outputs:["criativos/factory/*/final/manifest.json","criativos/factory/*/final/legendas.md","criativos/factory/*/final/**/*.png"],
+    feeds:["subida manual"], guards:"Gera propostas; só itens aprovados pelo operador entram no pacote final.", level:"Aula 3", artifacts:"Lote de imagens e legendas" }
+];
+
+// ═══════════════════════════════════════════════════════════
+// FLOW LAYOUT — posições no canvas (col, row)
+// ═══════════════════════════════════════════════════════════
+const CELL_W = 240, CELL_H = 100, NODE_W = 196, NODE_H = 76;
+const FLOW_POS = {
+  "comecar":              { col: 0,  row: 2 },
+  "avatar-funil":         { col: 1,  row: 2 },
+  "espiao-do-concorrente":{ col: 2,  row: 2 },
+  "trend-hunting":        { col: 3,  row: 2 },
+  "swipe-file":           { col: 4,  row: 2 },
+  "offerbook":            { col: 5,  row: 2 },
+  "design-md":            { col: 6,  row: 2 },
+  "metodo-funil":         { col: 7,  row: 2 },
+  "copy-funil":           { col: 8,  row: 2 },
+  "vsl-funil":            { col: 9,  row: 0 },
+  "advertorial-funil":    { col: 9,  row: 1 },
+  "lancamento-funil":     { col: 9,  row: 2 },
+  "webinario-funil":      { col: 9,  row: 3 },
+  "quiz-funil":           { col: 9,  row: 4 },
+  "pagina-vendas-funil":  { col: 9,  row: 5 },
+  "conteudo-funil":       { col: 10, row: 1 },
+  "criativos-funil":      { col: 10, row: 3 },
+  "email-funil":          { col: 11, row: 1 },
+  "whatsapp-funil":       { col: 11, row: 3 },
+  "mockup-produto-funil": { col: 11, row: 5 },
+  "bonus-funil":          { col: 11, row: 6 },
+  "recuperacao-funil":    { col: 12, row: 1 },
+  "backend-funil":        { col: 12, row: 3 },
+  "cro-funil":            { col: 13, row: 2 },
+  "status-funil":         { col: 7,  row: 0 },
+  "zelador":              { col: 9,  row: 7 },
+  "briefista":            { col: 10, row: 7 },
+  "estruturador":         { col: 11, row: 7 },
+  "leitor-de-metricas":   { col: 12, row: 7 },
+  "diagnosticador":       { col: 13, row: 7 },
+  "ads-creative-factory": { col: 10, row: 8 }
+};
+
+const FLOW_EDGES = [
+  ["comecar","avatar-funil"],["avatar-funil","espiao-do-concorrente"],["espiao-do-concorrente","trend-hunting"],
+  ["trend-hunting","swipe-file"],["swipe-file","offerbook"],["offerbook","design-md"],["design-md","metodo-funil"],
+  ["metodo-funil","copy-funil"],
+  ["copy-funil","vsl-funil"],["copy-funil","advertorial-funil"],["copy-funil","lancamento-funil"],
+  ["copy-funil","webinario-funil"],["copy-funil","quiz-funil"],["copy-funil","pagina-vendas-funil"],
+  ["vsl-funil","conteudo-funil"],["advertorial-funil","conteudo-funil"],["lancamento-funil","conteudo-funil"],
+  ["webinario-funil","criativos-funil"],["quiz-funil","criativos-funil"],["pagina-vendas-funil","criativos-funil"],
+  ["conteudo-funil","email-funil"],["criativos-funil","email-funil"],
+  ["conteudo-funil","whatsapp-funil"],["criativos-funil","whatsapp-funil"],
+  ["email-funil","recuperacao-funil"],["whatsapp-funil","recuperacao-funil"],
+  ["email-funil","backend-funil"],["whatsapp-funil","backend-funil"],
+  ["recuperacao-funil","cro-funil"],["backend-funil","cro-funil"],
+  ["status-funil","metodo-funil","utility"],["status-funil","copy-funil","utility"],["status-funil","cro-funil","utility"],
+  ["criativos-funil","zelador"],
+  ["zelador","briefista"],["zelador","estruturador"],
+  ["briefista","estruturador"],["briefista","ads-creative-factory"],
+  ["estruturador","leitor-de-metricas"],["estruturador","ads-creative-factory"],
+  ["leitor-de-metricas","diagnosticador"],
+  ["diagnosticador","briefista","branch"],["diagnosticador","estruturador","branch"]
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let currentView = 'flow';
+let currentSelected = null;
+let currentArtifact = null;
+let artifactRegistry = {};
+let flowState = { x: 40, y: 40, scale: 1 };
+let flowOrientation = localStorage.getItem('cohort-flow-orientation') === 'vertical' ? 'vertical' : 'horizontal';
+let flowPanning = false, flowPanStart = null;
+let canvasMetrics = { w: 0, h: 0 };
+let panAnimFrame = null;
+
+/** Trilha N12 núcleo — apenas skills com amostras reais em mapa-skills-samples/ */
+const N12_TOUR = [
+  "comecar", "avatar-funil", "espiao-do-concorrente", "trend-hunting", "swipe-file",
+  "offerbook", "design-md", "metodo-funil", "copy-funil",
+  "quiz-funil", "email-funil", "recuperacao-funil", "backend-funil"
+];
+let tourState = { active: false, index: 0, timer: null };
+
+const REF_TO_SKILL = {
+  "design.md": "design-md", "design-md": "design-md",
+  "funil.md": "metodo-funil", "copy.md": "copy-funil",
+  "offerbook": "offerbook", "offerbook.md": "offerbook"
+};
+
+// ═══════════════════════════════════════════════════════════
+// FLOW CANVAS
+// ═══════════════════════════════════════════════════════════
+function getFlowPos(id) {
+  const pos = FLOW_POS[id];
+  if (!pos) return null;
+  if (flowOrientation === 'vertical') return { col: pos.row, row: pos.col };
+  return pos;
+}
+
+function getFlowOrigin(id) {
+  const pos = getFlowPos(id);
+  if (!pos) return null;
+  return {
+    x: pos.col * CELL_W + 20,
+    y: pos.row * CELL_H + 20
+  };
+}
+
+function getFlowPositions() {
+  return SKILLS
+    .map(skill => getFlowPos(skill.id))
+    .filter(Boolean);
+}
+
+function getFlowEdgePath(from, to) {
+  const a = getNodeCenter(from);
+  const b = getNodeCenter(to);
+  if (flowOrientation === 'vertical') {
+    const x1 = a.x;
+    const y1 = a.y + NODE_H / 2 - 10;
+    const x2 = b.x;
+    const y2 = b.y - NODE_H / 2 + 10;
+    const my = (y1 + y2) / 2;
+    return `M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`;
+  }
+  const x1 = a.x + NODE_W / 2 - 10;
+  const y1 = a.y;
+  const x2 = b.x - NODE_W / 2 + 10;
+  const y2 = b.y;
+  const mx = (x1 + x2) / 2;
+  return `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+}
+
+function syncFlowOrientationUI() {
+  const vp = document.getElementById('flow-viewport');
+  vp?.classList.toggle('flow-vertical', flowOrientation === 'vertical');
+  document.getElementById('flow-orientation-horizontal')?.classList.toggle('is-active', flowOrientation === 'horizontal');
+  document.getElementById('flow-orientation-vertical')?.classList.toggle('is-active', flowOrientation === 'vertical');
+}
+
+function setFlowOrientation(orientation) {
+  if (!['horizontal', 'vertical'].includes(orientation) || orientation === flowOrientation) return;
+  cancelPanAnimation();
+  flowOrientation = orientation;
+  localStorage.setItem('cohort-flow-orientation', flowOrientation);
+  syncFlowOrientationUI();
+  renderFlowCanvas();
+  setTimeout(flowFit, 30);
+}
+
+function getNodeCenter(id) {
+  const origin = getFlowOrigin(id);
+  if (!origin) return { x: 0, y: 0 };
+  return {
+    x: origin.x + NODE_W / 2,
+    y: origin.y + NODE_H / 2
+  };
+}
+
+function renderFlowCanvas() {
+  const nodesEl = document.getElementById('flow-nodes');
+  const svgEl = document.getElementById('flow-svg');
+  nodesEl.innerHTML = '';
+  syncFlowOrientationUI();
+
+  // Calculate canvas size
+  let maxCol = 0, maxRow = 0;
+  getFlowPositions().forEach(p => { maxCol = Math.max(maxCol, p.col); maxRow = Math.max(maxRow, p.row); });
+  const canvasW = (maxCol + 1) * CELL_W + 80;
+  const canvasH = (maxRow + 1) * CELL_H + 80;
+  svgEl.setAttribute('width', canvasW);
+  svgEl.setAttribute('height', canvasH);
+  document.getElementById('flow-canvas').style.width = canvasW + 'px';
+  document.getElementById('flow-canvas').style.height = canvasH + 'px';
+  canvasMetrics = { w: canvasW, h: canvasH };
+
+  // Swimlane backgrounds
+  const lanes = [
+    { row: 0, label: 'Nível 5', color: 'rgba(244,63,94,0.04)' },
+    { row: 2, label: 'Núcleo N12', color: 'rgba(201,178,152,0.05)' },
+    { row: 5, label: 'Suporte', color: 'rgba(100,116,139,0.04)' }
+  ];
+  let swimHTML = '';
+  lanes.forEach(l => {
+    if (flowOrientation === 'vertical') {
+      const x = l.row * CELL_W;
+      swimHTML += `<rect x="${x}" y="0" width="${CELL_W * 2}" height="${canvasH}" fill="${l.color}" rx="0"/>`;
+      swimHTML += `<text x="${x + 8}" y="18" fill="#3f3f46" font-size="9" font-weight="600" font-family="Inter,sans-serif" letter-spacing="0.08em">${l.label}</text>`;
+      return;
+    }
+    const y = l.row * CELL_H;
+    swimHTML += `<rect x="0" y="${y}" width="${canvasW}" height="${CELL_H * 2}" fill="${l.color}" rx="0"/>`;
+    swimHTML += `<text x="8" y="${y + CELL_H + 4}" fill="#3f3f46" font-size="9" font-weight="600" font-family="Inter,sans-serif" letter-spacing="0.08em">${l.label}</text>`;
+  });
+
+  // Draw edges
+  const showConns = document.getElementById('toggle-connections')?.checked ?? true;
+  let edgesHTML = swimHTML;
+  if (showConns) {
+    FLOW_EDGES.forEach(([from, to, kind]) => {
+      const cls = kind === 'utility' ? 'flow-edge utility' : (kind === 'branch' ? 'flow-edge branch' : 'flow-edge');
+      edgesHTML += `<path class="${cls}" data-from="${from}" data-to="${to}" d="${getFlowEdgePath(from, to)}"/>`;
+    });
+  }
+  svgEl.innerHTML = edgesHTML;
+
+  // Draw nodes
+  SKILLS.forEach(skill => {
+    const origin = getFlowOrigin(skill.id);
+    if (!origin) return;
+    const el = document.createElement('div');
+    el.className = 'flow-node';
+    el.dataset.id = skill.id;
+    el.style.left = origin.x + 'px';
+    el.style.top = origin.y + 'px';
+    el.innerHTML = `
+      <div class="fn-head">
+        <div class="fn-phase-dot" style="background:${skill.phaseColor}"></div>
+        <span class="fn-name flex-1 truncate">${skill.name}</span>
+        ${skill.order < 99 ? `<span class="fn-order">${skill.order}</span>` : ''}
+      </div>
+      <span class="fn-type" style="background:${skill.phaseColor}18;color:${skill.phaseColor}">${skill.type}</span>
+    `;
+    el.addEventListener('click', (e) => { e.stopPropagation(); selectSkill(skill.id, el); });
+    nodesEl.appendChild(el);
+  });
+
+  const prevId = currentSelected?.id;
+  if (prevId) {
+    const node = document.querySelector(`.flow-node[data-id="${prevId}"]`);
+    if (node) {
+      node.classList.add('selected');
+      highlightFlowEdges(prevId);
+    }
+  }
+
+  renderMinimap();
+  applyFlowTransform();
+}
+
+function applyFlowTransform() {
+  const canvas = document.getElementById('flow-canvas');
+  canvas.style.transform = `translate(${flowState.x}px, ${flowState.y}px) scale(${flowState.scale})`;
+  updateMinimapViewport();
+}
+
+function initFlowPanZoom() {
+  const vp = document.getElementById('flow-viewport');
+
+  document.getElementById('flow-minimap')?.addEventListener('click', onMinimapClick);
+
+  vp.addEventListener('mousedown', (e) => {
+    if (e.target.closest('.flow-node') || e.target.closest('.flow-toolbar') || e.target.closest('#flow-minimap')) return;
+    cancelPanAnimation();
+    flowPanning = true;
+    flowPanStart = { x: e.clientX - flowState.x, y: e.clientY - flowState.y };
+    vp.classList.add('panning');
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!flowPanning) return;
+    flowState.x = e.clientX - flowPanStart.x;
+    flowState.y = e.clientY - flowPanStart.y;
+    applyFlowTransform();
+  });
+  window.addEventListener('mouseup', () => {
+    flowPanning = false;
+    vp.classList.remove('panning');
+  });
+  vp.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    cancelPanAnimation();
+    const delta = e.deltaY > 0 ? -0.08 : 0.08;
+    const rect = vp.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const newScale = Math.min(2, Math.max(0.3, flowState.scale + delta));
+    const ratio = newScale / flowState.scale;
+    flowState.x = mx - (mx - flowState.x) * ratio;
+    flowState.y = my - (my - flowState.y) * ratio;
+    flowState.scale = newScale;
+    applyFlowTransform();
+  }, { passive: false });
+}
+
+function flowZoom(delta) {
+  const vp = document.getElementById('flow-viewport');
+  const mx = vp.clientWidth / 2;
+  const my = vp.clientHeight / 2;
+  const newScale = Math.min(2, Math.max(0.3, flowState.scale + delta));
+  const ratio = newScale / flowState.scale;
+  flowState.x = mx - (mx - flowState.x) * ratio;
+  flowState.y = my - (my - flowState.y) * ratio;
+  flowState.scale = newScale;
+  applyFlowTransform();
+}
+
+function getComfortableFocusScale() {
+  const vp = document.getElementById('flow-viewport');
+  if (!vp || !canvasMetrics.w) return 0.85;
+  const fitScale = Math.min((vp.clientWidth - 16) / canvasMetrics.w, (vp.clientHeight - 16) / canvasMetrics.h, 1);
+  // Mantém alguns nós ao redor legíveis sem voltar para o zoom total.
+  const axisScale = flowOrientation === 'vertical'
+    ? (vp.clientHeight * 0.78) / (CELL_H * 4.5)
+    : (vp.clientWidth * 0.82) / (CELL_W * 3.5);
+  return Math.min(1.15, Math.max(fitScale * 1.35, Math.min(axisScale, 1)));
+}
+
+function flowFit() {
+  const vp = document.getElementById('flow-viewport');
+  const canvas = document.getElementById('flow-canvas');
+  const vpW = vp.clientWidth, vpH = vp.clientHeight;
+  const cW = canvas.offsetWidth, cH = canvas.offsetHeight;
+  const padding = 16;
+  const scale = Math.min((vpW - padding) / cW, (vpH - padding) / cH, 1);
+  flowState.scale = scale;
+  flowState.x = (vpW - cW * scale) / 2;
+  flowState.y = (vpH - cH * scale) / 2;
+  applyFlowTransform();
+}
+
+function flowReset() {
+  flowFit();
+}
+
+function clearFlowHighlight() {
+  document.querySelectorAll('.flow-edge').forEach(p => {
+    p.classList.remove('active', 'inbound', 'outbound');
+  });
+  document.querySelectorAll('.flow-node').forEach(el => {
+    el.classList.remove('unrelated', 'connected-upstream', 'connected-downstream');
+  });
+  document.getElementById('flow-particles')?.remove();
+}
+
+function highlightFlowEdges(skillId) {
+  clearFlowHighlight();
+  const connected = new Set([skillId]);
+
+  document.querySelectorAll('.flow-edge').forEach(p => {
+    const from = p.dataset.from, to = p.dataset.to;
+    const touches = from === skillId || to === skillId;
+    if (!touches) return;
+    connected.add(from);
+    connected.add(to);
+    p.classList.add('active');
+    p.classList.toggle('outbound', from === skillId);
+    p.classList.toggle('inbound', to === skillId);
+  });
+
+  document.querySelectorAll('.flow-node').forEach(el => {
+    const id = el.dataset.id;
+    if (id === skillId) return;
+    if (!connected.has(id)) {
+      el.classList.add('unrelated');
+      return;
+    }
+    if (FLOW_EDGES.some(([f, t]) => f === id && t === skillId)) el.classList.add('connected-upstream');
+    if (FLOW_EDGES.some(([f, t]) => f === skillId && t === id)) el.classList.add('connected-downstream');
+  });
+
+  renderFlowParticles(skillId);
+}
+
+function renderFlowParticles(skillId) {
+  const svg = document.getElementById('flow-svg');
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.id = 'flow-particles';
+
+  document.querySelectorAll('.flow-edge.active').forEach((path, i) => {
+    const d = path.getAttribute('d');
+    if (!d) return;
+    const isOut = path.classList.contains('outbound');
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('r', '3.5');
+    circle.setAttribute('class', isOut ? 'flow-particle' : 'flow-particle inbound-p');
+    const anim = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+    anim.setAttribute('dur', isOut ? '1.1s' : '1.3s');
+    anim.setAttribute('repeatCount', 'indefinite');
+    anim.setAttribute('path', d);
+    circle.appendChild(anim);
+    g.appendChild(circle);
+    // Segunda partícula defasada nas saídas principais
+    if (isOut && i < 4) {
+      const c2 = circle.cloneNode(true);
+      const a2 = c2.querySelector('animateMotion');
+      a2.setAttribute('begin', '0.55s');
+      g.appendChild(c2);
+    }
+  });
+
+  if (g.childNodes.length) svg.appendChild(g);
+}
+
+// ═══════════════════════════════════════════════════════════
+// MINIMAP
+// ═══════════════════════════════════════════════════════════
+function renderMinimap() {
+  const canvas = document.getElementById('minimap-canvas');
+  if (!canvas || !canvasMetrics.w) return;
+  const ctx = canvas.getContext('2d');
+  const mw = canvas.width, mh = canvas.height;
+  const scale = Math.min(mw / canvasMetrics.w, mh / canvasMetrics.h);
+  const ox = (mw - canvasMetrics.w * scale) / 2;
+  const oy = (mh - canvasMetrics.h * scale) / 2;
+
+  ctx.clearRect(0, 0, mw, mh);
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, mw, mh);
+
+  // edges
+  ctx.strokeStyle = '#3f3f46';
+  ctx.lineWidth = 0.5;
+  FLOW_EDGES.forEach(([from, to]) => {
+    const a = getNodeCenter(from), b = getNodeCenter(to);
+    const x1 = flowOrientation === 'vertical' ? a.x : a.x + NODE_W / 2;
+    const y1 = flowOrientation === 'vertical' ? a.y + NODE_H / 2 : a.y;
+    const x2 = flowOrientation === 'vertical' ? b.x : b.x - NODE_W / 2;
+    const y2 = flowOrientation === 'vertical' ? b.y - NODE_H / 2 : b.y;
+    ctx.beginPath();
+    ctx.moveTo(x1 * scale + ox, y1 * scale + oy);
+    ctx.lineTo(x2 * scale + ox, y2 * scale + oy);
+    ctx.stroke();
+  });
+
+  // nodes
+  SKILLS.forEach(skill => {
+    const origin = getFlowOrigin(skill.id);
+    if (!origin) return;
+    const x = origin.x * scale + ox;
+    const y = origin.y * scale + oy;
+    const w = NODE_W * scale, h = NODE_H * scale;
+    ctx.fillStyle = skill.phaseColor + '99';
+    ctx.fillRect(x, y, w, h);
+    if (currentSelected?.id === skill.id) {
+      ctx.strokeStyle = '#C9B298';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x - 0.5, y - 0.5, w + 1, h + 1);
+    }
+  });
+
+  canvas.dataset.ox = ox;
+  canvas.dataset.oy = oy;
+  canvas.dataset.scale = scale;
+  updateMinimapViewport();
+}
+
+function updateMinimapViewport() {
+  const vp = document.getElementById('flow-viewport');
+  const mm = document.getElementById('flow-minimap');
+  const rect = document.getElementById('minimap-viewport');
+  const canvas = document.getElementById('minimap-canvas');
+  if (!vp || !rect || !canvas || !canvasMetrics.w) return;
+
+  const ox = parseFloat(canvas.dataset.ox || 0);
+  const oy = parseFloat(canvas.dataset.oy || 0);
+  const ms = parseFloat(canvas.dataset.scale || 1);
+
+  const visX = -flowState.x / flowState.scale;
+  const visY = -flowState.y / flowState.scale;
+  const visW = vp.clientWidth / flowState.scale;
+  const visH = vp.clientHeight / flowState.scale;
+
+  rect.style.left = (visX * ms + ox) + 'px';
+  rect.style.top = (visY * ms + oy) + 'px';
+  rect.style.width = (visW * ms) + 'px';
+  rect.style.height = (visH * ms) + 'px';
+}
+
+function onMinimapClick(e) {
+  const canvas = document.getElementById('minimap-canvas');
+  if (!canvas) return;
+  const r = canvas.getBoundingClientRect();
+  const ox = parseFloat(canvas.dataset.ox || 0);
+  const oy = parseFloat(canvas.dataset.oy || 0);
+  const ms = parseFloat(canvas.dataset.scale || 1);
+  const cx = (e.clientX - r.left) * (canvas.width / r.width);
+  const cy = (e.clientY - r.top) * (canvas.height / r.height);
+  const worldX = (cx - ox) / ms;
+  const worldY = (cy - oy) / ms;
+  focusOnPoint(worldX, worldY, true, false);
+}
+
+function focusTransformFor(worldX, worldY, targetScale) {
+  const vp = document.getElementById('flow-viewport');
+  return {
+    x: vp.clientWidth / 2 - worldX * targetScale,
+    y: vp.clientHeight / 2 - worldY * targetScale,
+    scale: targetScale
+  };
+}
+
+function focusOnPoint(worldX, worldY, animate, keepScale = false) {
+  const targetScale = keepScale ? flowState.scale : getComfortableFocusScale();
+  const t = focusTransformFor(worldX, worldY, targetScale);
+  if (animate) animateFocusTo(t.x, t.y, t.scale);
+  else {
+    flowState.x = t.x;
+    flowState.y = t.y;
+    flowState.scale = t.scale;
+    applyFlowTransform();
+  }
+}
+
+function focusOnSkill(skillId, animate = true) {
+  const c = getNodeCenter(skillId);
+  focusOnPoint(c.x, c.y, animate, false);
+}
+
+function cancelPanAnimation() {
+  if (panAnimFrame) { cancelAnimationFrame(panAnimFrame); panAnimFrame = null; }
+}
+
+function animateFocusTo(tx, ty, targetScale, duration = 480) {
+  cancelPanAnimation();
+  const sx = flowState.x, sy = flowState.y, ss = flowState.scale;
+  const t0 = performance.now();
+  function step(now) {
+    const p = Math.min(1, (now - t0) / duration);
+    const ease = 1 - Math.pow(1 - p, 3);
+    flowState.x = sx + (tx - sx) * ease;
+    flowState.y = sy + (ty - sy) * ease;
+    flowState.scale = ss + (targetScale - ss) * ease;
+    applyFlowTransform();
+    if (p < 1) panAnimFrame = requestAnimationFrame(step);
+    else panAnimFrame = null;
+  }
+  panAnimFrame = requestAnimationFrame(step);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOUR N12
+// ═══════════════════════════════════════════════════════════
+function updateTourUI() {
+  const bar = document.getElementById('tour-bar');
+  const icon = document.getElementById('tour-icon');
+  const label = document.getElementById('tour-label');
+  const progress = document.getElementById('tour-progress');
+  const step = document.getElementById('tour-step');
+  const skill = SKILLS.find(s => s.id === N12_TOUR[tourState.index]);
+
+  bar?.classList.toggle('playing', tourState.active);
+  if (icon) icon.className = tourState.active ? 'iconoir-pause' : 'iconoir-play';
+  if (label) label.textContent = tourState.active ? 'Pausar tour' : 'Tour N12';
+  if (progress && skill) {
+    progress.innerHTML = tourState.active
+      ? `<span class="amber">${skill.name}</span> — ${skill.phase}`
+      : 'Percorra a sequência canônica N12 nó a nó';
+  }
+  if (step) step.textContent = skill ? `${tourState.index + 1}/${N12_TOUR.length}` : '—';
+
+  document.querySelectorAll('.flow-node.tour-active').forEach(n => n.classList.remove('tour-active'));
+  if (skill) document.querySelector(`.flow-node[data-id="${skill.id}"]`)?.classList.add('tour-active');
+}
+
+function tourGoTo(index) {
+  tourState.index = Math.max(0, Math.min(N12_TOUR.length - 1, index));
+  const skillId = N12_TOUR[tourState.index];
+  const node = document.querySelector(`.flow-node[data-id="${skillId}"]`);
+  ensureFlowView();
+  focusOnSkill(skillId, true);
+  selectSkill(skillId, node, true);
+  updateTourUI();
+  renderMinimap();
+}
+
+function scheduleNextTourStep() {
+  if (!tourState.active) return;
+  if (tourState.timer) clearTimeout(tourState.timer);
+  if (tourState.index >= N12_TOUR.length - 1) {
+    tourState.timer = setTimeout(() => stopTour(true), 2800);
+    return;
+  }
+  tourState.timer = setTimeout(() => {
+    tourGoTo(tourState.index + 1);
+    scheduleNextTourStep();
+  }, 2800);
+}
+
+function toggleTour() {
+  if (tourState.active) stopTour();
+  else startTour();
+}
+
+function startTour(fromIndex) {
+  stopTour(false);
+  tourState.active = true;
+  tourGoTo(typeof fromIndex === 'number' ? fromIndex : tourState.index);
+  scheduleNextTourStep();
+}
+
+function stopTour(showDone) {
+  tourState.active = false;
+  if (tourState.timer) { clearTimeout(tourState.timer); tourState.timer = null; }
+  document.querySelectorAll('.flow-node.tour-active').forEach(n => n.classList.remove('tour-active'));
+  const progress = document.getElementById('tour-progress');
+  if (showDone && progress) progress.textContent = `Tour N12 concluído — ${N12_TOUR.length} passos`;
+  updateTourUI();
+}
+
+function tourNext() {
+  stopTour(false);
+  tourGoTo(tourState.index + 1, false);
+}
+
+function tourPrev() {
+  stopTour(false);
+  tourGoTo(tourState.index - 1, false);
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVEGAÇÃO ENTRE NÓS (pré-requisitos + alimenta)
+// ═══════════════════════════════════════════════════════════
+function resolveSkillRef(ref) {
+  if (!ref || typeof ref !== 'string') return null;
+  const raw = ref.trim();
+  const lower = raw.toLowerCase().replace(/\s*\([^)]*\)\s*/g, '').trim();
+
+  if (REF_TO_SKILL[lower]) return REF_TO_SKILL[lower];
+
+  let skill = SKILLS.find(s => s.id === lower || s.id === raw);
+  if (skill) return skill.id;
+
+  if (/design\.?md/i.test(raw)) return 'design-md';
+  if (/funil\.md/i.test(raw)) return 'metodo-funil';
+  if (/copy\.md/i.test(raw)) return 'copy-funil';
+  if (/\bvsl\b/i.test(raw)) return 'vsl-funil';
+  if (/pagina|página/i.test(raw)) return 'pagina-vendas-funil';
+  if (/offerbook/i.test(raw)) return 'offerbook';
+  if (/email/i.test(raw)) return 'email-funil';
+  if (/whatsapp/i.test(raw)) return 'whatsapp-funil';
+  if (/recupera/i.test(raw)) return 'recuperacao-funil';
+  if (/backend|back-end/i.test(raw)) return 'backend-funil';
+  if (/cro/i.test(raw)) return 'cro-funil';
+  if (/status/i.test(raw)) return 'status-funil';
+  if (/swipe/i.test(raw)) return 'swipe-file';
+  if (/avatar/i.test(raw)) return 'avatar-funil';
+  if (/espiao|espião/i.test(raw)) return 'espiao-do-concorrente';
+  if (/trend/i.test(raw)) return 'trend-hunting';
+  if (/metodo|método/i.test(raw)) return 'metodo-funil';
+  if (/comecar/i.test(raw)) return 'comecar';
+
+  skill = SKILLS.find(s => lower.includes(s.id) || raw.includes(s.id));
+  return skill?.id || null;
+}
+
+function renderSkillChip(label, variant) {
+  const targetId = resolveSkillRef(label);
+  const base = 'skill-chip';
+  if (!targetId) {
+    return `<span class="${base} skill-chip-static">${label}</span>`;
+  }
+  const variantClass = variant === 'prereq' ? 'skill-chip--prereq' : 'skill-chip--feed';
+  return `<span onclick="navigateToSkill('${targetId}')" class="${base} ${variantClass}" title="Ir para ${targetId}">
+    <i class="iconoir-arrow-right" style="font-size:9px;opacity:0.6"></i>${label}
+  </span>`;
+}
+
+function navigateToSkill(skillId) {
+  if (tourState.active) stopTour(false);
+  ensureFlowView();
+  const node = document.querySelector(`.flow-node[data-id="${skillId}"]`);
+  focusOnSkill(skillId, true);
+  selectSkill(skillId, node);
+}
+
+function ensureFlowView() {
+  if (currentView !== 'flow') setViewMode('flow');
+}
+
+// ═══════════════════════════════════════════════════════════
+// VIEW MODES
+// ═══════════════════════════════════════════════════════════
+function setViewMode(mode) {
+  const switchingToFlow = mode === 'flow' && currentView !== 'flow';
+  currentView = mode;
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('view-active'));
+  document.getElementById('view-' + mode)?.classList.add('view-active');
+
+  document.getElementById('flow-container').classList.toggle('hidden', mode !== 'flow');
+  document.getElementById('grid-container').classList.toggle('hidden', mode !== 'grid');
+  document.getElementById('mermaid-container').classList.toggle('hidden', mode !== 'mermaid');
+
+  if (mode === 'grid' && !document.getElementById('cluster-view').innerHTML) renderClusters();
+  if (mode === 'mermaid') renderMermaid();
+  // flowFit só ao ENTRAR na view — nunca durante navegação entre nós
+  if (switchingToFlow) setTimeout(flowFit, 50);
+}
+
+function renderMermaid() {
+  const div = document.getElementById('mermaid-flow');
+  const src = document.getElementById('mermaid-source')?.textContent.trim();
+  if (!div || !src) return;
+  div.removeAttribute('data-processed');
+  div.innerHTML = src;
+  if (typeof mermaid !== 'undefined') {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: '#0a0a0a',
+        mainBkg: '#121212',
+        primaryColor: '#141414',
+        primaryTextColor: '#ededed',
+        primaryBorderColor: 'rgba(201, 178, 152, 0.45)',
+        lineColor: 'rgba(201, 178, 152, 0.35)',
+        secondaryColor: '#1a1a1a',
+        tertiaryColor: '#0f0f0f',
+        clusterBkg: '#121212',
+        clusterBorder: 'rgba(201, 178, 152, 0.25)',
+        titleColor: '#c9b298',
+        edgeLabelBackground: '#121212',
+        fontFamily: '"Hanken Grotesk", system-ui, sans-serif',
+        fontSize: '13px',
+      },
+      flowchart: { curve: 'linear', padding: 14, htmlLabels: true },
+    });
+    setTimeout(() => { try { mermaid.run({ nodes: [div] }); } catch(e) { console.warn(e); } }, 60);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// GRID VIEW (legado)
+// ═══════════════════════════════════════════════════════════
+function renderClusters() {
+  const container = document.getElementById('cluster-view');
+  container.innerHTML = '';
+  const grouped = {};
+  SKILLS.forEach(s => { if (!grouped[s.phase]) grouped[s.phase] = []; grouped[s.phase].push(s); });
+  const order = ["Setup","Pesquisa (Aula 1)","Oferta (Aula 1)","Fundação","Copy","Peças do Funil","Aquisição & Conteúdo","Comunicação","Back-end & Recuperação","Otimização","Tráfego","Utilitários"];
+
+  order.forEach(phaseName => {
+    if (!grouped[phaseName]) return;
+    const section = document.createElement('div');
+    section.className = 'mb-8 cluster';
+    section.dataset.phase = phaseName;
+    const color = grouped[phaseName][0].phaseColor;
+    let html = `<div class="cluster__head"><div class="cluster__dot" style="background:${color}"></div><div class="cluster__title">${phaseName}</div></div><div class="cluster__grid">`;
+    grouped[phaseName].forEach(skill => {
+      html += `<div onclick="selectSkill('${skill.id}', this)" class="node skill-bubble" data-id="${skill.id}" data-name="${skill.name}">
+        <div style="font-weight:650;font-size:14px">${skill.name}</div>
+        <div class="cluster__card-desc">${skill.description}</div>
+      </div>`;
+    });
+    html += '</div>';
+    section.innerHTML = html;
+    container.appendChild(section);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// ARTIFACTS
+// ═══════════════════════════════════════════════════════════
+function getArtifactsForSkill(skill) {
+  const samples = (window.ARTIFACT_SAMPLES || {})[skill.id];
+  if (samples && samples.length) return samples;
+
+  if (!skill.outputs || !skill.outputs.length) return [];
+  return skill.outputs.map((o, i) => window.buildGenericArtifact(skill, o, i));
+}
+
+function getFormatIcon(format) {
+  const m = { md:'iconoir-page', html:'iconoir-code', pdf:'iconoir-page', docx:'iconoir-page', folder:'iconoir-folder' };
+  return m[format] || 'iconoir-page';
+}
+
+function registerArtifacts(skill, artifacts) {
+  artifacts.forEach(art => {
+    artifactRegistry[art.id] = { ...art, skillId: skill.id };
+  });
+}
+
+function eraseBrightPdfEdges(imageData) {
+  const { data, width, height } = imageData;
+  const seen = new Uint8Array(width * height);
+  const queue = [];
+  const fill = [10, 10, 10, 255];
+
+  const isBrightNeutral = (idx) => {
+    const o = idx * 4;
+    const a = data[o + 3];
+    if (a < 20) return true;
+    const r = data[o], g = data[o + 1], b = data[o + 2];
+    const luminance = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
+    const spread = Math.max(r, g, b) - Math.min(r, g, b);
+    return luminance > 175 && spread < 70;
+  };
+
+  const push = (x, y) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) return;
+    const idx = y * width + x;
+    if (seen[idx] || !isBrightNeutral(idx)) return;
+    seen[idx] = 1;
+    queue.push(idx);
+  };
+
+  for (let x = 0; x < width; x++) {
+    push(x, 0);
+    push(x, height - 1);
+  }
+  for (let y = 1; y < height - 1; y++) {
+    push(0, y);
+    push(width - 1, y);
+  }
+
+  while (queue.length) {
+    const idx = queue.pop();
+    const o = idx * 4;
+    data[o] = fill[0];
+    data[o + 1] = fill[1];
+    data[o + 2] = fill[2];
+    data[o + 3] = fill[3];
+
+    const x = idx % width;
+    const y = (idx - x) / width;
+    push(x + 1, y);
+    push(x - 1, y);
+    push(x, y + 1);
+    push(x, y - 1);
+  }
+}
+
+function cropWhitePdfMargins(canvas) {
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx || !canvas.width || !canvas.height) return false;
+
+  const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = image.data;
+  let darkSample = 0, totalSample = 0;
+  for (let y = 0; y < canvas.height; y += 8) {
+    for (let x = 0; x < canvas.width; x += 8) {
+      const i = (y * canvas.width + x) * 4;
+      const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+      if (a < 20) continue;
+      totalSample++;
+      if (r + g + b < 420) darkSample++;
+    }
+  }
+  const darkRatio = totalSample ? darkSample / totalSample : 0;
+  if (darkRatio < 0.35) return false;
+
+  let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+  const isWhite = (r, g, b, a) => a < 20 || (r > 235 && g > 235 && b > 235);
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      const i = (y * canvas.width + x) * 4;
+      if (isWhite(data[i], data[i + 1], data[i + 2], data[i + 3])) continue;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  }
+
+  if (minX >= maxX || minY >= maxY) return false;
+  const pad = 2;
+  minX = Math.max(0, minX - pad);
+  minY = Math.max(0, minY - pad);
+  maxX = Math.min(canvas.width - 1, maxX + pad);
+  maxY = Math.min(canvas.height - 1, maxY + pad);
+
+  const cropW = maxX - minX + 1;
+  const cropH = maxY - minY + 1;
+  const removedX = canvas.width - cropW;
+  const removedY = canvas.height - cropH;
+  if (removedX < 20 && removedY < 20) return false;
+
+  const cropped = ctx.getImageData(minX, minY, cropW, cropH);
+  eraseBrightPdfEdges(cropped);
+
+  const outerPad = 18;
+  const innerPad = 42;
+  const frameW = cropW + innerPad * 2;
+  const frameH = cropH + innerPad * 2;
+  canvas.width = frameW + outerPad * 2;
+  canvas.height = frameH + outerPad * 2;
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = 'rgba(245, 245, 245, 0.82)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(outerPad, outerPad, frameW, frameH);
+  ctx.putImageData(cropped, outerPad + innerPad, outerPad + innerPad);
+  return true;
+}
+
+async function setPdfPreview(sampleUrl) {
+  const wrap = document.getElementById('am-preview-pdf-wrap');
+  const canvas = document.getElementById('am-preview-pdf-canvas');
+  const iframe = document.getElementById('am-preview-pdf');
+  const fallback = document.getElementById('am-preview-pdf-fallback');
+  iframe.classList.add('hidden');
+  iframe.removeAttribute('src');
+  fallback.classList.add('hidden');
+  wrap.classList.remove('hidden');
+  canvas.classList.remove('hidden');
+  canvas.dataset.rendered = '0';
+
+  if (!window.pdfjsLib) {
+    fallback.classList.remove('hidden');
+    fallback.innerHTML = '<p class="muted" style="font-size:14px">pdf.js não carregou. Abra via servidor HTTP.</p>';
+    return;
+  }
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  const pdf = await pdfjsLib.getDocument(sampleUrl).promise;
+  const page = await pdf.getPage(1);
+  const baseVp = page.getViewport({ scale: 1 });
+  const scale = Math.min(1.5, Math.max(0.8, (wrap.clientWidth - 32) / baseVp.width));
+  const viewport = page.getViewport({ scale });
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  canvas.dataset.cropped = cropWhitePdfMargins(canvas) ? '1' : '0';
+  canvas.dataset.rendered = '1';
+  canvas.dataset.sampleUrl = sampleUrl;
+}
+
+function clearPdfPreview() {
+  const canvas = document.getElementById('am-preview-pdf-canvas');
+  const iframe = document.getElementById('am-preview-pdf');
+  if (canvas) {
+    canvas.classList.add('hidden');
+    canvas.dataset.rendered = '0';
+    delete canvas.dataset.sampleUrl;
+    const ctx = canvas.getContext('2d');
+    if (ctx) ctx.clearRect(0, 0, canvas.width || 0, canvas.height || 0);
+  }
+  if (iframe) { iframe.src = 'about:blank'; iframe.classList.add('hidden'); }
+}
+
+async function fetchArtifactContent(artifact) {
+  if (!artifact.sampleUrl) return artifact.content || null;
+  try {
+    const res = await fetch(artifact.sampleUrl);
+    if (!res.ok) return artifact.content || null;
+    return await res.text();
+  } catch {
+    return artifact.content || null;
+  }
+}
+
+async function openArtifactById(artifactId) {
+  const artifact = artifactRegistry[artifactId];
+  if (!artifact) return;
+  await openArtifactPreview(artifact);
+}
+
+function syncArtifactButtons(activeId) {
+  document.querySelectorAll('.artifact-btn').forEach(btn => {
+    btn.classList.toggle('is-active', btn.dataset.artifactId === activeId);
+  });
+}
+
+function getHtmlTwinForArtifact(artifact) {
+  if (artifact.htmlId && artifactRegistry[artifact.htmlId]) return artifactRegistry[artifact.htmlId];
+  const skillArts = Object.values(artifactRegistry).filter(a => a.skillId === artifact.skillId);
+  const base = artifact.label.replace(/\.pdf$/i, '.html');
+  return skillArts.find(a => a.format === 'html' && (a.label === base || a.label.includes(base.replace(/^.*\//, ''))));
+}
+
+function showArtifactTab(mode) {
+  const mdEl = document.getElementById('am-preview-md');
+  const htmlEl = document.getElementById('am-preview-html');
+  const pdfWrap = document.getElementById('am-preview-pdf-wrap');
+  const pdfIframe = document.getElementById('am-preview-pdf');
+  const pdfFallback = document.getElementById('am-preview-pdf-fallback');
+  mdEl.classList.add('hidden');
+  htmlEl.classList.add('hidden');
+  pdfWrap.classList.add('hidden');
+  pdfIframe.classList.add('hidden');
+  pdfFallback.classList.add('hidden');
+  document.querySelectorAll('.preview-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === mode);
+  });
+  if (mode === 'md') mdEl.classList.remove('hidden');
+  if (mode === 'html') htmlEl.classList.remove('hidden');
+  if (mode === 'pdf') {
+    pdfWrap.classList.remove('hidden');
+    const canvas = document.getElementById('am-preview-pdf-canvas');
+    if (canvas?.dataset.rendered === '1') canvas.classList.remove('hidden');
+  }
+}
+
+async function openArtifactPreview(artifact) {
+  currentArtifact = artifact;
+  const panel = document.getElementById('artifact-modal');
+  panel.classList.remove('hidden');
+  syncArtifactButtons(artifact.id);
+
+  document.getElementById('am-label').textContent = artifact.label;
+  document.getElementById('am-path').textContent = artifact.path;
+  document.getElementById('am-badge').style.display = artifact.generic ? '' : 'none';
+
+  const tabs = document.getElementById('am-tabs');
+  const mdEl = document.getElementById('am-preview-md');
+  const htmlEl = document.getElementById('am-preview-html');
+  const pdfWrap = document.getElementById('am-preview-pdf-wrap');
+  const pdfIframe = document.getElementById('am-preview-pdf');
+  const pdfFallback = document.getElementById('am-preview-pdf-fallback');
+  const pdfBanner = document.getElementById('am-pdf-banner');
+
+  mdEl.classList.add('hidden');
+  htmlEl.classList.add('hidden');
+  pdfWrap.classList.add('hidden');
+  pdfIframe.classList.add('hidden');
+  pdfFallback.classList.add('hidden');
+  tabs.innerHTML = '';
+  mdEl.innerHTML = '<p class="muted" style="font-size:14px">Carregando...</p>';
+
+  const fmt = artifact.format;
+  const fetched = await fetchArtifactContent(artifact);
+  if (fetched) artifact._fetched = fetched;
+
+  if (fmt === 'folder' && (fetched || artifact.content)) {
+    tabs.innerHTML = `<button class="preview-tab active text-xs px-3 py-1.5 rounded-t-lg" data-tab="md">Estrutura</button>`;
+    const body = fetched || artifact.content;
+    mdEl.classList.remove('hidden');
+    mdEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(body) : `<pre>${body}</pre>`;
+    return;
+  }
+
+  if (fmt === 'pdf' || fmt === 'docx') {
+    const twin = getHtmlTwinForArtifact(artifact);
+    const sampleUrl = artifact.sampleUrl;
+    const isDocx = fmt === 'docx';
+    const twinHtml = twin ? (await fetchArtifactContent(twin)) || twin.content : null;
+
+    tabs.innerHTML = '';
+    if (sampleUrl && !isDocx) {
+      tabs.innerHTML += `<button class="preview-tab active text-xs px-3 py-1.5 rounded-t-lg" data-tab="pdf" onclick="showPdfTab('embed')">PDF</button>`;
+    }
+    if (twinHtml || twin?.sampleUrl) {
+      tabs.innerHTML += `<button class="preview-tab ${!sampleUrl || isDocx ? 'active' : ''} text-xs px-3 py-1.5 rounded-t-lg" data-tab="html" onclick="showPdfTab('html')">HTML fonte</button>`;
+      if (twin) twin._fetched = twinHtml;
+    }
+
+    pdfBanner.innerHTML = isDocx
+      ? `<i class="iconoir-page" style="color:var(--mint);margin-right:4px"></i> DOCX gerado no projeto real. Preview visual = HTML estilizado equivalente.`
+      : `<i class="iconoir-page" style="color:var(--red);margin-right:4px"></i> Amostra real de <code style="background:var(--surface-2);padding:2px 6px;border-radius:4px">mapa-skills-samples/</code> · Projeto: <span class="font-mono muted">${artifact.path}</span>`;
+
+    if (sampleUrl && !isDocx) {
+      showArtifactTab('pdf');
+      await setPdfPreview(sampleUrl);
+      currentArtifact._pdfMode = 'embed';
+    } else if (twinHtml || twin?.sampleUrl) {
+      showArtifactTab('html');
+      if (twin?.sampleUrl) { htmlEl.removeAttribute('srcdoc'); htmlEl.src = twin.sampleUrl; }
+      else htmlEl.srcdoc = twinHtml;
+      htmlEl.classList.remove('hidden');
+    } else {
+      showArtifactTab('pdf');
+      pdfFallback.classList.remove('hidden');
+      pdfFallback.innerHTML = `<p class="muted" style="font-size:14px">Amostra PDF ainda não gerada. Rode <code>bash sync-mapa-samples.sh</code>.</p>`;
+    }
+    return;
+  }
+
+  const body = fetched || artifact.content;
+  if (fmt === 'html' && (body || artifact.sampleUrl)) {
+    tabs.innerHTML = `<button class="preview-tab active text-xs px-3 py-1.5 rounded-t-lg" data-tab="html">Preview</button>`;
+    htmlEl.classList.remove('hidden');
+    if (artifact.sampleUrl && !body) { htmlEl.removeAttribute('srcdoc'); htmlEl.src = artifact.sampleUrl; }
+    else { htmlEl.removeAttribute('src'); htmlEl.srcdoc = body; }
+  } else if (fmt === 'md' && body) {
+    tabs.innerHTML = `<button class="preview-tab active text-xs px-3 py-1.5 rounded-t-lg" data-tab="md">Markdown</button>`;
+    mdEl.classList.remove('hidden');
+    mdEl.innerHTML = typeof marked !== 'undefined' ? marked.parse(body) : `<pre>${body}</pre>`;
+  } else {
+    mdEl.classList.remove('hidden');
+    mdEl.innerHTML = `<p class="muted">Sem preview disponível para este formato.</p><p class="font-mono muted" style="font-size:12px;margin-top:8px">${artifact.path}</p>`;
+  }
+}
+
+async function showPdfTab(mode) {
+  const twin = getHtmlTwinForArtifact(currentArtifact);
+  const htmlEl = document.getElementById('am-preview-html');
+  if (mode === 'html' && twin) {
+    const body = twin._fetched || await fetchArtifactContent(twin) || twin.content;
+    if (twin.sampleUrl) { htmlEl.removeAttribute('srcdoc'); htmlEl.src = twin.sampleUrl; }
+    else { htmlEl.removeAttribute('src'); htmlEl.srcdoc = body; }
+    showArtifactTab('html');
+    return;
+  }
+  if (currentArtifact?.sampleUrl) {
+    await setPdfPreview(currentArtifact.sampleUrl);
+    showArtifactTab('pdf');
+  }
+}
+
+function switchPreviewTab(tab) {
+  document.querySelectorAll('.preview-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase().includes(tab)));
+}
+
+function closeArtifactModal() {
+  document.getElementById('artifact-modal').classList.add('hidden');
+  syncArtifactButtons(null);
+  clearPdfPreview();
+  currentArtifact = null;
+}
+
+function copyArtifactPath() {
+  if (!currentArtifact) return;
+  navigator.clipboard.writeText(currentArtifact.path);
+}
+
+// ═══════════════════════════════════════════════════════════
+// DETAIL PANEL
+// ═══════════════════════════════════════════════════════════
+function selectSkill(skillId, element, fromTour = false) {
+  if (tourState.active && !fromTour) stopTour(false);
+
+  document.querySelectorAll('.flow-node.selected, .node.selected').forEach(el => el.classList.remove('selected'));
+  if (element) element.classList.add('selected');
+
+  const skill = SKILLS.find(s => s.id === skillId);
+  if (!skill) return;
+  if (currentSelected?.id && currentSelected.id !== skillId) closeArtifactModal();
+  currentSelected = skill;
+
+  const tourIdx = N12_TOUR.indexOf(skillId);
+  if (tourIdx >= 0) tourState.index = tourIdx;
+
+  highlightFlowEdges(skillId);
+  renderMinimap();
+
+  const panel = document.getElementById('detail-panel');
+  panel.classList.remove('hidden');
+
+  document.getElementById('detail-name').textContent = skill.name;
+  document.getElementById('detail-phase').innerHTML = `<span style="color:${skill.phaseColor}">${skill.phase}</span> · ${skill.level}`;
+
+  const iconEl = document.getElementById('detail-icon');
+  iconEl.style.background = `${skill.phaseColor}20`;
+  iconEl.style.color = skill.phaseColor;
+  iconEl.innerHTML = `<i class="${getIconForSkill(skill)}"></i>`;
+
+  let content = `<div><div class="section-title">Descrição</div><p style="line-height:1.45;margin-top:4px">${skill.description}</p></div>`;
+
+  if (skill.prerequisites?.length) {
+    content += `<div><div class="section-title section-title--mint"><i class="iconoir-link"></i> Pré-requisitos <span class="muted" style="text-transform:none;font-weight:400">(clique para ir)</span></div><div class="chip-row" style="margin-top:6px">${skill.prerequisites.map(p => renderSkillChip(p, 'prereq')).join('')}</div></div>`;
+  }
+
+  const artifacts = getArtifactsForSkill(skill);
+  registerArtifacts(skill, artifacts);
+  if (artifacts.length) {
+    content += `<div><div class="section-title section-title--green"><i class="iconoir-folder"></i> Artefatos gerados <span class="muted" style="text-transform:none;font-weight:400">(clique para ver)</span></div><div class="artifact-list" style="margin-top:8px">`;
+    artifacts.forEach(art => {
+      const icon = getFormatIcon(art.format);
+      const hasPreview = art.content || art.format === 'pdf' || art.format === 'docx' || art.sampleUrl || art.htmlId;
+      content += `<button type="button" onclick="openArtifactById('${art.id}')" class="artifact-btn" data-artifact-id="${art.id}" style="${hasPreview ? '' : 'opacity:0.7'}">
+        <i class="${icon} ab-icon"></i>
+        <div class="flex-1 min-w-0">
+          <div class="font-mono truncate">${art.label}</div>
+          <div class="muted truncate" style="font-size:10px">${art.path}</div>
+        </div>
+        <i class="${hasPreview ? 'iconoir-eye' : 'iconoir-open-new-window'}" style="font-size:10px;opacity:0.5"></i>
+      </button>`;
+    });
+    content += `</div></div>`;
+  } else if (skill.outputs?.length) {
+    content += `<div><div class="section-title section-title--green">Artefatos gerados</div><div class="artifact-list" style="margin-top:6px">${skill.outputs.map(o => `<div class="output-line">${o}</div>`).join('')}</div></div>`;
+  }
+
+  if (skill.feeds?.length) {
+    content += `<div><div class="section-title section-title--gold"><i class="iconoir-share-android"></i> Alimenta <span class="muted" style="text-transform:none;font-weight:400">(clique para ir)</span></div><div class="chip-row" style="margin-top:6px">${skill.feeds.map(f => renderSkillChip(f, 'feed')).join('')}</div></div>`;
+  }
+
+  if (skill.guards) {
+    content += `<div class="guards-box"><div class="section-title"><i class="iconoir-shield"></i> Guards</div><p>${skill.guards}</p></div>`;
+  }
+
+  content += `<div class="detail-meta">Ordem N12: <span class="font-mono">${skill.order}</span> · Tipo: ${skill.type}</div>`;
+  document.getElementById('detail-content').innerHTML = content;
+}
+
+function getIconForSkill(skill) {
+  const map = {
+    utility:'iconoir-settings', research:'iconoir-search', strategy:'iconoir-bright-star',
+    foundation:'iconoir-layers', funnel:'iconoir-funnel', acquisition:'iconoir-target',
+    communication:'iconoir-mail', backend:'iconoir-settings', optimization:'iconoir-stats-up-square',
+    support:'iconoir-media-image', traffic:'iconoir-megaphone'
+  };
+  return map[skill.type] || 'iconoir-star';
+}
+
+function closeDetail() {
+  closeArtifactModal();
+  document.getElementById('detail-panel').classList.add('hidden');
+  document.querySelectorAll('.flow-node.selected, .node.selected').forEach(el => el.classList.remove('selected'));
+  clearFlowHighlight();
+}
+
+function highlightInMap() {
+  if (!currentSelected) return;
+  navigateToSkill(currentSelected.id);
+}
+
+function copySkillCommand() {
+  if (!currentSelected) return;
+  navigator.clipboard.writeText('/' + currentSelected.id);
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════════════════════════════
+function filterNodes() {
+  const search = (document.getElementById('search-input').value || '').toLowerCase();
+  const showHubs = document.getElementById('toggle-hubs')?.checked ?? true;
+
+  document.querySelectorAll('.flow-node').forEach(el => {
+    const skill = SKILLS.find(s => s.id === el.dataset.id);
+    if (!skill) return;
+    let visible = true;
+    if (search && !skill.name.includes(search) && !skill.description.toLowerCase().includes(search)) visible = false;
+    if (!showHubs && skill.type === 'utility' && skill.id !== 'status-funil') visible = false;
+    el.classList.toggle('dimmed', !visible);
+    el.style.pointerEvents = visible ? '' : 'none';
+  });
+
+  document.querySelectorAll('.node').forEach(el => {
+    const skill = SKILLS.find(s => s.id === el.dataset.id);
+    if (!skill) return;
+    let visible = true;
+    if (search && !skill.name.includes(search) && !skill.description.toLowerCase().includes(search)) visible = false;
+    el.style.display = visible ? '' : 'none';
+  });
+}
+
+function applyFilters() {
+  renderFlowCanvas();
+  filterNodes();
+}
+
+function resetFilters() {
+  stopTour(false);
+  document.getElementById('search-input').value = '';
+  ['toggle-connections','toggle-guards','toggle-hubs'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = true; });
+  closeDetail();
+  flowReset();
+  applyFilters();
+  setTimeout(flowFit, 80);
+}
+
+function showLegend() {
+  const legend = document.createElement('div');
+  legend.className = 'legend-backdrop';
+  legend.innerHTML = `<div class="legend-card">
+    <div class="flex justify-between items-center">
+      <h3>Legenda</h3>
+      <button type="button" class="hub-icon-btn" onclick="this.closest('.legend-backdrop').remove()" aria-label="Fechar">×</button>
+    </div>
+    <div class="legend-card__body">
+      <div><strong class="gold">Fluxo</strong> — Canvas estilo n8n. Ao clicar num nó, conexões animam e nós vizinhos destacam.</div>
+      <div><strong class="mint">Verde-água</strong> = entradas (upstream) · <strong class="gold">Ouro</strong> = saídas (downstream)</div>
+      <div><strong class="mint">Pré-requisitos</strong> — Clique para ir ao nó (como em Alimenta).</div>
+      <div><strong class="amber">Tour N12</strong> — Percorre a sequência canônica automaticamente.</div>
+      <div><strong class="gold">Minimap</strong> — Canto inferior direito; clique para saltar no canvas.</div>
+      <div class="legend-card__foot">Teclas: / buscar · Esc fechar · setas no tour (anterior/próximo)</div>
+    </div>
+  </div>`;
+  document.body.appendChild(legend);
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+function init() {
+  renderFlowCanvas();
+  initFlowPanZoom();
+  setTimeout(flowFit, 100);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement.tagName === 'BODY') { e.preventDefault(); document.getElementById('search-input').focus(); }
+    if (e.key === 'ArrowRight' && currentView === 'flow') { e.preventDefault(); tourNext(); }
+    if (e.key === 'ArrowLeft' && currentView === 'flow') { e.preventDefault(); tourPrev(); }
+    if (e.key === ' ' && currentView === 'flow' && document.activeElement.tagName === 'BODY') {
+      e.preventDefault();
+      toggleTour();
+    }
+    if (e.key === 'Escape') {
+      if (tourState.active) stopTour(false);
+      else if (!document.getElementById('artifact-modal').classList.contains('hidden')) closeArtifactModal();
+      else if (!document.getElementById('detail-panel').classList.contains('hidden')) closeDetail();
+      else resetFilters();
+    }
+  });
+
+  document.getElementById('artifact-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'artifact-modal') closeArtifactModal();
+  });
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

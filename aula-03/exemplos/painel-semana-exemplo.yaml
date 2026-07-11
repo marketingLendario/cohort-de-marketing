@@ -1,0 +1,24 @@
+versao: "1.0.0"
+aula: "A3 - Trafego"
+projeto: "exemplo-didatico"
+campanha: "Campanha exemplo"
+semana: "2026-07-04 a 2026-07-10"
+fonte: "Meta Ads — exemplo didático"
+janela_atribuicao: "nao fornecido"
+sinais:
+  - metrica: "Gasto"
+    valor: 210
+    selo: "Real"
+    fonte: "colado pelo aluno em 2026-07-10"
+  - metrica: "Impressoes"
+    valor: 41800
+    selo: "Real"
+    fonte: "colado pelo aluno em 2026-07-10"
+  - metrica: "CTR"
+    valor: null
+    selo: "nao_fornecido"
+    fonte: ""
+  - metrica: "ROAS"
+    valor: 3.1
+    selo: "Estimado"
+    fonte: "gerenciador; venda em caixa não confirmada"

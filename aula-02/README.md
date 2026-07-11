@@ -49,6 +49,10 @@ As skills abaixo montam o squad **Arquiteto de Funil**:
 
 **Tese-mãe da Aula 02:** um funil não é uma página. É um sistema. Cada peça tem um trabalho — e existe uma ordem certa para montar.
 
+## Próxima aula
+
+Quando a oferta, a mensagem, o funil e as pendências estiverem revisados, siga para a [Aula 03 — Tráfego Pago](../aula-03/README.md). O handoff detalhado está em [`aula-03/docs/conexao-aula-02.md`](../aula-03/docs/conexao-aula-02.md).
+
 ---
 
 ## Setup em 5 minutos

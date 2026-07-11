@@ -1,0 +1,721 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/project-brief.schema.json",
+  "title": "Project Brief Unico",
+  "description": "Schema canonico para coletar uma unica vez os inputs usados pelas skills do Cohort de Marketing.",
+  "schemaVersion": "0.1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "project"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "lastSavedAt": { "type": "string", "format": "date-time" },
+        "completionStatus": {
+          "type": "string",
+          "enum": ["draft", "ready_for_research", "ready_for_offer", "ready_for_funnel", "ready_for_optimization"]
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug"],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "title": "Slug do projeto",
+          "x-step": "project"
+        },
+        "name": {
+          "type": "string",
+          "title": "Nome do projeto",
+          "x-step": "project"
+        },
+        "ownerName": {
+          "type": "string",
+          "title": "Dono ou especialista",
+          "x-step": "project"
+        },
+        "clientName": {
+          "type": "string",
+          "title": "Cliente atendido",
+          "x-step": "project"
+        },
+        "startingPoint": {
+          "type": "string",
+          "enum": ["rodando", "do-zero", "sem-projeto", "afiliado"],
+          "title": "Situacao de partida",
+          "x-step": "project"
+        },
+        "offerType": {
+          "type": "string",
+          "enum": ["especialista", "fisico-varejo-local", "saas-app", "servico", "b2b"],
+          "title": "Tipo de oferta",
+          "x-step": "project"
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["dono", "agencia"],
+          "title": "Quem opera",
+          "x-step": "project"
+        },
+        "regulatedNiche": {
+          "type": "string",
+          "enum": ["nao", "saude-medico", "juridico", "psico", "financeiro"],
+          "title": "Nicho regulado",
+          "x-step": "project"
+        },
+        "voice": {
+          "type": "string",
+          "enum": ["pessoa", "marca"],
+          "title": "Voz",
+          "x-step": "project"
+        },
+        "ticketRange": {
+          "type": "string",
+          "enum": ["baixo", "medio", "alto-5k", "premium"],
+          "title": "Faixa de ticket",
+          "x-step": "project"
+        },
+        "currentStage": {
+          "type": "string",
+          "enum": ["aula-1", "aula-2", "trafego", "dados", "nao-sei"],
+          "title": "Etapa atual",
+          "x-step": "project"
+        }
+      }
+    },
+    "market": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "niche": {
+          "type": "string",
+          "title": "Nicho",
+          "x-step": "market"
+        },
+        "productCategory": {
+          "type": "string",
+          "title": "Categoria do produto",
+          "x-step": "market"
+        },
+        "targetAudience": {
+          "type": "string",
+          "title": "Publico",
+          "x-step": "market"
+        },
+        "avatarSummary": {
+          "type": "string",
+          "title": "Resumo do avatar",
+          "x-step": "market",
+          "x-control": "textarea"
+        },
+        "dominantPain": {
+          "type": "string",
+          "title": "Dor dominante",
+          "x-step": "market",
+          "x-control": "textarea"
+        },
+        "objections": {
+          "type": "array",
+          "title": "Objecoes",
+          "items": { "type": "string" },
+          "x-step": "market"
+        },
+        "desiredTransformation": {
+          "type": "string",
+          "title": "Transformacao desejada",
+          "x-step": "market"
+        },
+        "awarenessLevel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "title": "Nivel de consciencia",
+          "x-step": "market"
+        },
+        "marketSophistication": {
+          "type": "string",
+          "enum": ["primeiro", "segundo", "maduro", "cetico", "esgotado"],
+          "title": "Sofisticacao do mercado",
+          "x-step": "market"
+        },
+        "trafficTemperature": {
+          "type": "string",
+          "enum": ["frio", "morno", "quente"],
+          "title": "Temperatura do trafego",
+          "x-step": "market"
+        },
+        "trafficSource": {
+          "type": "string",
+          "enum": ["ads-frio", "base-quente", "organico-lista", "parceria-jv", "nao-sei"],
+          "title": "Origem do publico",
+          "x-step": "market"
+        },
+        "competitors": {
+          "type": "array",
+          "title": "Concorrentes",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "url": { "type": "string" },
+              "handle": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          },
+          "x-step": "market"
+        },
+        "researchMode": {
+          "type": "string",
+          "enum": ["usuario-envia", "web", "hibrido"],
+          "title": "Modo de pesquisa",
+          "x-step": "market"
+        },
+        "userResearchMaterials": {
+          "type": "string",
+          "title": "Materiais enviados pelo usuario",
+          "x-step": "market",
+          "x-control": "textarea"
+        },
+        "trendSearchTerms": {
+          "type": "array",
+          "title": "Termos para trend hunting",
+          "items": { "type": "string" },
+          "x-step": "market"
+        }
+      }
+    },
+    "offer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Nome da oferta",
+          "x-step": "offer"
+        },
+        "productName": {
+          "type": "string",
+          "title": "Nome do produto",
+          "x-step": "offer"
+        },
+        "promise": {
+          "type": "string",
+          "title": "Promessa central",
+          "x-step": "offer"
+        },
+        "uniqueMechanism": {
+          "type": "string",
+          "title": "Mecanismo unico",
+          "x-step": "offer"
+        },
+        "problemMechanism": {
+          "type": "string",
+          "title": "Mecanismo do problema",
+          "x-step": "offer"
+        },
+        "solutionMechanism": {
+          "type": "string",
+          "title": "Mecanismo da solucao",
+          "x-step": "offer"
+        },
+        "exactPrice": {
+          "type": "number",
+          "minimum": 0,
+          "title": "Preco exato",
+          "x-step": "offer",
+          "x-unit": "BRL"
+        },
+        "anchorPrice": {
+          "type": "number",
+          "minimum": 0,
+          "title": "Preco ancora",
+          "x-step": "offer",
+          "x-unit": "BRL"
+        },
+        "guarantee": {
+          "type": "string",
+          "title": "Garantia",
+          "x-step": "offer"
+        },
+        "deliverables": {
+          "type": "array",
+          "title": "Entregaveis",
+          "items": { "type": "string" },
+          "x-step": "offer"
+        },
+        "proofAssets": {
+          "type": "array",
+          "title": "Provas disponiveis",
+          "items": { "type": "string" },
+          "x-step": "offer"
+        },
+        "bonuses": {
+          "type": "array",
+          "title": "Bonus",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "canDeliver": { "type": "boolean" },
+              "type": {
+                "type": "string",
+                "enum": ["ebook", "guia", "workbook", "checklist", "template", "planilha", "calculadora", "audio-video", "comunidade", "servico", "outro"]
+              },
+              "notes": { "type": "string" }
+            }
+          },
+          "x-step": "offer"
+        },
+        "upsell": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "price": { "type": "number", "minimum": 0 },
+            "type": {
+              "type": "string",
+              "enum": ["facilitador", "mais-acesso", "produto-premium", "servico", "outro"]
+            }
+          },
+          "x-step": "offer"
+        },
+        "downsell": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "price": { "type": "number", "minimum": 0 }
+          },
+          "x-step": "offer"
+        },
+        "backendOffer": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "price": { "type": "number", "minimum": 0 },
+            "notes": { "type": "string" }
+          },
+          "x-step": "offer"
+        },
+        "affiliate": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "producerProductName": { "type": "string" },
+            "producerPageUrl": { "type": "string" },
+            "officialCheckoutUrl": { "type": "string" },
+            "affiliateLink": { "type": "string" },
+            "commission": { "type": "string" },
+            "bonusRules": { "type": "string" },
+            "cartOpenAt": { "type": "string" },
+            "cartCloseAt": { "type": "string" }
+          },
+          "x-step": "offer"
+        }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "designMode": {
+          "type": "string",
+          "enum": ["existing-design-md", "extract-url", "from-scratch", "references", "neutral"],
+          "title": "Modo de design",
+          "x-step": "brand"
+        },
+        "sourceUrl": {
+          "type": "string",
+          "title": "URL de referencia",
+          "x-step": "brand"
+        },
+        "referenceImages": {
+          "type": "array",
+          "title": "Referencias visuais",
+          "items": { "type": "string" },
+          "x-step": "brand"
+        },
+        "vibeWords": {
+          "type": "array",
+          "title": "Tres palavras de vibe",
+          "minItems": 0,
+          "maxItems": 3,
+          "items": { "type": "string" },
+          "x-step": "brand"
+        },
+        "colors": {
+          "type": "array",
+          "title": "Cores",
+          "items": { "type": "string" },
+          "x-step": "brand"
+        },
+        "forbiddenColors": {
+          "type": "array",
+          "title": "Cores proibidas",
+          "items": { "type": "string" },
+          "x-step": "brand"
+        },
+        "fonts": {
+          "type": "array",
+          "title": "Fontes",
+          "items": { "type": "string" },
+          "x-step": "brand"
+        },
+        "logoAsset": {
+          "type": "string",
+          "title": "Logo ou caminho do ativo",
+          "x-step": "brand"
+        },
+        "brandAssets": {
+          "type": "array",
+          "title": "Ativos de marca",
+          "items": { "type": "string" },
+          "x-step": "brand"
+        },
+        "approvedDirection": {
+          "type": "boolean",
+          "title": "Direcao visual aprovada",
+          "x-step": "brand"
+        }
+      }
+    },
+    "funnel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommendedFormat": {
+          "type": "string",
+          "enum": ["quiz", "webinario", "vsl", "advertorial", "lancamento", "pagina-vendas", "nao-definido"],
+          "title": "Formato recomendado",
+          "x-step": "funnel"
+        },
+        "closingDestination": {
+          "type": "string",
+          "enum": ["checkout", "reuniao-diagnostico", "conversa-comercial", "produtor-afiliado"],
+          "title": "Destino do fechamento",
+          "x-step": "funnel"
+        },
+        "captureMoment": {
+          "type": "string",
+          "enum": ["antes-resultado", "depois-resultado", "nao-aplica"],
+          "title": "Momento de captura",
+          "x-step": "funnel"
+        },
+        "segmentationAxis": {
+          "type": "string",
+          "enum": ["arquetipo", "dor-dominante", "estagio-maturidade", "score-nota", "nao-aplica"],
+          "title": "Eixo de segmentacao",
+          "x-step": "funnel"
+        },
+        "quizResultCount": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 5,
+          "title": "Quantidade de resultados do quiz",
+          "x-step": "funnel"
+        },
+        "bigDomino": {
+          "type": "string",
+          "title": "Big Domino",
+          "x-step": "funnel"
+        },
+        "webinarSecrets": {
+          "type": "array",
+          "title": "Tres segredos do webinar",
+          "items": { "type": "string" },
+          "x-step": "funnel"
+        },
+        "originStory": {
+          "type": "string",
+          "title": "Historia de origem",
+          "x-step": "funnel",
+          "x-control": "textarea"
+        },
+        "webinarFormat": {
+          "type": "string",
+          "enum": ["ao-vivo", "evergreen", "hibrido"],
+          "title": "Formato do webinar",
+          "x-step": "funnel"
+        },
+        "presenterModel": {
+          "type": "string",
+          "enum": ["um-apresentador", "varios-consultores", "nao-aplica"],
+          "title": "Modelo de apresentacao",
+          "x-step": "funnel"
+        },
+        "cartTargetDate": {
+          "type": "string",
+          "format": "date",
+          "title": "Data alvo do carrinho",
+          "x-step": "funnel"
+        },
+        "launchType": {
+          "type": "string",
+          "enum": ["semente", "interno", "parceria-jv"],
+          "title": "Tipo de lancamento",
+          "x-step": "funnel"
+        },
+        "audienceListSize": {
+          "type": "integer",
+          "minimum": 0,
+          "title": "Tamanho da lista/audiencia",
+          "x-step": "funnel"
+        }
+      }
+    },
+    "channels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "emailTypes": {
+          "type": "array",
+          "title": "Tipos de e-mail",
+          "items": {
+            "type": "string",
+            "enum": ["convite", "confirmacao", "lembrete", "recap", "nurture", "venda", "transacional"]
+          },
+          "x-step": "channels"
+        },
+        "primaryCtaText": {
+          "type": "string",
+          "title": "Texto do CTA principal",
+          "x-step": "channels"
+        },
+        "primaryCtaUrl": {
+          "type": "string",
+          "title": "URL do CTA principal",
+          "x-step": "channels"
+        },
+        "eventUrl": {
+          "type": "string",
+          "title": "Link do evento",
+          "x-step": "channels"
+        },
+        "thankYouPageUrl": {
+          "type": "string",
+          "title": "Pagina de obrigado",
+          "x-step": "channels"
+        },
+        "whatsappTool": {
+          "type": "string",
+          "title": "Ferramenta de WhatsApp/DM",
+          "x-step": "channels"
+        },
+        "automationMode": {
+          "type": "string",
+          "enum": ["manual", "automacao", "misto", "nao-sei"],
+          "title": "Modo de envio",
+          "x-step": "channels"
+        },
+        "detectableEvents": {
+          "type": "array",
+          "title": "Eventos detectaveis",
+          "items": {
+            "type": "string",
+            "enum": ["lead", "show-up", "offer-view", "checkout-start", "cart-abandon", "card-declined", "boleto-pix", "purchase", "no-show", "proposal-sent", "close"]
+          },
+          "x-step": "channels"
+        },
+        "contentPlatforms": {
+          "type": "array",
+          "title": "Plataformas de conteudo",
+          "items": {
+            "type": "string",
+            "enum": ["instagram", "youtube", "tiktok", "x", "linkedin"]
+          },
+          "x-step": "channels"
+        },
+        "contentFormats": {
+          "type": "array",
+          "title": "Formatos de conteudo",
+          "items": {
+            "type": "string",
+            "enum": ["carrossel", "reels", "video-longo", "shorts", "post", "thread", "artigo"]
+          },
+          "x-step": "channels"
+        },
+        "voiceMaterials": {
+          "type": "array",
+          "title": "Materiais de fala/voz",
+          "items": { "type": "string" },
+          "x-step": "channels"
+        },
+        "referenceCreators": {
+          "type": "array",
+          "title": "Criadores de referencia",
+          "items": { "type": "string" },
+          "x-step": "channels"
+        },
+        "adChannels": {
+          "type": "array",
+          "title": "Canais de criativos pagos",
+          "items": {
+            "type": "string",
+            "enum": ["meta", "linkedin", "google-display", "tiktok-ads"]
+          },
+          "x-step": "channels"
+        },
+        "adFormats": {
+          "type": "array",
+          "title": "Formatos de criativo",
+          "items": {
+            "type": "string",
+            "enum": ["video-script", "static-banner", "feed-4x5", "story-9x16", "square-1x1", "display-kit"]
+          },
+          "x-step": "channels"
+        },
+        "creativeScope": {
+          "type": "string",
+          "title": "Escopo dos criativos",
+          "x-step": "channels"
+        },
+        "swipePatterns": {
+          "type": "array",
+          "title": "Padroes do swipe",
+          "items": { "type": "string" },
+          "x-step": "channels"
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "analyticsVariant": {
+          "type": "string",
+          "enum": ["checkout", "reuniao-b2b-servico", "fisico-local", "afiliado", "pre-lancamento"],
+          "title": "Variante de analise",
+          "x-step": "data"
+        },
+        "visitors": { "type": "number", "minimum": 0, "x-step": "data" },
+        "leads": { "type": "number", "minimum": 0, "x-step": "data" },
+        "participants": { "type": "number", "minimum": 0, "x-step": "data" },
+        "offerViews": { "type": "number", "minimum": 0, "x-step": "data" },
+        "checkoutStarts": { "type": "number", "minimum": 0, "x-step": "data" },
+        "purchases": { "type": "number", "minimum": 0, "x-step": "data" },
+        "meetingsScheduled": { "type": "number", "minimum": 0, "x-step": "data" },
+        "meetingsHeld": { "type": "number", "minimum": 0, "x-step": "data" },
+        "proposalsSent": { "type": "number", "minimum": 0, "x-step": "data" },
+        "closes": { "type": "number", "minimum": 0, "x-step": "data" },
+        "whatsappMessages": { "type": "number", "minimum": 0, "x-step": "data" },
+        "storeVisits": { "type": "number", "minimum": 0, "x-step": "data" },
+        "affiliateClicks": { "type": "number", "minimum": 0, "x-step": "data" },
+        "dataSourceNotes": {
+          "type": "string",
+          "title": "Fonte dos dados",
+          "x-step": "data",
+          "x-control": "textarea"
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "apifyStatus": {
+          "type": "string",
+          "enum": ["missing", "configured", "not_needed", "unknown"],
+          "title": "Status Apify",
+          "x-step": "data",
+          "x-sensitive": false
+        },
+        "openRouterStatus": {
+          "type": "string",
+          "enum": ["missing", "configured", "not_needed", "unknown"],
+          "title": "Status OpenRouter",
+          "x-step": "data",
+          "x-sensitive": false
+        },
+        "activeCampaignStatus": {
+          "type": "string",
+          "enum": ["missing", "configured", "not_needed", "unknown"],
+          "title": "Status ActiveCampaign",
+          "x-step": "data",
+          "x-sensitive": false
+        },
+        "calendarStatus": {
+          "type": "string",
+          "enum": ["missing", "configured", "not_needed", "unknown"],
+          "title": "Status Calendly/TidyCal",
+          "x-step": "data",
+          "x-sensitive": false
+        }
+      }
+    },
+    "fieldMeta": {
+      "type": "object",
+      "description": "Metadados por campo. As chaves usam dot path, ex.: project.slug.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": ["user", "artifact", "inferred", "pending_confirmation", "not_applicable"]
+          },
+          "sourcePath": { "type": "string" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "x-steps": [
+    {
+      "id": "project",
+      "title": "Projeto",
+      "description": "Identidade do projeto e Perfil do Projeto."
+    },
+    {
+      "id": "market",
+      "title": "Mercado",
+      "description": "Nicho, avatar, consciencia, sofisticacao e pesquisa."
+    },
+    {
+      "id": "offer",
+      "title": "Oferta",
+      "description": "Produto, promessa, preco, garantias, bonus e esteira."
+    },
+    {
+      "id": "brand",
+      "title": "Marca",
+      "description": "Direcao visual e ativos para DESIGN.md."
+    },
+    {
+      "id": "funnel",
+      "title": "Funil",
+      "description": "Formato recomendado, captura, fechamento e variacoes."
+    },
+    {
+      "id": "channels",
+      "title": "Canais",
+      "description": "E-mail, WhatsApp, conteudo e criativos."
+    },
+    {
+      "id": "data",
+      "title": "Dados",
+      "description": "Metricas, eventos detectaveis e status de integracoes."
+    },
+    {
+      "id": "review",
+      "title": "Revisao",
+      "description": "Campos faltantes, skills desbloqueadas e exportacao."
+    }
+  ]
+}
