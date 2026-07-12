@@ -189,22 +189,16 @@ offerbook
 
 ## O que ainda precisa de decisão
 
-### Standalone ou app?
+### Interface standalone
 
-Opção A: evoluir `mapa-skills.html`.
+Evoluir `mapa-skills.html`:
 
 - Mais rápido.
 - Funciona como protótipo local.
 - Autosave fica limitado ao navegador.
 - Escrita em arquivo exige export/import ou servidor local.
 
-Opção B: criar tela no app React em `apps/academia-lendaria-ads-studio`.
-
-- Melhor para autosave real e evolução de produto.
-- Reaproveita componentes e padrão de store/persistência já existentes.
-- Exige integrar rota, estado e camada de dados.
-
-Recomendação: começar com protótipo standalone se o objetivo é validar UX rápido; migrar para app React quando a estrutura estiver aprovada.
+O produto React não faz parte deste repositório público. A superfície suportada aqui é o fluxo standalone integrado às skills canônicas.
 
 ### O que desbloqueia de verdade?
 

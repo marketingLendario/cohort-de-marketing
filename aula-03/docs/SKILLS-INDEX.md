@@ -10,14 +10,9 @@
 | 4 | `/leitor-de-metricas` | números literais da plataforma | `trafficMetricReading` |
 | 5 | `/diagnosticador` | leitura do Leitor e Painel da Semana | `trafficDiagnosis` |
 
-## Capacidade de apoio
-
-`/ads-creative-factory` pode produzir variações visuais e textuais para a etapa de curadoria. A aprovação continua humana e a capacidade não publica assets na Meta.
-
 ## Fonte e espelho
 
 - fonte canônica: `../../.claude/skills/{skill}/SKILL.md`;
-- espelho para Codex: `../../.agents/skills/{skill}/SKILL.md`;
-- catálogo gerado do produto: `../../apps/academia-lendaria-ads-studio/src/generated/skill-catalog.ts`.
+- espelho para Codex: `../../.agents/skills/{skill}/SKILL.md`.
 
 Não copie `SKILL.md` para esta pasta. Este índice explica a aula; o comportamento da skill continua na fonte canônica.

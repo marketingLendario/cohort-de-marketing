@@ -27,8 +27,6 @@ O squad principal tem cinco etapas, nesta ordem:
 | 4 | `/leitor-de-metricas` | Leitura literal dos números confirmados |
 | 5 | `/diagnosticador` | Uma alavanca com hipótese, sucesso, reversão e circuit breaker |
 
-`/ads-creative-factory` é uma capacidade de apoio para produzir os assets. Ela não substitui a curadoria humana nem muda a ordem do squad principal.
-
 ## Regra central
 
 O squad prepara e recomenda. O operador humano confirma, aprova, decide e publica.
@@ -41,11 +39,7 @@ Nenhuma etapa desta aula deve publicar, pausar, escalar ou alterar uma campanha 
 
 ## Como rodar localmente
 
-Para abrir o Marketing Studio:
-
-```bash
-node scripts/marketing-studio.mjs start
-```
+Abra este repositório no Claude Code ou Codex e execute as cinco skills na ordem apresentada acima. Cada skill lê e atualiza os arquivos em `projetos/{slug}/`.
 
 Para usar o adapter Meta em modo de leitura, consulte [`services/meta-ads/README.md`](../services/meta-ads/README.md). As credenciais ficam fora do repositório, em arquivos `.env.{spoke}` locais.
 
@@ -55,16 +49,11 @@ Esta pasta organiza o material didático. O runtime permanece separado:
 
 - skills: [`.claude/skills/`](../.claude/skills/);
 - espelho para Codex: [`.agents/skills/`](../.agents/skills/);
-- painel: [`apps/academia-lendaria-ads-studio/`](../apps/academia-lendaria-ads-studio/);
 - adapter Meta: [`services/meta-ads/`](../services/meta-ads/);
-- evidências técnicas: [`docs/qa/`](../docs/qa/);
-- histórias e gates: [`docs/stories/`](../docs/stories/).
 
 ## Materiais complementares
 
-Os manuais, o mapa de skills e o pacote navegável de briefing ficam em [`materiais/`](./materiais/). O Ads Studio está disponível em [`ads-studio/`](./ads-studio/) como snapshot local sem dependências instaladas nem evidências geradas; a fonte canônica continua em [`apps/academia-lendaria-ads-studio/`](../apps/academia-lendaria-ads-studio/).
-
-As dependências desses dois pacotes estão descritas em [`docs/mapa-skills-dependencias.md`](./docs/mapa-skills-dependencias.md) e [`docs/ads-studio-dependencias.md`](./docs/ads-studio-dependencias.md).
+Os manuais, o mapa de skills e o pacote navegável de briefing ficam em [`materiais/`](./materiais/). As dependências do mapa estão descritas em [`docs/mapa-skills-dependencias.md`](./docs/mapa-skills-dependencias.md).
 
 ## Próxima aula
 

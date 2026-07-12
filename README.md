@@ -48,7 +48,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ### Aula 3 · Tráfego
 
-**Status:** operacional em piloto no Marketing Studio. [Material da Aula 3](./aula-03/README.md). As cinco skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/leitor-de-metricas` → `/diagnosticador` — já executam via Codex CLI local, com persistência, revisão humana e artefatos no projeto. O modo Cohort prepara e recomenda; publicação e decisões continuam humanas.
+**Status:** disponível. [Material da Aula 3](./aula-03/README.md). As cinco skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/leitor-de-metricas` → `/diagnosticador` — executam via Claude Code ou Codex CLI local e preservam os artefatos no projeto. O modo Cohort prepara e recomenda; publicação e decisões continuam humanas.
 
 ### Aula 4 · Dados
 
@@ -73,61 +73,6 @@ Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao ab
 As skills leem o **Perfil do Projeto** (no topo do seu offerbook) e se adaptam ao seu negócio: especialista, agência, B2B, negócio local, nicho regulado (saúde/jurídico/psico/financeiro), afiliado ou "ainda não sei o que vender".
 
 Para entender exatamente o que cada skill pode pedir ao usuário, consulte o [Mapa de inputs das skills](./docs/skill-inputs.md).
-
----
-
-## Marketing Studio
-
-O Marketing Studio unifica Briefing, Jornada de Skills, Artefatos, Ads Studio e Operação Semanal em `apps/academia-lendaria-ads-studio/`.
-
-### Primeira vez no Studio
-
-Depois que o Studio abrir no navegador, toda a jornada acontece pela tela:
-
-1. Em **Seu primeiro acesso**, informe e-mail, senha e o nome do seu negócio.
-2. Em **Seus projetos**, escolha **Começar meu projeto** e dê um nome ao trabalho.
-3. Se você já tem materiais, escolha **Trazer materiais**, confira a lista e confirme. Os arquivos originais não são alterados.
-4. Escolha **Ver minha próxima ação**. A visão geral mostra uma única recomendação e leva direto ao ponto que precisa de atenção.
-
-Se algo interromper a jornada, não apague nem refaça o projeto. Use **Tentar novamente** na própria mensagem. O nome digitado é preservado. No cabeçalho, o indicador de estado explica em linguagem simples o que precisa de atenção; escolha **Verificar novamente** depois de seguir a orientação. Em telas pequenas, os mesmos passos aparecem em uma coluna, com botões de toque amplo.
-
-As instruções abaixo são apenas para quem prepara a instalação. O aluno não precisa copiá-las durante o uso.
-
-Para iniciar tudo pela raiz do repositório, use um único comando:
-
-```bash
-node scripts/marketing-studio.mjs start
-```
-
-O inicializador prepara os serviços locais necessários e abre o Studio. A tela
-do aluno não mostra comandos, configurações internas nem detalhes de banco.
-
-O indicador no cabeçalho mostra **tudo pronto**, **um item precisa de atenção**
-ou **ação necessária para continuar**, sempre com recuperação na própria tela.
-
-Comandos de apoio:
-
-```bash
-node scripts/marketing-studio.mjs check   # diagnostica sem iniciar
-node scripts/marketing-studio.mjs status  # mostra a sessão atual
-node scripts/marketing-studio.mjs stop    # encerra só o que o launcher iniciou
-```
-
-O shutdown preserva o banco e os artefatos em `projetos/`. Para portas
-alternativas, use `--web-port 5188 --bff-port 3308`. A inicialização manual com
-`npm run dev` e `npm run dev:server` continua disponível para desenvolvimento.
-
-Validação completa do app:
-
-```bash
-npm --prefix apps/academia-lendaria-ads-studio test
-npm --prefix apps/academia-lendaria-ads-studio run test:launcher
-npm --prefix apps/academia-lendaria-ads-studio run test:visual
-npm --prefix apps/academia-lendaria-ads-studio run lint:db
-npm --prefix apps/academia-lendaria-ads-studio run test:db
-```
-
-O mock visual canônico importado fica em `docs/design/mocks/academia-lendaria-ads-studio/ads-studio.dc.html`.
 
 ---
 

@@ -39,8 +39,7 @@
     "trafficCreativeBattery": ["squad-trafego/creative-battery.json", "PAINEL-DA-SEMANA.yaml"],
     "trafficCampaignPlan": ["squad-trafego/campaign-plan.json", "PAINEL-DA-SEMANA.yaml"],
     "trafficMetricReading": ["squad-trafego/metric-reading.json", "PAINEL-DA-SEMANA.yaml"],
-    "trafficDiagnosis": ["squad-trafego/diagnosis.json", "PAINEL-DA-SEMANA.yaml"],
-    "creativeFactoryBatch": ["criativos/factory/*/final/manifest.json"]
+    "trafficDiagnosis": ["squad-trafego/diagnosis.json", "PAINEL-DA-SEMANA.yaml"]
   },
   "skills": {
     "comecar": {
@@ -485,16 +484,6 @@
       "requiredArtifacts": ["trafficMetricReading"],
       "recommendedArtifacts": ["trafficCampaignPlan"],
       "panelHint": "Recomenda uma alavanca com sucesso e reversao; nunca executa."
-    },
-    "ads-creative-factory": {
-      "type": "traffic",
-      "command": "/ads-creative-factory",
-      "primaryArtifacts": ["creativeFactoryBatch"],
-      "requiredFields": ["project.slug", "channels.primaryCtaUrl", "channels.adFormats"],
-      "recommendedFields": ["project.voice", "brand.brandAssets"],
-      "requiredArtifacts": ["trafficCreativeBattery", "trafficCampaignPlan"],
-      "recommendedArtifacts": ["design", "copy"],
-      "panelHint": "Gera imagens e legendas somente dos finalistas curados e exige aprovacao humana."
     }
   }
 }

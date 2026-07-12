@@ -10,8 +10,10 @@ import { parseColetaEntries } from './lib/coleta-utils.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SCRATCH = process.env.MAP_SCRATCH || '/var/folders/6c/d7ws84896057zvsl4kdbznnh0000gn/T/grok-goal-69c8d840b7c7/implementer';
 mkdirSync(SCRATCH, { recursive: true });
-const PROJ = join(ROOT, 'projetos/academia-fit');
 const SAMPLES = join(ROOT, 'mapa-skills-samples/academia-fit');
+const LIVE_PROJ = join(ROOT, 'projetos/academia-fit');
+const hasLiveProject = existsSync(LIVE_PROJ);
+const PROJ = hasLiveProject ? LIVE_PROJ : SAMPLES;
 const port = Number(process.env.MAP_PORT || 8765);
 
 let failed = 0;
@@ -54,10 +56,12 @@ async function ensureHttp() {
 }
 
 // coleta → md
-const coletaPath = join(PROJ, 'pesquisa-avatar-2026-07/coleta-roteiro.txt');
-const relatorioPath = join(PROJ, 'relatorio-avatar.md');
-log(existsSync(coletaPath), 'coleta-roteiro.txt existe');
-if (existsSync(coletaPath) && existsSync(relatorioPath)) {
+const coletaPath = join(LIVE_PROJ, 'pesquisa-avatar-2026-07/coleta-roteiro.txt');
+const relatorioPath = join(LIVE_PROJ, 'relatorio-avatar.md');
+if (hasLiveProject) {
+  log(existsSync(coletaPath), 'coleta-roteiro.txt existe');
+}
+if (hasLiveProject && existsSync(coletaPath) && existsSync(relatorioPath)) {
   const coleta = readFileSync(coletaPath, 'utf8');
   const rel = readFileSync(relatorioPath, 'utf8');
   const entries = parseColetaEntries(coleta);
@@ -68,11 +72,13 @@ if (existsSync(coletaPath) && existsSync(relatorioPath)) {
   }
 }
 
+if (!hasLiveProject) log(true, 'snapshot didático usado no clone limpo');
+
 log(existsSync(join(PROJ, '.cohort-run.json')), '.cohort-run.json');
 log(existsSync(join(ROOT, 'scripts/lib/nucleo-from-coleta.mjs')), 'nucleo-from-coleta.mjs');
 
 const KEY = ['avatar.md', 'offerbook.md', 'DESIGN.md', 'funil.md', 'copy.md'];
-for (const f of KEY) log(existsSync(join(PROJ, f)), `projeto/${f}`);
+for (const f of KEY) log(existsSync(join(PROJ, f)), `${hasLiveProject ? 'projeto' : 'snapshot'}/${f}`);
 
 writeFileSync(join(SCRATCH, 'projeto-listing.txt'), listDir(PROJ).join('\n'));
 writeFileSync(join(SCRATCH, 'samples-listing.txt'), listDir(SAMPLES).join('\n'));
