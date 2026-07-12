@@ -24,6 +24,7 @@
     "scripts/alib.py",
     "scripts/anchors.py",
     "scripts/archetype_render.py",
+    "scripts/build_brand_pack.py",
     "scripts/carousel.py",
     "scripts/carousel_copy_adapter.py",
     "scripts/collect_finals.py",
@@ -72,7 +73,7 @@
       "kind": "source",
       "origin": {
         "repository": "private-upstream",
-        "commit": "epic-12"
+        "commit": "26ec0a87f10cd139295b6d282b3b224665962790"
       },
       "license": {
         "spdx": "MIT",
@@ -82,8 +83,8 @@
         "status": "cleared",
         "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
       },
-      "bytes": 7577,
-      "sha256": "c036e66497c40b89dd96000615811fbba5efa8375d251e4d3f2e4e77b2e7f0f5"
+      "bytes": 8658,
+      "sha256": "ca8d043a84f457903f6ec2fc5234fe6ffe150f309f9531af103720b3888cf791"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -369,6 +370,25 @@
       },
       "bytes": 9407,
       "sha256": "33670368c29de0791eb0ab8d365af3c1cfe157fab94f8cfb5622652ab92b59d2"
+    },
+    {
+      "path": "scripts/build_brand_pack.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "26ec0a87f10cd139295b6d282b3b224665962790"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution; implementation merged in Epic 14."
+      },
+      "bytes": 16246,
+      "sha256": "e05304f7bcd5dadbd060b476d885d008884b459794ae1df77233af4b67f91883"
     },
     {
       "path": "scripts/carousel.py",

@@ -48,7 +48,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ### Aula 3 · Tráfego
 
-**Status:** disponível. [Material da Aula 3](./aula-03/README.md). As seis skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/ads-creative-factory` → `/leitor-de-metricas` → `/diagnosticador` — executam via Claude Code ou Codex CLI local e preservam os artefatos no projeto. A Creative Factory exige um brand pack externo explícito e usa a sessão local autenticada do Codex; publicação e decisões continuam humanas.
+**Status:** disponível. [Material da Aula 3](./aula-03/README.md). As seis skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/ads-creative-factory` → `/leitor-de-metricas` → `/diagnosticador` — executam via Claude Code ou Codex CLI local e preservam os artefatos no projeto. A Creative Factory exige um brand pack externo explícito, mas a versão 2.1.0 já o cria a partir do `DESIGN.md` com preview e declaração de direitos, sem editar JSON; a geração usa a sessão local autenticada do Codex e publicação e decisões continuam humanas.
 
 ### Aula 4 · Dados
 

@@ -1,7 +1,7 @@
 ---
 name: ads-creative-factory
 description: "Motor agnóstico de criativos de performance. De 1 briefing → N criativos em arquétipos distintos, usando packs externos versionados, multi-formato e gate anti-AI-slop."
-version: "2.0.0"
+version: "2.1.0"
 user-invocable: true
 argument-hint: "[request.json]"
 ---
@@ -27,6 +27,29 @@ Formatos, variações, arquétipos e personas são campos de `params:` no YAML:
 
 O adapter preenche a copy de imagem e a copy de anúncio (`caption` +
 `link_description`) por hook; ambas viajam no manifesto sanitizado.
+
+## Criar o Brand Pack sem editar JSON
+
+Quando o projeto já possui um `projetos/{slug}/DESIGN.md` aprovado, converta-o
+com o builder canônico. A declaração de direitos é obrigatória e o pack nasce
+como **não redistribuível**; isso permite uso no projeto sem presumir licença
+pública de logo, fonte ou referência:
+
+```bash
+SKILL_DIR="$(git rev-parse --show-toplevel)/.claude/skills/ads-creative-factory"
+python3 "$SKILL_DIR/scripts/build_brand_pack.py" \
+  --design "projetos/meu-projeto/DESIGN.md" \
+  --output "projetos/meu-projeto/brand-pack" \
+  --rights-notice "Declaro que tenho direito de usar estes ativos neste projeto." \
+  --asset "logo:/caminho/para/logo.svg" \
+  --json
+```
+
+`--asset` é opcional e repetível (`logo`, `font`, `reference`, `texture` ou
+`other`). O builder gera `pack.json`, `assets/DESIGN.md`, `preview.html` e
+`build-report.json`, valida tudo com o mesmo loader do runtime e falha fechado
+quando faltam cores, tipografia, provenance ou declaração de direitos. No
+painel, o fluxo "Criar pack" invoca este mesmo comando e salva no projeto.
 
 # ads-creative-factory
 
