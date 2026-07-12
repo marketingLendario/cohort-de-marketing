@@ -1,0 +1,773 @@
+{
+  "schemaVersion": "2.0.0",
+  "artifact": "ads-creative-factory",
+  "publication": {
+    "status": "released",
+    "verdict": "PASS",
+    "reason": "All allow-listed files have verified licenses and redistribution clearance."
+  },
+  "allowList": [
+    "LICENSE",
+    "SKILL.md",
+    "THIRD_PARTY_NOTICES.md",
+    "requirements.txt",
+    "data/archetypes.yaml",
+    "data/hooks-library.yaml",
+    "data/variation-axes.yaml",
+    "fonts/InstrumentSerif-Italic.ttf",
+    "fonts/InstrumentSerif-Regular.ttf",
+    "fonts/InterTight.ttf",
+    "fonts/JetBrainsMono.ttf",
+    "licenses/OFL-1.1.txt",
+    "schemas/brand-pack.v1.schema.json",
+    "schemas/persona-pack.v1.schema.json",
+    "scripts/alib.py",
+    "scripts/anchors.py",
+    "scripts/archetype_render.py",
+    "scripts/carousel.py",
+    "scripts/carousel_copy_adapter.py",
+    "scripts/collect_finals.py",
+    "scripts/compose.py",
+    "scripts/didactic.py",
+    "scripts/doctor.py",
+    "scripts/factory.py",
+    "scripts/finish.py",
+    "scripts/formats.py",
+    "scripts/formats_hybrid.py",
+    "scripts/gate.py",
+    "scripts/generate.py",
+    "scripts/pack_loader.py",
+    "scripts/person.py",
+    "scripts/prepare_assets.py",
+    "scripts/refine.py",
+    "scripts/review.py",
+    "scripts/saturation.py",
+    "scripts/typeset.py",
+    "scripts/ugc.py",
+    "scripts/variation.py"
+  ],
+  "files": [
+    {
+      "path": "LICENSE",
+      "package": "public",
+      "kind": "license",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "747e9fe232d729157e0c172feb16677bb4f08ce5"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 1069,
+      "sha256": "28ede1e7bf2097f76b17f52e306f13730da02b3ba529cf7711b3bd026a1a29d7"
+    },
+    {
+      "path": "SKILL.md",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "epic-12"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 7577,
+      "sha256": "c036e66497c40b89dd96000615811fbba5efa8375d251e4d3f2e4e77b2e7f0f5"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "package": "public",
+      "kind": "notice",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "epic-12"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 2317,
+      "sha256": "0c32b13cf62074ae8b04c33864355f57ec41a85bc254b57879b669673a62604b"
+    },
+    {
+      "path": "requirements.txt",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 43,
+      "sha256": "5d03f62f13c3072ff60dc60f5c550829c822037a60034c68d64fde6a810094ca"
+    },
+    {
+      "path": "data/archetypes.yaml",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 991,
+      "sha256": "73945fb958e32850940e48d85d73ee9d5be497afa95461d2829578257f9e1c53"
+    },
+    {
+      "path": "data/hooks-library.yaml",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4952,
+      "sha256": "5a06f6a2b3b594ca13dd36ab6452aea3047928924be1c59b9517a6f473361b46"
+    },
+    {
+      "path": "data/variation-axes.yaml",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 5029,
+      "sha256": "9600d4af1a647587cc2aab013af3246aea9bb37f039153427961603a92208db5"
+    },
+    {
+      "path": "fonts/InstrumentSerif-Italic.ttf",
+      "package": "public",
+      "kind": "binary",
+      "origin": {
+        "repository": "Instrument/instrument-serif",
+        "commit": "40e3baa2b74836077f1fe1430089143f5b4dba1c"
+      },
+      "license": {
+        "spdx": "OFL-1.1",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Copyright notice and complete OFL-1.1 text are bundled."
+      },
+      "bytes": 71592,
+      "sha256": "08939b8bdf534afec24ae0ef5e03f948940cd9a8fe08e7fecbad040e62327385"
+    },
+    {
+      "path": "fonts/InstrumentSerif-Regular.ttf",
+      "package": "public",
+      "kind": "binary",
+      "origin": {
+        "repository": "Instrument/instrument-serif",
+        "commit": "40e3baa2b74836077f1fe1430089143f5b4dba1c"
+      },
+      "license": {
+        "spdx": "OFL-1.1",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Copyright notice and complete OFL-1.1 text are bundled."
+      },
+      "bytes": 70012,
+      "sha256": "498efd461f6ddfcb7a111bf9a565709d2085d48201d501ead960d93e84ffbb88"
+    },
+    {
+      "path": "fonts/InterTight.ttf",
+      "package": "public",
+      "kind": "binary",
+      "origin": {
+        "repository": "rsms/inter-tight",
+        "commit": "402edb741211e70993dbd4648e36c4cd9b7f0f69"
+      },
+      "license": {
+        "spdx": "OFL-1.1",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Copyright notice and complete OFL-1.1 text are bundled."
+      },
+      "bytes": 581588,
+      "sha256": "b81b73dcb64df3c230cabade7df6c5773bf863233f24c9ee51087519f1f88b6f"
+    },
+    {
+      "path": "fonts/JetBrainsMono.ttf",
+      "package": "public",
+      "kind": "binary",
+      "origin": {
+        "repository": "JetBrains/JetBrainsMono",
+        "commit": "61cf0cedc2d9d29efcab968e97707d6899133e68"
+      },
+      "license": {
+        "spdx": "OFL-1.1",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Copyright notice and complete OFL-1.1 text are bundled."
+      },
+      "bytes": 187208,
+      "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda"
+    },
+    {
+      "path": "licenses/OFL-1.1.txt",
+      "package": "public",
+      "kind": "license",
+      "origin": {
+        "repository": "SIL Open Font License",
+        "commit": "1.1-2007-02-26"
+      },
+      "license": {
+        "spdx": "OFL-1.1",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Canonical license text bundled for the font software."
+      },
+      "bytes": 4128,
+      "sha256": "ebc109078c06f79af74cf2b27454c262830d12a65749f0e2bf25d1ac1db7a02a"
+    },
+    {
+      "path": "schemas/brand-pack.v1.schema.json",
+      "package": "public",
+      "kind": "schema",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "epic-12"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4669,
+      "sha256": "269bd1924a7ce1c02d27fada8e375979d458f6164d39eaf205992b6353c98ef0"
+    },
+    {
+      "path": "schemas/persona-pack.v1.schema.json",
+      "package": "public",
+      "kind": "schema",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "epic-12"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 3140,
+      "sha256": "3632dfa08f765d533e59ecd6c139506cd797b2b8dab0bd4829b1c0ef4907c3ad"
+    },
+    {
+      "path": "scripts/alib.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 21690,
+      "sha256": "152ca233c1dead8c8842d7cd3ac178942a893ee1ee86797047c75d07f1ade4d3"
+    },
+    {
+      "path": "scripts/anchors.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4043,
+      "sha256": "faac5ea2dc3844296d945c87374c4c6bb9c943dc1d7159caa6b0c96f4286f289"
+    },
+    {
+      "path": "scripts/archetype_render.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 9407,
+      "sha256": "33670368c29de0791eb0ab8d365af3c1cfe157fab94f8cfb5622652ab92b59d2"
+    },
+    {
+      "path": "scripts/carousel.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 50113,
+      "sha256": "6aececf77e98a97241b3bd0e6d73b4bcf2387139c6861116ad382f1ec84204ef"
+    },
+    {
+      "path": "scripts/carousel_copy_adapter.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 23078,
+      "sha256": "df944d551331946be95f4e368df553cfd58c45ce6ea2788777f535752424a92f"
+    },
+    {
+      "path": "scripts/collect_finals.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4540,
+      "sha256": "c4f34d367d71145915bff22f1fc28a9f1238d3cc4e3259b5c1f3fcb06b8a9882"
+    },
+    {
+      "path": "scripts/compose.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 3856,
+      "sha256": "6e4cf92a780e2c3307939c34c6490a8bcfcbac3a1fbbee7ed7f5af909b056965"
+    },
+    {
+      "path": "scripts/didactic.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 7348,
+      "sha256": "fdc83333b765573c2dbbc118f906312e33f6f34ce1bf3acfeeb5a2ad6207beb1"
+    },
+    {
+      "path": "scripts/doctor.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "epic-12"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 6923,
+      "sha256": "19ae8ae60627af3b5123aa29b6dae928e77fc7d1522a04b6ee6d831a4dd81007"
+    },
+    {
+      "path": "scripts/factory.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 17437,
+      "sha256": "8318c44a73d3f8321af2be635819d6bbe7206191349ff341af1d57fa6ff81485"
+    },
+    {
+      "path": "scripts/finish.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 5012,
+      "sha256": "f9a9bf7fe2fe949f7cca3b754fad51b07acdc56503830fd136fd5000e465b4bd"
+    },
+    {
+      "path": "scripts/formats.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 5496,
+      "sha256": "9517759aa30e26b93e0e1e035a92ac1a008b16f0bc3e047591d19d3122fb5d37"
+    },
+    {
+      "path": "scripts/formats_hybrid.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4004,
+      "sha256": "998001058b28c728b422d7614134b9e1651f2ef027b48f2ba1913b9bb5b21b53"
+    },
+    {
+      "path": "scripts/gate.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 8884,
+      "sha256": "7d564838e999a3c1efdcf971f6482310edc71c42a356a0133082c56a3b72c262"
+    },
+    {
+      "path": "scripts/generate.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 6597,
+      "sha256": "caaddea2a22160c21bf0f2797489adf978dba8eb14cb8b39cc275f9e09a35e7c"
+    },
+    {
+      "path": "scripts/pack_loader.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "private-upstream",
+        "commit": "epic-12"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 13675,
+      "sha256": "b5f93cc80aa71eba439e9b908396c3ea4d20942dc9e32e8131f1a55a716d264a"
+    },
+    {
+      "path": "scripts/person.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 6145,
+      "sha256": "5d85ee51028ae52dc0fb079968be9c85b1d3071eba14a7af107d1fd32b4683f7"
+    },
+    {
+      "path": "scripts/prepare_assets.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 3569,
+      "sha256": "c906e1502c9a74c983bbf9e45e5b73e4a7f43ecfdbb0002ac3a1c267294db4b3"
+    },
+    {
+      "path": "scripts/refine.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4301,
+      "sha256": "2472ba2b1a8467007152d39859ce240bdbf6a12b84ba2c87157961cb30b1ab98"
+    },
+    {
+      "path": "scripts/review.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4811,
+      "sha256": "10aab77c3b3dfc246d29ec1bc49e463de37b158a37e920e9812f58179f91c12b"
+    },
+    {
+      "path": "scripts/saturation.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 2791,
+      "sha256": "379f79eaad6a00492d46fa3810f6e56c1e138d9c7f60aa2224721c8d94d68174"
+    },
+    {
+      "path": "scripts/typeset.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 83710,
+      "sha256": "96f4c29fa7a7b2a87b9629b0993cd3bb7599ece6557f2aca1ab07167e950ca80"
+    },
+    {
+      "path": "scripts/ugc.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 5288,
+      "sha256": "c1fb6e3c0dd29e77bb51e9438bdfacdd255aa8fcd83bd983ffe8900dd7b35593"
+    },
+    {
+      "path": "scripts/variation.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 4383,
+      "sha256": "22f51d13bb9b8da06cfba8b2bbfcfd542d47529d1382a9d5a02b8ee2394320bf"
+    }
+  ]
+}

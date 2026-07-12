@@ -91,6 +91,7 @@ Se a credencial faltar, a skill deve pedir a chave, ajudar a configurar ou ofere
 | `zelador` | confirmação literal dos 7 itens de conta/tracking e evidência vista na tela |
 | `briefista` | ângulos validados, nível de consciência, provas, voz e formatos |
 | `estruturador` | gate do Zelador, 2-3 finalistas, objetivo, verba e período |
+| `ads-creative-factory` | brand pack explícito, finalistas curados, formatos, arquétipos e autorização de likeness quando aplicável |
 | `leitor-de-metricas` | métricas prontas e nomeadas, fonte, janela e confirmação de venda para ROAS Real |
 | `diagnosticador` | leitura confirmada, break-even e decisão humana sobre a alavanca |
 
@@ -757,6 +758,26 @@ Bloqueios:
 - Verba abaixo de R$20 por dia.
 - Tracking crítico.
 - Finalistas ainda não escolhidos pelo operador.
+
+### `ads-creative-factory`
+
+Inputs diretos:
+
+- Brand pack v1 explícito, validado pelo schema da skill.
+- Dois a três finalistas já curados pelo operador.
+- Formatos, arquétipos, quantidade de variantes, CTA e descrição do link.
+- Persona pack e autorizações de likeness somente quando houver pessoa real.
+
+Bloqueios:
+
+- Brand pack ausente, inválido ou fora das raízes permitidas.
+- Finalistas não curados ou tentativa de usar likeness sem foto e autorização.
+- Codex CLI local não autenticado.
+
+Contrato:
+
+- Gera imagens e legendas como propostas; promoção para o pacote final exige revisão humana.
+- Não usa `OPENAI_API_KEY` nem `CODEX_API_KEY`.
 
 ### `leitor-de-metricas`
 

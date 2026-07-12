@@ -1,0 +1,31 @@
+# =============================================================================
+# Creative Archetypes — o EIXO PRIMÁRIO de diversidade (a "espécie" da peça).
+# O factory sorteia arquétipos DISTINTOS por lote; cada um tem um modo de
+# geração próprio. Variação secundária (mecanismo/material/layout) acontece
+# DENTRO do arquétipo.
+# =============================================================================
+archetypes:
+  - id: dark_editorial
+    label: "Dark Editorial Luxe"
+    mode: hybrid
+    theme: dark
+  - id: light_clean
+    label: "Light / Clean"
+    mode: hybrid
+    theme: light
+  - id: person_authority
+    label: "Pessoa / Autoridade"
+    mode: person
+    needs_persona: true
+  - id: mockup_product
+    label: "Mockup / Produto"
+    mode: mockup
+    theme: dark
+  - id: ugc_native
+    label: "UGC / Nativo"
+    mode: ugc
+    format: story          # nativo é 9:16
+  - id: didactic_compare
+    label: "Didático / Comparativo"
+    mode: didactic
+    theme: dark

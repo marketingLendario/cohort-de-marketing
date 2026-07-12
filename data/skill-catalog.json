@@ -969,6 +969,41 @@
         "mode": "local_skill",
         "requiresHumanReview": true
       }
+    },
+    {
+      "id": "ads-creative-factory",
+      "title": "Creative Factory",
+      "command": "/ads-creative-factory",
+      "description": "Produz lotes reais de imagens e legendas a partir dos finalistas curados, com contrato v1, packs externos explícitos, arquétipos, formatos e gate visual.",
+      "phase": "Trafego",
+      "phaseColor": "#c9b298",
+      "order": 31,
+      "kind": "traffic",
+      "level": "Aula 3",
+      "skillPath": ".claude/skills/ads-creative-factory/SKILL.md",
+      "prerequisites": [
+        "briefista",
+        "estruturador",
+        "curadoria humana"
+      ],
+      "outputs": [
+        "criativos/factory/*/final/manifest.json",
+        "criativos/factory/*/final/legendas.md",
+        "criativos/factory/*/final/**/*.png"
+      ],
+      "primaryArtifacts": [
+        "creativeFactoryBatch"
+      ],
+      "feeds": [
+        "subida manual"
+      ],
+      "guard": "Exige brand_pack explícito; persona_pack é opcional; gera propostas e somente itens aprovados pelo operador entram no pacote final.",
+      "artifactSummary": "Lote de imagens e legendas",
+      "execution": {
+        "mode": "local_skill",
+        "requiresHumanReview": true,
+        "mirrorTree": true
+      }
     }
   ],
   "edges": [
@@ -1171,6 +1206,11 @@
       "from": "diagnosticador",
       "to": "estruturador",
       "type": "feedback"
+    },
+    {
+      "from": "estruturador",
+      "to": "ads-creative-factory",
+      "type": "dependency"
     }
   ]
 }
