@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ads-creative-factory.invalid/schemas/brand-pack.v1.schema.json",
+  "title": "Brand pack contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_type",
+    "id",
+    "identity",
+    "palette",
+    "typography",
+    "formats",
+    "voice",
+    "assets",
+    "rights"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "pack_type": {"const": "brand"},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"},
+    "identity": {"$ref": "#/$defs/brand_identity"},
+    "palette": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "secondary", "background", "foreground", "accent"],
+      "properties": {
+        "primary": {"$ref": "#/$defs/color"},
+        "secondary": {"$ref": "#/$defs/color"},
+        "background": {"$ref": "#/$defs/color"},
+        "foreground": {"$ref": "#/$defs/color"},
+        "accent": {"$ref": "#/$defs/color"}
+      }
+    },
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heading", "body"],
+      "properties": {
+        "heading": {"type": "string", "minLength": 1},
+        "body": {"type": "string", "minLength": 1}
+      }
+    },
+    "formats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["feed", "story", "square"],
+      "properties": {
+        "feed": {"$ref": "#/$defs/format"},
+        "story": {"$ref": "#/$defs/format"},
+        "square": {"$ref": "#/$defs/format"}
+      }
+    },
+    "voice": {"$ref": "#/$defs/voice"},
+    "assets": {"$ref": "#/$defs/assets"},
+    "rights": {"$ref": "#/$defs/rights"}
+  },
+  "$defs": {
+    "brand_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display_name", "description"],
+      "properties": {
+        "display_name": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "format": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "aspect"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "aspect": {"type": "string", "minLength": 3}
+      }
+    },
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tone", "principles", "avoid"],
+      "properties": {
+        "tone": {"type": "string", "minLength": 1},
+        "principles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "avoid": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/asset"}
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "kind", "rights_id"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"},
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+$"
+        },
+        "kind": {"type": "string", "enum": ["logo", "font", "reference", "texture", "other"]},
+        "rights_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["redistributable", "notice", "licenses"],
+      "properties": {
+        "redistributable": {"type": "boolean"},
+        "notice": {"type": "string", "minLength": 1},
+        "licenses": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/license"}
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "spdx", "redistributable", "notice"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"},
+        "name": {"type": "string", "minLength": 1},
+        "spdx": {"type": "string", "minLength": 1},
+        "redistributable": {"type": "boolean"},
+        "notice": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

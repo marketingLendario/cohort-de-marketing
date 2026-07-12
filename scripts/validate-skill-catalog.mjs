@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -32,9 +32,18 @@ function sha256(buffer) {
   return createHash('sha256').update(buffer).digest('hex');
 }
 
+function listTree(root, relative = '') {
+  return readdirSync(join(root, relative), { withFileTypes: true })
+    .flatMap((entry) => {
+      const child = relative ? `${relative}/${entry.name}` : entry.name;
+      return entry.isDirectory() ? listTree(root, child) : [child];
+    })
+    .sort();
+}
+
 assert(catalog.schemaVersion === '1.0.0', 'catalog schemaVersion must be 1.0.0');
 assert(Array.isArray(catalog.skills), 'catalog.skills must be an array');
-assert(catalog.skills.length === 30, `catalog must contain 30 skills, found ${catalog.skills.length}`);
+assert(catalog.skills.length === 31, `catalog must contain 31 skills, found ${catalog.skills.length}`);
 
 const ids = catalog.skills.map((skill) => skill.id);
 assert(new Set(ids).size === ids.length, 'catalog contains duplicate skill ids');
@@ -80,6 +89,32 @@ for (const skill of catalog.skills) {
   assert(frontmatterName === skill.id, `${skill.id} frontmatter name is ${frontmatterName ?? 'missing'}`);
   assert(skill.command === `/${skill.id}`, `${skill.id} command must be /${skill.id}`);
   assert(skill.execution?.requiresHumanReview === true, `${skill.id} must require human review`);
+  if (skill.execution?.mirrorTree) {
+    const canonicalRoot = dirname(canonicalPath);
+    const mirrorRoot = dirname(mirrorPath);
+    const canonicalFiles = listTree(canonicalRoot);
+    const mirrorFiles = listTree(mirrorRoot);
+    assert(JSON.stringify(canonicalFiles) === JSON.stringify(mirrorFiles), `mirror tree differs for ${skill.id}`);
+    for (const relative of canonicalFiles) {
+      if (!mirrorFiles.includes(relative)) continue;
+      assert(
+        readFileSync(join(canonicalRoot, relative)).equals(readFileSync(join(mirrorRoot, relative))),
+        `mirror file differs for ${skill.id}: ${relative}`,
+      );
+    }
+  }
+  if (skill.id === 'ads-creative-factory') {
+    const skillRoot = dirname(canonicalPath);
+    const releaseManifest = JSON.parse(readFileSync(join(skillRoot, 'source-manifest.json'), 'utf8'));
+    assert(releaseManifest.publication?.verdict === 'PASS', 'ads-creative-factory release verdict must be PASS');
+    for (const file of releaseManifest.files ?? []) {
+      const releasedPath = join(skillRoot, file.path);
+      assert(existsSync(releasedPath), `ads-creative-factory released file missing: ${file.path}`);
+      if (existsSync(releasedPath)) {
+        assert(sha256(readFileSync(releasedPath)) === file.sha256, `ads-creative-factory hash drift: ${file.path}`);
+      }
+    }
+  }
 }
 
 for (const edge of catalog.edges) {

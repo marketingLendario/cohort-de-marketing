@@ -1,0 +1,56 @@
+# Third-party notices and redistribution gate
+
+Status: **CLEARED FOR DISTRIBUTION** with the license boundaries below.
+
+The public candidate is produced by
+`scripts/build-public-creative-factory.mjs`. It copies only the exact
+allow-list recorded in `data/source-manifest.json`; it does not copy client
+packs, people, photos, logos, generated references, campaign examples or
+secrets. The generated `source-manifest.json` reports the rights verdict
+computed from the reviewed source manifest.
+
+Client identity and people assets remain in external packs. Those packs are
+not a grant of redistribution rights. Local execution must opt into one
+explicitly, for example:
+
+```bash
+ACF_BRAND_PACK="$PWD/client-packs/example/pack.json" \
+  python3 .claude/skills/ads-creative-factory/scripts/factory.py campaign.yaml
+```
+
+The public code is distributed under the MIT License included at `LICENSE`.
+Font software remains under OFL-1.1 and is not relicensed by MIT.
+
+## Font software
+
+All bundled font files are distributed under SIL Open Font License 1.1. The
+complete license is included at `licenses/OFL-1.1.txt`.
+
+### Instrument Serif
+
+- Copyright 2022 The Instrument Serif Project Authors
+- Upstream: https://github.com/Instrument/instrument-serif
+- OFL evidence commit: `40e3baa2b74836077f1fe1430089143f5b4dba1c`
+- Embedded version: 1.000
+- `InstrumentSerif-Regular.ttf` SHA-256: `498efd461f6ddfcb7a111bf9a565709d2085d48201d501ead960d93e84ffbb88`
+- `InstrumentSerif-Italic.ttf` SHA-256: `08939b8bdf534afec24ae0ef5e03f948940cd9a8fe08e7fecbad040e62327385`
+
+### Inter Tight
+
+- Copyright 2022 The Inter Project Authors
+- Upstream: https://github.com/rsms/inter-tight
+- OFL evidence commit: `402edb741211e70993dbd4648e36c4cd9b7f0f69`
+- Embedded version: 3.004
+- `InterTight.ttf` SHA-256: `b81b73dcb64df3c230cabade7df6c5773bf863233f24c9ee51087519f1f88b6f`
+
+### JetBrains Mono
+
+- Copyright 2020 The JetBrains Mono Project Authors
+- Upstream: https://github.com/JetBrains/JetBrainsMono
+- OFL evidence commit: `61cf0cedc2d9d29efcab968e97707d6899133e68`
+- Embedded version: 2.211
+- `JetBrainsMono.ttf` SHA-256: `48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda`
+
+The names above acknowledge the copyright holders and do not imply endorsement.
+
+No client pack or private asset is covered by the public code license.

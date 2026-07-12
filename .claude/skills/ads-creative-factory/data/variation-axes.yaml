@@ -1,0 +1,67 @@
+# =============================================================================
+# Variation Axes — a fonte combinatoria de diversidade visual (anti-saturacao).
+# Um hook visual = mechanism_core (o conceito) + 1 valor de cada eixo (o tratamento).
+# Cada valor carrega um fragment de prompt. Todos os fragments sao on-brand
+# (dark-first, gold como unico acento) — a diversidade NUNCA sai da marca.
+# 5 eixos x ~5 valores = milhares de combinacoes dentro da identidade.
+# =============================================================================
+version: "1.0.0"
+
+axes:
+  material:
+    - { id: metal,    fragment: "rendered in brushed dark-gold metal surfaces with precious sheen" }
+    - { id: glass,    fragment: "rendered in translucent smoked dark glass with subtle gold refraction" }
+    - { id: paper,    fragment: "rendered as folded matte paper and origami forms, warm gold paper" }
+    - { id: liquid,   fragment: "rendered as viscous reflective liquid gold with slow ripples" }
+    - { id: smoke,    fragment: "formed from slow drifting dark smoke catching a thin gold light" }
+    - { id: stone,    fragment: "carved from matte dark stone with a single gold-leaf inlay" }
+    - { id: light,    fragment: "drawn purely with thin lines of warm gold light on black" }
+
+  lighting:
+    - { id: chiaroscuro, fragment: "dramatic chiaroscuro studio lighting, deep falloff into shadow" }
+    - { id: rim_light,   fragment: "soft golden rim light tracing the silhouette" }
+    - { id: spotlight,   fragment: "a single hard spotlight pooling on the subject" }
+    - { id: ambient_glow,fragment: "soft ambient gold glow with no hard source" }
+    - { id: backlit,     fragment: "strong backlight creating a luminous gold halo" }
+
+  composition:
+    - { id: asymmetric,   fragment: "asymmetric editorial composition, subject offset to one side, vast negative space" }
+    - { id: diptych,      fragment: "vertical diptych split contrasting two states" }
+    - { id: centered_void,fragment: "single subject centered in an immense empty dark void" }
+    - { id: full_bleed,   fragment: "full-bleed subject cropped boldly by the frame" }
+    - { id: low_angle,    fragment: "dramatic low-angle hero perspective" }
+    - { id: top_down,     fragment: "clean top-down flat-lay arrangement" }
+
+  density:
+    - { id: minimal,  fragment: "extreme minimalism, almost entirely empty dark space" }
+    - { id: balanced, fragment: "balanced editorial density with clear focal hierarchy" }
+
+  finish:
+    - { id: cinematic,  fragment: "cinematic photographic finish, shallow depth of field" }
+    - { id: editorial,  fragment: "flat editorial graphic finish, crisp and matte" }
+    - { id: sculptural, fragment: "monumental sculptural finish, museum-object gravitas" }
+
+  # FUNDO — SEMPRE com textura/profundidade/atmosfera. NUNCA preto liso e morto.
+  backdrop:
+    - { id: atmospheric_fog,  fragment: "set in deep atmospheric haze with soft volumetric light shafts cutting the dark" }
+    - { id: textured_concrete,fragment: "against a dark textured concrete wall with subtle grain and tonal variation" }
+    - { id: brushed_field,    fragment: "against a dark brushed surface catching faint grazing reflections" }
+    - { id: paper_grain,      fragment: "on a dark textured paper field with visible fiber grain" }
+    - { id: gradient_grain,   fragment: "over a deep tonal gradient with fine film grain, rich and never flat" }
+    - { id: smoke_drift,      fragment: "with slow drifting dark smoke and dust adding atmospheric depth" }
+    - { id: raked_wall,       fragment: "a dark wall raked by a single grazing light revealing its texture" }
+
+# LAYOUTS — variam a ESTRUTURA do criativo (não só o objeto). Evita que tudo
+# vire "objeto dourado + bloco de texto". Consumidos por typeset (posição do
+# texto) e pelo prompt de fundo (zona reservada). Ver typeset.LAYOUTS.
+layouts:
+  - { id: editorial_top,    reserve: "keep the UPPER HALF clear and atmospheric for text, place any subject in the lower portion" }
+  - { id: editorial_bottom, reserve: "keep the LOWER 45% clear and atmospheric for text, place any subject in the upper portion" }
+  - { id: editorial_left,   reserve: "place any subject ONLY in the right third of the frame; keep the LEFT 60% of the frame completely clear, dark and atmospheric for a text column, with the subject never crossing into the left or center" }
+  - { id: hero_type,        reserve: "NO central object — just a rich atmospheric textured backdrop with depth, leaving the whole frame open for oversized typography" }
+  - { id: full_scene,       reserve: "a full-bleed atmospheric scene filling the frame, with one darker calmer band where text can overlay" }
+
+# Compatibilidade: alguns mecanismos fixam um eixo (ex: big-number fixa material
+# nao-aplicavel se for tipografico). O compositor respeita 'locks' opcionais.
+# Saturacao alvo: nenhuma combinacao (mechanism + material + lighting + composition)
+# deve repetir dentro da mesma janela de campanha (motor anti-saturacao, fase C).

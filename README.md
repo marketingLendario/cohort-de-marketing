@@ -48,7 +48,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ### Aula 3 · Tráfego
 
-**Status:** disponível. [Material da Aula 3](./aula-03/README.md). As cinco skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/leitor-de-metricas` → `/diagnosticador` — executam via Claude Code ou Codex CLI local e preservam os artefatos no projeto. O modo Cohort prepara e recomenda; publicação e decisões continuam humanas.
+**Status:** disponível. [Material da Aula 3](./aula-03/README.md). As seis skills canônicas — `/zelador` → `/briefista` → `/estruturador` → `/ads-creative-factory` → `/leitor-de-metricas` → `/diagnosticador` — executam via Claude Code ou Codex CLI local e preservam os artefatos no projeto. A Creative Factory exige um brand pack externo explícito e usa a sessão local autenticada do Codex; publicação e decisões continuam humanas.
 
 ### Aula 4 · Dados
 
@@ -56,7 +56,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ---
 
-## As 30 skills
+## As 31 skills
 
 Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao abrir o Claude Code na pasta. Para o Codex, `.agents/skills/` é um espelho literal da pasta canônica; chame com `@` quando a interface usar esse prefixo. Se houver dúvida, siga sempre `.claude/skills/` como fonte de verdade.
 
@@ -68,7 +68,7 @@ Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao ab
 | **Formatos de funil** | `/quiz-funil` · `/webinario-funil` · `/vsl-funil` · `/advertorial-funil` · `/lancamento-funil` |
 | **Peças** | `/pagina-vendas-funil` · `/email-funil` · `/whatsapp-funil` · `/conteudo-funil` · `/recuperacao-funil` · `/backend-funil` · `/cro-funil` |
 | **Reforço de oferta** | `/mockup-produto-funil` · `/bonus-funil` · `/criativos-funil` |
-| **Tráfego (Aula 3)** | `/zelador` · `/briefista` · `/estruturador` · `/leitor-de-metricas` · `/diagnosticador` |
+| **Tráfego (Aula 3)** | `/zelador` · `/briefista` · `/estruturador` · `/ads-creative-factory` · `/leitor-de-metricas` · `/diagnosticador` |
 
 As skills leem o **Perfil do Projeto** (no topo do seu offerbook) e se adaptam ao seu negócio: especialista, agência, B2B, negócio local, nicho regulado (saúde/jurídico/psico/financeiro), afiliado ou "ainda não sei o que vender".
 
@@ -86,7 +86,7 @@ cohort-de-marketing/
 ├── apps/
 │   └── academia-lendaria-ads-studio/  painel Ads Factory
 ├── .claude/
-│   └── skills/                   as 30 skills + regras compartilhadas (_shared/)
+│   └── skills/                   as 31 skills + regras compartilhadas (_shared/)
 ├── .agents/
 │   └── skills/                   espelho literal para Codex carregar as mesmas skills
 ├── docs/

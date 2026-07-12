@@ -12,7 +12,7 @@ O aluno sempre começa por **`comecar`** (`.claude/skills/comecar/SKILL.md`): pr
 
 ## Skills disponíveis
 
-`comecar` · `avatar-funil` · `espiao-do-concorrente` · `trend-hunting` · `swipe-file` · `offerbook` · `design-md` · `metodo-funil` · `copy-funil` · `quiz-funil` · `webinario-funil` · `vsl-funil` · `advertorial-funil` · `lancamento-funil` · `pagina-vendas-funil` · `email-funil` · `whatsapp-funil` · `conteudo-funil` · `criativos-funil` · `mockup-produto-funil` · `bonus-funil` · `backend-funil` · `recuperacao-funil` · `cro-funil` · `status-funil` · `zelador` · `briefista` · `estruturador` · `leitor-de-metricas` · `diagnosticador`
+`comecar` · `avatar-funil` · `espiao-do-concorrente` · `trend-hunting` · `swipe-file` · `offerbook` · `design-md` · `metodo-funil` · `copy-funil` · `quiz-funil` · `webinario-funil` · `vsl-funil` · `advertorial-funil` · `lancamento-funil` · `pagina-vendas-funil` · `email-funil` · `whatsapp-funil` · `conteudo-funil` · `criativos-funil` · `mockup-produto-funil` · `bonus-funil` · `backend-funil` · `recuperacao-funil` · `cro-funil` · `status-funil` · `zelador` · `briefista` · `estruturador` · `ads-creative-factory` · `leitor-de-metricas` · `diagnosticador`
 
 ## Regras gerais (valem em qualquer agente)
 

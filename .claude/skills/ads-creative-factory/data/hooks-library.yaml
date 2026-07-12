@@ -1,0 +1,124 @@
+# =============================================================================
+# Hooks Library — mecanismos visuais (o "o quê" do hook).
+# Cada mecanismo tem um `core`: o esqueleto conceitual (1 frase EN) que o
+# compositor de eixos (variation.py) combina com material/luz/composição/etc.
+# `core` NÃO descreve materialidade nem luz — isso vem dos eixos. Assim o mesmo
+# mecanismo rende dezenas de looks distintos (anti-saturação).
+# =============================================================================
+version: "2.0.0"
+
+mechanisms:
+  - id: typographic_offer
+    label: "Oferta tipográfica"
+    psych: "clareza direta da oferta"
+    core: "A bold typographic poster where the headline is the hero and one emphasis word dominates"
+    needs_likeness: false
+
+  - id: comparative_split
+    label: "Comparativo (split)"
+    psych: "contraste lógico; expõe o erro do leitor"
+    core: "Two contrasting states placed against each other, a chaotic dim one versus a clear resolved one"
+    needs_likeness: false
+
+  - id: dark_to_light_metaphor
+    label: "Metáfora escuro→luz"
+    psych: "dor visceral: operar no escuro"
+    core: "A scene moving from darkness into a single revealing shaft of light uncovering a hidden truth"
+    needs_likeness: false
+
+  - id: tribe_contrast
+    label: "Contraste de tribo"
+    psych: "identidade: pertencer aos que constroem"
+    core: "A faint dispersed crowd of many similar elements versus one distinct standout that breaks away"
+    needs_likeness: false
+
+  - id: listicle_number
+    label: "Listicle / número gigante"
+    psych: "prova de estrutura/método"
+    core: "A single colossal numeral dominating the frame as the monumental hero"
+    needs_likeness: false
+
+  - id: authority_founder
+    label: "Autoridade (founder)"
+    psych: "prova por figura de autoridade"
+    core: "A dramatic editorial portrait of the founder as a commanding authority figure"
+    needs_likeness: true
+
+  - id: benchmark_proof
+    label: "Prova / benchmark"
+    psych: "evidência comparativa quantitativa"
+    core: "A minimal ranking of forms or bars with one clear standout value rising above the rest"
+    needs_likeness: false
+
+  - id: before_after
+    label: "Antes / depois"
+    psych: "transformação concreta"
+    core: "A clear two-state transformation from a degraded state into a strong refined state"
+    needs_likeness: false
+
+  - id: bold_question
+    label: "Pergunta-gancho"
+    psych: "abre loop de curiosidade / auto-diagnóstico"
+    core: "A dominant provocative question with a single charged emphasis word and vast breathing room"
+    needs_likeness: false
+
+  - id: visual_metaphor_object
+    label: "Metáfora de objeto"
+    psych: "memorabilidade por imagem inesperada"
+    core: "A single conceptual metaphor object that physically embodies the abstract idea"
+    needs_likeness: false
+
+  # ---- novos (expansão A) ----
+  - id: severed_dependency
+    label: "Dependência rompida"
+    psych: "libertação: cortar o que prende"
+    core: "Cut cords, severed marionette strings or a broken chain releasing a form into freedom"
+    needs_likeness: false
+
+  - id: emergence
+    label: "Emergência da escuridão"
+    psych: "revelação / surgimento do método"
+    core: "A defining form emerging and rising out of deep darkness or dissolving fog"
+    needs_likeness: false
+
+  - id: system_network
+    label: "Sistema / rede orquestrada"
+    psych: "método operável, squad coordenado"
+    core: "An orchestrated network of connected nodes in elegant order with one element clearly leading"
+    needs_likeness: false
+
+  - id: instrument_dial
+    label: "Instrumento de medição"
+    psych: "controle por números / leitura"
+    core: "A set of precision instruments, gauges or dials with exactly one active and reading"
+    needs_likeness: false
+
+  - id: macro_object
+    label: "Macro de objeto"
+    psych: "tensão e desejo por detalhe extremo"
+    core: "An extreme macro close-up of a single luxury object held as the sole hero"
+    needs_likeness: false
+
+  - id: negative_space_statement
+    label: "Declaração em vazio"
+    psych: "gravidade / contemplação premium"
+    core: "A tiny lone subject dwarfed within an immense empty field, quiet and contemplative"
+    needs_likeness: false
+
+  - id: exploded_view
+    label: "Vista explodida"
+    psych: "revelar as partes de um sistema"
+    core: "An exploded disassembled view of a few components floating apart in precise arrangement"
+    needs_likeness: false
+
+  - id: threshold_door
+    label: "Limiar / portal"
+    psych: "convite a atravessar / transformação"
+    core: "A doorway, threshold or portal opening from darkness into a warm light beyond"
+    needs_likeness: false
+
+# Diversidade: ao montar um lote, escolher mecanismos DISTINTOS e, dentro de cada,
+# combinações de eixos não repetidas (motor anti-saturação em saturation.py).
+diversity_rule:
+  distinct_mechanisms: true
+  max_likeness_per_batch: 1
