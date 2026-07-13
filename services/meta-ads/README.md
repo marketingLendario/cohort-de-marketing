@@ -24,6 +24,15 @@ The Meta Ads CLI is excellent but assumes a single set of credentials per proces
 
 ## Usage
 
+The package exposes exactly two entry points, both read-only:
+
+| Entry point | What it does |
+|-------------|--------------|
+| `index.js` | Lists spokes and validates a spoke's credentials (`meta auth status`). |
+| `insights-runner.js` | Pulls insights, campaign and page snapshots and writes them as JSON. |
+
+**Arbitrary meta CLI commands are not exposed.** `index.js` accepts only `--list-spokes`, `--check --spoke=<slug>` and `--help`; any other argument fails closed with exit code 2 before a process is spawned. There is no flag, environment variable or escape hatch that re-enables a generic pass-through — publishing, pausing, scaling or editing ads is out of scope for this adapter. A new Meta query must be added as a named, tested, read-only operation.
+
 ### List available spokes
 
 ```bash
@@ -62,15 +71,7 @@ Authenticated (token: [REDACTED])
 OK — spoke 'natalia-tanaka' is ready.
 ```
 
-### Pass-through any meta CLI command
-
-```bash
-node services/meta-ads/index.js --spoke=natalia-tanaka ads campaign list
-node services/meta-ads/index.js --spoke=natalia-tanaka ads adset list
-node services/meta-ads/index.js --spoke=natalia-tanaka ads insights get --date-preset last_7d
-```
-
-### Daily insights pull (helper)
+### Daily insights pull (read-only)
 
 ```bash
 node services/meta-ads/insights-runner.js --spoke=natalia-tanaka
@@ -93,11 +94,12 @@ Zero code changes needed. Pure config:
 - **`scrubSecrets()` runs on all CLI output** before forwarding. Even if the upstream CLI accidentally echoes a token in stderr/stdout, it gets replaced with `[REDACTED]` before reaching the terminal.
 - **`maskSecret()` for the `--check` display** shows only the first 6 chars + length. Adequate for confirming the right token loaded without exposing the whole value.
 - **No shell interpolation.** `child_process.spawnSync` with array of args, never `exec()` with a string.
+- **Read-only by construction.** `index.js` never forwards user-supplied arguments to the CLI: the only command it spawns is the hardcoded `meta auth status`. Unknown arguments are rejected with exit code 2 before any process starts, and `index.test.js` asserts zero spawns for every rejected input. `insights-runner.js` issues only read queries (`ads insights get`, `ads campaign list`, `ads page list`).
 
 ## Caveats
 
 - **`meta-ads` is alpha** (`Development Status :: 3 - Alpha` per PyPI metadata). API may change. Pin version in CI.
-- **Read/check/pass-through commands fail closed** after `META_ADS_TIMEOUT_MS` (default: 30s).
+- **Check and insights commands fail closed** after `META_ADS_TIMEOUT_MS` (default: 30s).
 - **`--output json` doesn't work uniformly across all subcommands.** `insights-runner.js` parses what it can and falls back to raw text in a `raw_table` field.
 - **Token echo in `meta auth status`** may include a token fragment. The wrapper scrubs full and partial echoes before forwarding.
 
@@ -105,9 +107,11 @@ Zero code changes needed. Pure config:
 
 | File | Purpose |
 |------|---------|
-| `index.js` | Main entry. Parses flags, dispatches to check / list / passthrough. |
+| `index.js` | Main entry. Parses flags, dispatches to list-spokes / check. Rejects anything else. |
 | `spoke-resolver.js` | Reads `.env.{spoke}`, maps to CLI env vars, masks secrets. |
 | `insights-runner.js` | Daily pull helper. Writes JSON snapshots to `outputs/aiox-ads/{spoke}/`. |
+| `index.test.js` | Read-only boundary tests: rejected input never spawns the meta CLI. |
+| `tests/index.test.js` | Secret-scrubbing regression test. |
 | `.env.example` | Documents what each spoke's `.env.{slug}` should contain. |
 | `package.json` | Service metadata (`@sinkra/meta-ads`, private). |
 
@@ -117,7 +121,8 @@ Zero code changes needed. Pure config:
 |---------|-------------|-----|
 | `Failed to invoke 'meta'` | CLI not installed | `pip install meta-ads` |
 | `MISSING required vars` | `.env.{slug}` incomplete | Compare to `.env.example`, fill missing vars |
-| `Authenticated` but `campaign list` returns nothing | Token lacks `ads_read` or `ads_management` scope | Regenerate System User token with full scope set |
+| `Authenticated` but `insights-runner.js` returns nothing | Token lacks the `ads_read` scope | Regenerate the System User token with the read scopes granted |
+| `Unknown argument '...'` | Tried to run a meta CLI command through `index.js` | Not supported by design. Use `insights-runner.js` for reads; new queries need a named read-only operation |
 | Wrapper hangs on `--check` | Network issue calling Graph API | Test with `curl https://graph.facebook.com/v25.0/me?access_token=$TOKEN` |
 | `Unknown spoke 'foo'` | Slug not in `SUPPORTED_SPOKES` | Add to array in `spoke-resolver.js` |
 
