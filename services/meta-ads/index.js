@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /**
- * services/meta-ads/index.js — Meta Ads CLI multi-spoke wrapper.
+ * services/meta-ads/index.js — Meta Ads CLI multi-spoke wrapper (read-only).
  *
  * Usage:
  *   node services/meta-ads/index.js --list-spokes
  *   node services/meta-ads/index.js --check --spoke=<slug>
- *   node services/meta-ads/index.js --spoke=<slug> <meta-ads-cli args...>
  *
  * Examples:
  *   node services/meta-ads/index.js --list-spokes
  *   node services/meta-ads/index.js --check --spoke=natalia-tanaka
- *   node services/meta-ads/index.js --spoke=natalia-tanaka ads campaign list
- *   node services/meta-ads/index.js --spoke=natalia-tanaka ads insights get --date-preset last_30d
+ *
+ * Only the named operations above are exposed. Arbitrary meta CLI commands are
+ * never forwarded: the sole process this wrapper ever spawns is
+ * `meta auth status`. Read-only insights collection lives in insights-runner.js.
  *
  * Story: STORY-152.2
  */
@@ -27,91 +28,142 @@ const {
 } = require('./spoke-resolver');
 
 const META_BIN = 'meta';
+const AUTH_STATUS_ARGS = ['auth', 'status'];
 const DEFAULT_TIMEOUT_MS = 30_000;
+const EXIT_USAGE = 2;
+
+/** Slug shape accepted before any resolution; resolveSpoke owns the allowlist. */
+const SPOKE_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 
 function timeoutMs() {
   const parsed = Number.parseInt(process.env.META_ADS_TIMEOUT_MS || '', 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_TIMEOUT_MS;
 }
 
-function printUsage() {
-  process.stdout.write(
-    [
-      'Usage:',
-      '  node services/meta-ads/index.js --list-spokes',
-      '  node services/meta-ads/index.js --check --spoke=<slug>',
-      '  node services/meta-ads/index.js --spoke=<slug> <meta-cli args...>',
-      '',
-      `Supported spokes: ${SUPPORTED_SPOKES.join(', ')}`,
-      '',
-      'Examples:',
-      '  --list-spokes                                  List spokes with .env.{slug} present',
-      '  --check --spoke=natalia-tanaka                 Validate token + scopes for spoke',
-      '  --spoke=natalia-tanaka ads campaign list       Pass-through to meta CLI',
-      '',
-    ].join('\n')
-  );
+function usageText() {
+  return [
+    'Usage:',
+    '  node services/meta-ads/index.js --list-spokes',
+    '  node services/meta-ads/index.js --check --spoke=<slug>',
+    '',
+    `Supported spokes: ${SUPPORTED_SPOKES.join(', ')}`,
+    '',
+    'Operations:',
+    '  --list-spokes                   List spokes with .env.{slug} present',
+    '  --check --spoke=<slug>          Validate token + scopes (runs `meta auth status`)',
+    '  -h, --help                      Show this help',
+    '',
+    'This adapter is read-only: it exposes no other meta CLI command.',
+    'For insights snapshots use: node services/meta-ads/insights-runner.js --spoke=<slug>',
+    '',
+  ].join('\n');
 }
 
+function fail(error) {
+  return { ok: false, error };
+}
+
+/**
+ * Parse argv into one named read-only operation. Pure: no I/O, no spawn.
+ *
+ * @returns {{ok: true, command: 'help'|'list-spokes'|'check', spoke: string|null}
+ *          | {ok: false, error: string}}
+ */
 function parseArgs(argv) {
-  const out = { spoke: null, listSpokes: false, check: false, passthrough: [] };
+  let command = null;
+  let spoke = null;
+
+  const setCommand = (next) => {
+    if (command !== null && command !== next) {
+      return fail(`Conflicting operations: '${command}' and '${next}'. Run one operation at a time.`);
+    }
+    command = next;
+    return null;
+  };
+
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a === '--list-spokes') {
-      out.listSpokes = true;
+    let conflict = null;
+
+    if (a === '-h' || a === '--help') {
+      conflict = setCommand('help');
+    } else if (a === '--list-spokes') {
+      conflict = setCommand('list-spokes');
     } else if (a === '--check') {
-      out.check = true;
-    } else if (a === '-h' || a === '--help') {
-      out.help = true;
-    } else if (a.startsWith('--spoke=')) {
-      out.spoke = a.slice('--spoke='.length);
-    } else if (a === '--spoke') {
-      out.spoke = argv[++i];
+      conflict = setCommand('check');
+    } else if (a === '--spoke' || a.startsWith('--spoke=')) {
+      if (spoke !== null) {
+        return fail('--spoke was given more than once.');
+      }
+      const value = a === '--spoke' ? argv[++i] : a.slice('--spoke='.length);
+      if (!value || value.startsWith('-')) {
+        return fail('--spoke requires a slug, e.g. --spoke=natalia-tanaka');
+      }
+      if (!SPOKE_PATTERN.test(value)) {
+        return fail(`Invalid spoke slug '${value}'. Expected lowercase letters, digits and dashes.`);
+      }
+      spoke = value;
     } else {
-      out.passthrough.push(a);
+      return fail(
+        `Unknown argument '${a}'. This adapter only accepts --list-spokes, --check --spoke=<slug> and --help. ` +
+          'Arbitrary meta CLI commands are not available.'
+      );
     }
+
+    if (conflict) return conflict;
   }
-  return out;
+
+  if (command === null) {
+    return fail(
+      spoke
+        ? `No operation given for spoke '${spoke}'. Use --check --spoke=${spoke}.`
+        : 'No operation given.'
+    );
+  }
+  if (command === 'check' && !spoke) {
+    return fail('--check requires --spoke=<slug>');
+  }
+  if (command !== 'check' && spoke) {
+    return fail(`--spoke is only valid with --check, not with --${command}.`);
+  }
+
+  return { ok: true, command, spoke };
 }
 
-function cmdListSpokes() {
+function cmdListSpokes(stdout) {
   const available = listAvailableSpokes();
-  process.stdout.write('Available spokes (with .env.{slug} present):\n');
+  stdout.write('Available spokes (with .env.{slug} present):\n');
   for (const s of SUPPORTED_SPOKES) {
     const present = available.includes(s);
-    process.stdout.write(`  ${present ? '✓' : '·'} ${s}${present ? '' : '  (no env file)'}\n`);
+    stdout.write(`  ${present ? '✓' : '·'} ${s}${present ? '' : '  (no env file)'}\n`);
   }
-  process.stdout.write(`\nTotal ready: ${available.length}/${SUPPORTED_SPOKES.length}\n`);
+  stdout.write(`\nTotal ready: ${available.length}/${SUPPORTED_SPOKES.length}\n`);
+  return 0;
 }
 
-function cmdCheck(spoke) {
-  if (!spoke) {
-    process.stderr.write('Error: --check requires --spoke=<slug>\n');
-    process.exit(2);
-  }
-
+function cmdCheck(spoke, { spawn, resolve, stdout, stderr }) {
   let resolved;
   try {
-    resolved = resolveSpoke(spoke);
+    resolved = resolve(spoke);
   } catch (e) {
-    process.stderr.write(`Error: ${e.message}\n`);
-    process.exit(2);
+    stderr.write(`Error: ${e.message}\n`);
+    return EXIT_USAGE;
   }
 
-  process.stdout.write(`Spoke: ${resolved.spoke}\n`);
-  process.stdout.write(`Source: ${resolved.source}\n`);
-  process.stdout.write(`\nResolved CLI env (masked):\n`);
+  stdout.write(`Spoke: ${resolved.spoke}\n`);
+  stdout.write(`Source: ${resolved.source}\n`);
+  stdout.write(`\nResolved CLI env (masked):\n`);
   for (const [k, v] of Object.entries(resolved.env)) {
-    process.stdout.write(`  ${k}=${maskSecret(v)}\n`);
+    stdout.write(`  ${k}=${maskSecret(v)}\n`);
   }
 
   if (resolved.missing.length > 0) {
-    process.stderr.write(`\nMISSING required vars: ${resolved.missing.join(', ')}\n`);
-    process.exit(2);
+    stderr.write(`\nMISSING required vars: ${resolved.missing.join(', ')}\n`);
+    return EXIT_USAGE;
   }
 
-  process.stdout.write(`\nInvoking 'meta auth status' for live validation...\n`);
-  const result = spawnSync(META_BIN, ['auth', 'status'], {
+  stdout.write(`\nInvoking 'meta auth status' for live validation...\n`);
+  const result = spawn(META_BIN, AUTH_STATUS_ARGS, {
     env: { ...process.env, ...resolved.env },
     stdio: 'pipe',
     encoding: 'utf8',
@@ -119,66 +171,23 @@ function cmdCheck(spoke) {
   });
 
   if (result.error) {
-    process.stderr.write(`\nFailed to invoke '${META_BIN}': ${result.error.message}\n`);
-    process.stderr.write(`Is the meta-ads CLI installed? Run: pip install meta-ads\n`);
-    process.exit(2);
+    stderr.write(`\nFailed to invoke '${META_BIN}': ${result.error.message}\n`);
+    stderr.write(`Is the meta-ads CLI installed? Run: pip install meta-ads\n`);
+    return EXIT_USAGE;
   }
 
-  const stdout = scrubSecrets(result.stdout || '', resolved.env);
-  const stderr = scrubSecrets(result.stderr || '', resolved.env);
-  if (stdout) process.stdout.write(stdout);
-  if (stderr) process.stderr.write(stderr);
+  const out = scrubSecrets(result.stdout || '', resolved.env);
+  const err = scrubSecrets(result.stderr || '', resolved.env);
+  if (out) stdout.write(out);
+  if (err) stderr.write(err);
 
   if (result.status !== 0) {
-    process.stderr.write(`\nmeta auth status exited with code ${result.status}\n`);
-    process.exit(result.status || 1);
+    stderr.write(`\nmeta auth status exited with code ${result.status}\n`);
+    return result.status || 1;
   }
 
-  process.stdout.write(`\nOK — spoke '${spoke}' is ready.\n`);
-}
-
-function cmdPassthrough(spoke, args) {
-  if (!spoke) {
-    process.stderr.write('Error: --spoke=<slug> required for pass-through invocation\n');
-    printUsage();
-    process.exit(2);
-  }
-  if (args.length === 0) {
-    process.stderr.write('Error: pass-through args required (e.g. "ads campaign list")\n');
-    process.exit(2);
-  }
-
-  let resolved;
-  try {
-    resolved = resolveSpoke(spoke);
-  } catch (e) {
-    process.stderr.write(`Error: ${e.message}\n`);
-    process.exit(2);
-  }
-  if (resolved.missing.length > 0) {
-    process.stderr.write(
-      `Error: missing vars in ${resolved.source}: ${resolved.missing.join(', ')}\n`
-    );
-    process.exit(2);
-  }
-
-  const result = spawnSync(META_BIN, args, {
-    env: { ...process.env, ...resolved.env },
-    stdio: 'pipe',
-    encoding: 'utf8',
-    timeout: timeoutMs(),
-  });
-
-  if (result.error) {
-    process.stderr.write(`Failed to invoke '${META_BIN}': ${result.error.message}\n`);
-    process.exit(2);
-  }
-
-  const stdout = scrubSecrets(result.stdout || '', resolved.env);
-  const stderr = scrubSecrets(result.stderr || '', resolved.env);
-  if (stdout) process.stdout.write(stdout);
-  if (stderr) process.stderr.write(stderr);
-  process.exit(result.status === null ? 1 : result.status);
+  stdout.write(`\nOK — spoke '${spoke}' is ready.\n`);
+  return 0;
 }
 
 /**
@@ -214,26 +223,38 @@ function escapeRegex(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function main() {
-  const args = parseArgs(process.argv.slice(2));
+/**
+ * Execute one parsed operation and return the process exit code.
+ * `spawn` and `resolve` are injectable so tests can prove that rejected input
+ * never reaches the meta CLI, without touching real credentials.
+ */
+function run(argv, deps = {}) {
+  const {
+    spawn = spawnSync,
+    resolve = resolveSpoke,
+    stdout = process.stdout,
+    stderr = process.stderr,
+  } = deps;
 
-  if (args.help || (!args.listSpokes && !args.check && args.passthrough.length === 0 && !args.spoke)) {
-    printUsage();
-    process.exit(args.help ? 0 : 2);
+  const parsed = parseArgs(argv);
+  if (!parsed.ok) {
+    stderr.write(`Error: ${parsed.error}\n`);
+    stdout.write(usageText());
+    return EXIT_USAGE;
   }
-  if (args.listSpokes) {
-    cmdListSpokes();
-    return;
+
+  if (parsed.command === 'help') {
+    stdout.write(usageText());
+    return 0;
   }
-  if (args.check) {
-    cmdCheck(args.spoke);
-    return;
+  if (parsed.command === 'list-spokes') {
+    return cmdListSpokes(stdout);
   }
-  cmdPassthrough(args.spoke, args.passthrough);
+  return cmdCheck(parsed.spoke, { spawn, resolve, stdout, stderr });
 }
 
 if (require.main === module) {
-  main();
+  process.exitCode = run(process.argv.slice(2));
 }
 
-module.exports = { parseArgs, scrubSecrets };
+module.exports = { parseArgs, run, scrubSecrets, usageText };
