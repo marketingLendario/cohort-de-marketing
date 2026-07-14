@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Dependências
 
@@ -17,23 +17,23 @@ renderer modes dentro do processo normal de desenvolvimento de código.
 
 ## Critérios de aceite
 
-- [ ] `archetype add` cria um preset namespaced em Extension Pack explícito.
-- [ ] O preset exige label, renderer mode, theme, formatos, required fields,
+- [x] `archetype add` cria um preset namespaced em Extension Pack explícito.
+- [x] O preset exige label, renderer mode, theme, formatos, required fields,
   compatibilidades, variantes internas e gate profile.
-- [ ] Renderer mode é validado contra allowlist do runtime.
-- [ ] Um mode desconhecido é recusado com orientação para abrir story de
+- [x] Renderer mode é validado contra allowlist do runtime.
+- [x] Um mode desconhecido é recusado com orientação para abrir story de
   desenvolvimento; não existe import dinâmico de código do pack.
-- [ ] Presets podem referenciar cenas UGC, mecanismos, variações e referências do
+- [x] Presets podem referenciar cenas UGC, mecanismos, variações e referências do
   mesmo catálogo resolvido.
-- [ ] Referência inexistente ou incompatível bloqueia a instalação.
-- [ ] `preview archetype` produz plano de render e prompt sanitizado com fixture
+- [x] Referência inexistente ou incompatível bloqueia a instalação.
+- [x] `preview archetype` produz plano de render e prompt sanitizado com fixture
   determinística.
-- [ ] O preview não exige likeness real; persona sintética ou ausência explícita
+- [x] O preview não exige likeness real; persona sintética ou ausência explícita
   cobre os caminhos aplicáveis.
-- [ ] O gate profile do arquétipo é validado antes do primeiro job.
-- [ ] Built-ins são migráveis para o mesmo modelo declarativo sem mudar o output
+- [x] O gate profile do arquétipo é validado antes do primeiro job.
+- [x] Built-ins são migráveis para o mesmo modelo declarativo sem mudar o output
   funcional existente.
-- [ ] Testes cobrem cada renderer mode allowlisted e a rejeição de mode arbitrário.
+- [x] Testes cobrem cada renderer mode allowlisted e a rejeição de mode arbitrário.
 
 ## Ownership
 

@@ -10,6 +10,7 @@
     "id",
     "identity",
     "voice",
+    "consent",
     "assets",
     "rights"
   ],
@@ -45,6 +46,15 @@
         }
       }
     },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["granted", "reference"],
+      "properties": {
+        "granted": {"const": true},
+        "reference": {"type": "string", "minLength": 8}
+      }
+    },
     "assets": {
       "type": "object",
       "additionalProperties": false,
@@ -56,7 +66,7 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["id", "path", "kind", "rights_id"],
+            "required": ["id", "path", "kind", "rights_id", "sha256"],
             "properties": {
               "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"},
               "path": {
@@ -65,7 +75,8 @@
                 "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+$"
               },
               "kind": {"type": "string", "enum": ["photo", "reference", "font", "other"]},
-              "rights_id": {"type": "string", "minLength": 1}
+              "rights_id": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
             }
           }
         }

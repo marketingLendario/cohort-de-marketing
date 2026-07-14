@@ -216,6 +216,7 @@ def build_brand_pack(
     display_name: str | None = None,
     assets: Iterable[str] = (),
     force: bool = False,
+    dry_run: bool = False,
 ) -> dict[str, Any]:
     if not rights_notice.strip():
         raise BrandPackBuildError("A declaração de direitos é obrigatória; informe --rights-notice.")
@@ -226,6 +227,25 @@ def build_brand_pack(
     identifier = _slug(pack_id or name)
     parsed_assets = [_parse_asset(raw) for raw in assets]
     output = Path(output_path).expanduser().resolve()
+    description = _description(design)
+    palette = _palette(design.tokens)
+    typography = _typography(design.tokens)
+    summary = {
+        "schemaVersion": "1.0.0",
+        "status": "planned" if dry_run else "valid",
+        "id": identifier,
+        "displayName": name,
+        "description": description,
+        "palette": palette,
+        "typography": typography,
+        "assetCount": len(parsed_assets) + 1,
+        "redistributable": False,
+        "rightsNotice": rights_notice.strip(),
+        "output": str(output),
+        "dryRun": dry_run,
+    }
+    if dry_run:
+        return summary
     if output.exists() and any(output.iterdir()) and not force:
         raise BrandPackBuildError(f"Destino {output} não está vazio. Use --force somente após revisar o pack existente.")
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -245,9 +265,6 @@ def build_brand_pack(
                 "kind": kind,
                 "rights_id": "project-use",
             })
-        description = _description(design)
-        palette = _palette(design.tokens)
-        typography = _typography(design.tokens)
         pack = {
             "schema_version": "1.0.0",
             "pack_type": "brand",
@@ -287,9 +304,7 @@ def build_brand_pack(
         (temporary / "pack.json").write_text(json.dumps(pack, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         (temporary / "preview.html").write_text(_preview(pack), encoding="utf-8")
         loaded = load_brand_pack(temporary)
-        summary = {
-            "schemaVersion": "1.0.0",
-            "status": "valid",
+        summary.update({
             "id": loaded["id"],
             "displayName": loaded["identity"]["display_name"],
             "description": loaded["identity"]["description"],
@@ -298,8 +313,7 @@ def build_brand_pack(
             "assetCount": len(loaded["assets"]["files"]),
             "redistributable": loaded["rights"]["redistributable"],
             "rightsNotice": loaded["rights"]["notice"],
-            "output": str(output),
-        }
+        })
         (temporary / "build-report.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         if output.exists():
             shutil.rmtree(output)
@@ -319,6 +333,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--name", dest="display_name", help="Nome de exibição; por padrão usa frontmatter name.")
     parser.add_argument("--asset", action="append", default=[], help="Ativo opcional kind:/caminho (repetível).")
     parser.add_argument("--force", action="store_true", help="Substitui um pack existente após validação da nova versão.")
+    parser.add_argument("--dry-run", action="store_true", help="Valida entradas sem criar ou alterar o pack.")
     parser.add_argument("--json", action="store_true", help="Emite somente o resumo JSON em stdout.")
     return parser
 
@@ -334,6 +349,7 @@ def main(argv: list[str] | None = None) -> int:
             display_name=args.display_name,
             assets=args.asset,
             force=args.force,
+            dry_run=args.dry_run,
         )
     except (BrandPackBuildError, PackLoadError, OSError, ValueError) as exc:
         if args.json:
@@ -350,4 +366,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

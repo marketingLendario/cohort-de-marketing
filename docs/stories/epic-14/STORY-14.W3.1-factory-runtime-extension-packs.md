@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Dependências
 
@@ -18,26 +18,26 @@ regredir campanhas que usam apenas built-ins.
 
 ## Critérios de aceite
 
-- [ ] O request aceita `extension_packs` explícitos e relativos à raiz autorizada
+- [x] O request aceita `extension_packs` explícitos e relativos à raiz autorizada
   do projeto.
-- [ ] Packs são validados e resolvidos antes da criação de qualquer job ou output.
-- [ ] `factory.py`, `variation.py` e `archetype_render.py` consultam o catálogo
+- [x] Packs são validados e resolvidos antes da criação de qualquer job ou output.
+- [x] `factory.py`, `variation.py` e `archetype_render.py` consultam o catálogo
   resolvido em vez de reler arquivos isolados durante a campanha.
-- [ ] Cenas UGC, dispositivos de mockup e estilos didáticos built-in deixam de ser
+- [x] Cenas UGC, dispositivos de mockup e estilos didáticos built-in deixam de ser
   arrays hardcoded e passam pelo mesmo contrato declarativo.
-- [ ] Hooks aceitam `copy_mechanism_id` e `visual_mechanism_id`.
-- [ ] O adapter legado mapeia `mechanism` para o comportamento v1 e emite aviso
+- [x] Hooks aceitam `copy_mechanism_id` e `visual_mechanism_id`.
+- [x] O adapter legado mapeia `mechanism` para o comportamento v1 e emite aviso
   sanitizado, sem quebrar campanhas existentes.
-- [ ] O manifesto registra packs, versões, entidades selecionadas, versão da
+- [x] O manifesto registra packs, versões, entidades selecionadas, versão da
   factory e `catalog_hash`.
-- [ ] Retry e retomada recusam catálogo cujo hash divergiu do job original, salvo
+- [x] Retry e retomada recusam catálogo cujo hash divergiu do job original, salvo
   criação explícita de nova versão do lote.
-- [ ] Anti-saturação inclui IDs namespaced e não mistura janelas de packs distintos.
-- [ ] Pessoa continua exigindo Persona Pack, foto real, hash e autorização.
-- [ ] Outputs permanecem fora da skill e somente itens aprovados são promovidos.
-- [ ] Testes com gerador fake cobrem todos os renderers; smoke real cobre ao menos
+- [x] Anti-saturação inclui IDs namespaced e não mistura janelas de packs distintos.
+- [x] Pessoa continua exigindo Persona Pack, foto real, hash e autorização.
+- [x] Outputs permanecem fora da skill e somente itens aprovados são promovidos.
+- [x] Testes com gerador fake cobrem todos os renderers; smoke real cobre ao menos
   mecanismo novo, cena UGC nova e arquétipo declarativo.
-- [ ] Campanha sem extension packs mantém compatibilidade de contrato e resultado.
+- [x] Campanha sem extension packs mantém compatibilidade de contrato e resultado.
 
 ## Ownership
 

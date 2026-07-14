@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "executed_at": "2026-07-14",
+  "runtime": "codex-cli-local",
+  "api_key_required": false,
+  "factory_version": "2.2.0",
+  "catalog_hash": "5bcdd31ea3b3c891786e113163681cd5ba894cbdea056e49ed4e724478583c1f",
+  "extension_packs": [
+    {
+      "id": "epic14-extension",
+      "version": "1.0.0",
+      "namespace": "epic14",
+      "min_factory_version": "2.2.0"
+    }
+  ],
+  "items": [
+    {
+      "id": "proof-live-light_clean-0",
+      "status": "FLAGGED_REVIEW",
+      "archetype": "light_clean",
+      "selected_entities": {
+        "archetype_id": "light_clean",
+        "visual_mechanism_id": "epic14.proof",
+        "ugc_scene_id": null,
+        "gate_profile_id": "builtin.default-light"
+      },
+      "gate": {
+        "verdict": "fail",
+        "ai_slop_score": 25.0,
+        "brand_adherence_pct": 50.0
+      },
+      "assets": [
+        {"format": "feed", "width": 1080, "height": 1350, "sha256": "17ae5cf2aab1d34a1b85c278fdefb180089a346471756a26333ddabf1e2ce6e2"},
+        {"format": "story", "width": 1080, "height": 1920, "sha256": "7f797df3dc39b126b7e2fbc1075b239c213a368e4e116108987a7428152a14b6"}
+      ]
+    },
+    {
+      "id": "proof-live-ugc_native-0",
+      "status": "FLAGGED_REVIEW",
+      "archetype": "ugc_native",
+      "selected_entities": {
+        "archetype_id": "ugc_native",
+        "visual_mechanism_id": "epic14.proof",
+        "ugc_scene_id": "epic14.desk",
+        "gate_profile_id": "builtin.default-native"
+      },
+      "gate": {
+        "verdict": "fail",
+        "ai_slop_score": 10.0,
+        "brand_adherence_pct": 75.0
+      },
+      "assets": [
+        {"format": "story", "width": 1080, "height": 1920, "sha256": "dcf41d72949fd92de9ebecfa9426573a3cbc1b549454e1770e45569d2e8ea62d"}
+      ]
+    },
+    {
+      "id": "proof-live-epic14-editorial-0",
+      "status": "OK",
+      "archetype": "epic14.editorial",
+      "selected_entities": {
+        "archetype_id": "epic14.editorial",
+        "visual_mechanism_id": "epic14.proof",
+        "ugc_scene_id": null,
+        "gate_profile_id": "epic14.default"
+      },
+      "gate": {
+        "verdict": "pass",
+        "ai_slop_score": 0.0,
+        "brand_adherence_pct": 100.0
+      },
+      "assets": [
+        {"format": "feed", "width": 1080, "height": 1350, "sha256": "c1cafa6efff1c5a63bde39800acf737ace25b2660f3dc9f78877563d71f11a76"},
+        {"format": "story", "width": 1080, "height": 1920, "sha256": "4e283e76262542ed7dccee19fc4b7cd8033edd74cef0f137fa250d2ccb35515a"}
+      ]
+    }
+  ],
+  "promotion_gate": {
+    "approved_item_ids": ["proof-live-epic14-editorial-0"],
+    "blocked_item_ids": ["proof-live-light_clean-0", "proof-live-ugc_native-0"]
+  },
+  "privacy": {
+    "absolute_path": false,
+    "secret": false,
+    "pii": false,
+    "generated_asset_embedded": false
+  }
+}

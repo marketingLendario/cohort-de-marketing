@@ -83,16 +83,22 @@ def _theme_text_hex(brand: dict, theme: str) -> str:
 # --------------------------------------------------------------------------- #
 # Gate principal
 # --------------------------------------------------------------------------- #
-def evaluate(img_path: str, brand: dict, theme: str = "dark") -> dict:
+def evaluate(img_path: str, brand: dict, theme: str = "dark",
+             profile: dict | None = None) -> dict:
     """theme: 'dark' (dark-first), 'light' (arquetipo claro: fundo claro domina),
     'native' (UGC — nao segue o brand tone; so checa neon/legibilidade)."""
     theme = str(theme or "dark").strip().lower()
     rules = brand.get("rules", {})
     palette = brand.get("palette", {})
+    thresholds = (profile or {}).get("thresholds", {})
 
-    gold_min = float(rules.get("gold_min_coverage_pct", 0.0))
-    gold_max = float(rules.get("gold_max_coverage_pct", 100.0))
-    min_contrast = float(rules.get("min_text_contrast", 4.5))
+    gold_min = float(thresholds.get("accent_min_coverage_pct", rules.get("gold_min_coverage_pct", 0.0)))
+    gold_max = float(thresholds.get("accent_max_coverage_pct", rules.get("gold_max_coverage_pct", 100.0)))
+    min_contrast = float(thresholds.get("min_contrast", rules.get("min_text_contrast", 4.5)))
+    dark_first_min = float(thresholds.get("dark_first_min_pct", DARK_FIRST_MIN_PCT))
+    neon_max = float(thresholds.get("neon_max_pct", NEON_MAX_PCT))
+    richness_min = float(thresholds.get("richness_min_edge_var", RICHNESS_MIN_EDGE_VAR))
+    slop_fail = float(thresholds.get("ai_slop_fail_threshold", AI_SLOP_FAIL_THRESHOLD))
 
     # --- Medidas programaticas (decode unico) --- #
     arr_rgb = _load_rgb(img_path)
@@ -109,10 +115,10 @@ def evaluate(img_path: str, brand: dict, theme: str = "dark") -> dict:
     elif theme == "native":
         dark_ok = True                      # UGC nativo nao segue o brand tone
     else:
-        dark_ok = dark_pct >= DARK_FIRST_MIN_PCT
+        dark_ok = dark_pct >= dark_first_min
     gold_ok = True if theme == "native" else (gold_min <= gold_pct <= gold_max)
-    neon_ok = neon_pct <= NEON_MAX_PCT
-    richness_ok = edge_var >= RICHNESS_MIN_EDGE_VAR
+    neon_ok = neon_pct <= neon_max
+    richness_ok = edge_var >= richness_min
     contrast_ok = contrast >= min_contrast
 
     checks = {
@@ -171,7 +177,7 @@ def evaluate(img_path: str, brand: dict, theme: str = "dark") -> dict:
     if not neon_ok:
         reasons.append(
             f"FAIL neon_violation: {neon_pct:.2f}% pixels roxo/azul saturados "
-            f"(max {NEON_MAX_PCT}%) — paleta proibida / AI-slop"
+            f"(max {neon_max}%) — paleta proibida / AI-slop"
         )
     if not gold_ok:
         reasons.append(
@@ -181,12 +187,12 @@ def evaluate(img_path: str, brand: dict, theme: str = "dark") -> dict:
     if not dark_ok:
         reasons.append(
             f"dark-first insuficiente: {dark_pct:.2f}% pixels escuros "
-            f"(min {DARK_FIRST_MIN_PCT}%)"
+            f"(min {dark_first_min}%)"
         )
     if not richness_ok:
         reasons.append(
             f"richness baixa (flat/template): edge_variance {edge_var:.2f} "
-            f"(min {RICHNESS_MIN_EDGE_VAR})"
+            f"(min {richness_min})"
         )
     if not contrast_ok:
         reasons.append(
@@ -194,7 +200,7 @@ def evaluate(img_path: str, brand: dict, theme: str = "dark") -> dict:
             f"(min {min_contrast})"
         )
 
-    if not neon_ok or not contrast_ok or slop > AI_SLOP_FAIL_THRESHOLD:
+    if not neon_ok or not contrast_ok or slop > slop_fail:
         verdict = "fail"
     elif reasons:
         verdict = "warn"
@@ -209,6 +215,7 @@ def evaluate(img_path: str, brand: dict, theme: str = "dark") -> dict:
         "checks": checks,
         "ai_slop_score": round(slop, 1),
         "brand_adherence_pct": round(adherence, 1),
+        "gate_profile_id": (profile or {}).get("id"),
         "verdict": verdict,
         "reasons": reasons,
     }

@@ -2,7 +2,7 @@
 
 ## Status
 
-Not started
+Done
 
 ## Regra de evidência
 
@@ -27,19 +27,19 @@ PII, path absoluto ou asset privado.
 
 ## Gates transversais
 
-- [ ] `git diff --check` sem erro.
-- [ ] Schemas rejeitam additional properties não previstas.
-- [ ] Paths absolutos, `..`, symlinks de escape e arquivos ausentes falham fechado.
-- [ ] IDs duplicados ou tentativa de override de built-in falham fechado.
-- [ ] Packs sem rights/provenance aplicáveis falham fechado.
-- [ ] Persona com likeness sem foto, hash e consentimento falha fechado.
-- [ ] Comandos de escrita passam por `--dry-run` antes da materialização.
-- [ ] Nenhum comando escreve fora de `projetos/{slug}/creative-factory/`.
-- [ ] `OPENAI_API_KEY` e `CODEX_API_KEY` não são exigidas nem herdadas.
-- [ ] `.claude/skills/ads-creative-factory/` e `.agents/skills/ads-creative-factory/` são idênticos.
-- [ ] `source-manifest.json` cobre exatamente a allow-list pública.
-- [ ] Nenhum pack de cliente, imagem gerada, cache ou output entra no release.
-- [ ] Revisão humana continua obrigatória antes da promoção do lote.
+- [x] `git diff --check` sem erro.
+- [x] Schemas rejeitam additional properties não previstas.
+- [x] Paths absolutos, `..`, symlinks de escape e arquivos ausentes falham fechado.
+- [x] IDs duplicados ou tentativa de override de built-in falham fechado.
+- [x] Packs sem rights/provenance aplicáveis falham fechado.
+- [x] Persona com likeness sem foto, hash e consentimento falha fechado.
+- [x] Comandos de escrita passam por `--dry-run` antes da materialização.
+- [x] Nenhum comando escreve fora de `projetos/{slug}/creative-factory/`.
+- [x] `OPENAI_API_KEY` e `CODEX_API_KEY` não são exigidas nem herdadas.
+- [x] `.claude/skills/ads-creative-factory/` e `.agents/skills/ads-creative-factory/` são idênticos.
+- [x] `source-manifest.json` cobre exatamente a allow-list pública.
+- [x] Nenhum pack de cliente, imagem gerada, cache ou output entra no release.
+- [x] Revisão humana continua obrigatória antes da promoção do lote.
 
 ## Gate operacional final
 
@@ -52,3 +52,25 @@ PII, path absoluto ou asset privado.
 5. Exercitar reload, retry e nova versão sem sobrescrever versão aprovada.
 6. Confirmar que o pacote final contém somente itens aprovados e diagnósticos
    sanitizados.
+
+## Execução final
+
+| Gate | Resultado |
+|---|---|
+| Skill pública | 24 testes Python aprovados; validação estrutural da skill e catálogo com 31 skills/41 edges aprovadas |
+| Skill no Ads Studio | 122 testes Python aprovados; mirrors byte a byte idênticos |
+| Ads Studio | typecheck, lint, 555 testes JS/TS, build web e build server aprovados em Node 22 |
+| Contrato CLI/painel | endpoint autenticado e teste de paridade sobre o mesmo `catalog_hash` aprovados |
+| Playwright | desktop 1440×1000 e mobile 390×844 aprovados, incluindo persistência entre BrowserContexts |
+| Smoke real | três arquétipos e dois formatos via Codex local; mecanismo, cena UGC, arquétipo e gate profile namespaced rastreados |
+| Release | `source-manifest.json` com 46 arquivos allowlisted, hashes verificados e mirrors idênticos |
+
+O manifesto sanitizado do smoke está em `live-smoke-2.2.0.json`. O gate aprovou
+somente `proof-live-epic14-editorial-0`; as peças `light_clean` e `ugc_native`
+permaneceram bloqueadas para promoção. Nenhum output de imagem, path absoluto,
+segredo, PII ou asset de cliente foi incorporado ao release público.
+
+## Decisão
+
+**PASS para release 2.2.0.** Blockers residuais: nenhum. A publicação de
+anúncios e a aprovação visual final continuam humanas.

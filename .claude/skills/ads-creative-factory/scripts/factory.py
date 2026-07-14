@@ -36,6 +36,7 @@ import typeset as typeset_mod
 import formats_hybrid as fhyb
 import archetype_render as arch_mod
 import carousel as carousel_mod
+from catalog_loader import FACTORY_VERSION, CatalogError, resolve_catalog
 
 
 SAFE_SEGMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")
@@ -48,13 +49,92 @@ def _validate_segment(value: object, label: str) -> str:
     return normalized
 
 
-def _select_best(candidates: list[dict], brand: dict) -> dict:
+def _resolve_campaign_catalog(campaign_path: str, cfg: dict, params: dict):
+    raw_paths = cfg.get("extension_packs", params.get("extension_packs", [])) or []
+    if not isinstance(raw_paths, list) or not all(isinstance(item, str) for item in raw_paths):
+        raise ValueError("extension_packs precisa ser uma lista de paths relativos ao projeto")
+    project_root = Path(campaign_path).expanduser().resolve().parent
+    resolved = []
+    for raw in raw_paths:
+        relative = Path(raw)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError("extension_packs aceita somente paths relativos confinados ao projeto")
+        try:
+            candidate = (project_root / relative).resolve(strict=True)
+            candidate.relative_to(project_root)
+        except (OSError, ValueError) as exc:
+            raise ValueError("extension pack inexistente ou fora da raiz autorizada do projeto") from exc
+        resolved.append(candidate)
+    return resolve_catalog(resolved), resolved
+
+
+def _normalize_hook_mechanisms(hooks: list[dict], catalog) -> tuple[list[dict], list[str]]:
+    normalized, warnings = [], []
+    for original in hooks:
+        hook = dict(original)
+        visual_id = hook.get("visual_mechanism_id")
+        legacy_id = hook.get("mechanism")
+        if not visual_id and legacy_id:
+            visual_id = legacy_id
+            hook["_mechanism_was_legacy"] = True
+            warnings.append(
+                f"hook {hook.get('id', '<unknown>')}: mechanism legado adaptado para visual_mechanism_id"
+            )
+        if visual_id:
+            try:
+                visual = catalog.get_entity("mechanisms", str(visual_id))
+            except CatalogError:
+                if not hook.get("_mechanism_was_legacy"):
+                    raise
+                visual = next(
+                    item for item in catalog.list_entities("mechanisms")
+                    if item["kind"] in {"visual", "hybrid"} and not item.get("needs_likeness")
+                )
+                warnings.append(
+                    f"hook {hook.get('id', '<unknown>')}: mechanism legado {visual_id!r} "
+                    f"nao existe no catalogo; usando {visual['id']!r}"
+                )
+                visual_id = visual["id"]
+            if visual["kind"] not in {"visual", "hybrid"}:
+                raise ValueError(f"visual_mechanism_id {visual_id!r} nao e visual nem hybrid")
+            hook["visual_mechanism_id"] = str(visual_id)
+        copy_id = hook.get("copy_mechanism_id")
+        if copy_id:
+            copy = catalog.get_entity("mechanisms", str(copy_id))
+            if copy["kind"] not in {"copy", "hybrid"}:
+                raise ValueError(f"copy_mechanism_id {copy_id!r} nao e copy nem hybrid")
+        normalized.append(hook)
+    return normalized, warnings
+
+
+def _assert_catalog_snapshot(work: Path, catalog, has_extensions: bool) -> None:
+    manifest_path = work / "manifest.json"
+    if not manifest_path.is_file():
+        return
+    try:
+        previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError("manifesto anterior invalido; nao e seguro retomar o lote") from exc
+    previous_hash = previous.get("catalog_hash")
+    if previous_hash and previous_hash != catalog.catalog_hash:
+        raise ValueError("catalog_hash divergiu do lote existente; crie uma nova versao da campanha")
+    if has_extensions and not previous_hash:
+        raise ValueError("lote anterior nao registra catalog_hash; crie uma nova versao da campanha")
+
+
+def _gate_profile(catalog, archetype: dict | None = None, theme: str = "dark") -> dict:
+    catalog = catalog or resolve_catalog()
+    profile_id = (archetype or {}).get("gate_profile") or f"builtin.default-{theme}"
+    return dict(catalog.get_entity("gate_profiles", profile_id))
+
+
+def _select_best(candidates: list[dict], brand: dict, profile: dict | None = None) -> dict:
     """candidates: [{path, ...}]. Avalia no gate e devolve o melhor + scores."""
     scored = []
     for c in candidates:
         if not c.get("ok"):
             continue
-        gr = gate_mod.evaluate(c["path"], brand)
+        gr = gate_mod.evaluate(c["path"], brand, profile=profile)
         scored.append({**c, "gate": gr})
     if not scored:
         return {}
@@ -88,8 +168,15 @@ def _unique_job_id(base_id: str, used_ids: set[str]) -> str:
     return unique
 
 
-def render_job(hk: dict, brand: dict, params: dict, work: Path) -> dict:
+def _job_token(value: object) -> str:
+    """Converte IDs namespaced em segmentos de arquivo seguros e determinísticos."""
+    token = re.sub(r"[^A-Za-z0-9_-]+", "-", str(value or "")).strip("-_")
+    return _validate_segment(token, "job token")
+
+
+def render_job(hk: dict, brand: dict, params: dict, work: Path, catalog=None) -> dict:
     """Renderiza um job isolado: todos os writes ficam sob work / id."""
+    catalog = catalog or params.get("_resolved_catalog") or resolve_catalog()
     n = params.get("best_of", 2)
     fmt = params.get("base_format", "feed")
     do_refine = params.get("refine", False)
@@ -101,7 +188,10 @@ def render_job(hk: dict, brand: dict, params: dict, work: Path) -> dict:
 
     hid = _validate_segment(hk["id"], "hook.id")
     base = str(work / hid)
-    entry = {"id": hid, "mechanism": hk.get("mechanism"), "headline": hk.get("headline"),
+    entry = {"id": hid, "mechanism": hk.get("mechanism"),
+             "copy_mechanism_id": hk.get("copy_mechanism_id"),
+             "visual_mechanism_id": hk.get("visual_mechanism_id"),
+             "headline": hk.get("headline"),
              "axes": hk.get("_axes"),
              # copy de ANÚNCIO (Meta), não vai na imagem — viaja no manifest p/ ad-midas
              "caption": hk.get("caption"),
@@ -136,21 +226,33 @@ def render_job(hk: dict, brand: dict, params: dict, work: Path) -> dict:
     if hk.get("_archetype"):
         # EIXO PRIMÁRIO: roteia a geração pelo arquétipo (a espécie da peça)
         arch = hk["_archetype"]
+        arch_mode = arch.get("renderer_mode") or arch.get("mode")
         res = arch_mod.render_archetype(
             arch, hk, brand, base, fmt=fmt, formats=targets,
             persona=hk.get("_persona_data"), arch_index=hk.get("_arch_index", 0),
+            catalog=catalog,
         )
         final = res.get("final")
         if not final:
             entry.update({"archetype": arch["id"], "status": "FAILED_GENERATION",
                           "error": res.get("error")})
             return entry
-        arch_theme = "native" if arch["mode"] == "ugc" else arch.get("theme", "dark")
-        gate_res = gate_mod.evaluate(final, brand, theme=arch_theme)
+        arch_theme = "native" if arch_mode == "ugc" else arch.get("theme", "dark")
+        profile = _gate_profile(catalog, arch, arch_theme)
+        gate_res = gate_mod.evaluate(final, brand, theme=arch_theme, profile=profile)
         rv = review_mod.review_final(final, brand, logo_variant=logo_variant,
                                      text_margin_safe=True, theme=arch_theme,
                                      gate_result=gate_res)
         entry.update({"archetype": arch["id"], "persona": hk.get("_persona"),
+                      "selected_entities": {
+                          "archetype_id": arch["id"],
+                          "copy_mechanism_id": hk.get("copy_mechanism_id"),
+                          "visual_mechanism_id": hk.get("visual_mechanism_id"),
+                          "ugc_scene_id": hk.get("_ugc_scene_id"),
+                          "mockup_device_id": hk.get("_mockup_device_id"),
+                          "didactic_style_id": hk.get("_didactic_style_id"),
+                          "gate_profile_id": profile["id"],
+                      },
                       "formats": res.get("formats", {}), "gate": gate_res, "final": final,
                       "review": rv, "status": "OK" if rv["verdict"] == "pass" else "FLAGGED_REVIEW"})
         return entry
@@ -171,7 +273,7 @@ def render_job(hk: dict, brand: dict, params: dict, work: Path) -> dict:
         fmts = fhyb.make_hybrid_formats(bg, hk, brand, targets, base, layout=layout_id,
                                         logo_variant=logo_variant, surface=surface, do_finish=do_finish)
         base_final = next((f["path"] for f in fmts if f["target"] == fmt), fmts[0]["path"])
-        gate_res = gate_mod.evaluate(base_final, brand)
+        gate_res = gate_mod.evaluate(base_final, brand, profile=_gate_profile(catalog))
         rv = review_mod.review_final(base_final, brand, logo_variant=logo_variant,
                                      text_margin_safe=True, gate_result=gate_res)
         entry.update({"bg": bg, "layout": layout_id, "backdrop": hk.get("_backdrop"),
@@ -186,7 +288,7 @@ def render_job(hk: dict, brand: dict, params: dict, work: Path) -> dict:
         gate_res = rf.get("gate") or (gate_mod.evaluate(chosen_path, brand) if chosen_path else None)
     else:
         cands = gen.generate_best_of(brand, hk, base, n=n, fmt=fmt)
-        best = _select_best(cands, brand)
+        best = _select_best(cands, brand, _gate_profile(catalog))
         chosen_path = best.get("path"); gate_res = best.get("gate")
         entry["candidates"] = [{"path": c.get("path"), "ok": c.get("ok")} for c in cands]
         entry["prompt"] = cands[0].get("prompt") if cands else None
@@ -223,7 +325,9 @@ def render_job(hk: dict, brand: dict, params: dict, work: Path) -> dict:
 
 
 def _render_jobs_ordered(jobs: list[dict], brand: dict, params: dict, work: Path,
-                         concurrency: int) -> list[dict]:
+                         concurrency: int, catalog=None) -> list[dict]:
+    render_params = params if catalog is None else {**params, "_resolved_catalog": catalog}
+
     def failed_entry(i: int, error: Exception) -> dict:
         return {"id": jobs[i]["id"],
                 "status": "FAILED_GENERATION",
@@ -233,14 +337,14 @@ def _render_jobs_ordered(jobs: list[dict], brand: dict, params: dict, work: Path
         entries = []
         for i, hk in enumerate(jobs):
             try:
-                entries.append(render_job(hk, brand, params, work))
+                entries.append(render_job(hk, brand, render_params, work))
             except Exception as exc:
                 entries.append(failed_entry(i, exc))
         return entries
 
     entries = [None] * len(jobs)
     with ThreadPoolExecutor(max_workers=concurrency) as pool:
-        futures = {pool.submit(render_job, hk, brand, params, work): i
+        futures = {pool.submit(render_job, hk, brand, render_params, work): i
                    for i, hk in enumerate(jobs)}
         for fut in as_completed(futures):
             i = futures[fut]
@@ -252,12 +356,22 @@ def _render_jobs_ordered(jobs: list[dict], brand: dict, params: dict, work: Path
 
 
 def run_campaign(campaign_path: str) -> dict:
-    with open(campaign_path) as f:
+    with open(campaign_path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
+    if not isinstance(cfg, dict):
+        raise ValueError("campaign.yaml precisa conter um objeto")
+    params = cfg.get("params", {})
+    if not isinstance(params, dict):
+        raise ValueError("params precisa ser um objeto")
+    catalog, extension_paths = _resolve_campaign_catalog(campaign_path, cfg, params)
+    expected_catalog_hash = params.get("catalog_hash_expected")
+    if expected_catalog_hash and expected_catalog_hash != catalog.catalog_hash:
+        raise ValueError("catalog_hash esperado diverge do catalogo resolvido; crie uma nova versao do lote")
+    hooks, compatibility_warnings = _normalize_hook_mechanisms(cfg.get("hooks", []), catalog)
+    cfg = {**cfg, "hooks": hooks}
     # The campaign identifier is descriptive only; identity is loaded solely
     # from the explicitly selected pack.
     brand = alib.load_brand(cfg.get("brand_id"))
-    params = cfg.get("params", {})
 
     # self-bootstrap somente quando o pack declara logo; DESIGN.md pode nao ter asset.
     if alib.has_logo_assets(brand) and not (alib.OUT_DIR / "brand_assets" / "logo_icon-dark.png").exists():
@@ -268,10 +382,17 @@ def run_campaign(campaign_path: str) -> dict:
     for hook in cfg.get("hooks", []):
         _validate_segment(hook.get("id"), "hook.id")
     work = alib.OUT_DIR / slug
+    _assert_catalog_snapshot(work, catalog, bool(extension_paths))
     work.mkdir(parents=True, exist_ok=True)
 
-    manifest = {"campaign": slug, "brand": brand["name"], "params": params,
-                "hooks": [], "ts": int(time.time())}
+    catalog_contract = catalog.to_dict()
+    manifest = {
+        "campaign": slug, "brand": brand["name"], "params": params,
+        "factory_version": FACTORY_VERSION, "catalog_hash": catalog.catalog_hash,
+        "extension_packs": catalog_contract["packs"],
+        "compatibility_warnings": compatibility_warnings,
+        "hooks": [], "ts": int(time.time()),
+    }
 
     # --- amarração B: expande cada hook em jobs concretos via eixos + anti-saturação ---
     variants = params.get("variants_per_hook", 1)
@@ -279,9 +400,9 @@ def run_campaign(campaign_path: str) -> dict:
     primary_axis = params.get("primary_axis", "mechanism")   # 'archetype' | 'mechanism'
     window = _validate_segment(params.get("saturation_window", slug), "saturation_window")
     used = sat_mod.load_used(window)
-    layouts = var_mod.load_layouts()
-    backdrops = var_mod.axis_values("backdrop")
-    archs = arch_mod.load_archetypes()
+    layouts = var_mod.load_layouts(catalog)
+    backdrops = var_mod.axis_values("backdrop", catalog)
+    archs = arch_mod.load_archetypes(catalog)
     selected_archetypes = params.get("archetypes") or []
     if selected_archetypes:
         selected = set(selected_archetypes)
@@ -303,11 +424,11 @@ def run_campaign(campaign_path: str) -> dict:
             job = dict(hk)
             job["id"] = _unique_job_id(hk["id"], job_ids)
             jobs.append(job); continue            # modo manual (recipe explícito, difusão)
-        mech = hk.get("mechanism", "")
-        core = (var_mod.mechanism_core(mech) or
+        mech = hk.get("visual_mechanism_id") or hk.get("mechanism", "")
+        core = (var_mod.mechanism_core(mech, catalog) or
                 hk.get("visual_recipe", "") or "A single hero element")
         used_axes = {"|".join(c.split("|")[1:]) for c in used if c.startswith(mech + "|")}
-        sels = var_mod.sample_diverse(variants, used=used_axes)
+        sels = var_mod.sample_diverse(variants, used=used_axes, catalog=catalog)
         for sel in sels:
             job = dict(hk)
             if hk.get("layout"):
@@ -317,11 +438,19 @@ def run_campaign(campaign_path: str) -> dict:
             job["_layout"] = lay["id"]; job["_reserve"] = lay["reserve"]
             job["_backdrop"] = hk.get("backdrop") or backdrops[jobi % len(backdrops)]
             job["_core"] = core
-            job["visual_recipe"] = var_mod.compose_recipe(core, sel)
+            job["visual_recipe"] = var_mod.compose_recipe(core, sel, catalog)
             job["_axes"] = sel
             if primary_axis == "archetype":
                 # EIXO PRIMÁRIO: arquétipo distinto por job (a "espécie" da peça)
                 arch = archs[jobi % len(archs)]
+                compatible = arch.get("compatible_mechanisms", ["*"])
+                if mech and "*" not in compatible and mech not in compatible:
+                    if not hk.get("_mechanism_was_legacy") or not compatible:
+                        raise ValueError(f"arquetipo {arch['id']} nao e compativel com mecanismo {mech}")
+                    adapted_mechanism = compatible[0]
+                    job["visual_mechanism_id"] = adapted_mechanism
+                    job["_core"] = var_mod.mechanism_core(adapted_mechanism, catalog) or core
+                    job["visual_recipe"] = var_mod.compose_recipe(job["_core"], sel, catalog, arch["id"])
                 job["_archetype"] = arch
                 selected_persona = persona_pool[jobi % len(persona_pool)] if persona_pool else None
                 job["_persona"] = selected_persona
@@ -332,8 +461,29 @@ def run_campaign(campaign_path: str) -> dict:
                         raise ValueError(f"persona explicita invalida: {selected_persona} ({exc})") from exc
                 ai = arch_count.get(arch["id"], 0)          # variacao INTERNA do arquetipo
                 job["_arch_index"] = ai
+                internal = arch_mod.resolve_internal_selection(
+                    arch, catalog, ai, job.get("_persona_data")
+                )
+                explicit_internal = {
+                    "ugc_scene_id": ("ugc_scenes", None, "ugc"),
+                    "mockup_device_id": ("variations", "mockup_device", "mockup"),
+                    "didactic_style_id": ("variations", "didactic_style", "didactic"),
+                }
+                arch_mode = arch.get("renderer_mode") or arch.get("mode")
+                for selector, (group, expected_axis, expected_mode) in explicit_internal.items():
+                    requested = job.get(selector)
+                    if not requested or arch_mode != expected_mode:
+                        continue
+                    entity = catalog.get_entity(group, str(requested))
+                    if expected_axis and entity.get("axis") != expected_axis:
+                        raise ValueError(f"{selector} {requested!r} nao pertence ao eixo {expected_axis}")
+                    internal[selector] = str(requested)
+                for key, value in internal.items():
+                    job[f"_{key}"] = value
                 arch_count[arch["id"]] = ai + 1
-                job["id"] = _unique_job_id(f"{hk['id']}-{arch['id']}-{ai}", job_ids)
+                job["id"] = _unique_job_id(
+                    f"{hk['id']}-{_job_token(arch['id'])}-{ai}", job_ids
+                )
                 used.add(f"{arch['id']}|{mech}|{sel['material']}")
             else:
                 raw_id = hk["id"] if variants <= 1 else f"{hk['id']}-{sel['material']}"
@@ -343,7 +493,7 @@ def run_campaign(campaign_path: str) -> dict:
     sat_mod.save_used(window, used)
 
     manifest["hooks"].extend(_render_jobs_ordered(
-        jobs, brand, params, work, _campaign_concurrency(params)))
+        jobs, brand, params, work, _campaign_concurrency(params), catalog))
 
     man_path = work / "manifest.json"
     with open(man_path, "w") as f:

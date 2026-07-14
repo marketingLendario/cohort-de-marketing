@@ -1,7 +1,7 @@
 {
   "epicId": "14",
   "title": "Extensibilidade governada da Ads Creative Factory",
-  "status": "Draft",
+  "status": "Done",
   "baseline": {
     "gitRef": "origin/main",
     "gitCommit": "d831ea369bf2aa8ad892fa43fa0b574a53b11d71",
@@ -12,19 +12,19 @@
     "publicCommand": "/ads-creative-factory"
   },
   "waves": [
-    { "id": "W1", "status": "pending", "name": "Contratos e catálogo" },
-    { "id": "W2", "status": "pending", "name": "Comandos de autoria" },
-    { "id": "W3", "status": "pending", "name": "Runtime, painel e release" }
+    { "id": "W1", "status": "completed", "name": "Contratos e catálogo" },
+    { "id": "W2", "status": "completed", "name": "Comandos de autoria" },
+    { "id": "W3", "status": "completed", "name": "Runtime, painel e release" }
   ],
   "stories": [
-    { "id": "14.W1.1", "status": "Draft", "dependsOn": [] },
-    { "id": "14.W1.2", "status": "Draft", "dependsOn": ["14.W1.1"] },
-    { "id": "14.W1.3", "status": "Draft", "dependsOn": ["14.W1.1", "14.W1.2"] },
-    { "id": "14.W2.1", "status": "Draft", "dependsOn": ["14.W1.1", "14.W1.3"] },
-    { "id": "14.W2.2", "status": "Draft", "dependsOn": ["14.W1.1", "14.W1.3"] },
-    { "id": "14.W2.3", "status": "Draft", "dependsOn": ["14.W1.1", "14.W1.2", "14.W2.2"] },
-    { "id": "14.W3.1", "status": "Draft", "dependsOn": ["14.W1.2", "14.W2.1", "14.W2.2", "14.W2.3"] },
-    { "id": "14.W3.2", "status": "Draft", "dependsOn": ["14.W3.1", "private-ads-studio-repository"] },
-    { "id": "14.W3.3", "status": "Draft", "dependsOn": ["14.W3.1", "14.W3.2"] }
+    { "id": "14.W1.1", "status": "Done", "dependsOn": [] },
+    { "id": "14.W1.2", "status": "Done", "dependsOn": ["14.W1.1"] },
+    { "id": "14.W1.3", "status": "Done", "dependsOn": ["14.W1.1", "14.W1.2"] },
+    { "id": "14.W2.1", "status": "Done", "dependsOn": ["14.W1.1", "14.W1.3"] },
+    { "id": "14.W2.2", "status": "Done", "dependsOn": ["14.W1.1", "14.W1.3"] },
+    { "id": "14.W2.3", "status": "Done", "dependsOn": ["14.W1.1", "14.W1.2", "14.W2.2"] },
+    { "id": "14.W3.1", "status": "Done", "dependsOn": ["14.W1.2", "14.W2.1", "14.W2.2", "14.W2.3"] },
+    { "id": "14.W3.2", "status": "Done", "dependsOn": ["14.W3.1", "private-ads-studio-repository"] },
+    { "id": "14.W3.3", "status": "Done", "dependsOn": ["14.W3.1", "14.W3.2"] }
   ]
 }

@@ -17,7 +17,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import alib
 
 ASSETS = alib.OUT_DIR / "brand_assets"
-STYLES = ["dark_columns", "dark_stacked", "light_check"]
+
+
+def style_for_index(index: int) -> str:
+    """Map a catalog position to one of the renderer's implemented layouts."""
+    slot = index % 3
+    if slot == 1:
+        return "dark_stacked"
+    if slot == 2:
+        return "light_check"
+    return "dark_columns"
 
 
 def _font(role, s, brand, w=None):

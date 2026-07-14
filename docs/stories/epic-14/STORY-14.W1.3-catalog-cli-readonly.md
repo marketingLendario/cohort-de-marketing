@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Dependências
 
@@ -15,25 +15,25 @@ Oferecer inspeção e validação do repertório antes de liberar comandos de es
 
 ## Critérios de aceite
 
-- [ ] Existe `catalog_cli.py` com subcomandos `catalog list`, `catalog show` e
+- [x] Existe `catalog_cli.py` com subcomandos `catalog list`, `catalog show` e
   `catalog validate`.
-- [ ] `catalog list` filtra por tipo, pack e disponibilidade e informa origem,
+- [x] `catalog list` filtra por tipo, pack e disponibilidade e informa origem,
   versão e compatibilidade sem revelar path absoluto.
-- [ ] `catalog show <tipo> <id>` exibe contrato resolvido e dependências.
-- [ ] `catalog validate <pack>` valida schema, assets, rights, colisões e
+- [x] `catalog show <tipo> <id>` exibe contrato resolvido e dependências.
+- [x] `catalog validate <pack>` valida schema, assets, rights, colisões e
   compatibilidade sem modificar o pack.
-- [ ] Todos os comandos suportam `--json` com schema de saída estável.
-- [ ] Exit code `0` representa sucesso, `1` bloqueio de validação e `2` erro de
+- [x] Todos os comandos suportam `--json` com schema de saída estável.
+- [x] Exit code `0` representa sucesso, `1` bloqueio de validação e `2` erro de
   uso/argumento.
-- [ ] O `doctor.py` reutiliza o mesmo loader e reporta extension packs quando
+- [x] O `doctor.py` reutiliza o mesmo loader e reporta extension packs quando
   explicitamente informados.
-- [ ] O frontmatter da skill passa a documentar
+- [x] O frontmatter da skill passa a documentar
   `/ads-creative-factory <entidade> <ação> [opções]` sem criar novas skills.
-- [ ] A validação do skill catalog continua reconhecendo um único comando
+- [x] A validação do skill catalog continua reconhecendo um único comando
   `/ads-creative-factory`.
-- [ ] Testes provam que os comandos read-only não alteram mtime, conteúdo ou
+- [x] Testes provam que os comandos read-only não alteram mtime, conteúdo ou
   árvore de arquivos do pack.
-- [ ] Ajuda CLI contém exemplos em português e recuperação para erros comuns.
+- [x] Ajuda CLI contém exemplos em português e recuperação para erros comuns.
 
 ## Ownership
 

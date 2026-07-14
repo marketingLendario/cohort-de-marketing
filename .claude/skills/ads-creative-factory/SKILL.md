@@ -1,14 +1,17 @@
 ---
 name: ads-creative-factory
-description: "Motor agnóstico de criativos de performance. De 1 briefing → N criativos em arquétipos distintos, usando packs externos versionados, multi-formato e gate anti-AI-slop."
-version: "2.1.1"
-user-invocable: true
-argument-hint: "[request.json]"
+description: "Motor extensível de criativos de performance. Cria, valida e usa packs versionados de brand, persona, arquétipos, mecanismos, cenas UGC, variações, referências e gates."
+metadata:
+  version: "2.2.0"
+  user-invocable: true
+  argument-hint: "[request.json] | entidade ação opções"
 ---
 
 ## Invocação (slash command)
 
 `/ads-creative-factory [request.json]`
+
+`/ads-creative-factory <entidade> <ação> [opções]`
 
 Na interface, o adapter converte os finalistas curados pelo `briefista` em um
 `campaign.yaml` fechado. No terminal, a skill recebe esse arquivo diretamente.
@@ -24,9 +27,49 @@ Formatos, variações, arquétipos e personas são campos de `params:` no YAML:
 | `brand_pack` | obrigatório | Brand pack v1 explícito |
 | `persona_pack` | opcional | Pack v1 de persona quando houver likeness |
 | `output_root` | obrigatório | Raiz relativa materializada em `projetos/{slug}/` após aprovação |
+| `extension_packs` | `[]` | Paths relativos e explícitos de Extension Packs instalados |
+| `catalog_hash` | automático | Snapshot determinístico recusado quando diverge em retry |
 
 O adapter preenche a copy de imagem e a copy de anúncio (`caption` +
 `link_description`) por hook; ambas viajam no manifesto sanitizado.
+
+## Catálogo e comandos de autoria
+
+Existe um único slash command público. No terminal, todos os subcomandos usam a
+mesma superfície CLI-first e aceitam `--json`; comandos de escrita também aceitam
+`--dry-run`:
+
+```bash
+SKILL_DIR="$(git rev-parse --show-toplevel)/.claude/skills/ads-creative-factory"
+CF="python3 $SKILL_DIR/scripts/catalog_cli.py"
+
+$CF --json catalog list --type archetypes
+$CF --json catalog show archetypes dark_editorial
+$CF --json catalog validate projetos/acme/creative-factory/packs/acme-extension
+
+$CF --json pack build --project-root projetos/acme --id acme-extension \
+  --namespace acme --version 1.0.0 --rights-notice "Uso autorizado neste projeto" --dry-run
+$CF --json pack install --project-root projetos/acme \
+  --pack projetos/acme/creative-factory/packs/acme-extension
+```
+
+Subcomandos disponíveis: `brand create`, `persona create`, `archetype add`,
+`mechanism add`, `ugc-scene add`, `variation add`, `reference add`,
+`gate-profile add`, `preview archetype`, `pack build` e `pack install`. Use
+`python3 "$SKILL_DIR/scripts/catalog_cli.py" <entidade> <ação> --help` para os
+campos do contrato. IDs externos devem ser namespaced, por exemplo
+`acme.editorial`; `builtin` é reservado. Um arquétipo novo pode selecionar
+somente os renderer modes `hybrid`, `person`, `mockup`, `ugc` e `didactic`.
+Renderer novo exige story de desenvolvimento e nunca é carregado do pack.
+Hooks podem selecionar entidades resolvidas explicitamente por
+`visual_mechanism_id`, `copy_mechanism_id`, `ugc_scene_id`,
+`mockup_device_id` e `didactic_style_id`; IDs desconhecidos ou de eixo
+incompatível falham antes da geração.
+
+Packs instalados ficam em
+`projetos/{slug}/creative-factory/packs/{pack-id}/` e o vínculo explícito em
+`projetos/{slug}/creative-factory/installed-packs.json`. Não edite os YAMLs
+built-in para adicionar repertório de cliente.
 
 ## Criar o Brand Pack sem editar JSON
 
@@ -89,6 +132,8 @@ O painel e o CLI enviam o mesmo objeto v1 dentro de `context.creativeFactory`.
 {
   "schema_version": "1.0.0",
   "brand_pack": { "id": "brand-alpha" },
+  "extension_packs": [{ "id": "acme-extension", "version": "1.0.0", "path": "projetos/acme/creative-factory/packs/acme-extension" }],
+  "catalog_hash": "<sha256-do-catalogo-resolvido>",
   "output_root": "criativos/factory",
   "campaign_id": "campanha-01",
   "production_skill_id": "ads-creative-factory",
@@ -107,7 +152,7 @@ usar um `jobId` durável para retry, cancelamento, aprovação e retomada. No CL
 standalone, `ACF_BRAND_PACK` e `ACF_OUT_DIR` materializam o mesmo boundary;
 falhas de pack, dependência ou path são bloqueantes e acionáveis.
 
-## Os 6 arquétipos (eixo primário) — `data/archetypes.yaml`
+## Os 6 arquétipos built-in (base extensível) — `data/archetypes.yaml`
 
 | Arquétipo | Modo | Linguagem |
 |---|---|---|
@@ -120,12 +165,15 @@ falhas de pack, dependência ou path são bloqueantes e acionáveis.
 
 O factory sorteia arquétipos **distintos** por job (eixo primário) + variação
 interna por instância (estilo/device/foto) → diversidade entre E dentro das espécies.
+Extension Packs adicionam presets declarativos sobre os mesmos cinco renderer
+modes sem sobrescrever os built-ins.
 
 ## campaign.yaml
 
 ```yaml
 campaign: "campaign-example"
 brand_id: "brand-alpha"
+extension_packs: ["creative-factory/packs/acme-extension"]
 params:
   primary_axis: "archetype"
   variants_per_hook: 3
@@ -189,7 +237,7 @@ acervo auto-curado. Pessoa = foto REAL via EDIT (nunca likeness gerada do zero).
   SKILL.md                       — este arquivo (entry point)
   scripts/                       — pipeline Python (factory, gate, person, archetype_render, ...)
   schemas/                       — contratos v1 de brand e persona packs
-  data/                          — arquétipos, hooks e eixos de variação genéricos
+  data/                          — built-ins declarativos de arquétipos, UGC, gates e variações
   fonts/                         — dependências tipográficas neutras do runtime
   THIRD_PARTY_NOTICES.md         — gate de licença e redistribuição
 ```

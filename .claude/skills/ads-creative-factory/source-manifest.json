@@ -10,23 +10,30 @@
     "LICENSE",
     "SKILL.md",
     "THIRD_PARTY_NOTICES.md",
-    "requirements.txt",
     "data/archetypes.yaml",
+    "data/gate-profiles.yaml",
     "data/hooks-library.yaml",
+    "data/ugc-scenes.yaml",
     "data/variation-axes.yaml",
     "fonts/InstrumentSerif-Italic.ttf",
     "fonts/InstrumentSerif-Regular.ttf",
     "fonts/InterTight.ttf",
     "fonts/JetBrainsMono.ttf",
     "licenses/OFL-1.1.txt",
+    "requirements.txt",
     "schemas/brand-pack.v1.schema.json",
+    "schemas/creative-extension-pack.v1.schema.json",
     "schemas/persona-pack.v1.schema.json",
     "scripts/alib.py",
     "scripts/anchors.py",
     "scripts/archetype_render.py",
     "scripts/build_brand_pack.py",
+    "scripts/build_persona_pack.py",
     "scripts/carousel.py",
     "scripts/carousel_copy_adapter.py",
+    "scripts/catalog_authoring.py",
+    "scripts/catalog_cli.py",
+    "scripts/catalog_loader.py",
     "scripts/collect_finals.py",
     "scripts/compose.py",
     "scripts/didactic.py",
@@ -72,8 +79,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "private-upstream",
-        "commit": "f5622a4dafde015b82125287921f456eb57ee57b"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -81,18 +88,18 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 8658,
-      "sha256": "b7fc21090cfacc9429b6cf259972b0d0ed88e7153e6f2e219bebc8807ee16aee"
+      "bytes": 11202,
+      "sha256": "458f0073c925b1ee9273ec9266453d62e12d6122db248418a6f89f348394e1c0"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
       "package": "public",
       "kind": "notice",
       "origin": {
-        "repository": "private-upstream",
-        "commit": "epic-12"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -100,29 +107,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 2317,
-      "sha256": "0c32b13cf62074ae8b04c33864355f57ec41a85bc254b57879b669673a62604b"
-    },
-    {
-      "path": "requirements.txt",
-      "package": "public",
-      "kind": "source",
-      "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
-      },
-      "license": {
-        "spdx": "MIT",
-        "status": "verified"
-      },
-      "redistribution": {
-        "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
-      },
-      "bytes": 43,
-      "sha256": "5d03f62f13c3072ff60dc60f5c550829c822037a60034c68d64fde6a810094ca"
+      "bytes": 2340,
+      "sha256": "d4bef456ff5d0c1de1b1051210f8e743c2c0534f9814c9a125bf0d88c7833681"
     },
     {
       "path": "data/archetypes.yaml",
@@ -144,6 +132,25 @@
       "sha256": "73945fb958e32850940e48d85d73ee9d5be497afa95461d2829578257f9e1c53"
     },
     {
+      "path": "data/gate-profiles.yaml",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for Epic 14."
+      },
+      "bytes": 826,
+      "sha256": "50eda6ed2b10bb16d53a4f44717cb6c152c44bfc8ef435f2ca77033cd03f2a0b"
+    },
+    {
       "path": "data/hooks-library.yaml",
       "package": "public",
       "kind": "source",
@@ -163,12 +170,12 @@
       "sha256": "5a06f6a2b3b594ca13dd36ab6452aea3047928924be1c59b9517a6f473361b46"
     },
     {
-      "path": "data/variation-axes.yaml",
+      "path": "data/ugc-scenes.yaml",
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -176,10 +183,29 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 5029,
-      "sha256": "9600d4af1a647587cc2aab013af3246aea9bb37f039153427961603a92208db5"
+      "bytes": 2086,
+      "sha256": "ab3e729344f50f29600349605ce7c1377a772adb6de68777283f1fb72dece536"
+    },
+    {
+      "path": "data/variation-axes.yaml",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for Epic 14."
+      },
+      "bytes": 5909,
+      "sha256": "1c5af06f3543b12dcc0b797de7ead1c739285af8a64df91ab6a5934d94e80efa"
     },
     {
       "path": "fonts/InstrumentSerif-Italic.ttf",
@@ -277,6 +303,25 @@
       "sha256": "ebc109078c06f79af74cf2b27454c262830d12a65749f0e2bf25d1ac1db7a02a"
     },
     {
+      "path": "requirements.txt",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "sinkra-hub",
+        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+      },
+      "bytes": 43,
+      "sha256": "5d03f62f13c3072ff60dc60f5c550829c822037a60034c68d64fde6a810094ca"
+    },
+    {
       "path": "schemas/brand-pack.v1.schema.json",
       "package": "public",
       "kind": "schema",
@@ -296,12 +341,12 @@
       "sha256": "269bd1924a7ce1c02d27fada8e375979d458f6164d39eaf205992b6353c98ef0"
     },
     {
-      "path": "schemas/persona-pack.v1.schema.json",
+      "path": "schemas/creative-extension-pack.v1.schema.json",
       "package": "public",
       "kind": "schema",
       "origin": {
-        "repository": "private-upstream",
-        "commit": "epic-12"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -309,10 +354,29 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 3140,
-      "sha256": "3632dfa08f765d533e59ecd6c139506cd797b2b8dab0bd4829b1c0ef4907c3ad"
+      "bytes": 8414,
+      "sha256": "f44658b240de6fc2754bd888178f50be297497c6f195be54b17a6e7765acc1d3"
+    },
+    {
+      "path": "schemas/persona-pack.v1.schema.json",
+      "package": "public",
+      "kind": "schema",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for Epic 14."
+      },
+      "bytes": 3489,
+      "sha256": "83732bc3a0477072cf4e5ef6608d7e9c4ffb17fcc6aa727e9546d63db6a264cb"
     },
     {
       "path": "scripts/alib.py",
@@ -357,8 +421,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -366,18 +430,18 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 9407,
-      "sha256": "33670368c29de0791eb0ab8d365af3c1cfe157fab94f8cfb5622652ab92b59d2"
+      "bytes": 11190,
+      "sha256": "94b1e8a3593529fcc209c3d29b03c38156906a7389575bfcbba72a103030b213"
     },
     {
       "path": "scripts/build_brand_pack.py",
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "private-upstream",
-        "commit": "26ec0a87f10cd139295b6d282b3b224665962790"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -385,10 +449,29 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution; implementation merged in Epic 14."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 16246,
-      "sha256": "e05304f7bcd5dadbd060b476d885d008884b459794ae1df77233af4b67f91883"
+      "bytes": 16793,
+      "sha256": "5a84f0287920581a3bc9d35ee0e40e342cd3c5e20b9771b16f42daa5b30285d6"
+    },
+    {
+      "path": "scripts/build_persona_pack.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for Epic 14."
+      },
+      "bytes": 8500,
+      "sha256": "114ac085d7c2e7646f924a98a2d09623640c03ef32584d7f9397120280c2c563"
     },
     {
       "path": "scripts/carousel.py",
@@ -427,6 +510,63 @@
       },
       "bytes": 23078,
       "sha256": "df944d551331946be95f4e368df553cfd58c45ce6ea2788777f535752424a92f"
+    },
+    {
+      "path": "scripts/catalog_authoring.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for Epic 14."
+      },
+      "bytes": 9366,
+      "sha256": "d4e6813c41c034dbe3781e2b7d17088ce670d06fced9f34d3bb090b0bc86dcab"
+    },
+    {
+      "path": "scripts/catalog_cli.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for Epic 14."
+      },
+      "bytes": 21783,
+      "sha256": "cf41e6792f3740038132abc05107884e331dcf99c82058610e10825000be2569"
+    },
+    {
+      "path": "scripts/catalog_loader.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for Epic 14."
+      },
+      "bytes": 12101,
+      "sha256": "86050391ad3b3ecf9180d835e7adabab3cb763c6ebdab781ea24aada524f11b3"
     },
     {
       "path": "scripts/collect_finals.py",
@@ -471,8 +611,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -480,18 +620,18 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 7348,
-      "sha256": "fdc83333b765573c2dbbc118f906312e33f6f34ce1bf3acfeeb5a2ad6207beb1"
+      "bytes": 7554,
+      "sha256": "ee7053a68f0a15ba8e0350af45ef7fced392d937f656f0c5f17a3ffd1fa1c68f"
     },
     {
       "path": "scripts/doctor.py",
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "private-upstream",
-        "commit": "epic-12"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -499,18 +639,18 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 6923,
-      "sha256": "19ae8ae60627af3b5123aa29b6dae928e77fc7d1522a04b6ee6d831a4dd81007"
+      "bytes": 8651,
+      "sha256": "7238ec1d929d457144fae936c6b722f42da10989907259461793bd8e287cf955"
     },
     {
       "path": "scripts/factory.py",
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -518,10 +658,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 17437,
-      "sha256": "8318c44a73d3f8321af2be635819d6bbe7206191349ff341af1d57fa6ff81485"
+      "bytes": 25795,
+      "sha256": "bf80d497a8c1e209469440a4e3b36080551c335426afa817ccf5fad468513adb"
     },
     {
       "path": "scripts/finish.py",
@@ -585,8 +725,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "private-upstream",
-        "commit": "f5622a4dafde015b82125287921f456eb57ee57b"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -594,10 +734,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 8683,
-      "sha256": "d1df89f7c5b2e7de02502a16fb248c63a084732a94d70319e9590bfa238dfd4a"
+      "bytes": 9234,
+      "sha256": "a998a82c442881c120ae69d007aa7b2a75e80d5735fc239295c315d10ed4b2f1"
     },
     {
       "path": "scripts/generate.py",
@@ -623,8 +763,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "private-upstream",
-        "commit": "epic-12"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -632,10 +772,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 13675,
-      "sha256": "b5f93cc80aa71eba439e9b908396c3ea4d20942dc9e32e8131f1a55a716d264a"
+      "bytes": 18635,
+      "sha256": "28dc75c9efa51a62a82f2c7e045bfeb322f5dae08d2d39942c99a836424cb15e"
     },
     {
       "path": "scripts/person.py",
@@ -775,8 +915,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "epic-14"
       },
       "license": {
         "spdx": "MIT",
@@ -784,10 +924,11 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for Epic 14."
       },
-      "bytes": 4383,
-      "sha256": "22f51d13bb9b8da06cfba8b2bbfcfd542d47529d1382a9d5a02b8ee2394320bf"
+      "bytes": 6470,
+      "sha256": "04acd93f386aab960bf712257310faf2488c959704425d806225b9cc94504bc0"
     }
-  ]
+  ],
+  "releaseVersion": "2.2.0"
 }

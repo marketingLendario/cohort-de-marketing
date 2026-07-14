@@ -7,6 +7,7 @@ then checked against that directory before the immutable contract is returned.
 from __future__ import annotations
 
 import concurrent.futures
+import hashlib
 import json
 import re
 from collections.abc import Iterator, Mapping, Sequence
@@ -21,9 +22,15 @@ SUPPORTED_SCHEMA_VERSION = "1.0.0"
 SCHEMA_FILES = {
     "brand": SCHEMA_DIR / "brand-pack.v1.schema.json",
     "persona": SCHEMA_DIR / "persona-pack.v1.schema.json",
+    "creative-extension": SCHEMA_DIR / "creative-extension-pack.v1.schema.json",
 }
-MANIFEST_NAMES = ("pack.json", "brand-pack.json", "persona-pack.json")
+MANIFEST_NAMES = ("pack.json", "brand-pack.json", "persona-pack.json", "creative-extension-pack.json")
 _WINDOWS_ABSOLUTE = re.compile(r"^[A-Za-z]:[\\/]")
+_SEMVER = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+_EXTENSION_ENTITY_GROUPS = (
+    "archetypes", "mechanisms", "ugc_scenes", "variations", "references", "gate_profiles",
+)
+_RENDERER_MODES = {"hybrid", "person", "mockup", "ugc", "didactic"}
 
 
 class PackLoadError(ValueError):
@@ -147,16 +154,24 @@ def _validate_schema(value: Any, schema: dict[str, Any], root_schema: dict[str, 
     if isinstance(value, str):
         if len(value) < schema.get("minLength", 0):
             raise _error(location, "must not be empty")
+        if "maxLength" in schema and len(value) > schema["maxLength"]:
+            raise _error(location, f"must contain at most {schema['maxLength']} characters")
         pattern = schema.get("pattern")
         if pattern and not re.search(pattern, value):
             raise _error(location, "has an invalid format")
 
     if isinstance(value, (int, float)) and "minimum" in schema and value < schema["minimum"]:
         raise _error(location, f"must be at least {schema['minimum']}")
+    if isinstance(value, (int, float)) and "maximum" in schema and value > schema["maximum"]:
+        raise _error(location, f"must be at most {schema['maximum']}")
 
     if isinstance(value, list):
         if len(value) < schema.get("minItems", 0):
             raise _error(location, f"must contain at least {schema['minItems']} item(s)")
+        if "maxItems" in schema and len(value) > schema["maxItems"]:
+            raise _error(location, f"must contain at most {schema['maxItems']} item(s)")
+        if schema.get("uniqueItems") and len({json.dumps(item, sort_keys=True) for item in value}) != len(value):
+            raise _error(location, "must not contain duplicate items")
         item_schema = schema.get("items")
         if isinstance(item_schema, dict):
             for index, item in enumerate(value):
@@ -274,19 +289,78 @@ def _validate_rights_and_assets(pack: dict[str, Any], root: Path, location: str)
                 f"{asset_location}.rights_id",
                 "pack cannot be marked redistributable while an asset license is not redistributable",
             )
-        asset_paths[asset["id"]] = _resolve_asset_path(root, asset["path"], f"{asset_location}.path")
+        resolved = _resolve_asset_path(root, asset["path"], f"{asset_location}.path")
+        declared_sha = asset.get("sha256")
+        if declared_sha:
+            actual_sha = hashlib.sha256(resolved.read_bytes()).hexdigest()
+            if actual_sha != declared_sha:
+                raise _error(f"{asset_location}.sha256", "declared SHA-256 does not match the asset")
+        asset_paths[asset["id"]] = resolved
     return asset_paths
 
 
+def _validate_extension_semantics(pack: dict[str, Any], location: str) -> None:
+    namespace = pack["namespace"]
+    if namespace == "builtin":
+        raise _error(f"{location}.namespace", "namespace 'builtin' is reserved by the factory")
+    if not _SEMVER.fullmatch(pack["version"]) or not _SEMVER.fullmatch(pack["min_factory_version"]):
+        raise _error(location, "version and min_factory_version must use MAJOR.MINOR.PATCH")
+
+    entities = pack["entities"]
+    seen: dict[str, str] = {}
+    for group in _EXTENSION_ENTITY_GROUPS:
+        for index, entity in enumerate(entities[group]):
+            entity_id = entity["id"]
+            entity_location = f"{location}.entities.{group}[{index}]"
+            if not entity_id.startswith(namespace + "."):
+                raise _error(f"{entity_location}.id", f"must use the declared namespace {namespace!r}")
+            if entity_id in seen:
+                raise _error(f"{entity_location}.id", f"duplicates entity declared at {seen[entity_id]}")
+            seen[entity_id] = entity_location
+
+            if group == "archetypes" and entity["renderer_mode"] not in _RENDERER_MODES:
+                raise _error(f"{entity_location}.renderer_mode", "renderer mode is not allowlisted")
+            if group == "mechanisms":
+                kind = entity["kind"]
+                if kind in {"visual", "hybrid"} and not str(entity.get("core", "")).strip():
+                    raise _error(f"{entity_location}.core", f"core is required for mechanism kind {kind!r}")
+                copy_fields = ("belief_shift", "hook_structure", "proof_type", "objection")
+                if kind in {"copy", "hybrid"}:
+                    missing = [field for field in copy_fields if not str(entity.get(field, "")).strip()]
+                    if missing:
+                        raise _error(entity_location, f"copy mechanism is missing: {', '.join(missing)}")
+            if group == "gate_profiles":
+                thresholds = entity["thresholds"]
+                for key, value in thresholds.items():
+                    limit = 100.0 if key.endswith("_pct") or key == "ai_slop_fail_threshold" else None
+                    if limit is not None and float(value) > limit:
+                        raise _error(f"{entity_location}.thresholds.{key}", "percentage threshold cannot exceed 100")
+                minimum = thresholds.get("accent_min_coverage_pct")
+                maximum = thresholds.get("accent_max_coverage_pct")
+                if minimum is not None and maximum is not None and minimum > maximum:
+                    raise _error(f"{entity_location}.thresholds", "accent minimum cannot exceed maximum")
+
+    assets = {asset["id"]: asset for asset in pack["assets"]["files"]}
+    licenses = {item["id"] for item in pack["rights"]["licenses"]}
+    for index, reference in enumerate(entities["references"]):
+        ref_location = f"{location}.entities.references[{index}]"
+        asset = assets.get(reference["asset_id"])
+        if asset is None:
+            raise _error(f"{ref_location}.asset_id", "reference points to an unknown asset")
+        if reference["rights_id"] not in licenses or reference["rights_id"] != asset["rights_id"]:
+            raise _error(f"{ref_location}.rights_id", "reference rights must match its asset license")
+
+
 def load_pack(pack_path: str | Path, expected_type: str | None = None) -> LoadedPack:
-    """Load one explicit brand/persona pack and return an immutable contract."""
+    """Load one explicit versioned pack and return an immutable contract."""
     root, manifest = _pack_manifest(pack_path)
     pack = _read_json(manifest)
     location = str(manifest)
 
     pack_type = pack.get("pack_type")
     if pack_type not in SCHEMA_FILES:
-        raise _error(f"{location}.pack_type", "unknown pack type; supported values are brand and persona")
+        supported = ", ".join(sorted(SCHEMA_FILES))
+        raise _error(f"{location}.pack_type", f"unknown pack type; supported values are {supported}")
     if expected_type is not None and pack_type != expected_type:
         raise _error(f"{location}.pack_type", f"expected {expected_type!r}, received {pack_type!r}")
     if pack.get("schema_version") != SUPPORTED_SCHEMA_VERSION:
@@ -298,6 +372,8 @@ def load_pack(pack_path: str | Path, expected_type: str | None = None) -> Loaded
     schema, schema_path = _load_schema(pack_type)
     _reject_obvious_path_issues(pack, location)
     _validate_schema(pack, schema, schema, location)
+    if pack_type == "creative-extension":
+        _validate_extension_semantics(pack, location)
     asset_paths = _validate_rights_and_assets(pack, root, location)
 
     return LoadedPack(
@@ -314,6 +390,10 @@ def load_brand_pack(pack_path: str | Path) -> LoadedPack:
 
 def load_persona_pack(pack_path: str | Path) -> LoadedPack:
     return load_pack(pack_path, expected_type="persona")
+
+
+def load_extension_pack(pack_path: str | Path) -> LoadedPack:
+    return load_pack(pack_path, expected_type="creative-extension")
 
 
 def load_packs(pack_paths: Sequence[str | Path], max_workers: int = 1) -> tuple[LoadedPack, ...]:
@@ -339,6 +419,7 @@ __all__ = [
     "LoadedPack",
     "PackLoadError",
     "load_brand_pack",
+    "load_extension_pack",
     "load_pack",
     "load_packs",
     "load_persona_pack",

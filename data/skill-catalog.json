@@ -974,7 +974,7 @@
       "id": "ads-creative-factory",
       "title": "Creative Factory",
       "command": "/ads-creative-factory",
-      "description": "Produz lotes reais de imagens e legendas a partir dos finalistas curados, com contrato v1, packs externos explícitos, arquétipos, formatos e gate visual.",
+      "description": "Produz lotes reais e permite criar repertório por Extension Packs versionados: arquétipos, mecanismos, UGC, variações, referências e gates declarativos.",
       "phase": "Trafego",
       "phaseColor": "#c9b298",
       "order": 31,
@@ -997,7 +997,7 @@
       "feeds": [
         "subida manual"
       ],
-      "guard": "Exige brand_pack explícito; persona_pack é opcional; gera propostas e somente itens aprovados pelo operador entram no pacote final.",
+      "guard": "Exige brand_pack explícito; Extension Packs entram por seleção e hash; likeness exige consentimento; somente itens aprovados entram no pacote final.",
       "artifactSummary": "Lote de imagens e legendas",
       "execution": {
         "mode": "local_skill",

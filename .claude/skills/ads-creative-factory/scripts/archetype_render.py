@@ -27,7 +27,12 @@ def _tallest(brand, formats):
     return max(formats, key=lambda t: brand["formats"][t]["h"])
 
 
-def load_archetypes() -> list[dict]:
+def load_archetypes(catalog=None) -> list[dict]:
+    if catalog is not None:
+        return [
+            {**dict(item), "mode": item["renderer_mode"]}
+            for item in catalog["archetypes"].values()
+        ]
     import yaml
     with open(alib.DATA_DIR / "archetypes.yaml") as f:
         return yaml.safe_load(f)["archetypes"]
@@ -52,11 +57,12 @@ def _emit_bg_formats(bg, hook, brand, formats, out_base, *,
     return out
 
 
-def _hybrid(brand, hook, arch, out_base, formats):
+def _hybrid(brand, hook, arch, out_base, formats, catalog=None):
     """dark/light: fundo gerado UMA vez (formato mais alto) + multi-formato."""
     theme = arch.get("theme", "dark")
     gen_fmt = _tallest(brand, formats)
-    core = var_mod.mechanism_core(hook.get("mechanism", "")) or "a single elegant hero object"
+    mechanism = hook.get("visual_mechanism_id") or hook.get("mechanism", "")
+    core = var_mod.mechanism_core(mechanism, catalog) or "a single elegant hero object"
     sel = {"material": "metal", "lighting": "chiaroscuro", "finish": "cinematic"}
     if theme == "light":
         palette = brand["palette"]
@@ -66,7 +72,7 @@ def _hybrid(brand, hook, arch, out_base, formats):
                f"Keep the UPPER-LEFT clean for text. NO text, no letters, no logo, no watermark.")
         surface = "light"
     else:
-        bgp = gen.build_bg_prompt(brand, core, sel, var_mod.backdrop_fragment("atmospheric_fog"),
+        bgp = gen.build_bg_prompt(brand, core, sel, var_mod.backdrop_fragment("atmospheric_fog", catalog),
                                   "keep the UPPER HALF clear and atmospheric for text, subject lower",
                                   "editorial_top", gen_fmt)
         surface = "dark"
@@ -77,17 +83,47 @@ def _hybrid(brand, hook, arch, out_base, formats):
                             layout="editorial_top", theme=theme, surface=surface)
 
 
-_MOCKUP_DEVICES = [
-    "a sleek laptop at a slight angle, screen showing a sophisticated marketing-revenue dashboard with glowing warm-gold charts on a dark UI, on a dark premium desk with soft volumetric light, in the LOWER portion",
-    "a modern smartphone held upright, screen showing a clean marketing dashboard with a glowing gold revenue line and metrics, floating against a dark premium backdrop, in the LOWER-RIGHT",
-    "two dark monitors side by side on a desk showing glowing gold analytics charts and a revenue graph, cinematic studio light, in the LOWER portion",
-    "an extreme close-up of a screen showing a single glowing gold revenue curve rising, shallow depth of field, abstract, filling the LOWER half",
-]
+def _catalog_item(catalog, group, entity_id):
+    if catalog is None or not entity_id:
+        return None
+    try:
+        return dict(catalog.get_entity(group, entity_id))
+    except Exception:
+        return None
 
 
-def _mockup(brand, hook, arch, out_base, formats, idx=0):
+def resolve_internal_selection(arch: dict, catalog, idx: int = 0,
+                               persona: dict | None = None) -> dict:
+    if catalog is None:
+        return {}
+    mode = arch.get("renderer_mode") or arch.get("mode")
+    if mode == "mockup":
+        values = var_mod.variation_entities("mockup_device", catalog, arch["id"])
+        return {"mockup_device_id": values[idx % len(values)]["id"]} if values else {}
+    if mode == "didactic":
+        values = var_mod.variation_entities("didactic_style", catalog, arch["id"])
+        return {"didactic_style_id": values[idx % len(values)]["id"]} if values else {}
+    if mode == "ugc":
+        allowed = set(arch.get("compatible_ugc_scenes", []))
+        values = [
+            dict(item) for item in catalog["ugc_scenes"].values()
+            if "story" in item.get("formats", [])
+            and (not allowed or "*" in allowed or item["id"] in allowed)
+            and (persona or not item.get("needs_persona"))
+        ]
+        return {"ugc_scene_id": values[idx % len(values)]["id"]} if values else {}
+    return {}
+
+
+def _mockup(brand, hook, arch, out_base, formats, idx=0, catalog=None):
     gen_fmt = _tallest(brand, formats)
-    device = _MOCKUP_DEVICES[idx % len(_MOCKUP_DEVICES)]
+    selected = _catalog_item(catalog, "variations", hook.get("_mockup_device_id"))
+    if selected is None:
+        values = var_mod.variation_entities("mockup_device", catalog, arch["id"])
+        selected = values[idx % len(values)] if values else None
+    if selected is None:
+        raise ValueError("catalogo sem variacao mockup_device compativel")
+    device = selected["fragment"]
     bgp = (f"Premium product mockup BACKGROUND, {brand['formats'][gen_fmt]['aspect']}. {device}. "
            f"Keep the UPPER HALF dark and clear for text. Cinematic tech product photo, dark-first, "
            f"accent {brand['palette']['accent']} screen glow. On-screen UI abstract and blurred, NOT readable words. "
@@ -98,16 +134,16 @@ def _mockup(brand, hook, arch, out_base, formats, idx=0):
     return _emit_bg_formats(bg, hook, brand, formats, out_base, layout="editorial_top", theme="dark")
 
 
-def _person(brand, hook, arch, out_base, formats, persona):
+def _person(brand, hook, arch, out_base, formats, persona, catalog=None):
     # A person archetype without a declared persona is intentionally personless.
     if not persona:
-        return _hybrid(brand, hook, {**arch, "theme": "dark"}, out_base, formats)
+        return _hybrid(brand, hook, {**arch, "theme": "dark"}, out_base, formats, catalog)
     p = person_mod.get(persona, brand)
     copy = dict(hook)
     copy["eyebrow"] = f"{p['name'].upper()} · AO VIVO"
     photo = person_mod.pick_photo(p, brand)
     if not photo:
-        return _hybrid(brand, hook, {**arch, "theme": "dark"}, out_base, formats)
+        return _hybrid(brand, hook, {**arch, "theme": "dark"}, out_base, formats, catalog)
     edited = person_mod.edit_to_scene(photo, out_base + "__edit.png")   # EDIT uma vez
     out = {}
     for fmt in formats:                                                 # compor por formato
@@ -117,20 +153,26 @@ def _person(brand, hook, arch, out_base, formats, persona):
     return out
 
 
-_UGC_PHOTOS = [
-    "a cozy desk with an open laptop, coffee mug, warm window light, slightly imperfect and unposed",
-    "a hand holding a phone showing a marketing app, casual cafe table in the background, natural light, candid",
-    "an over-the-shoulder view of someone working at a laptop late at night, warm desk lamp, screen glowing, candid and real",
-    "a messy-but-cozy creator workspace with notes, a laptop and a plant by a sunny window, authentic and lived-in",
-]
-
-
-def _ugc(brand, hook, arch, out_base, formats, idx=0):
+def _ugc(brand, hook, arch, out_base, formats, idx=0, catalog=None, persona=None):
     # UGC e nativo 9:16 (story/reels) — formato proprio, independe dos targets
-    scene = _UGC_PHOTOS[idx % len(_UGC_PHOTOS)]
-    photo_prompt = (f"An authentic candid smartphone photo, vertical 9:16: {scene}. Looks like a real "
-                    f"phone photo someone actually took, NOT a studio ad, NOT stylized. Natural everyday "
-                    f"tones, a little grain. No text, no UI, no logo, no watermark.")
+    scene = _catalog_item(catalog, "ugc_scenes", hook.get("_ugc_scene_id"))
+    if scene is None:
+        scenes = [
+            dict(item) for item in catalog["ugc_scenes"].values()
+            if "story" in item.get("formats", []) and (persona or not item.get("needs_persona"))
+        ] if catalog is not None else []
+        scene = scenes[idx % len(scenes)] if scenes else None
+    if scene is None:
+        raise ValueError("catalogo sem cena UGC compativel")
+    positive = ", ".join([
+        scene["setting"], scene["shot"], scene["lighting"],
+        *scene.get("props", []), *scene.get("authenticity_guards", []),
+    ])
+    negative = ", ".join(scene.get("negative_guards", []))
+    photo_prompt = (
+        f"An authentic candid smartphone photo, vertical 9:16: {positive}. "
+        f"Looks like a real phone photo someone actually took. Avoid: {negative}."
+    )
     photo = out_base + "__photo.png"
     if not alib.codex_image(photo_prompt, photo)["ok"]:
         return None
@@ -144,8 +186,14 @@ def _ugc(brand, hook, arch, out_base, formats, idx=0):
     return {"story": p}
 
 
-def _didactic(brand, hook, arch, out_base, formats, idx=0):
-    style = didactic_mod.STYLES[idx % len(didactic_mod.STYLES)]   # variacao interna
+def _didactic(brand, hook, arch, out_base, formats, idx=0, catalog=None):
+    selected = _catalog_item(catalog, "variations", hook.get("_didactic_style_id"))
+    if selected is None:
+        values = var_mod.variation_entities("didactic_style", catalog, arch["id"])
+        selected = values[idx % len(values)] if values else None
+    if selected is None:
+        raise ValueError("catalogo sem variacao didactic_style compativel")
+    style = selected.get("value_id") or didactic_mod.style_for_index(idx)
     cmp = dict(hook.get("compare") or {})
     cmp.setdefault("eyebrow", hook.get("eyebrow", ""))
     cmp.setdefault("title_left", "")
@@ -165,22 +213,23 @@ def _didactic(brand, hook, arch, out_base, formats, idx=0):
 
 def render_archetype(arch: dict, hook: dict, brand: dict, out_base: str,
                      fmt: str = "feed", formats: list | None = None,
-                     persona: dict | None = None, arch_index: int = 0) -> dict:
+                     persona: dict | None = None, arch_index: int = 0,
+                     catalog=None) -> dict:
     """Multi-formato: cada modo gera o ativo pesado UMA vez e emite todos os formatos
     (mesma cena reenquadrada — consistente). arch_index dirige a variacao interna."""
-    mode = arch["mode"]
+    mode = arch.get("renderer_mode") or arch["mode"]
     formats = formats or [fmt]
     try:
         if mode == "hybrid":
-            outs = _hybrid(brand, hook, arch, out_base, formats)
+            outs = _hybrid(brand, hook, arch, out_base, formats, catalog)
         elif mode == "mockup":
-            outs = _mockup(brand, hook, arch, out_base, formats, arch_index)
+            outs = _mockup(brand, hook, arch, out_base, formats, arch_index, catalog)
         elif mode == "person":
-            outs = _person(brand, hook, arch, out_base, formats, persona)
+            outs = _person(brand, hook, arch, out_base, formats, persona, catalog)
         elif mode == "ugc":
-            outs = _ugc(brand, hook, arch, out_base, formats, arch_index)
+            outs = _ugc(brand, hook, arch, out_base, formats, arch_index, catalog, persona)
         elif mode == "didactic":
-            outs = _didactic(brand, hook, arch, out_base, formats, arch_index)
+            outs = _didactic(brand, hook, arch, out_base, formats, arch_index, catalog)
         else:
             outs = None
     except Exception as e:

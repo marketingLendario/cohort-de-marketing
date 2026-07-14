@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Dependências
 
@@ -16,35 +16,35 @@ declarativas versionadas, sem editar os dados built-in.
 
 ## Critérios de aceite
 
-- [ ] `mechanism add` cria mecanismo `copy`, `visual` ou `hybrid` dentro de um
+- [x] `mechanism add` cria mecanismo `copy`, `visual` ou `hybrid` dentro de um
   Extension Pack selecionado.
-- [ ] Mecanismo de copy declara transformação de crença, estrutura do hook, tipo
+- [x] Mecanismo de copy declara transformação de crença, estrutura do hook, tipo
   de prova, objeção, campos obrigatórios e claims proibidos.
-- [ ] Mecanismo visual declara `core`, intenção psicológica, necessidade de
+- [x] Mecanismo visual declara `core`, intenção psicológica, necessidade de
   likeness e compatibilidades de arquétipo/formato.
-- [ ] `ugc-scene add` declara setting, shot, lighting, props, authenticity guards,
+- [x] `ugc-scene add` declara setting, shot, lighting, props, authenticity guards,
   negative guards, formatos e necessidade de persona.
-- [ ] `variation add` aceita somente eixos allowlisted e valida fragmento,
+- [x] `variation add` aceita somente eixos allowlisted e valida fragmento,
   compatibilidades e locks. Os eixos incluem material, lighting, composition,
   density, finish, backdrop, layout, mockup device e didactic style.
-- [ ] `reference add` copia o asset para o pack, calcula SHA-256 e exige source,
+- [x] `reference add` copia o asset para o pack, calcula SHA-256 e exige source,
   rights ID, licença/autorização e redistributability.
-- [ ] `gate-profile add` aceita somente métricas e intervalos allowlisted pelo
+- [x] `gate-profile add` aceita somente métricas e intervalos allowlisted pelo
   runtime; não pode desativar revisão humana, likeness gate ou confinamento.
-- [ ] `pack build` consolida as entidades do workspace temporário em um Extension
+- [x] `pack build` consolida as entidades do workspace temporário em um Extension
   Pack e só publica o destino após validação completa.
-- [ ] `pack install` associa explicitamente o pack ao projeto em arquivo de
+- [x] `pack install` associa explicitamente o pack ao projeto em arquivo de
   configuração versionável; não existe registry global implícito.
-- [ ] Promoção de referência gerada escreve no pack do projeto, nunca no catálogo
+- [x] Promoção de referência gerada escreve no pack do projeto, nunca no catálogo
   público interno da skill.
-- [ ] Todos os comandos aceitam `--dry-run`, `--json`, pack explícito e escrita
+- [x] Todos os comandos aceitam `--dry-run`, `--json`, pack explícito e escrita
   atômica.
-- [ ] Nenhum comando permite override de built-in ou ID já instalado.
-- [ ] O campo legado `mechanism` possui regra documentada de adaptação para
+- [x] Nenhum comando permite override de built-in ou ID já instalado.
+- [x] O campo legado `mechanism` possui regra documentada de adaptação para
   `visual_mechanism_id`; não é removido nesta story.
-- [ ] `preview` consegue validar composição textual e prompt sanitizado sem exigir
+- [x] `preview` consegue validar composição textual e prompt sanitizado sem exigir
   geração de imagem real.
-- [ ] Fixtures e testes cobrem todas as entidades, campos condicionais, colisões,
+- [x] Fixtures e testes cobrem todas as entidades, campos condicionais, colisões,
   rights e rollback em falha.
 
 ## Ownership

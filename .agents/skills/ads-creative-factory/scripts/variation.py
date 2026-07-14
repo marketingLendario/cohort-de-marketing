@@ -29,39 +29,80 @@ def load_axes() -> dict:
     return _AXES
 
 
-def _fragment(axis: str, value_id: str) -> str:
+def variation_entities(axis: str, catalog=None, archetype_id: str | None = None) -> list[dict]:
+    if catalog is None:
+        return [
+            {"id": value["id"], "value_id": value["id"], "axis": axis,
+             "fragment": value["fragment"], "compatible_archetypes": ["*"]}
+            for value in load_axes().get(axis, [])
+        ]
+    items = []
+    for raw_item in catalog["variations"].values():
+        item = dict(raw_item)
+        if item.get("axis") != axis:
+            continue
+        compatible = item.get("compatible_archetypes", ["*"])
+        if archetype_id and "*" not in compatible and archetype_id not in compatible:
+            continue
+        items.append(item)
+    return items
+
+
+def _value_id(item: dict) -> str:
+    return str(item.get("value_id") or item["id"])
+
+
+def _fragment(axis: str, value_id: str, catalog=None, archetype_id: str | None = None) -> str:
+    if catalog is not None:
+        for item in variation_entities(axis, catalog, archetype_id):
+            if value_id in {str(item["id"]), str(item.get("value_id", ""))}:
+                return str(item["fragment"])
     for v in load_axes().get(axis, []):
         if v["id"] == value_id:
             return v["fragment"]
     return ""
 
 
-def compose_recipe(mechanism_core: str, sel: dict) -> str:
+def compose_recipe(mechanism_core: str, sel: dict, catalog=None,
+                   archetype_id: str | None = None) -> str:
     """sel: {material, lighting, composition, density, finish} (qualquer subconjunto)."""
     order = ["material", "lighting", "composition", "density", "finish"]
-    frags = [_fragment(ax, sel[ax]) for ax in order if ax in sel and sel[ax]]
+    frags = [
+        _fragment(ax, sel[ax], catalog, archetype_id)
+        for ax in order if ax in sel and sel[ax]
+    ]
     tail = ("near-black #070709 background, warm muted gold (#c9b298) as the only "
             "accent color, no people, no text, no logo, generous space reserved for "
             "a headline, premium luxury editorial mood, 4:5 vertical")
     return ", ".join([mechanism_core.rstrip(". ")] + [f for f in frags if f] + [tail])
 
 
-def axis_values(axis: str) -> list[str]:
-    return [v["id"] for v in load_axes().get(axis, [])]
+def axis_values(axis: str, catalog=None, archetype_id: str | None = None) -> list[str]:
+    return [_value_id(item) for item in variation_entities(axis, catalog, archetype_id)]
 
 
-def load_layouts() -> list[dict]:
+def load_layouts(catalog=None, archetype_id: str | None = None) -> list[dict]:
+    if catalog is not None:
+        return [
+            {"id": _value_id(item), "reserve": item["fragment"]}
+            for item in variation_entities("layout", catalog, archetype_id)
+        ]
     import yaml
     with open(alib.DATA_DIR / "variation-axes.yaml") as f:
         return yaml.safe_load(f).get("layouts", [])
 
 
-def backdrop_fragment(value_id: str) -> str:
-    return _fragment("backdrop", value_id)
+def backdrop_fragment(value_id: str, catalog=None, archetype_id: str | None = None) -> str:
+    return _fragment("backdrop", value_id, catalog, archetype_id)
 
 
-def mechanism_core(mechanism: str) -> str:
+def mechanism_core(mechanism: str, catalog=None) -> str:
     """Busca o `core` conceitual de um mecanismo na hooks-library."""
+    if catalog is not None and mechanism:
+        try:
+            return str(catalog.get_entity("mechanisms", mechanism).get("core", ""))
+        except Exception:
+            return ""
     import yaml
     with open(alib.DATA_DIR / "hooks-library.yaml") as f:
         lib = yaml.safe_load(f)
@@ -93,7 +134,8 @@ def _axis_combo_at_index(i: int, mats: list, lights: list, comps: list,
     }
 
 
-def sample_diverse(n: int, used: set | None = None, seed_offset: int = 0) -> list[dict]:
+def sample_diverse(n: int, used: set | None = None, seed_offset: int = 0,
+                   catalog=None, archetype_id: str | None = None) -> list[dict]:
     """Gera n selecoes de eixos diversas, evitando chaves ja em `used`.
 
     Deterministico (sem random): percorre o produto cartesiano dos 5 eixos via
@@ -101,11 +143,13 @@ def sample_diverse(n: int, used: set | None = None, seed_offset: int = 0) -> lis
     livres). `used` contem chaves 'material|lighting|composition' (anti-saturacao).
     """
     used = set() if used is None else used   # set() vazio e falsy: nao recriar
-    mats = axis_values("material")
-    lights = axis_values("lighting")
-    comps = axis_values("composition")
-    dens = axis_values("density")
-    fins = axis_values("finish")
+    mats = axis_values("material", catalog, archetype_id)
+    lights = axis_values("lighting", catalog, archetype_id)
+    comps = axis_values("composition", catalog, archetype_id)
+    dens = axis_values("density", catalog, archetype_id)
+    fins = axis_values("finish", catalog, archetype_id)
+    if not all((mats, lights, comps, dens, fins)):
+        raise ValueError("catalogo de variacoes incompleto para gerar combinacoes")
     out, i = [], seed_offset
     guard = 0
     while len(out) < n and guard < 10000:

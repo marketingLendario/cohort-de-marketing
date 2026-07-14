@@ -1,0 +1,31 @@
+version: "1.0.0"
+
+gate_profiles:
+  - id: builtin.default-dark
+    label: "Default dark"
+    thresholds:
+      dark_first_min_pct: 45.0
+      neon_max_pct: 2.0
+      richness_min_edge_var: 1.8
+      min_contrast: 4.5
+      ai_slop_fail_threshold: 60.0
+    human_review_required: true
+    likeness_gate_required: true
+  - id: builtin.default-light
+    label: "Default light"
+    thresholds:
+      neon_max_pct: 2.0
+      richness_min_edge_var: 1.8
+      min_contrast: 4.5
+      ai_slop_fail_threshold: 60.0
+    human_review_required: true
+    likeness_gate_required: true
+  - id: builtin.default-native
+    label: "Default native"
+    thresholds:
+      neon_max_pct: 2.0
+      richness_min_edge_var: 1.2
+      min_contrast: 4.5
+      ai_slop_fail_threshold: 60.0
+    human_review_required: true
+    likeness_gate_required: true

@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ads-creative-factory.invalid/schemas/creative-extension-pack.v1.schema.json",
+  "title": "Creative extension pack contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_type",
+    "id",
+    "version",
+    "namespace",
+    "min_factory_version",
+    "entities",
+    "assets",
+    "rights"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "pack_type": {"const": "creative-extension"},
+    "id": {"$ref": "#/$defs/safe_id"},
+    "version": {"$ref": "#/$defs/semver"},
+    "namespace": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,31}$"},
+    "min_factory_version": {"$ref": "#/$defs/semver"},
+    "entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["archetypes", "mechanisms", "ugc_scenes", "variations", "references", "gate_profiles"],
+      "properties": {
+        "archetypes": {"type": "array", "items": {"$ref": "#/$defs/archetype"}},
+        "mechanisms": {"type": "array", "items": {"$ref": "#/$defs/mechanism"}},
+        "ugc_scenes": {"type": "array", "items": {"$ref": "#/$defs/ugc_scene"}},
+        "variations": {"type": "array", "items": {"$ref": "#/$defs/variation"}},
+        "references": {"type": "array", "items": {"$ref": "#/$defs/reference"}},
+        "gate_profiles": {"type": "array", "items": {"$ref": "#/$defs/gate_profile"}}
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files"],
+      "properties": {
+        "files": {"type": "array", "items": {"$ref": "#/$defs/asset"}}
+      }
+    },
+    "rights": {"$ref": "#/$defs/rights"}
+  },
+  "$defs": {
+    "safe_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,95}$"},
+    "entity_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,31}\\.[a-z0-9][a-z0-9._-]{1,63}$"},
+    "semver": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "string_list": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "archetype": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "renderer_mode", "theme", "formats", "required_fields", "compatible_mechanisms", "internal_variants", "gate_profile"],
+      "properties": {
+        "id": {"$ref": "#/$defs/entity_id"},
+        "label": {"type": "string", "minLength": 1},
+        "renderer_mode": {"enum": ["hybrid", "person", "mockup", "ugc", "didactic"]},
+        "theme": {"enum": ["dark", "light", "native"]},
+        "formats": {"$ref": "#/$defs/string_list"},
+        "required_fields": {"$ref": "#/$defs/string_list"},
+        "compatible_mechanisms": {"$ref": "#/$defs/string_list"},
+        "compatible_ugc_scenes": {"$ref": "#/$defs/string_list"},
+        "compatible_variations": {"$ref": "#/$defs/string_list"},
+        "reference_ids": {"$ref": "#/$defs/string_list"},
+        "internal_variants": {"$ref": "#/$defs/string_list"},
+        "gate_profile": {"type": "string", "minLength": 1},
+        "needs_persona": {"type": "boolean"}
+      }
+    },
+    "mechanism": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "label", "psych", "required_fields", "prohibited_claims", "compatible_archetypes", "formats", "needs_likeness"],
+      "properties": {
+        "id": {"$ref": "#/$defs/entity_id"},
+        "kind": {"enum": ["copy", "visual", "hybrid"]},
+        "label": {"type": "string", "minLength": 1},
+        "psych": {"type": "string", "minLength": 1},
+        "core": {"type": "string", "minLength": 1},
+        "belief_shift": {"type": "string", "minLength": 1},
+        "hook_structure": {"type": "string", "minLength": 1},
+        "proof_type": {"type": "string", "minLength": 1},
+        "objection": {"type": "string", "minLength": 1},
+        "required_fields": {"$ref": "#/$defs/string_list"},
+        "prohibited_claims": {"$ref": "#/$defs/string_list"},
+        "compatible_archetypes": {"$ref": "#/$defs/string_list"},
+        "formats": {"$ref": "#/$defs/string_list"},
+        "needs_likeness": {"type": "boolean"}
+      }
+    },
+    "ugc_scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "setting", "shot", "lighting", "props", "authenticity_guards", "negative_guards", "formats", "needs_persona"],
+      "properties": {
+        "id": {"$ref": "#/$defs/entity_id"},
+        "label": {"type": "string", "minLength": 1},
+        "setting": {"type": "string", "minLength": 1},
+        "shot": {"type": "string", "minLength": 1},
+        "lighting": {"type": "string", "minLength": 1},
+        "props": {"$ref": "#/$defs/string_list"},
+        "authenticity_guards": {"$ref": "#/$defs/string_list"},
+        "negative_guards": {"$ref": "#/$defs/string_list"},
+        "formats": {"$ref": "#/$defs/string_list"},
+        "needs_persona": {"type": "boolean"}
+      }
+    },
+    "variation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "axis", "fragment", "compatible_archetypes", "locks"],
+      "properties": {
+        "id": {"$ref": "#/$defs/entity_id"},
+        "axis": {"enum": ["material", "lighting", "composition", "density", "finish", "backdrop", "layout", "mockup_device", "didactic_style"]},
+        "fragment": {"type": "string", "minLength": 1},
+        "compatible_archetypes": {"$ref": "#/$defs/string_list"},
+        "locks": {"$ref": "#/$defs/string_list"}
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "asset_id", "source", "rights_id", "redistributable", "tags"],
+      "properties": {
+        "id": {"$ref": "#/$defs/entity_id"},
+        "asset_id": {"$ref": "#/$defs/safe_id"},
+        "source": {"type": "string", "minLength": 1},
+        "rights_id": {"$ref": "#/$defs/safe_id"},
+        "redistributable": {"type": "boolean"},
+        "tags": {"$ref": "#/$defs/string_list"}
+      }
+    },
+    "gate_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "thresholds", "human_review_required", "likeness_gate_required"],
+      "properties": {
+        "id": {"$ref": "#/$defs/entity_id"},
+        "label": {"type": "string", "minLength": 1},
+        "thresholds": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "accent_min_coverage_pct": {"type": "number", "minimum": 0},
+            "accent_max_coverage_pct": {"type": "number", "minimum": 0},
+            "dark_first_min_pct": {"type": "number", "minimum": 0},
+            "neon_max_pct": {"type": "number", "minimum": 0},
+            "richness_min_edge_var": {"type": "number", "minimum": 0},
+            "min_contrast": {"type": "number", "minimum": 1},
+            "ai_slop_fail_threshold": {"type": "number", "minimum": 0}
+          }
+        },
+        "human_review_required": {"const": true},
+        "likeness_gate_required": {"const": true}
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "kind", "rights_id", "sha256"],
+      "properties": {
+        "id": {"$ref": "#/$defs/safe_id"},
+        "path": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+$"},
+        "kind": {"enum": ["reference", "texture", "image", "other"]},
+        "rights_id": {"$ref": "#/$defs/safe_id"},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["redistributable", "notice", "licenses"],
+      "properties": {
+        "redistributable": {"type": "boolean"},
+        "notice": {"type": "string", "minLength": 1},
+        "licenses": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/license"}}
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "spdx", "redistributable", "notice"],
+      "properties": {
+        "id": {"$ref": "#/$defs/safe_id"},
+        "name": {"type": "string", "minLength": 1},
+        "spdx": {"type": "string", "minLength": 1},
+        "redistributable": {"type": "boolean"},
+        "notice": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -51,6 +51,17 @@ axes:
     - { id: smoke_drift,      fragment: "with slow drifting dark smoke and dust adding atmospheric depth" }
     - { id: raked_wall,       fragment: "a dark wall raked by a single grazing light revealing its texture" }
 
+  mockup_device:
+    - { id: laptop_angle, fragment: "a sleek laptop at a slight angle with an abstract analytics dashboard, positioned in the lower portion" }
+    - { id: phone_upright, fragment: "a modern smartphone held upright with an abstract analytics screen, positioned in the lower-right" }
+    - { id: dual_monitors, fragment: "two dark monitors side by side showing abstract analytics charts, positioned in the lower portion" }
+    - { id: screen_macro, fragment: "an extreme close-up of a screen with one abstract rising curve, filling the lower half" }
+
+  didactic_style:
+    - { id: dark_columns, fragment: "two dark comparison columns with clear negative and positive states" }
+    - { id: dark_stacked, fragment: "two vertically stacked dark comparison panels" }
+    - { id: light_check, fragment: "a light checklist comparison on a clean high-contrast surface" }
+
 # LAYOUTS — variam a ESTRUTURA do criativo (não só o objeto). Evita que tudo
 # vire "objeto dourado + bloco de texto". Consumidos por typeset (posição do
 # texto) e pelo prompt de fundo (zona reservada). Ver typeset.LAYOUTS.

@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Dependências
 
@@ -15,25 +15,25 @@ imutável, reproduzível e rastreável.
 
 ## Critérios de aceite
 
-- [ ] Existe `catalog_loader.py` separado do loader estrutural de packs.
-- [ ] O loader recebe uma lista explícita de packs; não varre projetos ou pastas
+- [x] Existe `catalog_loader.py` separado do loader estrutural de packs.
+- [x] O loader recebe uma lista explícita de packs; não varre projetos ou pastas
   globais automaticamente.
-- [ ] Built-ins são carregados como namespace reservado e não podem ser
+- [x] Built-ins são carregados como namespace reservado e não podem ser
   sobrescritos por packs externos.
-- [ ] IDs duplicados dentro ou entre packs falham fechado com origem dos dois
+- [x] IDs duplicados dentro ou entre packs falham fechado com origem dos dois
   registros na mensagem.
-- [ ] A ordem de resolução independe da ordem do filesystem.
-- [ ] O catálogo resolvido é imutável e não vaza cache entre campanhas.
-- [ ] O resultado registra pack ID, versão, origem sanitizada e versão mínima da
+- [x] A ordem de resolução independe da ordem do filesystem.
+- [x] O catálogo resolvido é imutável e não vaza cache entre campanhas.
+- [x] O resultado registra pack ID, versão, origem sanitizada e versão mínima da
   factory.
-- [ ] Um hash canônico é calculado sobre representação ordenada e permanece
+- [x] Um hash canônico é calculado sobre representação ordenada e permanece
   estável entre processos, CLI e painel.
-- [ ] Compatibilidades entre arquétipo, mecanismo, persona, formato, gate profile
+- [x] Compatibilidades entre arquétipo, mecanismo, persona, formato, gate profile
   e renderer mode são validadas antes da geração.
-- [ ] O loader expõe consultas tipadas por entidade e uma visão completa para
+- [x] O loader expõe consultas tipadas por entidade e uma visão completa para
   diagnóstico.
-- [ ] Erros são acionáveis e não incluem path absoluto no payload público.
-- [ ] Testes cobrem determinismo, colisão, override, versão incompatível,
+- [x] Erros são acionáveis e não incluem path absoluto no payload público.
+- [x] Testes cobrem determinismo, colisão, override, versão incompatível,
   referência quebrada e isolamento entre duas campanhas.
 
 ## Ownership

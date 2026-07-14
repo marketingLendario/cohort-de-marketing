@@ -1,0 +1,43 @@
+version: "1.0.0"
+
+ugc_scenes:
+  - id: builtin.ugc-cozy-desk
+    label: "Mesa acolhedora"
+    setting: "a cozy desk with an open laptop, coffee mug and a slightly imperfect lived-in workspace"
+    shot: "candid handheld smartphone photo"
+    lighting: "warm natural window light"
+    props: ["laptop", "coffee mug"]
+    authenticity_guards: ["natural everyday tones", "subtle phone-camera grain", "unposed composition"]
+    negative_guards: ["studio ad", "polished commercial lighting", "text", "logo", "watermark"]
+    formats: ["story"]
+    needs_persona: false
+  - id: builtin.ugc-phone-cafe
+    label: "Celular no café"
+    setting: "a hand holding a phone above a casual cafe table with a softly blurred background"
+    shot: "close candid smartphone snapshot"
+    lighting: "soft natural daylight"
+    props: ["phone", "cafe table"]
+    authenticity_guards: ["minor framing imperfection", "realistic depth", "casual context"]
+    negative_guards: ["studio ad", "readable app text", "logo", "watermark"]
+    formats: ["story"]
+    needs_persona: false
+  - id: builtin.ugc-late-work
+    label: "Trabalho à noite"
+    setting: "an over-the-shoulder view of someone working at a laptop late at night"
+    shot: "candid vertical phone photo from behind"
+    lighting: "warm desk lamp and soft screen glow"
+    props: ["laptop", "desk lamp"]
+    authenticity_guards: ["candid posture", "real room texture", "subtle grain"]
+    negative_guards: ["recognizable face", "studio ad", "readable UI", "logo", "watermark"]
+    formats: ["story"]
+    needs_persona: false
+  - id: builtin.ugc-creator-workspace
+    label: "Workspace de creator"
+    setting: "a messy-but-cozy creator workspace with notes, a laptop and a plant by a sunny window"
+    shot: "wide candid smartphone photo"
+    lighting: "natural morning window light"
+    props: ["notes", "laptop", "plant"]
+    authenticity_guards: ["lived-in details", "imperfect arrangement", "natural grain"]
+    negative_guards: ["studio ad", "generic stock photo", "text", "logo", "watermark"]
+    formats: ["story"]
+    needs_persona: false

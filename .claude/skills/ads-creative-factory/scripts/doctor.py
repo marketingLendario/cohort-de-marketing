@@ -81,8 +81,45 @@ def _check_pack(path: str | None, expected_type: str | None) -> dict[str, Any] |
         }
 
 
+def _check_extension_catalog(paths: list[str]) -> dict[str, Any] | None:
+    if not paths:
+        return None
+    try:
+        from catalog_loader import resolve_catalog  # type: ignore[import-not-found]
+
+        catalog = resolve_catalog(paths)
+        return {
+            "id": "extension-catalog",
+            "label": "Catálogo de extensões",
+            "required": True,
+            "status": "ready",
+            "detail": (
+                f"{len(catalog.packs)} pack(s) explícito(s) resolvido(s); "
+                f"catalog_hash={catalog.catalog_hash}."
+            ),
+            "action": None,
+        }
+    except Exception as exc:
+        detail = str(exc)
+        for value in [*paths, str(Path.cwd()), str(Path.home())]:
+            try:
+                detail = detail.replace(str(Path(value).expanduser().resolve()), "<path>")
+            except (OSError, RuntimeError):
+                pass
+        return {
+            "id": "extension-catalog",
+            "label": "Catálogo de extensões",
+            "required": True,
+            "status": "blocked",
+            "detail": detail,
+            "action": "Corrija o Extension Pack ou suas compatibilidades e rode o doctor novamente.",
+        }
+
+
 def diagnose(pack: str | None = None, pack_type: str | None = None,
-             pack_only: bool = False) -> dict[str, Any]:
+             pack_only: bool = False,
+             extension_packs: list[str] | None = None) -> dict[str, Any]:
+    extension_packs = extension_packs or []
     checks: list[dict[str, Any]] = [
         {
             "id": "python",
@@ -124,7 +161,8 @@ def diagnose(pack: str | None = None, pack_type: str | None = None,
         })
 
     pack_check = _check_pack(pack, pack_type)
-    if pack_only and not pack_check:
+    extension_check = _check_extension_catalog(extension_packs)
+    if pack_only and not pack_check and not extension_check:
         pack_check = {
             "id": "pack",
             "label": "Pack selecionado",
@@ -135,6 +173,8 @@ def diagnose(pack: str | None = None, pack_type: str | None = None,
         }
     if pack_check:
         checks.append(pack_check)
+    if extension_check:
+        checks.append(extension_check)
 
     required_blockers = [check for check in checks if check["required"] and check["status"] != "ready"]
     return {
@@ -156,10 +196,17 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Diagnostica dependências e packs da Creative Factory")
     parser.add_argument("--json", action="store_true", help="emite somente JSON")
     parser.add_argument("--pack", help="diretório ou pack.json explícito para validar")
-    parser.add_argument("--type", choices=("brand", "persona"), help="tipo esperado do pack")
+    parser.add_argument("--type", choices=("brand", "persona", "creative-extension"), help="tipo esperado do pack")
+    parser.add_argument(
+        "--extension-pack", action="append", default=[],
+        help="Extension Pack explícito para resolver no catálogo; repetível",
+    )
     parser.add_argument("--pack-only", action="store_true", help="valida somente o contrato do pack")
     args = parser.parse_args(argv)
-    result = diagnose(args.pack, args.type, pack_only=args.pack_only)
+    result = diagnose(
+        args.pack, args.type, pack_only=args.pack_only,
+        extension_packs=args.extension_pack,
+    )
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

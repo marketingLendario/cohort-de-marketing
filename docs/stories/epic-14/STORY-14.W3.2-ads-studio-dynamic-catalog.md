@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft
+Done
 
 ## Dependências
 
@@ -22,24 +22,24 @@ preservando o mesmo contrato, hash e regras do CLI.
 
 ## Critérios de aceite
 
-- [ ] O backend expõe endpoint local autenticado para listar o catálogo resolvido
+- [x] O backend expõe endpoint local autenticado para listar o catálogo resolvido
   do projeto, sem devolver path absoluto ou asset privado.
-- [ ] A validação de request usa ID seguro mais lookup no catálogo, em vez de enum
+- [x] A validação de request usa ID seguro mais lookup no catálogo, em vez de enum
   estático de seis arquétipos ou personas conhecidas.
-- [ ] A UI lista entidade, pack, versão, compatibilidade e estado bloqueado com
+- [x] A UI lista entidade, pack, versão, compatibilidade e estado bloqueado com
   motivo acionável.
-- [ ] O operador consegue criar/validar packs pelos mesmos comandos do CLI; o
+- [x] O operador consegue criar/validar packs pelos mesmos comandos do CLI; o
   painel não implementa um segundo builder.
-- [ ] Seleções persistem IDs namespaced, versões e `catalog_hash`.
-- [ ] Mudança de catálogo após criação do lote exige nova versão, não mutação do
+- [x] Seleções persistem IDs namespaced, versões e `catalog_hash`.
+- [x] Mudança de catálogo após criação do lote exige nova versão, não mutação do
   lote em andamento.
-- [ ] Consentimento e autorização de likeness continuam obrigatórios e visíveis.
-- [ ] Reload, novo BrowserContext e restart preservam pack e seleções.
-- [ ] Estados de loading, vazio, pack inválido, incompatibilidade e retry possuem
+- [x] Consentimento e autorização de likeness continuam obrigatórios e visíveis.
+- [x] Reload, novo BrowserContext e restart preservam pack e seleções.
+- [x] Estados de loading, vazio, pack inválido, incompatibilidade e retry possuem
   tratamento acessível por teclado e leitor de tela.
-- [ ] Testes de contrato provam que CLI e painel resolvem o mesmo JSON canônico e
+- [x] Testes de contrato provam que CLI e painel resolvem o mesmo JSON canônico e
   o mesmo hash.
-- [ ] Playwright cobre desktop e mobile sem overflow, request failure ou erro de
+- [x] Playwright cobre desktop e mobile sem overflow, request failure ou erro de
   console.
 
 ## Ownership no repositório privado
