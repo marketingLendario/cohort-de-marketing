@@ -1,0 +1,52 @@
+# STORY-14.W1.3 - CLI read-only de catálogo e diagnóstico
+
+## Status
+
+Draft
+
+## Dependências
+
+- 14.W1.1
+- 14.W1.2
+
+## Objetivo
+
+Oferecer inspeção e validação do repertório antes de liberar comandos de escrita.
+
+## Critérios de aceite
+
+- [ ] Existe `catalog_cli.py` com subcomandos `catalog list`, `catalog show` e
+  `catalog validate`.
+- [ ] `catalog list` filtra por tipo, pack e disponibilidade e informa origem,
+  versão e compatibilidade sem revelar path absoluto.
+- [ ] `catalog show <tipo> <id>` exibe contrato resolvido e dependências.
+- [ ] `catalog validate <pack>` valida schema, assets, rights, colisões e
+  compatibilidade sem modificar o pack.
+- [ ] Todos os comandos suportam `--json` com schema de saída estável.
+- [ ] Exit code `0` representa sucesso, `1` bloqueio de validação e `2` erro de
+  uso/argumento.
+- [ ] O `doctor.py` reutiliza o mesmo loader e reporta extension packs quando
+  explicitamente informados.
+- [ ] O frontmatter da skill passa a documentar
+  `/ads-creative-factory <entidade> <ação> [opções]` sem criar novas skills.
+- [ ] A validação do skill catalog continua reconhecendo um único comando
+  `/ads-creative-factory`.
+- [ ] Testes provam que os comandos read-only não alteram mtime, conteúdo ou
+  árvore de arquivos do pack.
+- [ ] Ajuda CLI contém exemplos em português e recuperação para erros comuns.
+
+## Ownership
+
+- `.claude/skills/ads-creative-factory/scripts/catalog_cli.py`
+- `.claude/skills/ads-creative-factory/scripts/doctor.py`
+- `.claude/skills/ads-creative-factory/SKILL.md`
+- `.claude/skills/ads-creative-factory/scripts/__tests__/**`
+- `.agents/skills/ads-creative-factory/**`
+- `data/skill-catalog.json`
+- `scripts/validate-skill-catalog.mjs`
+
+## Validação
+
+- Snapshots JSON dos três subcomandos.
+- Testes de exit code e prova de ausência de escrita.
+- Mirror parity e validação do catálogo de skills.
