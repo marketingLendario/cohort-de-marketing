@@ -92,6 +92,9 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - `fieldMeta` e `fieldSources` aceitam somente dot-paths extraídos dos 120
   campos canônicos; referências de artefato são IDs redistribuíveis, nunca
   paths absolutos ou privados.
+- `sourcePath` relativo do 0.1.0 permanece compatível e é normalizado para
+  separadores POSIX em `sourceArtifactId`; traversal, absolutos Unix/Windows,
+  URI e referências sensíveis continuam bloqueados pelo mesmo formato AJV.
 - A busca de PRs abertos por `ProjectBrief`, `project brief` e `16.W1.1`
   retornou lista vazia antes da implementação.
 
@@ -101,7 +104,7 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
   passou e 5 falharam, confirmando as lacunas do baseline.
 - `node --check scripts/migrate-project-brief.mjs`: PASS.
 - `node --test data/contracts/fixtures/project-brief/project-brief-contract.test.mjs`:
-  PASS, 10/10 após o remediation QG Round 1.
+  PASS, 18/18 após o remediation QG Round 2.
 - `npm ci --prefix scripts --ignore-scripts`: PASS a partir do lockfile.
 - `node scripts/validate-project-brief-rules.mjs`: PASS, 120 campos, 31 skills
   e ambos schemas AJV 2020 compilados.
@@ -109,6 +112,9 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - Casos negativos cobertos: `startingPoint`, `awarenessLevel`, `exactPrice`,
   propriedade adicional, timestamp, `sourceArtifactId` numérico, dot-path
   privado e path absoluto.
+- Compatibilidade R2 coberta com fixture relativa, equivalência POSIX/Windows
+  e negativos separados para traversal, absolutos Unix/Windows, URI, segredo,
+  privado e valor não-string.
 - `git diff --check`: PASS.
 
 ### Commits locais
@@ -117,6 +123,8 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - `5011ca6` - `feat: harden ProjectBrief v1 migration [Story 16.W1.1]`
 - `f619e6e` - `docs: hand off ProjectBrief v1 for review [Story 16.W1.1]`
 - `b10b94c` - `fix: enforce AJV ProjectBrief validation [Story 16.W1.1]`
+- `a369e64` - `docs: record ProjectBrief QG remediation [Story 16.W1.1]`
+- `fa971fd` - `fix: normalize portable artifact references [Story 16.W1.1]`
 
 ## File List real
 
@@ -124,6 +132,7 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - `data/contracts/fixtures/project-brief/legacy-0.1.0.valid.json`
 - `data/contracts/fixtures/project-brief/migrated-1.0.0.valid.json`
 - `data/contracts/fixtures/project-brief/project-brief-1.0.0.valid.json`
+- `data/contracts/fixtures/project-brief/relative-source-path.valid.json`
 - `data/contracts/fixtures/project-brief/unknown-version.invalid.json`
 - `data/contracts/fixtures/project-brief/critical-field.invalid.json`
 - `data/contracts/fixtures/project-brief/project-brief-contract.test.mjs`
@@ -143,6 +152,8 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
   `fieldMeta` não reaparece em `data` e que origem/confirmation não se perdem.
 - Revalidar os findings QG-001 a QG-003 contra o commit `b10b94c`, incluindo
   o caminho idempotente e todos os casos negativos enumerados nas evidências.
+- No Round 3, revisar `fa971fd` contra QG-003-R2 e confirmar que a normalização
+  altera apenas separadores, sem reduzir a validação dos dot-paths canônicos.
 - O status permanece `InReview`; nenhum veredito de quality gate foi
   autoatribuído pelo executor.
 
@@ -152,3 +163,5 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
   validações registradas e story encaminhada para revisão independente.
 - 2026-07-14: QG Round 1 remediado com validação AJV única, dependências
   versionadas, dot-paths canônicos, referências portáveis e regressões exatas.
+- 2026-07-14: QG Round 2 remediado preservando `sourcePath` relativo legítimo,
+  com normalização determinística e rejeições de segurança separadamente testadas.
