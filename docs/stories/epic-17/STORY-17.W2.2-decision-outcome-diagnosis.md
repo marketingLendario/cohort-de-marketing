@@ -1,5 +1,5 @@
 ---
-status: InProgress
+status: InReview
 story_id: "17.W2.2"
 title: "Diagnóstico decisão versus resultado"
 epic: 17
@@ -8,7 +8,7 @@ parent_epic: "docs/stories/epic-17/EPIC-17-AULA-04-DATA-FOUNDATION.md"
 effort: 7h
 deploy_type: none
 appetite: 1d
-hill_phase: uphill
+hill_phase: downhill
 confidence_level: know-how
 involves_ui: false
 task_mode: MODIFICAR
@@ -60,7 +60,7 @@ affected_paths:
 
 ## Status
 
-InProgress — 17.W1.2 e 17.W2.1 estão `Done`; execução isolada na baseline integrada `1c4f84a`.
+InReview — implementação e evidência local concluídas; aguarda QG independente `@architect`.
 
 ## Dependências
 
@@ -73,19 +73,19 @@ Estender `diagnosticador` para confrontar a decisão anterior com o resultado ob
 
 ## Critérios de aceite
 
-- [ ] Diagnóstico referencia por ID a hipótese, alavanca, critério de sucesso, janela e reversão da decisão anterior; texto ausente falha fechado.
-- [ ] Resultado é classificado deterministicamente como `sustentou`, `refutou`, `inconclusivo` ou `nao_mensuravel`, consumindo somente o contrato aprovado de 17.W2.1.
-- [ ] Exatamente zero ou uma nova alavanca é proposta; ausência de evidência suficiente produz pendência e zero alavancas.
-- [ ] Circuit breaker, reversão e decisão humana permanecem obrigatórios; nenhum comando mutante ou integração de plataforma é introduzido.
-- [ ] Ausência, janela incompatível ou evidência estimada não gera narrativa conclusiva nem reescreve decisão histórica.
+- [x] Diagnóstico referencia por ID a hipótese, alavanca, critério de sucesso, janela e reversão da decisão anterior; texto ausente falha fechado.
+- [x] Resultado é classificado deterministicamente como `sustentou`, `refutou`, `inconclusivo` ou `nao_mensuravel`, consumindo somente o contrato aprovado de 17.W2.1.
+- [x] Exatamente zero ou uma nova alavanca é proposta; ausência de evidência suficiente produz pendência e zero alavancas.
+- [x] Circuit breaker, reversão e decisão humana permanecem obrigatórios; nenhum comando mutante ou integração de plataforma é introduzido.
+- [x] Ausência, janela incompatível ou evidência estimada não gera narrativa conclusiva nem reescreve decisão histórica.
 
 ## Tasks
 
-- [ ] Confirmar baseline e contratos consumidores.
-- [ ] Definir fixtures e testes antes do código.
-- [ ] Implementar dentro da File List aprovada.
-- [ ] Registrar evidência sanitizada.
-- [ ] Atualizar checkboxes, File List real e state JSON.
+- [x] Confirmar baseline e contratos consumidores.
+- [x] Definir fixtures e testes antes do código.
+- [x] Implementar dentro da File List aprovada.
+- [x] Registrar evidência sanitizada.
+- [x] Atualizar checkboxes e File List real; state JSON permanece reservado ao fan-in `@devops`.
 
 ## File List proposta
 
@@ -118,6 +118,41 @@ A File List é uma allow-list inicial. Mudanças fora dela exigem rematerializa�
 - Golden cases para quatro vereditos.
 - Mirror parity.
 - Teste de uma única alavanca e circuit breaker.
+
+## Dev Agent Record
+
+```yaml
+agent_model: "GPT-5 Codex"
+completion_notes:
+  - "Preflight confirmou baseline 1c4f84a, 17.W1.2/17.W2.1 Done, W2.3 disponível e nenhum PR aberto cobrindo 17.W2.2."
+  - "A File List foi rematerializada no commit 2d20738 antes de criar CLI, schema, testes ou fixtures."
+  - "TDD RED no commit 2f96359 congelou sete grupos e quatro goldens; 7/7 falharam pela ausência do CLI."
+  - "RED adicional 864f862 fechou projectId, campaignId, weeklyPanelId e sourceRef contra PII/credencial republicável."
+  - "O commit a803b45 implementa request fechado, comparação decimal exata, quatro vereditos, provenance-only output e zero/uma alavanca pré-autorizada."
+  - "Testes focais 7/7, adjacentes 67/67 e gate Node completo controlado 149/149 passaram; mirrors são byte a byte idênticos."
+  - "Story movida para InReview; QG, fechamento, epic-state, merge, push e deploy permanecem fora da autoridade do executor."
+file_list:
+  - ".claude/skills/diagnosticador/SKILL.md"
+  - ".agents/skills/diagnosticador/SKILL.md"
+  - "data/contracts/decision-outcome-diagnosis.v1.schema.json"
+  - "scripts/diagnose-aula-04-decision.mjs"
+  - "scripts/diagnose-aula-04-decision.test.mjs"
+  - "aula-04/fixtures/diagnosis-sustained.json"
+  - "aula-04/fixtures/diagnosis-refuted.json"
+  - "aula-04/fixtures/diagnosis-inconclusive.json"
+  - "aula-04/fixtures/diagnosis-not-measurable.json"
+  - "aula-04/templates/diagnostico-longitudinal.yaml"
+  - "docs/stories/epic-17/STORY-17.W2.2-decision-outcome-diagnosis.md"
+  - "docs/stories/epic-17/evidence/STORY-17.W2.2.md"
+```
+
+## Change Log
+
+| Data | Agente | Mudança |
+|---|---|---|
+| 2026-07-15 | @dev | Escopo rematerializado sobre a baseline integrada, com dependências e PR coverage confirmados. |
+| 2026-07-15 | @dev | RED congelou quatro goldens, estados adversariais, precisão, proveniência, PII e fronteira read-only. |
+| 2026-07-15 | @dev | Implementação determinística concluída; 149/149 testes Node verdes e story movida para `InReview`. |
 
 ## Stop conditions adicionais
 
