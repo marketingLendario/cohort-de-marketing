@@ -6,6 +6,8 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
+import '../../skill-surface-contract.js';
+
 import {
   SkillReadinessError,
   decideNextSkill,
@@ -18,7 +20,7 @@ const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
+  '.mjs': 'application/javascript; charset=utf-8',
   '.svg': 'image/svg+xml',
 };
 
@@ -39,12 +41,28 @@ const rule = (priority, overrides = {}) => ({
   ...overrides,
 });
 
+const contractRefsFor = (rules) => ({
+  schemaVersion: 'skill-readiness-contract-refs-v1',
+  rulesSchemaVersion: '0.1.0',
+  projectBriefSchemaVersion: '1.0.0',
+  artifactIndexSchemaVersion: 'artifact-index-v1',
+  skills: Object.fromEntries(Object.entries(rules.skills).map(([skillId, skillRule]) => [skillId, {
+    requiredFields: [...(skillRule.requiredFields || [])],
+    requiredArtifacts: [...(skillRule.requiredArtifacts || [])],
+    anyOfLabels: (skillRule.anyOf || []).map((group) => group.label),
+    recommended: [...(skillRule.recommendedFields || []), ...(skillRule.recommendedArtifacts || [])],
+  }])),
+});
+
+const decide = (input) => decideNextSkill({ ...input, contractRefs: contractRefsFor(input.rules) });
+
 const evaluated = (skillId, state, overrides = {}) => ({
   skillId,
   state,
   missingFields: [],
   missingArtifacts: [],
   missingAnyOf: [],
+  metAnyOf: [],
   recommendedMissing: [],
   ...overrides,
 });
@@ -73,7 +91,10 @@ async function startServer() {
     }
     try {
       const body = await readFile(file);
-      response.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' });
+      response.writeHead(200, {
+        'content-type': MIME[path.extname(file)] || 'application/octet-stream',
+        'content-security-policy': "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; object-src 'none'",
+      });
       response.end(body);
     } catch {
       response.writeHead(404).end('not found');
@@ -85,7 +106,7 @@ async function startServer() {
 
 test('o motor aceita somente os seis estados públicos e falha fechado para estado desconhecido', () => {
   for (const state of STATES) {
-    const decision = decideNextSkill({
+    const decision = decide({
       rules: rulesFor({ fixture: rule(1) }),
       evaluatedSkills: [evaluated('fixture', state)],
       ...evidence,
@@ -95,7 +116,7 @@ test('o motor aceita somente os seis estados públicos e falha fechado para esta
   }
 
   assert.throws(
-    () => decideNextSkill({
+    () => decide({
       rules: rulesFor({ fixture: rule(1) }),
       evaluatedSkills: [evaluated('fixture', 'unknown')],
       ...evidence,
@@ -105,12 +126,12 @@ test('o motor aceita somente os seis estados públicos e falha fechado para esta
 });
 
 test('prioridade declarada torna a escolha independente da ordem do objeto e do array', () => {
-  const first = decideNextSkill({
+  const first = decide({
     rules: rulesFor({ zeta: rule(20, { command: '/zeta' }), alpha: rule(10, { command: '/alpha' }) }),
     evaluatedSkills: [evaluated('zeta', 'recommended'), evaluated('alpha', 'recommended')],
     ...evidence,
   });
-  const second = decideNextSkill({
+  const second = decide({
     rules: rulesFor({ alpha: rule(10, { command: '/alpha' }), zeta: rule(20, { command: '/zeta' }) }),
     evaluatedSkills: [evaluated('alpha', 'recommended'), evaluated('zeta', 'recommended')],
     ...evidence,
@@ -118,14 +139,21 @@ test('prioridade declarada torna a escolha independente da ordem do objeto e do 
   assert.deepEqual(first, second);
   assert.equal(first.nextSkill.id, 'alpha');
 
-  const tied = decideNextSkill({
+  const tied = decide({
     rules: rulesFor({ zeta: rule(10, { command: '/zeta' }), alpha: rule(10, { command: '/alpha' }) }),
     evaluatedSkills: [evaluated('zeta', 'available'), evaluated('alpha', 'available')],
     ...evidence,
   });
   assert.equal(tied.nextSkill.id, 'alpha', 'empate numérico usa o ID estável, não insertion order');
 
-  const gatedRoute = decideNextSkill({
+  const tiedAcrossStates = decide({
+    rules: rulesFor({ zeta: rule(10, { command: '/zeta' }), alpha: rule(10, { command: '/alpha', requiredFields: ['project.slug'] }) }),
+    evaluatedSkills: [evaluated('zeta', 'available'), evaluated('alpha', 'blocked', { missingFields: ['project.slug'] })],
+    ...evidence,
+  });
+  assert.equal(tiedAcrossStates.nextSkill.id, 'alpha', 'estado não participa do desempate declarado');
+
+  const gatedRoute = decide({
     rules: rulesFor({ foundation: rule(1, { command: '/foundation' }), later: rule(20, { command: '/later' }) }),
     evaluatedSkills: [evaluated('later', 'available'), evaluated('foundation', 'blocked', { missingFields: ['project.slug'] })],
     ...evidence,
@@ -136,7 +164,7 @@ test('prioridade declarada torna a escolha independente da ordem do objeto e do 
 
 test('regra sem prioridade ou elegibilidade explícita falha fechado', () => {
   assert.throws(
-    () => decideNextSkill({
+    () => decide({
       rules: rulesFor({ fixture: rule(undefined) }),
       evaluatedSkills: [evaluated('fixture', 'available')],
       ...evidence,
@@ -146,7 +174,7 @@ test('regra sem prioridade ou elegibilidade explícita falha fechado', () => {
   const malformed = rule(1);
   delete malformed.recommendationEligible;
   assert.throws(
-    () => decideNextSkill({
+    () => decide({
       rules: rulesFor({ fixture: malformed }),
       evaluatedSkills: [evaluated('fixture', 'available')],
       ...evidence,
@@ -155,8 +183,55 @@ test('regra sem prioridade ou elegibilidade explícita falha fechado', () => {
   );
 });
 
+test('versões, comando canônico e referências públicas falham fechado', () => {
+  const validRules = rulesFor({ fixture: rule(1) });
+  const base = { rules: validRules, evaluatedSkills: [evaluated('fixture', 'available')], ...evidence };
+  assert.throws(
+    () => decide({ ...base, rules: { ...validRules, schemaVersion: '9.9.9' } }),
+    (error) => error?.code === 'INVALID_READINESS_RULES',
+  );
+  assert.throws(
+    () => decide({ ...base, rules: rulesFor({ fixture: rule(1, { command: '/outro' }) }) }),
+    (error) => error?.code === 'INVALID_SKILL_COMMAND',
+  );
+  assert.throws(
+    () => decide({ ...base, projectBrief: { ...evidence.projectBrief, schemaVersion: 'token-super-secreto' } }),
+    (error) => error?.code === 'INVALID_PROJECT_BRIEF_VERSION',
+  );
+  assert.throws(
+    () => decide({ ...base, artifactIndex: { ...evidence.artifactIndex, schemaVersion: '../../credenciais' } }),
+    (error) => error?.code === 'INVALID_ARTIFACT_INDEX_VERSION',
+  );
+  assert.throws(
+    () => decide({ ...base, evaluatedSkills: [evaluated('fixture', 'blocked', { missingFields: ['../../token'] })] }),
+    (error) => error?.code === 'UNDECLARED_REQUIREMENT_REFERENCE',
+  );
+  assert.throws(
+    () => decideNextSkill(base),
+    (error) => error?.code === 'INVALID_CONTRACT_REFS',
+  );
+});
+
+test('contractRefs reais nascem do SOT compartilhado e só contêm identificadores declarados', async () => {
+  assert.equal(typeof globalThis.SkillSurfaceContract.createReadinessContractRefs, 'function');
+  const [catalog, rules, legacySchema, projectBriefSchema] = await Promise.all([
+    readFile(path.join(ROOT, 'data/skill-catalog.json'), 'utf8').then(JSON.parse),
+    readFile(path.join(ROOT, 'data/skill-unlock-rules.json'), 'utf8').then(JSON.parse),
+    readFile(path.join(ROOT, 'data/project-brief.schema.json'), 'utf8').then(JSON.parse),
+    readFile(path.join(ROOT, 'data/contracts/project-brief.v1.schema.json'), 'utf8').then(JSON.parse),
+  ]);
+  const refs = globalThis.SkillSurfaceContract.createReadinessContractRefs({ catalog, rules, legacySchema, projectBriefSchema });
+  assert.equal(refs.rulesSchemaVersion, rules.schemaVersion);
+  assert.deepEqual(Object.keys(refs.skills).sort(), Object.keys(rules.skills).sort());
+  for (const [skillId, skillRefs] of Object.entries(refs.skills)) {
+    assert.deepEqual(skillRefs.requiredFields, [...(rules.skills[skillId].requiredFields || [])].sort());
+    assert.deepEqual(skillRefs.requiredArtifacts, [...(rules.skills[skillId].requiredArtifacts || [])].sort());
+    assert.deepEqual(skillRefs.anyOfLabels, (rules.skills[skillId].anyOf || []).map((group) => group.label).sort());
+  }
+});
+
 test('decisão explica requisitos, ausências e evidências sem copiar valores do briefing', () => {
-  const decision = decideNextSkill({
+  const decision = decide({
     rules: rulesFor({
       fixture: rule(7, {
         command: '/fixture',
@@ -191,8 +266,8 @@ test('decisão explica requisitos, ausências e evidências sem copiar valores d
     recommended: ['design', 'offer.name'],
   });
   assert.deepEqual(decision.evidence, {
-    projectBrief: { present: true, schemaVersion: '1.0.0', status: 'draft' },
-    artifactIndex: { present: true, schemaVersion: 'artifact-index-v1', total: 2, confirmed: 1, pendingConfirmation: 1 },
+    projectBrief: { present: true, contract: 'project-brief-v1', status: 'draft' },
+    artifactIndex: { present: true, contract: 'artifact-index-v1', total: 2, confirmed: 1, pendingConfirmation: 1 },
   });
   assert.match(decision.reason, /\/fixture/);
   assert.doesNotMatch(JSON.stringify(decision), /segredo-do-cliente|dado-sensivel-do-cliente/);
@@ -214,9 +289,9 @@ test('golden matrix entrega decisão byte-equivalente nas quatro superfícies', 
     ],
     ...evidence,
   };
-  const golden = JSON.stringify(decideNextSkill(input));
+  const golden = JSON.stringify(decide(input));
   for (const surface of ['comecar', 'briefing', 'mapa', 'status-funil']) {
-    assert.equal(JSON.stringify(decideNextSkill(input)), golden, `${surface} divergiu do golden`);
+    assert.equal(JSON.stringify(decide(input)), golden, `${surface} divergiu do golden`);
   }
   assert.equal(JSON.parse(golden).nextSkill.command, '/offerbook');
 });
@@ -229,13 +304,13 @@ test('not_applicable e perfis mudam a rota sem mutar artefatos; chamada direta s
   });
   const artifactIndex = structuredClone(evidence.artifactIndex);
   const before = JSON.stringify(artifactIndex);
-  const ownOffer = decideNextSkill({
+  const ownOffer = decide({
     rules,
     evaluatedSkills: [evaluated('avatar', 'done'), evaluated('offerbook', 'recommended'), evaluated('backend', 'almost')],
     projectBrief: evidence.projectBrief,
     artifactIndex,
   });
-  const affiliate = decideNextSkill({
+  const affiliate = decide({
     rules,
     evaluatedSkills: [evaluated('avatar', 'done'), evaluated('offerbook', 'done'), evaluated('backend', 'not_applicable')],
     projectBrief: evidence.projectBrief,
@@ -262,6 +337,8 @@ test('not_applicable e perfis mudam a rota sem mutar artefatos; chamada direta s
   for (const content of [briefing, map]) {
     assert.match(content, /decideNextSkill/);
     assert.match(content, /decision\.reason|READINESS_DECISION\.reason/);
+    assert.doesNotMatch(content, /createObjectURL\(new Blob\(\[await .*skill-readiness/s);
+    assert.match(content, /import\('\/scripts\/lib\/skill-readiness\.mjs'\)/);
   }
 });
 

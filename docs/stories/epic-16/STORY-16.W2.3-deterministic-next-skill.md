@@ -33,6 +33,7 @@ touched_paths:
   - "data/skill-unlock-rules.json"
   - "scripts/lib/skill-readiness.mjs"
   - "scripts/lib/skill-readiness.test.mjs"
+  - "skill-surface-contract.js"
   - "briefing.html"
   - "mapa-skills.html"
   - "aula-03/materiais/briefing.html"
@@ -48,6 +49,7 @@ affected_paths:
   - "data/skill-unlock-rules.json"
   - "scripts/lib/skill-readiness.mjs"
   - "scripts/lib/skill-readiness.test.mjs"
+  - "skill-surface-contract.js"
   - "briefing.html"
   - "mapa-skills.html"
   - "aula-03/materiais/briefing.html"
@@ -94,6 +96,7 @@ affected_paths:
 - `data/skill-unlock-rules.json`
 - `scripts/lib/skill-readiness.mjs`
 - `scripts/lib/skill-readiness.test.mjs`
+- `skill-surface-contract.js`
 - `briefing.html`
 - `mapa-skills.html`
 - `aula-03/materiais/briefing.html`
@@ -114,6 +117,9 @@ repetir a validação de arquitetura antes de implementar.
 eram byte a byte equivalentes às superfícies raiz em `16.W2.2`. Como a nova
 decisão é parte do contrato público dessas superfícies, os dois mirrors HTML
 entram na allow-list para preservar essa invariável sem criar um segundo motor.
+O QG1 também exigiu que versões e identificadores válidos viessem do contrato
+público compartilhado; por isso `skill-surface-contract.js` entra na allow-list
+como única fonte dos `contractRefs` consumidos pelo motor.
 
 ## Dev Notes
 
