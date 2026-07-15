@@ -59,6 +59,16 @@ jq -e . data/contracts/fixtures/aula-04/*.json
 
 Todos passaram. O teste de imutabilidade copia e valida as cinco fixtures, compara os buffers antes/depois e confirma igualdade byte a byte inclusive nos casos inválidos.
 
+## Quality Gate
+
+- Revisor: `@architect`.
+- HEAD revisado: `d9ef444ee41ab6e785f02a0e5aa4d951e768abb6`.
+- Veredito: `PASS`.
+- Score: `98/100`; confiança: `0,97`.
+- Probes: `42/42` passaram.
+- Findings: zero.
+- Reserva: 2 pontos de excelência, sem falha funcional nem ação corretiva pendente.
+
 ## Estado da entidade
 
 `Aula04ContractBaseline/project-brief-v1-frozen` foi transformado em `Aula04ExecutableContracts/validated`: os três casos positivos validam, os dois negativos falham fechado e nenhuma métrica é inferida, preenchida ou normalizada.

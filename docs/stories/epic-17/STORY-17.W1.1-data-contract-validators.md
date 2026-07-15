@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "17.W1.1"
 title: "Validadores dos contratos de campanha e semana"
 epic: 17
@@ -8,7 +8,7 @@ parent_epic: "docs/stories/epic-17/EPIC-17-AULA-04-DATA-FOUNDATION.md"
 effort: 6h
 deploy_type: none
 appetite: 1d
-hill_phase: executing
+hill_phase: done
 confidence_level: know-how
 involves_ui: false
 task_mode: CRIAR
@@ -69,7 +69,7 @@ affected_paths:
 
 ## Status
 
-InReview
+Done
 
 ## Dependências
 
@@ -156,6 +156,26 @@ file_list:
   - "docs/stories/epic-17/evidence/STORY-17.W1.1.md"
 ```
 
+## QA Results
+
+```yaml
+quality_gate_report:
+  story_id: "17.W1.1"
+  verdict: "PASS"
+  score: 98
+  confidence: 0.97
+  probes:
+    passed: 42
+    total: 42
+  findings: []
+  score_reserve:
+    points: 2
+    reason: "Reserva de excelência; nenhuma falha funcional ou finding acionável."
+  reviewed_by: "@architect"
+  reviewed_at: "2026-07-15"
+  reviewed_head: "d9ef444ee41ab6e785f02a0e5aa4d951e768abb6"
+```
+
 ## Stop Conditions
 
 - O schema precisar duplicar ou reinterpretar o ProjectBrief v1.
@@ -169,3 +189,5 @@ file_list:
 | 2026-07-14 | @po | Contrato enriquecido e validado para execução na PUB-17 W1. |
 | 2026-07-15 | @dev | TDD RED congelou fixtures, stdout, exit codes, transições e imutabilidade. |
 | 2026-07-15 | @dev | Desenvolvimento concluído; 8/8 testes focais e 65/65 testes adjacentes passaram. Status movido para InReview. |
+| 2026-07-15 | @architect | QG PASS 98/100, confiança 0,97, 42/42 probes e zero findings no HEAD `d9ef444`. |
+| 2026-07-15 | @po | Story fechada após QG PASS; status `Done` e hill phase `done`. Epic state reservado ao fan-in @devops. |
