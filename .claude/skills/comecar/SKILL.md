@@ -186,9 +186,29 @@ Peça pro aluno digitar, no chat do Claude Code / Codex, só o caractere de coma
 
 Aponte **um único** próximo passo. Quando já existir ProjectBrief v1 e/ou
 ArtifactIndex v1 do projeto, a fonte obrigatória da decisão é o motor puro
-`scripts/lib/skill-readiness.mjs`: avalie as skills com os contratos públicos,
-chame `decideNextSkill({ rules, evaluatedSkills, projectBrief, artifactIndex })`
-e apresente **exatamente** `nextSkill.command` e `reason`. O motor lê a prioridade
+`scripts/lib/skill-readiness.mjs`. Carregue também `skill-surface-contract.js` e
+os quatro contratos públicos (`catalog`, `rules`, `legacySchema` e
+`projectBriefSchema`), então execute este padrão sem omitir `contractRefs`:
+
+```js skill-readiness-probe
+const contractInputs = { catalog, rules, legacySchema, projectBriefSchema };
+const contractRefs = SkillSurfaceContract.createReadinessContractRefs(contractInputs);
+const evaluatedSkills = SkillSurfaceContract.evaluateSkills({
+  ...contractInputs,
+  projectBrief,
+  artifactIndex,
+  allowPartialProjectBrief: true,
+});
+const decision = decideNextSkill({
+  rules,
+  contractRefs,
+  evaluatedSkills,
+  projectBrief,
+  artifactIndex,
+});
+```
+
+Apresente **exatamente** `decision.nextSkill.command` e `decision.reason`. O motor lê a prioridade
 de `data/skill-unlock-rules.json`; nunca escolha pela ordem do JSON, do diretório
 ou do DOM. Se contrato, regra ou estado forem inválidos, falhe fechado e explique
 que a rota precisa ser revalidada — não improvise um comando.

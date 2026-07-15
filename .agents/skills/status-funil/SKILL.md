@@ -44,9 +44,28 @@ ls projetos/{slug}/avatar.md \
 3. Gere/valide o ArtifactIndex v1 com `scripts/project-artifact-index.mjs` e
    avalie catálogo, regras, ProjectBrief e índice com o contrato público. Artefato
    apenas detectado, mas ainda `pending_confirmation`, não libera requisito crítico.
-4. Passe o resultado para `scripts/lib/skill-readiness.mjs` com
-   `decideNextSkill({ rules, evaluatedSkills, projectBrief, artifactIndex })`.
-   Mostre exatamente `nextSkill.command` e `reason`; prioridade vem somente de
+4. Carregue `skill-surface-contract.js`, `scripts/lib/skill-readiness.mjs` e os
+   quatro contratos públicos. Derive `contractRefs` do mesmo SOT e execute:
+
+```js skill-readiness-probe
+const contractInputs = { catalog, rules, legacySchema, projectBriefSchema };
+const contractRefs = SkillSurfaceContract.createReadinessContractRefs(contractInputs);
+const evaluatedSkills = SkillSurfaceContract.evaluateSkills({
+  ...contractInputs,
+  projectBrief,
+  artifactIndex,
+  allowPartialProjectBrief: true,
+});
+const decision = decideNextSkill({
+  rules,
+  contractRefs,
+  evaluatedSkills,
+  projectBrief,
+  artifactIndex,
+});
+```
+
+   Mostre exatamente `decision.nextSkill.command` e `decision.reason`; prioridade vem somente de
    `data/skill-unlock-rules.json`, nunca da ordem abaixo nem do filesystem.
 5. Monte o checklist na ordem do funil, marcando `[x]` o que existe e `[ ]` o
    que falta. Marque **"você está aqui"** na skill retornada pelo motor. Se o
