@@ -35,12 +35,16 @@ artifact_contract:
   required_signoffs: ["@po", "@qa", "@architect"]
 touched_paths:
   - "scripts/aula-04-release-gate.test.mjs"
+  - ".claude/skills/_shared/squad-trafego/source-lock.json"
+  - ".agents/skills/_shared/squad-trafego/source-lock.json"
   - "docs/releases/aula-04-data-loop-v1.md"
   - "docs/stories/epic-17/STORY-17.W3.2-aula-04-public-release-gate.md"
   - "docs/stories/epic-17/evidence/STORY-17.W3.2.md"
   - "docs/stories/epic-17/EPIC-17-EVIDENCE.md"
 affected_paths:
   - "scripts/aula-04-release-gate.test.mjs"
+  - ".claude/skills/_shared/squad-trafego/source-lock.json"
+  - ".agents/skills/_shared/squad-trafego/source-lock.json"
   - "docs/releases/aula-04-data-loop-v1.md"
   - "docs/stories/epic-17/STORY-17.W3.2-aula-04-public-release-gate.md"
   - "docs/stories/epic-17/evidence/STORY-17.W3.2.md"
@@ -94,13 +98,13 @@ Aula 3 handoff
   -> decisão histórica approved + próxima decisão pending
 ```
 
-Os componentes acima já estão implementados e aprovados. Esta story adiciona somente prova de release e documentação; não cria outro validator, contrato, conversor, motor ou configuração mutável.
+Os componentes acima já estão implementados e aprovados. Esta story adiciona prova de release e documentação; não cria outro validator, contrato, conversor ou motor. O primeiro GREEN revelou dois hashes obsoletos nos source-locks canônico/mirror após mudanças já integradas de W2.1/W2.2. A remediação autorizada calibra somente esses quatro valores de hash, sem alterar skills ou validator.
 
 ### Opções consideradas
 
 | Opção | Descrição | Trade-off | Decisão |
 |---|---|---|---|
-| A | Novo teste de release compõe APIs/CLIs existentes e reutiliza o exemplo W3.1 | Uma prova adicional, sem mudar runtime | Escolhida |
+| A | Novo teste de release compõe APIs/CLIs existentes, reutiliza o exemplo W3.1 e calibra metadata de lock somente quando drift integrado é provado | Uma prova adicional e metadata espelhada, sem mudar runtime | Escolhida |
 | B | Alterar `validate-aula-04-contracts.mjs` e `validate-skill-catalog.mjs` | Acopla release a validators já aprovados e amplia risco | Rejeitada |
 | C | Gate somente documental | Menor delta, mas não prova Aula 3 → Aula 4 nem privacidade executável | Rejeitada |
 
@@ -110,6 +114,7 @@ Os componentes acima já estão implementados e aprovados. Esta story adiciona s
 |---|---|---|---|
 | `aula-04-release-gate.test.mjs` | fixtures públicas, exemplo W3.1, CLIs existentes | assertions Node determinísticas | somente temporários fora do repo |
 | validators existentes | contratos e catálogo versionados | exit code/JSON ou `OK` | read-only |
+| source-lock canônico/mirror | hashes dos skills já integrados em W2.1/W2.2 | paridade e catálogo verificáveis | quatro hashes autorizados; skills imutáveis |
 | walkthrough W3.1 | exemplo público + diretório temporário vazio | seis artefatos públicos | somente output temporário |
 | release manifest/evidence | versões e resultados sanitizados | documentação revisável | paths allow-listed |
 
@@ -121,7 +126,7 @@ Os componentes acima já estão implementados e aprovados. Esta story adiciona s
 
 - Não há configuração mutável nova: caminhos são derivados de `import.meta.url`, artefatos são públicos/versionados e outputs usam `os.tmpdir()`.
 - Nenhuma rede, Studio, API, browser automatizado, credencial ou serviço privado participa do gate.
-- Skills/mirrors, validators, contratos e runtime W1/W2/W3 são dependências read-only.
+- Skills, validators, contratos e runtime W1/W2/W3 são dependências read-only. Somente os dois arquivos de metadata source-lock espelhados podem mudar nos hashes autorizados.
 
 ## Test Strategy
 
@@ -136,8 +141,9 @@ Os componentes acima já estão implementados e aprovados. Esta story adiciona s
 
 - [x] Confirmar baseline exata, W3.1 `Done`, autorização, worktree isolado e PR coverage vazio.
 - [x] Mapear arquitetura, opções, contratos consumidores, riscos, testes e File List antes do código; registrar `@po READY`.
-- [ ] Congelar RED focal do release gate antes do GREEN.
-- [ ] Implementar somente o teste de gate e executar validators/runtime existentes em modo read-only.
+- [x] Congelar RED focal do release gate antes do GREEN.
+- [x] Reproduzir RED de catálogo: hashes de `leitor-de-metricas` e `diagnosticador` divergiam nos dois source-locks apesar de mirrors byte-idênticos.
+- [ ] Implementar o teste de gate e calibrar somente os quatro hashes autorizados nos locks canônico/mirror; validators/runtime/skills permanecem read-only.
 - [ ] Produzir release manifest e evidência sanitizada dentro da File List.
 - [ ] Executar focal, adjacente, full Node, checkout limpo, walkthrough, scans, `git diff --check` e auditoria da File List.
 - [ ] Registrar `@qa PASS técnico` e mover para `InReview`; `@architect` permanece independente.
@@ -146,12 +152,14 @@ Os componentes acima já estão implementados e aprovados. Esta story adiciona s
 ## File List
 
 - `scripts/aula-04-release-gate.test.mjs`
+- `.claude/skills/_shared/squad-trafego/source-lock.json`
+- `.agents/skills/_shared/squad-trafego/source-lock.json`
 - `docs/releases/aula-04-data-loop-v1.md`
 - `docs/stories/epic-17/STORY-17.W3.2-aula-04-public-release-gate.md`
 - `docs/stories/epic-17/evidence/STORY-17.W3.2.md`
 - `docs/stories/epic-17/EPIC-17-EVIDENCE.md`
 
-Esta é a allowlist exata do executor. Validators, schemas, skills, mirrors, exemplos, materiais W3.1 e `epic-17-state.json` são read-only. O state é reservado ao fan-in `@devops`; qualquer outro path exige rematerialização anterior à mudança.
+Esta é a allowlist exata do executor. Validators, schemas, conteúdo das skills, exemplos, materiais W3.1 e `epic-17-state.json` são read-only. Nos dois source-locks, somente os hashes de `leitor-de-metricas/SKILL.md` e `diagnosticador/SKILL.md` podem mudar e os arquivos devem permanecer byte-idênticos. O state é reservado ao fan-in `@devops`; qualquer outro path exige rematerialização anterior à mudança.
 
 ## Validation Matrix
 
@@ -160,6 +168,7 @@ Esta é a allowlist exata do executor. Validators, schemas, skills, mirrors, exe
 | Focal | `node --test scripts/aula-04-release-gate.test.mjs` | compatibilidade, E2E, distribuição e privacidade verdes |
 | Aula 4 | suites validator/ledger/history/reconciliation/diagnosis/walkthrough/release | zero falhas |
 | Validators | `validate-aula-04-contracts.mjs` e `validate-skill-catalog.mjs` | exit 0; arquivos imutáveis |
+| Source lock | SHA-256 atual dos dois skills + `cmp` dos locks/mirrors | hashes exatos e byte-equivalência |
 | Walkthrough | runner sobre exemplo em output temporário vazio | seis outputs; `approved -> pending` |
 | Full Node | matriz pública controlada | zero regressão |
 | Checkout | worktree temporário detached no HEAD | mesmas contagens; status limpo |
@@ -174,11 +183,12 @@ Esta é a allowlist exata do executor. Validators, schemas, skills, mirrors, exe
 | Interpretar `pending` como decisão ausente | Alta | Provar decisão histórica `approved` no request e nova decisão `pending` no diagnóstico |
 | Scan ingênuo gerar falso positivo em métricas/IDs opacos | Média | Testar outputs reais e padrões contextuais já aprovados; evidência não inclui valores dos probes |
 | Gate corrigir runtime durante validação | Alta | Stop imediato; validators/runtime permanecem read-only e correção volta à story proprietária |
+| Lock obsoleto mascarar skill integrada | Alta | Calibrar somente hashes provados de W2.1/W2.2 nos dois locks e parar diante de qualquer drift adicional |
 | Checkout da integração conter worktrees operacionais | Média | Provar em worktree detached temporária criada do HEAD da story e removê-la ao final |
 
 ## Stop Conditions
 
-- Qualquer teste exigir correção em validator, contrato, skill, mirror, exemplo ou runtime fora da File List.
+- Qualquer teste exigir correção em validator, contrato, skill, exemplo ou runtime fora da File List, ou revelar drift além dos dois hashes autorizados.
 - Alguma fonte não rastreável virar série histórica ou métrica ausente ganhar valor/janela/confirmação.
 - Decisão histórica for reescrita, próxima decisão deixar de ser `pending` ou surgir alavanca/mutação automática.
 - Evidência depender de segredo, PII, path absoluto, arquivo de projeto real, Studio, API, rede ou serviço privado.
@@ -192,6 +202,7 @@ Esta é a allowlist exata do executor. Validators, schemas, skills, mirrors, exe
 - Reviewer: `@po`
 - Veredito: `READY`
 - Escopo: valor, interpretação da decisão humana, allowlist e critérios executáveis alinhados.
+- Expansão controlada: dois source-locks adicionados após RED do catálogo e autorização explícita; conteúdo dos skills/validator permanece fora do escopo.
 - Baseline: `d571775af4f8a9998af3d4c5d8c241e0033295be`.
 
 ### QA executor
@@ -209,3 +220,5 @@ Esta é a allowlist exata do executor. Validators, schemas, skills, mirrors, exe
 | Data | Agente | Mudança |
 |---|---|---|
 | 2026-07-15 | @po | Preflight confirmado, arquitetura/allowlist materializadas e story movida de `Ready` para `InProgress`. |
+| 2026-07-15 | @qa | RED do catálogo encontrou somente dois hashes obsoletos; skills canônico/mirror permanecem byte-idênticos. |
+| 2026-07-15 | @po | Expansão mínima autorizada e rematerializada para calibrar somente os dois source-locks espelhados. |
