@@ -33,6 +33,10 @@ touched_paths:
   - ".agents/skills/leitor-de-metricas/SKILL.md"
   - "scripts/read-aula-04-history.mjs"
   - "scripts/read-aula-04-history.test.mjs"
+  - "scripts/build-weekly-ledger.mjs"
+  - "scripts/build-weekly-ledger.test.mjs"
+  - "data/contracts/weekly-ledger.v1.schema.json"
+  - "aula-04/fixtures/ledger-three-weeks.expected.json"
   - "aula-04/templates/leitura-historica.yaml"
   - "aula-04/fixtures/history-compatible.ledger.json"
   - "aula-04/fixtures/history-incompatible.ledger.json"
@@ -44,6 +48,10 @@ affected_paths:
   - ".agents/skills/leitor-de-metricas/SKILL.md"
   - "scripts/read-aula-04-history.mjs"
   - "scripts/read-aula-04-history.test.mjs"
+  - "scripts/build-weekly-ledger.mjs"
+  - "scripts/build-weekly-ledger.test.mjs"
+  - "data/contracts/weekly-ledger.v1.schema.json"
+  - "aula-04/fixtures/ledger-three-weeks.expected.json"
   - "aula-04/templates/leitura-historica.yaml"
   - "aula-04/fixtures/history-compatible.ledger.json"
   - "aula-04/fixtures/history-incompatible.ledger.json"
@@ -96,6 +104,10 @@ InReview
 - `.agents/skills/leitor-de-metricas/SKILL.md`
 - `scripts/read-aula-04-history.mjs`
 - `scripts/read-aula-04-history.test.mjs`
+- `scripts/build-weekly-ledger.mjs`
+- `scripts/build-weekly-ledger.test.mjs`
+- `data/contracts/weekly-ledger.v1.schema.json`
+- `aula-04/fixtures/ledger-three-weeks.expected.json`
 - `aula-04/templates/leitura-historica.yaml`
 - `aula-04/fixtures/history-compatible.ledger.json`
 - `aula-04/fixtures/history-incompatible.ledger.json`
@@ -149,6 +161,10 @@ file_list:
   - ".agents/skills/leitor-de-metricas/SKILL.md"
   - "scripts/read-aula-04-history.mjs"
   - "scripts/read-aula-04-history.test.mjs"
+  - "scripts/build-weekly-ledger.mjs"
+  - "scripts/build-weekly-ledger.test.mjs"
+  - "data/contracts/weekly-ledger.v1.schema.json"
+  - "aula-04/fixtures/ledger-three-weeks.expected.json"
   - "aula-04/templates/leitura-historica.yaml"
   - "aula-04/fixtures/history-compatible.ledger.json"
   - "aula-04/fixtures/history-incompatible.ledger.json"
@@ -162,7 +178,16 @@ file_list:
 ```yaml
 quality_gate_report:
   story_id: "17.W2.1"
-  verdict: "NOT_RUN"
+  verdict: "FAIL"
+  score: 58
+  rounds:
+    - round: 1
+      verdict: "FAIL"
+      score: 58
+      blocking_findings:
+        - "A projeção persistida não tinha digest recomputável; valor ou sourceRef adulterado passava na leitura."
+        - "Múltiplas revisões da mesma semana eram contadas como histórico suficiente."
+        - "Lexemas numéricos fora da faixa JSON segura podiam ser arredondados antes da saída."
 ```
 
 ## Stop conditions
@@ -177,3 +202,5 @@ quality_gate_report:
 |---|---|---|
 | 2026-07-15 | @po | Contrato W2.1 materializado na baseline `d0bc5ed`; story pronta para execução paralela com 17.W2.3. |
 | 2026-07-15 | @dev | TDD RED, implementação fail-closed e documentação da skill concluídos; 76/76 testes Node verdes e story movida para `InReview`. |
+| 2026-07-15 | @architect | QG1 `FAIL 58`: digest de projeção ausente, contagem por revisão e arredondamento de lexema numérico bloquearam o fan-in. |
+| 2026-07-15 | @dev | File List expandida antes da remediação para versionar WeeklyLedger, builder, schema e fixture esperada. |
