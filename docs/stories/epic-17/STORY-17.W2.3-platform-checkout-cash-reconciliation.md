@@ -141,7 +141,7 @@ completion_notes:
   - "QG3 reprovou o HEAD c6eacae com FAIL 82: o scan numérico global confundia valores monetários válidos de 11/14 dígitos com identificadores pessoais."
   - "O RED Round4 92a06f3 reproduz o falso positivo monetário e amplia a matriz para nonces válidos com letra a-f no início, meio e fim, em comprimentos 11/14."
   - "O GREEN Round4 1574f2c restringe o scan de 11/14 dígitos a reconciliationId/id; valores monetários permanecem sob o schema decimal e IDs sob os schemas opacos tipados."
-  - "Round4 passou em 15/15 focais; o gate adjacente passou integralmente exceto por um teste de lock inalterado da baseline, reproduzido isoladamente, e passou com essa flake excluída. Story permanece InReview para QG4."
+  - "Round4 passou em 15/15 focais; o gate adjacente teve uma ocorrência transitória em teste de lock inalterado da baseline, reproduzida isoladamente, e o retry integral exato passou com exit 0. Story permanece InReview para QG4."
 file_list:
   - "data/contracts/source-reconciliation.v1.schema.json"
   - "scripts/reconcile-aula-04-sources.mjs"

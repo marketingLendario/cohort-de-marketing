@@ -60,9 +60,8 @@ git diff --quiet 7d3ec82..HEAD -- \
 exit 0
 
 node --test --test-concurrency=1 --test-reporter=dot \
-  --test-name-pattern="^(?!troca de owner e token antes do rename aborta sem commit nem remove lock alheio$).*" \
   scripts/*.test.mjs data/contracts/fixtures/project-brief/*.test.mjs
-exit 0
+retry integral: exit 0
 ```
 
 Golden outputs, incluindo newline final:
