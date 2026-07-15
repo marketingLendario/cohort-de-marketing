@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { execFile, spawn } from 'node:child_process';
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  access, lstat, mkdir, mkdtemp, readFile, rm, rmdir, symlink, writeFile,
+} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -30,18 +32,33 @@ async function run(args, options = {}) {
   }
 }
 
-function runConcurrent(args, options = {}) {
-  return new Promise((resolve) => {
-    const child = spawn(process.execPath, [SCRIPT, ...args], {
+function spawnConcurrent(args, options = {}) {
+  const child = spawn(process.execPath, [SCRIPT, ...args], {
       env: { ...process.env, ...options.env },
       stdio: ['ignore', 'pipe', 'pipe'],
-    });
+  });
+  const result = new Promise((resolve) => {
     let stdout = '';
     let stderr = '';
     child.stdout.on('data', (chunk) => { stdout += chunk; });
     child.stderr.on('data', (chunk) => { stderr += chunk; });
     child.on('close', (code) => resolve({ code, stdout, stderr }));
   });
+  return { child, result };
+}
+
+function runConcurrent(args, options = {}) {
+  return spawnConcurrent(args, options).result;
+}
+
+async function waitFor(probe, timeoutMs = 5_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() <= deadline) {
+    const value = await probe();
+    if (value) return value;
+    await new Promise((resolve) => setTimeout(resolve, 2));
+  }
+  return null;
 }
 
 function lockPathFor(ledgerPath) {
@@ -283,6 +300,169 @@ test('vinte e quatro writers concorrentes preservam todas as entradas exatamente
   assert.equal(ledger.entries.length, 24);
   assert.equal(new Set(ledger.entries.map(({ projectId }) => projectId)).size, 24);
   await assert.rejects(access(lockPathFor(ledgerPath)));
+});
+
+test('vinte e quatro contenders recuperam o mesmo lock morto e stale sem perder writers', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const lockPath = lockPathFor(ledgerPath);
+  const base = JSON.parse((await readFile(fixture('ledger-three-weeks.input.jsonl'), 'utf8')).split('\n')[0]);
+  const inputs = [];
+  for (let index = 0; index < 24; index += 1) {
+    const panel = structuredClone(base);
+    const suffix = String(index).padStart(2, '0');
+    panel.id = `weekly-panel:stale-race-${suffix}:2026-07-20:r1`;
+    panel.projectId = `project-stale-race-${suffix}`;
+    panel.campaignId = `campaign-stale-race-${suffix}`;
+    const input = path.join(path.dirname(ledgerPath), `stale-race-${suffix}.jsonl`);
+    await writeFile(input, `${JSON.stringify(panel)}\n`);
+    inputs.push(input);
+  }
+  await mkdir(lockPath);
+  await writeFile(path.join(lockPath, 'owner.json'), `${JSON.stringify({
+    version: 1,
+    pid: 2_147_483_647,
+    token: 'dead-stale-before-contention',
+    createdAt: '2000-01-01T00:00:00.000Z',
+  })}\n`);
+
+  const results = await Promise.all(inputs.map((input) => runConcurrent([input, ledgerPath], {
+    env: { WEEKLY_LEDGER_LOCK_STALE_MS: '1' },
+  })));
+  assert.deepEqual(results.map(({ code }) => code), Array(24).fill(0), JSON.stringify(results));
+  const ledger = JSON.parse(await readFile(ledgerPath, 'utf8'));
+  assert.equal(ledger.entries.length, 24);
+  assert.equal(new Set(ledger.entries.map(({ projectId }) => projectId)).size, 24);
+  await assert.rejects(access(lockPath));
+});
+
+test('vinte e quatro replays concorrentes convergem para uma entrada', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const input = fixture('ledger-idempotent.input.jsonl');
+  const results = await Promise.all(Array.from(
+    { length: 24 },
+    () => runConcurrent([input, ledgerPath]),
+  ));
+  assert.deepEqual(results.map(({ code }) => code), Array(24).fill(0), JSON.stringify(results));
+  const ledger = JSON.parse(await readFile(ledgerPath, 'utf8'));
+  assert.equal(ledger.entries.length, 1);
+  assert.equal(new Set(ledger.entries.map((entry) => JSON.stringify([
+    entry.projectId, entry.campaignId, entry.weekStart, entry.revision,
+  ]))).size, 1);
+  await assert.rejects(access(lockPathFor(ledgerPath)));
+});
+
+test('ENOENT entre mkdir e owner write e transitorio e repete a aquisicao', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const lockPath = lockPathFor(ledgerPath);
+  const execution = spawnConcurrent([fixture('ledger-idempotent.input.jsonl'), ledgerPath], {
+    env: { WEEKLY_LEDGER_TEST_LOCK_INIT_DELAY_MS: '150' },
+  });
+  const disrupted = await waitFor(async () => {
+    try {
+      const lockStat = await lstat(lockPath);
+      if (!lockStat.isDirectory()) return false;
+      try {
+        await lstat(path.join(lockPath, 'owner.json'));
+        return false;
+      } catch (error) {
+        if (error.code !== 'ENOENT') throw error;
+      }
+      await rmdir(lockPath);
+      return true;
+    } catch (error) {
+      if (error.code === 'ENOENT' || error.code === 'ENOTEMPTY') return false;
+      throw error;
+    }
+  });
+  assert.equal(disrupted, true, 'the controlled mkdir/owner gap was not observed');
+  const result = await execution.result;
+  assert.equal(result.code, 0, result.stderr || result.stdout);
+  assert.equal(JSON.parse(await readFile(ledgerPath, 'utf8')).entries.length, 1);
+  await assert.rejects(access(lockPath));
+});
+
+test('troca de owner e token antes do rename aborta sem commit nem remove lock alheio', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const lockPath = lockPathFor(ledgerPath);
+  const execution = spawnConcurrent([fixture('ledger-three-weeks.input.jsonl'), ledgerPath], {
+    env: { WEEKLY_LEDGER_TEST_BEFORE_RENAME_DELAY_MS: '250' },
+  });
+  const replaced = await waitFor(async () => {
+    try {
+      await readFile(path.join(lockPath, 'owner.json'), 'utf8');
+      await writeFile(path.join(lockPath, 'owner.json'), `${JSON.stringify({
+        version: 1,
+        pid: process.pid,
+        token: 'replacement-owner',
+        createdAt: new Date().toISOString(),
+      })}\n`);
+      return true;
+    } catch (error) {
+      if (error.code === 'ENOENT') return false;
+      throw error;
+    }
+  });
+  assert.equal(replaced, true, 'owner was not replaced before the controlled rename boundary');
+  const result = await execution.result;
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'Unable to retain ledger lock.\n');
+  await assert.rejects(readFile(ledgerPath));
+  assert.equal(
+    JSON.parse(await readFile(path.join(lockPath, 'owner.json'), 'utf8')).token,
+    'replacement-owner',
+  );
+});
+
+test('SIGKILL depois da aquisicao deixa owner recuperavel sem update parcial', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const lockPath = lockPathFor(ledgerPath);
+  const execution = spawnConcurrent([fixture('ledger-three-weeks.input.jsonl'), ledgerPath], {
+    env: { WEEKLY_LEDGER_TEST_BEFORE_RENAME_DELAY_MS: '1000' },
+  });
+  const owner = await waitFor(async () => {
+    try {
+      return JSON.parse(await readFile(path.join(lockPath, 'owner.json'), 'utf8'));
+    } catch (error) {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    }
+  });
+  assert.equal(owner?.pid, execution.child.pid);
+  execution.child.kill('SIGKILL');
+  const killed = await execution.result;
+  assert.equal(killed.code, null);
+  await assert.rejects(readFile(ledgerPath));
+
+  const recovered = await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath], {
+    env: { WEEKLY_LEDGER_LOCK_STALE_MS: '1' },
+  });
+  assert.equal(recovered.code, 0, recovered.stderr || recovered.stdout);
+  assert.equal(JSON.parse(await readFile(ledgerPath, 'utf8')).entries.length, 4);
+  await assert.rejects(access(lockPath));
+});
+
+test('lock symlink stale e removido sem seguir ou apagar o alvo', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const lockPath = lockPathFor(ledgerPath);
+  const target = path.join(path.dirname(ledgerPath), 'foreign-lock-target');
+  await mkdir(target);
+  await writeFile(path.join(target, 'owner.json'), `${JSON.stringify({
+    version: 1,
+    pid: 2_147_483_647,
+    token: 'foreign-dead-owner',
+    createdAt: '2000-01-01T00:00:00.000Z',
+  })}\n`);
+  await writeFile(path.join(target, 'sentinel'), 'must-survive');
+  await symlink(target, lockPath, 'dir');
+
+  const result = await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath], {
+    env: { WEEKLY_LEDGER_LOCK_STALE_MS: '1' },
+  });
+  assert.equal(result.code, 0, result.stderr || result.stdout);
+  assert.equal(await readFile(path.join(target, 'sentinel'), 'utf8'), 'must-survive');
+  assert.equal((await lstat(target)).isDirectory(), true);
+  await assert.rejects(access(lockPath));
 });
 
 test('lock abandonado por processo morto e recuperado e removido pelo novo owner', async (t) => {
