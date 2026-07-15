@@ -1,5 +1,5 @@
 ---
-status: Ready
+status: InReview
 story_id: "17.W1.2"
 title: "Ledger multi-semana com proveniência"
 epic: 17
@@ -8,7 +8,7 @@ parent_epic: "docs/stories/epic-17/EPIC-17-AULA-04-DATA-FOUNDATION.md"
 effort: 7h
 deploy_type: none
 appetite: 1d
-hill_phase: executing
+hill_phase: verifying
 confidence_level: know-how
 involves_ui: false
 task_mode: CRIAR
@@ -67,7 +67,7 @@ affected_paths:
 
 ## Status
 
-Ready
+InReview
 
 ## Dependências
 
@@ -75,19 +75,19 @@ Ready
 
 ## Acceptance Criteria
 
-- [ ] AC1: Cada entrada do `weekly-ledger.v1` referencia `projectId`, `campaignId`, `weekStart`, `revision`, `weeklyPanelId`, `schemaVersion` e o hash canônico do registro validado.
-- [ ] AC2: Toda métrica preserva valor ou ausência explícita, selo, fonte, janela de atribuição, premissa aplicável e confirmação humana; métrica sem proveniência válida falha fechado.
-- [ ] AC3: Repetir a mesma identidade e hash é idempotente; a mesma identidade com hash diferente retorna conflito, exit code não zero e não modifica o ledger existente.
-- [ ] AC4: Revisão posterior é anexada sem sobrescrever a anterior, e a fixture de três semanas produz índice consultável por projeto, campanha e semana em ordem determinística.
-- [ ] AC5: A saída contém somente referências, metadados e métricas do contrato; testes provam que conteúdo bruto, decisões históricas e dados pessoais não são copiados nem reescritos.
+- [x] AC1: Cada entrada do `weekly-ledger.v1` referencia `projectId`, `campaignId`, `weekStart`, `revision`, `weeklyPanelId`, `schemaVersion` e o hash canônico do registro validado.
+- [x] AC2: Toda métrica preserva valor ou ausência explícita, selo, fonte, janela de atribuição, premissa aplicável e confirmação humana; métrica sem proveniência válida falha fechado.
+- [x] AC3: Repetir a mesma identidade e hash é idempotente; a mesma identidade com hash diferente retorna conflito, exit code não zero e não modifica o ledger existente.
+- [x] AC4: Revisão posterior é anexada sem sobrescrever a anterior, e a fixture de três semanas produz índice consultável por projeto, campanha e semana em ordem determinística.
+- [x] AC5: A saída contém somente referências, metadados e métricas do contrato; testes provam que conteúdo bruto, decisões históricas e dados pessoais não são copiados nem reescritos.
 
 ## Tasks
 
-- [ ] Confirmar que 17.W1.1 está `Done`, seus validators passam e não existe PR cobrindo este escopo.
-- [ ] Congelar schema, serialização canônica, identidade, algoritmo de hash e fixtures antes da implementação.
-- [ ] Implementar builder append-only e índice de consulta somente dentro da File List aprovada.
-- [ ] Testar três semanas, nova revisão, replay idempotente, conflito e métrica sem proveniência.
-- [ ] Registrar evidência sanitizada; atualizar checkboxes e a File List real sem editar o epic state fora do fan-in.
+- [x] Confirmar que 17.W1.1 está `Done`, seus validators passam e não existe PR cobrindo este escopo.
+- [x] Congelar schema, serialização canônica, identidade, algoritmo de hash e fixtures antes da implementação.
+- [x] Implementar builder append-only e índice de consulta somente dentro da File List aprovada.
+- [x] Testar três semanas, nova revisão, replay idempotente, conflito e métrica sem proveniência.
+- [x] Registrar evidência sanitizada; atualizar checkboxes e a File List real sem editar o epic state fora do fan-in.
 
 ## File List
 
@@ -130,6 +130,28 @@ model: "sonnet"
 - Execução do builder sobre as quatro fixtures declaradas.
 - Comparação do ledger antes/depois de replay idempotente e conflito.
 
+## Dev Agent Record
+
+```yaml
+agent_model: "GPT-5 Codex"
+completion_notes:
+  - "Preflight confirmou baseline 85cad24, 17.W1.1 Done, validators verdes e nenhum PR aberto cobrindo o escopo."
+  - "TDD RED congelou identidade composta, serialização JSON canônica, SHA-256, fixtures e envelopes de saída no commit 65c6b75."
+  - "Builder valida WeeklyPanel v1 pelo contrato de W1.1, valida o ledger completo e só então faz rename atômico do temporário."
+  - "Replay idempotente não toca o arquivo; conflito, lote inválido, ledger forjado e falha de I/O preservam o destino."
+  - "Executados 10/10 testes focais e 55/55 testes Node completos, além de prova manual por hash antes/depois."
+file_list:
+  - "data/contracts/weekly-ledger.v1.schema.json"
+  - "scripts/build-weekly-ledger.mjs"
+  - "scripts/build-weekly-ledger.test.mjs"
+  - "aula-04/fixtures/ledger-three-weeks.input.jsonl"
+  - "aula-04/fixtures/ledger-three-weeks.expected.json"
+  - "aula-04/fixtures/ledger-idempotent.input.jsonl"
+  - "aula-04/fixtures/ledger-conflict.input.jsonl"
+  - "docs/stories/epic-17/STORY-17.W1.2-multi-week-ledger.md"
+  - "docs/stories/epic-17/evidence/STORY-17.W1.2.md"
+```
+
 ## Stop Conditions
 
 - O modelo exigir reescrever semanas ou decisões históricas.
@@ -141,3 +163,5 @@ model: "sonnet"
 | Data | Agente | Mudança |
 |---|---|---|
 | 2026-07-14 | @po | Contrato enriquecido e validado para execução na PUB-17 W1. |
+| 2026-07-15 | @dev | TDD RED congelou schema, identidade composta, hash canônico, fixtures e garantias de imutabilidade. |
+| 2026-07-15 | @dev | Desenvolvimento e evidências concluídos; story movida para `InReview` com 10/10 testes focais e 55/55 testes Node verdes. |
