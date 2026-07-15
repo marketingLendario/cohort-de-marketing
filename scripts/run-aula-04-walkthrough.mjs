@@ -1,5 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
-import { readFile, readdir, stat, writeFile } from 'node:fs/promises';
+import {
+  lstat, readFile, readdir, realpath, stat, writeFile,
+} from 'node:fs/promises';
 import path, { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -32,6 +34,15 @@ const SENSITIVE_TEXT_PATTERNS = Object.freeze([
   /(?:^|\s)\/Users\//,
   /(?:^|\s)[A-Z]:\\/i,
 ]);
+const PERSONAL_IDENTIFIER_PATTERNS = Object.freeze([
+  /(?<![a-z0-9])(?:\d{11}|\d{14})(?![a-z0-9])/i,
+  /(?<![a-z0-9])\d{3}\.\d{3}\.\d{3}-\d{2}(?![a-z0-9])/i,
+  /(?<![a-z0-9])\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}(?![a-z0-9])/i,
+  /(?<![a-z0-9])\(?\d{2}\)?[ .-]\d{4,5}[ .-]\d{4}(?![a-z0-9])/i,
+]);
+const NUMERIC_MEASUREMENT_KEYS = new Set([
+  'absolutegap', 'denominator', 'numerator', 'relativegap', 'threshold', 'value',
+]);
 const EMPTY_LEDGER = Object.freeze({
   contract: 'WeeklyLedger',
   schemaVersion: '1.1.0',
@@ -48,13 +59,39 @@ function errorWithCode(code) {
   return error;
 }
 
-function containsSensitiveText(value) {
+function containsSensitiveText(value, parentKey = '') {
   if (typeof value === 'string') {
-    return SENSITIVE_TEXT_PATTERNS.some((pattern) => pattern.test(value));
+    return SENSITIVE_TEXT_PATTERNS.some((pattern) => pattern.test(value))
+      || (!NUMERIC_MEASUREMENT_KEYS.has(parentKey.toLowerCase())
+        && PERSONAL_IDENTIFIER_PATTERNS.some((pattern) => pattern.test(value)));
   }
-  if (Array.isArray(value)) return value.some(containsSensitiveText);
+  if (Array.isArray(value)) return value.some((item) => containsSensitiveText(item, parentKey));
   if (!value || typeof value !== 'object') return false;
-  return Object.values(value).some(containsSensitiveText);
+  return Object.entries(value).some(([key, item]) => (
+    containsSensitiveText(key, 'key') || containsSensitiveText(item, key)
+  ));
+}
+
+function isSameOrDescendant(parent, candidate) {
+  const relative = path.relative(parent, candidate);
+  return relative === ''
+    || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
+}
+
+async function realpathAllowingMissingLeaf(target) {
+  let cursor = resolve(target);
+  const missingSegments = [];
+  while (true) {
+    try {
+      return path.join(await realpath(cursor), ...missingSegments.reverse());
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      const parent = path.dirname(cursor);
+      if (parent === cursor) throw error;
+      missingSegments.push(path.basename(cursor));
+      cursor = parent;
+    }
+  }
 }
 
 async function readSafeJson(file, code) {
@@ -107,22 +144,38 @@ async function parsePanels(file) {
 }
 
 async function ensureInputAndOutput(exampleDirectory, outputDirectory) {
+  let canonicalExample;
   try {
     if (!(await stat(exampleDirectory)).isDirectory()) throw new Error('not-directory');
     for (const file of INPUT_FILES) {
       if (!(await stat(path.join(exampleDirectory, file))).isFile()) throw new Error('not-file');
     }
+    canonicalExample = await realpath(exampleDirectory);
   } catch {
     throw errorWithCode('INVALID_EXAMPLE');
   }
+
+  try {
+    const lexicalExample = resolve(exampleDirectory);
+    const lexicalOutput = resolve(outputDirectory);
+    const canonicalOutput = await realpathAllowingMissingLeaf(outputDirectory);
+    if (isSameOrDescendant(lexicalExample, lexicalOutput)
+      || isSameOrDescendant(canonicalExample, canonicalOutput)) {
+      throw errorWithCode('INVALID_OUTPUT');
+    }
+  } catch (error) {
+    if (error.code === 'INVALID_OUTPUT') throw error;
+    throw errorWithCode('INVALID_OUTPUT');
+  }
+
   try {
     if (!(await stat(outputDirectory)).isDirectory()) throw new Error('not-directory');
+    if ((await lstat(outputDirectory)).isSymbolicLink()) throw new Error('symlink-directory');
     if ((await readdir(outputDirectory)).length !== 0) throw errorWithCode('OUTPUT_NOT_EMPTY');
   } catch (error) {
     if (error.code === 'OUTPUT_NOT_EMPTY') throw error;
     throw errorWithCode('INVALID_OUTPUT');
   }
-  if (resolve(exampleDirectory) === resolve(outputDirectory)) throw errorWithCode('INVALID_OUTPUT');
 }
 
 function prettyJson(value) {

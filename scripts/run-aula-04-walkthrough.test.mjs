@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { cp, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import {
+  cp, mkdir, mkdtemp, readFile, readdir, readlink, rm, symlink, writeFile,
+} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -56,6 +58,7 @@ async function snapshotDirectory(directory) {
   for (const entry of entries) {
     const target = path.join(directory, entry.name);
     if (entry.isDirectory()) snapshot[entry.name] = await snapshotDirectory(target);
+    else if (entry.isSymbolicLink()) snapshot[entry.name] = { symlink: await readlink(target) };
     else snapshot[entry.name] = createHash('sha256').update(await readFile(target)).digest('hex');
   }
   return snapshot;
@@ -174,6 +177,127 @@ test('duas execuções limpas são determinísticas e não alteram o exemplo', a
   }
   const outputs = await Promise.all(EXPECTED_ARTIFACTS.map((artifact) => readFile(path.join(first, artifact), 'utf8')));
   assert.doesNotMatch(outputs.join('\n'), /\/Users\/|[A-Z]:\\\\|@|bearer|token|password|secret/i);
+  assert.doesNotMatch(
+    outputs.join('\n'),
+    /(?<![a-z0-9])(?:\d{11}|\d{14})(?![a-z0-9])|(?<![a-z0-9])\d{3}\.\d{3}\.\d{3}-\d{2}(?![a-z0-9])|(?<![a-z0-9])\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}(?![a-z0-9])|(?<![a-z0-9])\(?\d{2}\)?[ .-]\d{4,5}[ .-]\d{4}(?![a-z0-9])/i,
+  );
+});
+
+test('telefone, CPF e CNPJ shaped falham fechado recursivamente sem bloquear IDs opacos', async (t) => {
+  const sensitiveCases = [
+    ['11987654321', 'INVALID_PREVIOUS_DECISION'],
+    ['(11) 98765-4321', 'INVALID_WEEKLY_PANEL'],
+    ['12345678901', 'INVALID_EXPECTATION'],
+    ['123.456.789-01', 'INVALID_SOURCE_OBSERVATIONS'],
+    ['12345678000195', 'INVALID_PREVIOUS_DECISION'],
+    ['12.345.678/0001-95', 'INVALID_EXPECTATION'],
+  ];
+
+  for (const [value, expectedCode] of sensitiveCases) {
+    const input = await temporaryDirectory(t, 'aula-04-pii-input-');
+    const output = await temporaryDirectory(t, 'aula-04-pii-output-');
+    await cp(EXAMPLE, input, { recursive: true });
+    if (expectedCode === 'INVALID_PREVIOUS_DECISION') {
+      const file = path.join(input, 'previous-decision.json');
+      const document = await readJson(file);
+      document.hypothesis.text = `Contato ${value}`;
+      await writeFile(file, `${JSON.stringify(document, null, 2)}\n`);
+    } else if (expectedCode === 'INVALID_WEEKLY_PANEL') {
+      const file = path.join(input, 'weekly-panels.jsonl');
+      const panels = (await readFile(file, 'utf8')).trimEnd().split('\n').map(JSON.parse);
+      panels[0].reader.note = `Contato ${value}`;
+      await writeFile(file, `${panels.map(JSON.stringify).join('\n')}\n`);
+    } else if (expectedCode === 'INVALID_SOURCE_OBSERVATIONS') {
+      const file = path.join(input, 'source-observations.json');
+      const document = await readJson(file);
+      document.operatorReference = { nested: [`Contato ${value}`] };
+      await writeFile(file, `${JSON.stringify(document, null, 2)}\n`);
+    } else {
+      const file = path.join(input, 'expected-walkthrough.json');
+      const document = await readJson(file);
+      document.operatorReference = { nested: [`Contato ${value}`] };
+      await writeFile(file, `${JSON.stringify(document, null, 2)}\n`);
+    }
+    const before = await snapshotDirectory(input);
+    const result = await run([input, output]);
+    assert.equal(result.code, 1, value);
+    assert.equal(result.stdout, '', value);
+    assert.equal(result.stderr, `${expectedCode}\n`, value);
+    assert.equal(result.stderr.includes(value), false, value);
+    assert.deepEqual(await readdir(output), [], value);
+    assert.deepEqual(await snapshotDirectory(input), before, value);
+  }
+
+  for (const opaqueId of ['a1234567890', 'a1234567890123']) {
+    const input = await temporaryDirectory(t, 'aula-04-opaque-input-');
+    const output = await temporaryDirectory(t, 'aula-04-opaque-output-');
+    await cp(EXAMPLE, input, { recursive: true });
+    const file = path.join(input, 'previous-decision.json');
+    const document = await readJson(file);
+    document.hypothesis.id = `hypothesis:${opaqueId}`;
+    await writeFile(file, `${JSON.stringify(document, null, 2)}\n`);
+    const result = await run([input, output]);
+    assert.equal(result.code, 0, result.stderr || opaqueId);
+    assert.deepEqual((await readdir(output)).sort(), EXPECTED_ARTIFACTS, opaqueId);
+  }
+});
+
+test('destino igual, descendente ou resolvido por symlink é rejeitado sem mutar o exemplo', async (t) => {
+  const example = await temporaryDirectory(t, 'aula-04-contained-example-');
+  await cp(EXAMPLE, example, { recursive: true });
+
+  let before = await snapshotDirectory(example);
+  let result = await run([example, example]);
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'INVALID_OUTPUT\n');
+  assert.deepEqual(await snapshotDirectory(example), before);
+
+  const descendant = path.join(example, 'generated');
+  await mkdir(descendant);
+  before = await snapshotDirectory(example);
+  result = await run([example, descendant]);
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'INVALID_OUTPUT\n');
+  assert.deepEqual(await snapshotDirectory(example), before);
+
+  const missingDescendant = path.join(example, 'missing', 'leaf');
+  before = await snapshotDirectory(example);
+  result = await run([example, missingDescendant]);
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'INVALID_OUTPUT\n');
+  assert.deepEqual(await snapshotDirectory(example), before);
+
+  const externalOutput = await temporaryDirectory(t, 'aula-04-external-output-');
+  const insideLink = path.join(example, 'output-link');
+  await symlink(externalOutput, insideLink, 'dir');
+  before = await snapshotDirectory(example);
+  result = await run([example, insideLink]);
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'INVALID_OUTPUT\n');
+  assert.deepEqual(await readdir(externalOutput), []);
+  assert.deepEqual(await snapshotDirectory(example), before);
+
+  const aliasParent = await temporaryDirectory(t, 'aula-04-alias-parent-');
+  const outsideAlias = path.join(aliasParent, 'example-alias');
+  await symlink(example, outsideAlias, 'dir');
+  const aliasDestination = path.join(example, 'via-alias');
+  await mkdir(aliasDestination);
+  before = await snapshotDirectory(example);
+  result = await run([example, path.join(outsideAlias, 'via-alias')]);
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'INVALID_OUTPUT\n');
+  assert.deepEqual(await snapshotDirectory(example), before);
+
+  result = await run([example, path.join(outsideAlias, 'not-created', 'leaf')]);
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'INVALID_OUTPUT\n');
+  assert.deepEqual(await snapshotDirectory(example), before);
 });
 
 test('runner falha fechado para uso, exemplo e destino inválidos sem ecoar paths', async (t) => {
