@@ -12,6 +12,7 @@ import {
   ArtifactIndexError,
   buildArtifactIndex,
   confirmArtifact,
+  matchesArtifactGlob,
   validateArtifactIndex,
 } from './project-artifact-index.mjs';
 
@@ -60,7 +61,7 @@ test('indexa apenas globs declarados, com metadados reproduziveis e sem bytes br
   assert.ok(first.entries.every((entry) => entry.satisfiesCriticalRequirement === false));
   assert.doesNotMatch(JSON.stringify(first), /conteudo privado|fora-do-contrato/);
   assert.ok(!JSON.stringify(first).includes(sandbox));
-  assert.deepEqual(validateArtifactIndex(first), first);
+  assert.deepEqual(validateArtifactIndex(first, RULES), first);
 });
 
 test('projeto ausente falha fechado com erro tipado e sanitizado', async () => {
@@ -163,7 +164,7 @@ test('confirmacao explicita altera somente a entrada alvo', async (t) => {
   await writeFile(path.join(projectRoot, 'avatar.md'), 'avatar');
   const pending = await buildArtifactIndex({ projectRoot, rules: RULES });
 
-  const confirmed = confirmArtifact(pending, { artifactType: 'avatar', path: 'avatar.md' });
+  const confirmed = confirmArtifact(pending, { artifactType: 'avatar', path: 'avatar.md' }, RULES);
   assert.equal(confirmed.entries.find((entry) => entry.path === 'avatar.md').confirmationStatus, 'confirmed');
   assert.equal(confirmed.entries.find((entry) => entry.path === 'avatar.md').satisfiesCriticalRequirement, true);
   assert.equal(confirmed.entries.find((entry) => entry.path === 'project-brief.json').confirmationStatus, 'pending_confirmation');
@@ -177,7 +178,7 @@ test('confirmacao recusa path absoluto, traversal e entrada inexistente', async 
 
   for (const candidate of ['/avatar.md', '../avatar.md', 'nao-existe.md']) {
     assert.throws(
-      () => confirmArtifact(index, { artifactType: 'avatar', path: candidate }),
+      () => confirmArtifact(index, { artifactType: 'avatar', path: candidate }, RULES),
       (error) => error instanceof ArtifactIndexError && ['INVALID_CONFIRMATION', 'ARTIFACT_NOT_FOUND'].includes(error.code),
     );
   }
@@ -195,11 +196,108 @@ test('CLI serializa somente o contrato validado e aceita confirmacao exata', asy
     '--rules', rulesPath,
     '--confirm', 'avatar:avatar.md',
   ]);
-  const index = validateArtifactIndex(JSON.parse(stdout));
+  const index = validateArtifactIndex(JSON.parse(stdout), RULES);
   assert.equal(stderr, '');
   assert.equal(index.entries[0].confirmationStatus, 'confirmed');
   assert.ok(!stdout.includes(projectRoot));
   assert.doesNotMatch(stdout, /avatar privado/);
+});
+
+test('matcher glob segmentado e deterministico cobre a matriz usada pelo Node e browser', () => {
+  const matrix = [
+    ['avatar.md', 'avatar.md', true],
+    ['relatorio-avatar.md', '*.md', true],
+    ['nested/avatar.md', 'nested/*.md', true],
+    ['nested/deep/avatar.md', 'nested/*.md', false],
+    ['nested/deep/avatar.md', 'nested/**/*.md', true],
+    ['nested/avatar.md', 'nested/**/*.md', true],
+    ['assets/a/final/banner.png', 'assets/*/final/*.png', true],
+    ['assets/a/draft/banner.png', 'assets/*/final/*.png', false],
+    ['a/b/c.md', '**/*.md', true],
+    ['avatar.md', '**/*.md', true],
+    ['avatar.md', '../*.md', false],
+    ['avatar.md', '/tmp/*.md', false],
+  ];
+  for (const [candidate, pattern, expected] of matrix) {
+    assert.equal(matchesArtifactGlob(candidate, pattern), expected, `${candidate} :: ${pattern}`);
+  }
+});
+
+test('validator vincula path, provenance, unicidade e policy as regras canonicas', async (t) => {
+  const { projectRoot } = await fixture(t);
+  await writeFile(path.join(projectRoot, 'avatar.md'), 'avatar');
+  const valid = await buildArtifactIndex({ projectRoot, rules: RULES });
+
+  const mismatchedPath = structuredClone(valid);
+  mismatchedPath.entries[0].path = 'nested/avatar.md';
+  assert.throws(
+    () => validateArtifactIndex(mismatchedPath, RULES),
+    (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_INDEX',
+  );
+
+  const mismatchedPattern = structuredClone(valid);
+  mismatchedPattern.entries[0].origin.patterns = ['nested/avatar.md'];
+  assert.throws(
+    () => validateArtifactIndex(mismatchedPattern, RULES),
+    (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_INDEX',
+  );
+
+  const mismatchedPolicy = structuredClone(valid);
+  mismatchedPolicy.rules.confirmationRequiredByDefault = false;
+  assert.throws(
+    () => validateArtifactIndex(mismatchedPolicy, RULES),
+    (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_INDEX',
+  );
+
+  const wrongVersion = structuredClone(valid);
+  wrongVersion.schemaVersion = 'artifact-index-v999';
+  assert.throws(() => validateArtifactIndex(wrongVersion, RULES), ArtifactIndexError);
+
+  const additionalProperty = { ...structuredClone(valid), rawContent: 'nao permitido' };
+  assert.throws(() => validateArtifactIndex(additionalProperty, RULES), ArtifactIndexError);
+
+  const sharedPathRules = {
+    ...RULES,
+    artifactGlobs: { first: ['shared.md'], second: ['shared.md'] },
+  };
+  const duplicate = {
+    schemaVersion: 'artifact-index-v1',
+    project: { slug: 'demo-seguro' },
+    rules: { schemaVersion: 'test', confirmationRequiredByDefault: true },
+    entries: ['first', 'second'].map((artifactType) => ({
+      artifactType,
+      path: 'shared.md',
+      sha256: 'a'.repeat(64),
+      sizeBytes: 1,
+      origin: { kind: 'declared_glob', rule: `artifactGlobs.${artifactType}`, patterns: ['shared.md'] },
+      confirmationStatus: 'pending_confirmation',
+      satisfiesCriticalRequirement: false,
+    })),
+    summary: { total: 2, confirmed: 0, pendingConfirmation: 2 },
+  };
+  assert.throws(
+    () => validateArtifactIndex(duplicate, sharedPathRules),
+    (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_INDEX',
+  );
+});
+
+test('validator aplica sanitizacao a toda provenance sem ecoar assinatura', async (t) => {
+  const { projectRoot } = await fixture(t);
+  await writeFile(path.join(projectRoot, 'avatar.md'), 'avatar');
+  const valid = await buildArtifactIndex({ projectRoot, rules: RULES });
+  const signature = `ghp_${'z'.repeat(24)}`;
+  for (const mutate of [
+    (entry) => { entry.origin.kind = signature; },
+    (entry) => { entry.origin.rule = signature; },
+    (entry) => { entry.origin.patterns = [signature]; },
+  ]) {
+    const tampered = structuredClone(valid);
+    mutate(tampered.entries[0]);
+    assert.throws(
+      () => validateArtifactIndex(tampered, RULES),
+      (error) => error instanceof ArtifactIndexError && !error.message.includes(signature),
+    );
+  }
 });
 
 test('briefings distribuidos permanecem identicos e declaram consumo de ArtifactIndex v1', async () => {
@@ -239,9 +337,13 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
   const browser = await chromium.launch({ headless: true });
   t.after(() => browser.close());
   const port = server.address().port;
+  const validDocument = JSON.parse(await readFile(
+    new URL('../data/contracts/fixtures/project-brief/project-brief-1.0.0.valid.json', import.meta.url),
+    'utf8',
+  ));
   const index = {
     schemaVersion: 'artifact-index-v1',
-    project: { slug: 'demo-seguro' },
+    project: { slug: 'acme-labs' },
     rules: { schemaVersion: '0.1.0', confirmationRequiredByDefault: true },
     entries: [{
       artifactType: 'avatar',
@@ -255,7 +357,7 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
     summary: { total: 1, confirmed: 1, pendingConfirmation: 0 },
   };
 
-  for (const pathname of ['/briefing.html', '/aula-03/materiais/briefing.html']) {
+  async function openPage(pathname, saved = null) {
     const page = await browser.newPage();
     const errors = [];
     page.on('pageerror', (error) => errors.push(error.message));
@@ -264,7 +366,74 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
       if (url.hostname === '127.0.0.1') route.continue();
       else route.abort();
     });
+    if (saved) {
+      await page.addInitScript((payload) => {
+        localStorage.setItem('cohort.projectBrief.activeProject.v1', payload.document.projectId);
+        localStorage.setItem(`cohort.projectBrief.v1:${encodeURIComponent(payload.document.projectId)}`, JSON.stringify(payload));
+      }, saved);
+    }
     await page.goto(`http://127.0.0.1:${port}${pathname}`, { waitUntil: 'load' });
+    return { page, errors };
+  }
+
+  const matcherMatrix = [
+    ['avatar.md', 'avatar.md'],
+    ['nested/avatar.md', 'nested/*.md'],
+    ['nested/deep/avatar.md', 'nested/*.md'],
+    ['nested/deep/avatar.md', 'nested/**/*.md'],
+    ['avatar.md', '**/*.md'],
+  ];
+
+  const duplicatePath = {
+    schemaVersion: 'artifact-index-v1',
+    project: { slug: 'acme-labs' },
+    rules: { schemaVersion: '0.1.0', confirmationRequiredByDefault: true },
+    entries: ['trafficTrackingAudit', 'trafficCreativeBattery'].map((artifactType) => ({
+      artifactType,
+      path: 'PAINEL-DA-SEMANA.yaml',
+      sha256: 'b'.repeat(64),
+      sizeBytes: 10,
+      origin: { kind: 'declared_glob', rule: `artifactGlobs.${artifactType}`, patterns: ['PAINEL-DA-SEMANA.yaml'] },
+      confirmationStatus: 'confirmed',
+      satisfiesCriticalRequirement: true,
+    })),
+    summary: { total: 2, confirmed: 2, pendingConfirmation: 0 },
+  };
+
+  const invalidIndexes = [
+    { label: 'schema v999', value: { ...structuredClone(index), schemaVersion: 'artifact-index-v999' } },
+    { label: 'additional property', value: { ...structuredClone(index), rawContent: 'nao permitido' } },
+    {
+      label: 'path sem casar provenance',
+      value: (() => {
+        const value = structuredClone(index);
+        value.entries[0].path = 'relatorio-avatar.md';
+        return value;
+      })(),
+    },
+    {
+      label: 'pattern canonico sem casar path',
+      value: (() => {
+        const value = structuredClone(index);
+        value.entries[0].origin.patterns = ['relatorio-avatar.md'];
+        return value;
+      })(),
+    },
+    {
+      label: 'policy divergente',
+      value: (() => {
+        const value = structuredClone(index);
+        value.rules.confirmationRequiredByDefault = false;
+        return value;
+      })(),
+    },
+    { label: 'path global duplicado', value: duplicatePath },
+  ];
+
+  for (const pathname of ['/briefing.html', '/aula-03/materiais/briefing.html']) {
+    const { page, errors } = await openPage(pathname);
+    const browserMatches = await page.evaluate((matrix) => matrix.map(([candidate, pattern]) => matchesArtifactGlob(candidate, pattern)), matcherMatrix);
+    assert.deepEqual(browserMatches, matcherMatrix.map(([candidate, pattern]) => matchesArtifactGlob(candidate, pattern)));
     await page.locator('#import-artifact-index-file').setInputFiles({
       name: 'artifact-index.json',
       mimeType: 'application/json',
@@ -275,5 +444,48 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
     assert.equal(await page.locator('[data-artifact="avatar"] input').isChecked(), true);
     assert.deepEqual(errors, []);
     await page.close();
+
+    const validSaved = {
+      document: validDocument,
+      artifacts: { avatar: false },
+      artifactIndex: index,
+      ui: { activeStep: 'review' },
+    };
+    const validReload = await openPage(pathname, validSaved);
+    await validReload.page.locator('[data-step="review"]').click();
+    assert.equal(await validReload.page.locator('[data-artifact="avatar"] input').isChecked(), true);
+    assert.deepEqual(validReload.errors, []);
+    await validReload.page.close();
+
+    for (const tamper of invalidIndexes) {
+      const saved = {
+        document: validDocument,
+        artifacts: { avatar: true, offerbook: true },
+        artifactIndex: tamper.value,
+        ui: { activeStep: 'review' },
+      };
+      const invalidReload = await openPage(pathname, saved);
+      await invalidReload.page.locator('[data-step="review"]').click();
+      assert.equal(
+        await invalidReload.page.locator('[data-artifact="avatar"] input').isChecked(),
+        false,
+        `${pathname}: ${tamper.label}`,
+      );
+      assert.equal(
+        await invalidReload.page.locator('[data-artifact="offerbook"] input').isChecked(),
+        false,
+        `${pathname}: ${tamper.label}`,
+      );
+      assert.match(await invalidReload.page.locator('#import-status').textContent(), /índice salvo recusado/i);
+      await invalidReload.page.locator('[data-step="project"]').click();
+      assert.equal(await invalidReload.page.locator('[data-path="project.name"]').inputValue(), 'Acme Labs');
+      const recovered = await invalidReload.page.evaluate(() => JSON.parse(
+        localStorage.getItem('cohort.projectBrief.v1:project-acme-labs'),
+      ));
+      assert.equal(recovered.artifactIndex, null);
+      assert.equal(Object.values(recovered.artifacts).some(Boolean), false);
+      assert.deepEqual(invalidReload.errors, []);
+      await invalidReload.page.close();
+    }
   }
 });
