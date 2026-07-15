@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { execFile } from 'node:child_process';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { execFile, spawn } from 'node:child_process';
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -18,13 +18,34 @@ function fixture(name) {
   return path.join(FIXTURES, name);
 }
 
-async function run(args) {
+async function run(args, options = {}) {
   try {
-    const result = await execFileAsync(process.execPath, [SCRIPT, ...args], { encoding: 'utf8' });
+    const result = await execFileAsync(process.execPath, [SCRIPT, ...args], {
+      encoding: 'utf8',
+      env: { ...process.env, ...options.env },
+    });
     return { ...result, code: 0 };
   } catch (error) {
     return { stdout: error.stdout ?? '', stderr: error.stderr ?? '', code: error.code };
   }
+}
+
+function runConcurrent(args, options = {}) {
+  return new Promise((resolve) => {
+    const child = spawn(process.execPath, [SCRIPT, ...args], {
+      env: { ...process.env, ...options.env },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (chunk) => { stdout += chunk; });
+    child.stderr.on('data', (chunk) => { stderr += chunk; });
+    child.on('close', (code) => resolve({ code, stdout, stderr }));
+  });
+}
+
+function lockPathFor(ledgerPath) {
+  return path.join(path.dirname(ledgerPath), `.${path.basename(ledgerPath)}.lock`);
 }
 
 async function withLedger(t) {
@@ -218,4 +239,108 @@ test('uso, I/O e JSONL invalido usam exit 2 e nunca criam saida parcial', async 
   assert.equal(writeFailure.code, 2);
   assert.equal(writeFailure.stdout, '');
   assert.equal(writeFailure.stderr, 'Unable to write ledger atomically.\n');
+});
+
+test('vinte e quatro writers concorrentes preservam todas as entradas exatamente uma vez', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const base = JSON.parse((await readFile(fixture('ledger-three-weeks.input.jsonl'), 'utf8')).split('\n')[0]);
+  const inputs = [];
+  for (let index = 0; index < 24; index += 1) {
+    const panel = structuredClone(base);
+    const suffix = String(index).padStart(2, '0');
+    panel.id = `weekly-panel:race-${suffix}:2026-07-20:r1`;
+    panel.projectId = `project-race-${suffix}`;
+    panel.campaignId = `campaign-race-${suffix}`;
+    const input = path.join(path.dirname(ledgerPath), `race-${suffix}.jsonl`);
+    await writeFile(input, `${JSON.stringify(panel)}\n`);
+    inputs.push(input);
+  }
+
+  const results = await Promise.all(inputs.map((input) => runConcurrent([input, ledgerPath])));
+  assert.deepEqual(results.map(({ code }) => code), Array(24).fill(0), JSON.stringify(results));
+  const ledger = JSON.parse(await readFile(ledgerPath, 'utf8'));
+  assert.equal(ledger.entries.length, 24);
+  assert.equal(new Set(ledger.entries.map(({ projectId }) => projectId)).size, 24);
+  await assert.rejects(access(lockPathFor(ledgerPath)));
+});
+
+test('lock abandonado por processo morto e recuperado e removido pelo novo owner', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const lockPath = lockPathFor(ledgerPath);
+  await mkdir(lockPath);
+  await writeFile(path.join(lockPath, 'owner.json'), `${JSON.stringify({
+    version: 1,
+    pid: 2_147_483_647,
+    token: 'crashed-owner',
+    createdAt: '2000-01-01T00:00:00.000Z',
+  })}\n`);
+
+  const result = await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath], {
+    env: { WEEKLY_LEDGER_LOCK_STALE_MS: '1' },
+  });
+  assert.equal(result.code, 0, result.stderr || result.stdout);
+  assert.equal(JSON.parse(await readFile(ledgerPath, 'utf8')).entries.length, 4);
+  await assert.rejects(access(lockPath));
+});
+
+test('lock de owner vivo expira com erro deterministico sem escrever nem remover lock alheio', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const lockPath = lockPathFor(ledgerPath);
+  await mkdir(lockPath);
+  await writeFile(path.join(lockPath, 'owner.json'), `${JSON.stringify({
+    version: 1,
+    pid: process.pid,
+    token: 'live-owner',
+    createdAt: new Date().toISOString(),
+  })}\n`);
+
+  const result = await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath], {
+    env: {
+      WEEKLY_LEDGER_LOCK_TIMEOUT_MS: '100',
+      WEEKLY_LEDGER_LOCK_RETRY_MS: '10',
+      WEEKLY_LEDGER_LOCK_STALE_MS: '1',
+    },
+  });
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'Unable to acquire ledger lock.\n');
+  await assert.rejects(readFile(ledgerPath));
+  assert.equal(JSON.parse(await readFile(path.join(lockPath, 'owner.json'), 'utf8')).token, 'live-owner');
+});
+
+test('proveniencia livre com PII, decisao ou conteudo bruto falha fechado sem criar ledger', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const panel = JSON.parse((await readFile(fixture('ledger-three-weeks.input.jsonl'), 'utf8')).split('\n')[0]);
+  panel.metrics[0].source = 'decidedBy=owner@example.invalid; humanAction=Manter verba.; Documento bruto confidencial';
+  const input = path.join(path.dirname(ledgerPath), 'sensitive-provenance.jsonl');
+  await writeFile(input, `${JSON.stringify(panel)}\n`);
+
+  const result = await run([input, ledgerPath]);
+  assert.equal(result.code, 1);
+  assert.equal(result.stderr, '');
+  assert.deepEqual(JSON.parse(result.stdout), {
+    valid: false,
+    code: 'INVALID_METRIC_PROVENANCE_REFERENCE',
+    line: 1,
+    metricIndex: 0,
+    field: 'source',
+  });
+  await assert.rejects(readFile(ledgerPath));
+});
+
+test('ledger projeta referencias estruturadas e nunca strings brutas de source ou premise', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const result = await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath]);
+  assert.equal(result.code, 0, result.stderr || result.stdout);
+  const ledger = JSON.parse(await readFile(ledgerPath, 'utf8'));
+  for (const entry of ledger.entries) {
+    for (const metric of entry.metrics) {
+      assert.equal(Object.hasOwn(metric, 'source'), false);
+      assert.equal(Object.hasOwn(metric, 'premise'), false);
+      assert.deepEqual(Object.keys(metric.sourceRef).sort(), ['id', 'kind']);
+      if (metric.premiseRef !== null) {
+        assert.deepEqual(Object.keys(metric.premiseRef).sort(), ['id', 'kind']);
+      }
+    }
+  }
 });
