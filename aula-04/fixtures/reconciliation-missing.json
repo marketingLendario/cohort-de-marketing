@@ -1,7 +1,7 @@
 {
   "contract": "SourceObservationSet",
   "schemaVersion": "1.0.0",
-  "reconciliationId": "reconciliation:missing:2026-07",
+  "reconciliationId": "reconciliation:revenue:2026-07:c3d4e5f6",
   "metric": "revenue",
   "observations": [
     {
@@ -19,7 +19,7 @@
       "cashConfirmed": false,
       "provenanceRef": {
         "kind": "platform-export",
-        "id": "platform-2026-07"
+        "id": "platform:2026-07:a1b2c3d4"
       }
     },
     {

@@ -18,8 +18,8 @@
   "properties": {
     "contract": { "type": "string", "const": "SourceReconciliation" },
     "schemaVersion": { "type": "string", "const": "1.0.0" },
-    "reconciliationId": { "$ref": "#/$defs/safeIdentifier" },
-    "metric": { "$ref": "#/$defs/safeMetric" },
+    "reconciliationId": { "$ref": "#/$defs/reconciliationIdentifier" },
+    "metric": { "$ref": "#/$defs/metric" },
     "sourceContract": {
       "type": "object",
       "additionalProperties": false,
@@ -54,17 +54,14 @@
     "requiresHumanReview": { "type": "boolean", "const": true }
   },
   "$defs": {
-    "safeIdentifier": {
+    "reconciliationIdentifier": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 128,
-      "pattern": "^[a-z0-9][a-z0-9.:-]*$"
+      "description": "Typed opaque identifier: allowlisted metric, calendar month and an 8-32 character lowercase hexadecimal nonce.",
+      "pattern": "^reconciliation:(?:revenue|orders|refunds|fees|net_revenue):[0-9]{4}-(?:0[1-9]|1[0-2]):[a-f0-9]{8,32}$"
     },
-    "safeMetric": {
+    "metric": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 64,
-      "pattern": "^[a-z][a-z0-9_.-]*$"
+      "enum": ["revenue", "orders", "refunds", "fees", "net_revenue"]
     },
     "decimal": {
       "type": "string",
@@ -91,13 +88,39 @@
     },
     "currency": {
       "type": "string",
-      "pattern": "^[A-Z]{3}$"
+      "description": "ISO 4217 codes supported by the Node.js runtime baseline used to freeze this contract.",
+      "enum": [
+        "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN",
+        "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL",
+        "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY",
+        "COP", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD",
+        "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP",
+        "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR",
+        "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS",
+        "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR",
+        "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP",
+        "MRU", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO",
+        "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN",
+        "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG",
+        "SEK", "SGD", "SHP", "SLE", "SLL", "SOS", "SRD", "SSP", "STN", "SVC",
+        "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD",
+        "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VES", "VND", "VUV", "WST",
+        "XAF", "XCD", "XCG", "XDR", "XOF", "XPF", "XSU", "YER", "ZAR", "ZMW",
+        "ZWG", "ZWL"
+      ]
     },
     "window": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 64,
-      "pattern": "^[a-z0-9][a-z0-9_.-]*$"
+      "enum": [
+        "calendar_day",
+        "calendar_week",
+        "calendar_month",
+        "lifetime",
+        "1d_click",
+        "7d_click",
+        "7d_click_1d_view",
+        "28d_click_1d_view"
+      ]
     },
     "period": {
       "type": "object",
@@ -109,20 +132,50 @@
       }
     },
     "provenanceRef": {
+      "oneOf": [
+        { "$ref": "#/$defs/platformProvenanceRef" },
+        { "$ref": "#/$defs/checkoutProvenanceRef" },
+        { "$ref": "#/$defs/cashProvenanceRef" },
+        { "$ref": "#/$defs/operatorProvenanceRef" }
+      ]
+    },
+    "platformProvenanceRef": {
+      "$ref": "#/$defs/platformProvenanceRefObject"
+    },
+    "platformProvenanceRefObject": {
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "id"],
       "properties": {
-        "kind": {
-          "type": "string",
-          "enum": ["platform-export", "checkout-export", "cash-export", "operator-declaration"]
-        },
-        "id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 80,
-          "pattern": "^[a-z0-9][a-z0-9.-]*$"
-        }
+        "kind": { "const": "platform-export" },
+        "id": { "type": "string", "pattern": "^platform:[0-9]{4}-(?:0[1-9]|1[0-2]):[a-f0-9]{8,32}$" }
+      }
+    },
+    "checkoutProvenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "const": "checkout-export" },
+        "id": { "type": "string", "pattern": "^checkout:[0-9]{4}-(?:0[1-9]|1[0-2]):[a-f0-9]{8,32}$" }
+      }
+    },
+    "cashProvenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "const": "cash-export" },
+        "id": { "type": "string", "pattern": "^cash:[0-9]{4}-(?:0[1-9]|1[0-2]):[a-f0-9]{8,32}$" }
+      }
+    },
+    "operatorProvenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "const": "operator-declaration" },
+        "id": { "type": "string", "pattern": "^operator:[0-9]{4}-(?:0[1-9]|1[0-2]):[a-f0-9]{8,32}$" }
       }
     },
     "observation": {
@@ -312,8 +365,8 @@
       "properties": {
         "contract": { "type": "string", "const": "SourceObservationSet" },
         "schemaVersion": { "type": "string", "const": "1.0.0" },
-        "reconciliationId": { "$ref": "#/$defs/safeIdentifier" },
-        "metric": { "$ref": "#/$defs/safeMetric" },
+        "reconciliationId": { "$ref": "#/$defs/reconciliationIdentifier" },
+        "metric": { "$ref": "#/$defs/metric" },
         "observations": {
           "type": "array",
           "minItems": 0,

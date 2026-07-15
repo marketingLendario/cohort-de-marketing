@@ -255,6 +255,56 @@ test('matriz positiva rejeita texto sensível em toda superfície republicada se
   }
 });
 
+test('schema de saída também fecha as superfícies republicadas contra texto sintético', async () => {
+  const validOutput = parseSuccess(await run([fixture('reconciliation-match.json')]));
+  const schema = JSON.parse(await readFile(SCHEMA, 'utf8'));
+  const ajv = new Ajv2020({ allErrors: true, strict: true });
+  addFormats(ajv);
+  const validate = ajv.compile(schema);
+  const cases = [
+    (output) => { output.reconciliationId = 'reconciliation:joao-silva:2026-07'; },
+    (output) => { output.metric = 'buyer-order'; },
+    (output) => { output.sources[0].window = 'rua-alpha-123'; },
+    (output) => { output.sources[0].provenanceRef.id = 'platform-joao-silva'; },
+    (output) => { output.sources[0].value = 'buyer-order'; },
+    (output) => { output.sources[0].currency = 'CPF'; },
+    (output) => { output.sources[0].period.start = 'phone-11.99999.8888'; },
+    (output) => { output.sources[0].observedAt = 'token-super-secreto'; },
+  ];
+  for (const mutate of cases) {
+    const output = structuredClone(validOutput);
+    mutate(output);
+    assert.equal(validate(output), false);
+  }
+});
+
+test('allowlists conhecidas e referência opaca do operador não geram falso positivo', async (t) => {
+  const metrics = ['revenue', 'orders', 'refunds', 'fees', 'net_revenue'];
+  const windows = [
+    'calendar_day', 'calendar_week', 'calendar_month', 'lifetime',
+    '1d_click', '7d_click', '7d_click_1d_view', '28d_click_1d_view',
+  ];
+  const base = await loadFixture('reconciliation-match.json');
+  base.observations[0].provenanceRef = {
+    kind: 'operator-declaration', id: 'operator:2026-07:d4e5f6a7',
+  };
+  for (const [metricIndex, metric] of metrics.entries()) {
+    for (const [windowIndex, window] of windows.entries()) {
+      const document = structuredClone(base);
+      const nonce = (0xa1b2c3d4 + (metricIndex * windows.length) + windowIndex)
+        .toString(16).padStart(8, '0');
+      document.metric = metric;
+      document.reconciliationId = `reconciliation:${metric}:2026-07:${nonce}`;
+      for (const observation of document.observations) observation.window = window;
+      const file = await withTempDocument(t, document, `known-${metric}-${window}.json`);
+      const output = parseSuccess(await run([file]));
+      assert.equal(output.metric, metric);
+      assert.equal(output.sources[0].window, window);
+      assert.deepEqual(output.sources[0].provenanceRef, base.observations[0].provenanceRef);
+    }
+  }
+});
+
 test('decimais maiores que Number.MAX_SAFE_INTEGER mantêm precisão e input não é alterado', async (t) => {
   const document = await loadFixture('reconciliation-match.json');
   document.observations[0].value = '9007199254740993.123456789012';

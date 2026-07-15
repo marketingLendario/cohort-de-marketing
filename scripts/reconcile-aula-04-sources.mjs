@@ -32,6 +32,7 @@ const SENSITIVE_VALUE_PATTERNS = Object.freeze([
   /\b(?:access|refresh|auth|api)[_-]?token\b/i,
   /\b(?:sk|pk)_(?:live|test)_[a-z0-9]+\b/i,
   /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  /(?:^|[^a-z])(?:buyer|customer|client|pessoa|nome|name|address|endereco|rua|avenida|street|cpf|cnpj|document|phone|telefone|mobile|token|secret|password)(?:[^a-z]|$)/i,
 ]);
 
 let validatorsPromise;
@@ -43,8 +44,6 @@ function normalizeKey(key) {
 function containsSensitiveData(value, parentKey = '') {
   if (typeof value === 'string') {
     if (SENSITIVE_VALUE_PATTERNS.some((pattern) => pattern.test(value))) return true;
-    if (parentKey === 'id' && /(?:^|[.-])token(?:[.-]|$)/i.test(value)) return true;
-    if (parentKey === 'id' && value.replace(/\D/g, '').length >= 10) return true;
     return false;
   }
   if (Array.isArray(value)) return value.some((item) => containsSensitiveData(item, parentKey));
@@ -269,7 +268,9 @@ export async function reconcileSourceObservations(document) {
     requiresHumanReview: true,
   };
   const { output: validateOutput } = await validators();
-  if (!validateOutput(output)) throw new Error('SourceReconciliation output contract violation');
+  if (containsSensitiveData(output) || !validateOutput(output)) {
+    throw new Error('SourceReconciliation output contract violation');
+  }
   return output;
 }
 
