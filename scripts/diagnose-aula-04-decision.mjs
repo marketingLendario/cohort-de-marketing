@@ -22,6 +22,7 @@ const ID_PATTERNS = Object.freeze({
   operator: new RegExp(`^operator:\\d{4}-\\d{2}-\\d{2}:${NONCE}$`),
 });
 const METRICS = new Set(['revenue', 'orders', 'refunds', 'fees', 'net_revenue', 'cpa', 'roas', 'spend', 'ctr']);
+const RECONCILABLE_METRICS = new Set(['revenue', 'orders', 'refunds', 'fees', 'net_revenue']);
 const WINDOWS = new Set([
   'calendar_day', 'calendar_week', 'calendar_month', 'lifetime',
   '1d_click', '7d_click', '7d_click_1d_view', '28d_click_1d_view',
@@ -290,22 +291,22 @@ function evidenceState(request) {
   if (samples.some((sample) => sample.attributionWindow !== decision.measurementWindow.attributionWindow)) {
     return { verdict: 'nao_mensuravel', reason: 'INCOMPATIBLE_ATTRIBUTION_WINDOW', samples };
   }
-  const reconciliation = request.sourceReconciliation;
-  if (reconciliation.metric !== metricName
-    || reconciliation.sources.some((source) => (
-      source.status !== 'provided' || !source.confirmedByHuman
-      || source.window !== decision.measurementWindow.attributionWindow
-      || !periodCoversWindow(source, decision.measurementWindow)
-      || (source.source === 'cash' && !source.cashConfirmed)
-    )) || reconciliation.comparisons.some((comparison) => !comparison.comparable)) {
-    return { verdict: 'nao_mensuravel', reason: 'RECONCILIATION_NOT_MEASURABLE', samples };
-  }
-  if (reconciliation.comparisons.some((comparison) => compareDecimals(comparison.absoluteGap, '0') !== 0)) {
-    return { verdict: 'inconclusivo', reason: 'RECONCILIATION_CONFOUNDING_GAP', samples };
-  }
   const latest = samples.at(-1);
-  if (reconciliation.sources.some((source) => compareDecimals(source.value, latest.value) !== 0)) {
-    return { verdict: 'inconclusivo', reason: 'RECONCILIATION_CONFOUNDING_GAP', samples };
+  if (RECONCILABLE_METRICS.has(metricName)) {
+    const reconciliation = request.sourceReconciliation;
+    if (reconciliation.metric !== metricName
+      || reconciliation.sources.some((source) => (
+        source.status !== 'provided' || !source.confirmedByHuman
+        || source.window !== decision.measurementWindow.attributionWindow
+        || !periodCoversWindow(source, decision.measurementWindow)
+        || (source.source === 'cash' && !source.cashConfirmed)
+      )) || reconciliation.comparisons.some((comparison) => !comparison.comparable)) {
+      return { verdict: 'nao_mensuravel', reason: 'RECONCILIATION_NOT_MEASURABLE', samples };
+    }
+    if (reconciliation.comparisons.some((comparison) => compareDecimals(comparison.absoluteGap, '0') !== 0)
+      || reconciliation.sources.some((source) => compareDecimals(source.value, latest.value) !== 0)) {
+      return { verdict: 'inconclusivo', reason: 'RECONCILIATION_CONFOUNDING_GAP', samples };
+    }
   }
   if (criterionMet(latest.value, decision.successCriterion)) {
     return { verdict: 'sustentou', reason: 'SUCCESS_CRITERION_MET', samples };
@@ -351,7 +352,7 @@ function buildOutput(request) {
           sourceRef: sample.sourceRef,
         })),
       },
-      sourceReconciliation: {
+      sourceReconciliation: reconciliation ? {
         contract: reconciliation.contract,
         schemaVersion: reconciliation.schemaVersion,
         reconciliationId: reconciliation.reconciliationId,
@@ -359,7 +360,7 @@ function buildOutput(request) {
         provenanceRefs: reconciliation.sources.filter((source) => source.provenanceRef !== null).map((source) => ({
           source: source.source, ref: source.provenanceRef,
         })),
-      },
+      } : null,
     },
     verdict: state.verdict,
     reasonCodes: [state.reason],
@@ -377,14 +378,18 @@ function buildOutput(request) {
 }
 
 export async function diagnoseDecisionOutcome(request) {
-  if (!exactKeys(request, [
-    'contract', 'schemaVersion', 'previousDecision', 'historicalReading', 'sourceReconciliation',
-  ]) || request.contract !== 'DecisionOutcomeEvaluationRequest' || request.schemaVersion !== '1.0.0'
+  const baseKeys = ['contract', 'schemaVersion', 'previousDecision', 'historicalReading'];
+  const hasReconciliation = Object.hasOwn(request ?? {}, 'sourceReconciliation');
+  if (!(exactKeys(request, baseKeys) || exactKeys(request, [...baseKeys, 'sourceReconciliation']))
+    || request.contract !== 'DecisionOutcomeEvaluationRequest' || request.schemaVersion !== '1.0.0'
     || !decisionIsValid(request.previousDecision)
     || !historyIsValid(request.historicalReading, request.previousDecision.successCriterion.metric)) return null;
+  const metricName = request.previousDecision.successCriterion.metric;
+  const requiresReconciliation = RECONCILABLE_METRICS.has(metricName);
+  if (requiresReconciliation !== hasReconciliation) return null;
   const { reconciliation: validateReconciliation, output: validateOutput } = await validators();
-  if (!validateReconciliation(request.sourceReconciliation)
-    || request.sourceReconciliation.metric !== request.previousDecision.successCriterion.metric) return null;
+  if (requiresReconciliation && (!validateReconciliation(request.sourceReconciliation)
+    || request.sourceReconciliation.metric !== metricName)) return null;
   const output = buildOutput(request);
   if (!validateOutput(output)) throw new Error('OUTPUT_CONTRACT_VIOLATION');
   return output;

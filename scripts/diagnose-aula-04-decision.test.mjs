@@ -465,9 +465,19 @@ test('output passa schema fechado; entrada e mirrors permanecem byte a byte', as
   addFormats(ajv);
   const validate = ajv.compile(schema);
   assert.equal(validate(output), true, JSON.stringify(validate.errors));
+  const trafficOutput = parseSuccess(await run([await withBundle(t, bundleForMetric('ctr', 3, {
+    successOperator: 'gte', successThreshold: '2.5', reversalOperator: 'lte', reversalThreshold: '1',
+  }), 'ctr-schema.json')]));
+  assert.equal(validate(trafficOutput), true, JSON.stringify(validate.errors));
   const forged = structuredClone(output);
   forged.evidence.historicalReading.observationRefs[0].rawValue = 'token-super-secreto';
   assert.equal(validate(forged), false);
+  const financialWithoutReconciliation = structuredClone(output);
+  financialWithoutReconciliation.evidence.sourceReconciliation = null;
+  assert.equal(validate(financialWithoutReconciliation), false);
+  const trafficWithReconciliation = structuredClone(trafficOutput);
+  trafficWithReconciliation.evidence.sourceReconciliation = output.evidence.sourceReconciliation;
+  assert.equal(validate(trafficWithReconciliation), false);
 
   const canonical = await readFile(SKILL, 'utf8');
   assert.equal(canonical, await readFile(MIRROR, 'utf8'));

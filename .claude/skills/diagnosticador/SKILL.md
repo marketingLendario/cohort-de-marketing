@@ -28,9 +28,15 @@ node scripts/diagnose-aula-04-decision.mjs \
 ```
 
 O request é um bundle fechado `DecisionOutcomeEvaluationRequest 1.0.0`. Ele
-mantém a decisão anterior estruturada e inclui, sem resolver referências, as
-duas saídas públicas já validadas. O CLI não lê `WeeklyLedger`, WeeklyPanel
-bruto, API, Studio, checkout, caixa, credencial ou projeto privado.
+mantém a decisão anterior estruturada e inclui, sem resolver referências, a
+saída pública validada `HistoricalMetricsReading 1.0.0`. Para `revenue`,
+`orders`, `refunds`, `fees` e `net_revenue`, também exige a saída pública
+`SourceReconciliation 1.0.0` da mesma métrica. Para `cpa`, `roas`, `spend` e
+`ctr`, a reconciliação financeira não se aplica e deve ser omitida; o output
+registra `sourceReconciliation: null` e preserva somente a proveniência W2.1.
+Reconciliação ausente em métrica financeira, presente em métrica não
+financeira ou incompatível falha fechado. O CLI não lê `WeeklyLedger`,
+WeeklyPanel bruto, API, Studio, checkout, caixa, credencial ou projeto privado.
 
 O resultado `DecisionOutcomeDiagnosis 1.0.0` usa somente quatro vereditos:
 

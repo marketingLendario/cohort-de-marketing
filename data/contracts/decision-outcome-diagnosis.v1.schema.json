@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://marketinglendario.local/cohort/decision-outcome-diagnosis.v1.schema.json",
   "title": "Decision Outcome Diagnosis v1",
-  "description": "Read-only, provenance-only diagnosis of a previous human decision against approved historical and reconciliation contracts. No raw metric values or causal narrative are republished.",
+  "description": "Read-only, provenance-only diagnosis of a previous human decision against an approved historical contract and, only for financially reconcilable metrics, the approved reconciliation contract. No raw metric values or causal narrative are republished.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -58,33 +58,32 @@
           }
         },
         "sourceReconciliation": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["contract", "schemaVersion", "reconciliationId", "metric", "provenanceRefs"],
-          "properties": {
-            "contract": { "const": "SourceReconciliation" },
-            "schemaVersion": { "const": "1.0.0" },
-            "reconciliationId": {
-              "type": "string",
-              "pattern": "^reconciliation:(?:revenue|orders|refunds|fees|net_revenue):[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$"
-            },
-            "metric": { "$ref": "#/$defs/metric" },
-            "provenanceRefs": {
-              "type": "array",
-              "maxItems": 3,
-              "items": {
+          "oneOf": [
+            { "$ref": "#/$defs/sourceReconciliationEvidence" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "historicalReading": {
                 "type": "object",
-                "additionalProperties": false,
-                "required": ["source", "ref"],
-                "properties": {
-                  "source": { "enum": ["platform", "checkout", "cash"] },
-                  "ref": { "$ref": "#/$defs/reconciliationRef" }
-                }
+                "properties": { "metric": { "$ref": "#/$defs/financialMetric" } },
+                "required": ["metric"]
               }
-            }
+            },
+            "required": ["historicalReading"]
+          },
+          "then": {
+            "properties": { "sourceReconciliation": { "$ref": "#/$defs/sourceReconciliationEvidence" } }
+          },
+          "else": {
+            "properties": { "sourceReconciliation": { "type": "null" } }
           }
         }
-      }
+      ]
     },
     "verdict": { "enum": ["sustentou", "refutou", "inconclusivo", "nao_mensuravel"] },
     "reasonCodes": {
@@ -155,6 +154,7 @@
     "circuitBreakerId": { "type": "string", "pattern": "^circuit-breaker:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
     "operatorId": { "type": "string", "pattern": "^operator:[0-9]{4}-[0-9]{2}-[0-9]{2}:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
     "metric": { "enum": ["revenue", "orders", "refunds", "fees", "net_revenue", "cpa", "roas", "spend", "ctr"] },
+    "financialMetric": { "enum": ["revenue", "orders", "refunds", "fees", "net_revenue"] },
     "window": { "enum": ["calendar_day", "calendar_week", "calendar_month", "lifetime", "1d_click", "7d_click", "7d_click_1d_view", "28d_click_1d_view"] },
     "historyRef": {
       "type": "object",
@@ -172,6 +172,33 @@
       "properties": {
         "kind": { "enum": ["platform-export", "checkout-export", "cash-export", "operator-declaration"] },
         "id": { "type": "string", "pattern": "^(?:platform|checkout|cash|operator):[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" }
+      }
+    },
+    "sourceReconciliationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract", "schemaVersion", "reconciliationId", "metric", "provenanceRefs"],
+      "properties": {
+        "contract": { "const": "SourceReconciliation" },
+        "schemaVersion": { "const": "1.0.0" },
+        "reconciliationId": {
+          "type": "string",
+          "pattern": "^reconciliation:(?:revenue|orders|refunds|fees|net_revenue):[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$"
+        },
+        "metric": { "$ref": "#/$defs/financialMetric" },
+        "provenanceRefs": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source", "ref"],
+            "properties": {
+              "source": { "enum": ["platform", "checkout", "cash"] },
+              "ref": { "$ref": "#/$defs/reconciliationRef" }
+            }
+          }
+        }
       }
     },
     "observationRef": {

@@ -19,12 +19,11 @@ evidence:
     metric: revenue
     attributionWindow: calendar_week
     observationRefs: []
-  sourceReconciliation:
-    contract: SourceReconciliation
-    schemaVersion: 1.0.0
-    reconciliationId: "reconciliation:revenue:<mes>:<nonce>"
-    metric: revenue
-    provenanceRefs: []
+  sourceReconciliation: null
+  # Para cpa, roas, spend e ctr, SourceReconciliationV1 não se aplica e este
+  # campo permanece null; a decisão usa somente as referências aprovadas de W2.1.
+  # Para revenue, orders, refunds, fees e net_revenue, null é substituído pelo
+  # objeto fechado SourceReconciliation 1.0.0 da mesma métrica.
 verdict: nao_mensuravel # sustentou | refutou | inconclusivo | nao_mensuravel
 reasonCodes:
   - INSUFFICIENT_DISTINCT_WEEKS
