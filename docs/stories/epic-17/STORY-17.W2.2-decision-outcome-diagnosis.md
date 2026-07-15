@@ -1,5 +1,5 @@
 ---
-status: Blocked
+status: InProgress
 story_id: "17.W2.2"
 title: "Diagnóstico decisão versus resultado"
 epic: 17
@@ -31,12 +31,26 @@ entity_output:
 touched_paths:
   - ".claude/skills/diagnosticador/SKILL.md"
   - ".agents/skills/diagnosticador/SKILL.md"
+  - "data/contracts/decision-outcome-diagnosis.v1.schema.json"
+  - "scripts/diagnose-aula-04-decision.mjs"
+  - "scripts/diagnose-aula-04-decision.test.mjs"
+  - "aula-04/fixtures/diagnosis-sustained.json"
+  - "aula-04/fixtures/diagnosis-refuted.json"
+  - "aula-04/fixtures/diagnosis-inconclusive.json"
+  - "aula-04/fixtures/diagnosis-not-measurable.json"
   - "aula-04/templates/diagnostico-longitudinal.yaml"
   - "docs/stories/epic-17/STORY-17.W2.2-decision-outcome-diagnosis.md"
   - "docs/stories/epic-17/evidence/STORY-17.W2.2.md"
 affected_paths:
   - ".claude/skills/diagnosticador/SKILL.md"
   - ".agents/skills/diagnosticador/SKILL.md"
+  - "data/contracts/decision-outcome-diagnosis.v1.schema.json"
+  - "scripts/diagnose-aula-04-decision.mjs"
+  - "scripts/diagnose-aula-04-decision.test.mjs"
+  - "aula-04/fixtures/diagnosis-sustained.json"
+  - "aula-04/fixtures/diagnosis-refuted.json"
+  - "aula-04/fixtures/diagnosis-inconclusive.json"
+  - "aula-04/fixtures/diagnosis-not-measurable.json"
   - "aula-04/templates/diagnostico-longitudinal.yaml"
   - "docs/stories/epic-17/STORY-17.W2.2-decision-outcome-diagnosis.md"
   - "docs/stories/epic-17/evidence/STORY-17.W2.2.md"
@@ -46,7 +60,7 @@ affected_paths:
 
 ## Status
 
-Blocked — depende de 17.W2.1 `Done` e de seu contrato de saída aprovado.
+InProgress — 17.W1.2 e 17.W2.1 estão `Done`; execução isolada na baseline integrada `1c4f84a`.
 
 ## Dependências
 
@@ -77,11 +91,27 @@ Estender `diagnosticador` para confrontar a decisão anterior com o resultado ob
 
 - `.claude/skills/diagnosticador/SKILL.md`
 - `.agents/skills/diagnosticador/SKILL.md`
+- `data/contracts/decision-outcome-diagnosis.v1.schema.json`
+- `scripts/diagnose-aula-04-decision.mjs`
+- `scripts/diagnose-aula-04-decision.test.mjs`
+- `aula-04/fixtures/diagnosis-sustained.json`
+- `aula-04/fixtures/diagnosis-refuted.json`
+- `aula-04/fixtures/diagnosis-inconclusive.json`
+- `aula-04/fixtures/diagnosis-not-measurable.json`
 - `aula-04/templates/diagnostico-longitudinal.yaml`
 - `docs/stories/epic-17/STORY-17.W2.2-decision-outcome-diagnosis.md`
 - `docs/stories/epic-17/evidence/STORY-17.W2.2.md`
 
 A File List é uma allow-list inicial. Mudanças fora dela exigem rematerialização e validação de arquitetura.
+
+## Dev Notes
+
+- Baseline integrada: `1c4f84ab0644312877838797d8c4477a9914b3ae`; 17.W1.2 e 17.W2.1 estão `Done` com QG aprovado. 17.W2.3 também está `Done` e fornece `SourceReconciliationV1` como evidência opcional estritamente validada.
+- O CLI recebe um bundle local fechado contendo `HistoricalMetricsReading 1.0.0`, `SourceReconciliation 1.0.0` e a decisão anterior estruturada. Não abre WeeklyLedger, WeeklyPanel bruto, Studio, API, checkout, caixa, credencial ou projeto privado.
+- Critérios usam operadores e limiares decimais explícitos; hipótese, alavanca, janela, sucesso, reversão, circuit breaker e decisão humana são preservados por IDs tipados. Texto livre é obrigatório no input para impedir decisão vazia, mas nunca é republicado no diagnóstico.
+- O veredito usa somente códigos determinísticos. Evidência ausente, estimada, incompatível, insuficiente ou não reconciliada nunca produz conclusão causal.
+- Uma eventual nova alavanca precisa estar pré-autorizada na decisão anterior e só pode ser referenciada; o CLI não executa mutação.
+- `deploy_type: none`: toda prova é local, determinística e read-only.
 
 ## Validação
 
