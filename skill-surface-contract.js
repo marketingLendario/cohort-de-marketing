@@ -295,12 +295,11 @@
       if (!Array.isArray(values)) fail('INVALID_UNLOCK_RULES', 'Uma lista de artefatos da regra é inválida.');
       if (values.some((artifact) => !artifactTypes.has(artifact))) fail('RULE_ORPHAN_ARTIFACT', 'Uma regra referencia artefato inexistente.');
     };
-    const validMatchValue = (value) => {
-      const scalar = (candidate) => ['string', 'number', 'boolean'].includes(typeof candidate)
-        && (typeof candidate !== 'string' || candidate.trim().length > 0)
-        && (typeof candidate !== 'number' || Number.isFinite(candidate));
-      return scalar(value) || (Array.isArray(value) && value.length > 0 && value.every(scalar));
-    };
+    const validScalar = (candidate) => ['string', 'number', 'boolean'].includes(typeof candidate)
+      && (typeof candidate !== 'string' || candidate.trim().length > 0)
+      && (typeof candidate !== 'number' || Number.isFinite(candidate));
+    const validMatchValue = (value) => validScalar(value)
+      || (Array.isArray(value) && value.length > 0 && value.every(validScalar));
     for (const [skillId, rule] of Object.entries(rules.skills)) {
       if (!isRecord(rule) || rule.command !== `/${skillId}`) fail('INVALID_UNLOCK_RULES', 'Uma regra de skill está ausente ou incompleta.');
       for (const key of ['primaryArtifacts', 'requiredArtifacts', 'recommendedArtifacts']) assertArtifacts(rule[key] || []);
@@ -339,8 +338,8 @@
         if (!isRecord(condition) || !fieldPaths.has(condition.field)
           || typeof condition.reason !== 'string' || condition.reason.trim().length === 0
           || hasEquals === hasIn
-          || (hasEquals && !validMatchValue(condition.equals))
-          || (hasIn && (!Array.isArray(condition.in) || condition.in.length === 0 || !condition.in.every((value) => validMatchValue(value))))
+          || (hasEquals && !validScalar(condition.equals))
+          || (hasIn && (!Array.isArray(condition.in) || condition.in.length === 0 || !condition.in.every(validScalar)))
           || Object.keys(condition).some((key) => !['field', 'equals', 'in', 'reason'].includes(key))) {
           fail('INVALID_UNLOCK_RULES', 'Uma condição notApplicableWhen é inexistente, ambígua ou inválida.');
         }

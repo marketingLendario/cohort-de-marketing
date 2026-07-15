@@ -113,7 +113,7 @@ test('campos e artefatos órfãos, inclusive anyOf e notApplicableWhen, falham f
   }
 });
 
-test('regras oficiais passam e 32 fixtures condicionais adversariais falham fechado', async () => {
+test('regras oficiais passam e 35 fixtures condicionais adversariais falham fechado', async () => {
   const contract = await loadContract();
   const inputs = await surfaceInputs();
   assert.doesNotThrow(() => contract.validateContracts(inputs));
@@ -152,8 +152,11 @@ test('regras oficiais passam e 32 fixtures condicionais adversariais falham fech
     ['in vazio', setNotApplicable([{ field: 'project.startingPoint', in: [], reason: 'x' }])],
     ['in com valor inválido', setNotApplicable([{ field: 'project.startingPoint', in: [{}], reason: 'x' }])],
     ['reason vazio', setNotApplicable([{ field: 'project.startingPoint', equals: 'sem-projeto', reason: '   ' }])],
+    ['equals array', setNotApplicable([{ field: 'project.startingPoint', equals: ['sem-projeto'], reason: 'x' }])],
+    ['in aninhado', setNotApplicable([{ field: 'project.startingPoint', in: [['sem-projeto']], reason: 'x' }])],
+    ['in misto', setNotApplicable([{ field: 'project.startingPoint', in: ['sem-projeto', ['afiliado']], reason: 'x' }])],
   ];
-  assert.equal(fixtures.length, 32);
+  assert.equal(fixtures.length, 35);
   for (const [label, mutate] of fixtures) {
     const rules = clone(inputs.rules);
     mutate(rules);
@@ -278,7 +281,11 @@ test('mapa revalida localStorage e não renderiza done para índice forjado', { 
   }
 
   const invalidRules = clone((await surfaceInputs()).rules);
-  invalidRules.skills['avatar-funil'].anyOf = [{ label: 'restrição vazia' }];
+  invalidRules.skills.offerbook.notApplicableWhen = [{
+    field: 'project.startingPoint',
+    in: ['sem-projeto', ['afiliado']],
+    reason: 'predicado aninhado',
+  }];
   for (const pathname of ['/mapa-skills.html', '/aula-03/materiais/mapa-skills.html']) {
     const page = await browser.newPage();
     const pageErrors = [];
