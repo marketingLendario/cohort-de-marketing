@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "17.W3.2"
 title: "Gate público da Aula 4"
 epic: 17
@@ -57,7 +57,7 @@ fan_in_paths:
 
 ## Status
 
-InReview — gate técnico local aprovado; aguarda QG independente `@architect`.
+Done — QG independente `@architect` aprovado com `PASS 99/100`, confiança `0.99` e zero findings.
 
 ## Story
 
@@ -82,7 +82,7 @@ InReview — gate técnico local aprovado; aguarda QG independente `@architect`.
 - [x] AC4: Validators de Aula 4, catálogo, mirrors canônico/Codex e suites W1/W2/W3 passam sem alteração nos validators, contratos, skills ou exemplos integrados.
 - [x] AC5: O gate de distribuição valida links relativos, ausência de integração externa e File List exata; o scan de privacidade não encontra segredo, credencial, email, telefone/CPF/CNPJ shaped, path absoluto de máquina, payload privado ou arquivo de projeto real nos materiais liberáveis e outputs.
 - [x] AC6: `docs/releases/aula-04-data-loop-v1.md` registra contratos/versões, compatibilidade Aula 3, comandos, limitações e rollback local, sem declarar push, publicação ou deploy.
-- [x] AC7: Evidência sanitizada registra checkout limpo, contagens, validators, mirrors, walkthrough, scans e os vereditos sequenciais `@po READY` e `@qa PASS técnico`; a story permanece `InReview` até QG independente `@architect`.
+- [x] AC7: Evidência sanitizada registra checkout limpo, contagens, validators, mirrors, walkthrough, scans e os vereditos sequenciais `@po READY`, `@qa PASS técnico` e `@architect PASS 99/100`.
 
 ## Arquitetura do gate
 
@@ -216,7 +216,10 @@ Esta é a allowlist exata do executor. Validators, schemas, conteúdo das skills
 ### Architect quality gate
 
 - Reviewer: `@architect`
-- Veredito: `PENDING — independente após handoff InReview`.
+- Veredito: `PASS 99/100`.
+- Confiança: `0.99`.
+- Findings/blockers: nenhum.
+- HEAD avaliado: `2a054a05638826cb931b2f8dc21bc35d15961baf`.
 
 ## Change Log
 
@@ -226,6 +229,7 @@ Esta é a allowlist exata do executor. Validators, schemas, conteúdo das skills
 | 2026-07-15 | @qa | RED do catálogo encontrou somente dois hashes obsoletos; skills canônico/mirror permanecem byte-idênticos. |
 | 2026-07-15 | @po | Expansão mínima autorizada e rematerializada para calibrar somente os dois source-locks espelhados. |
 | 2026-07-15 | @qa | Gate técnico aprovado: focal 4/4, Aula 4 84/84, full Node 166/166, validators/mirrors/scans verdes; story movida para `InReview`. |
+| 2026-07-15 | @architect | QG independente aprovado: PASS 99/100, confiança 0.99, zero findings; story movida para `Done`. |
 
 ## QA Results
 
@@ -243,8 +247,12 @@ executor_gate:
   privacy_distribution: "PASS"
 quality_gate:
   reviewer: "@architect"
-  verdict: "PENDING"
-  independence_required: true
+  verdict: "PASS"
+  score: 99
+  confidence: 0.99
+  findings: []
+  blockers: []
+  reviewed_head: "2a054a05638826cb931b2f8dc21bc35d15961baf"
 ```
 
 ## Dev Agent Record
@@ -258,7 +266,7 @@ completion_notes:
   - "Allowlist expandida em 3dd123c antes de calibrar os dois locks espelhados; skills e validator permaneceram imutáveis."
   - "GREEN 01059ba entregou quatro grupos executáveis e catálogo 31 skills/41 edges."
   - "Focal 4/4, Aula 4 84/84, full Node 166/166, sete validators, três mirrors, checkout e scans passaram."
-  - "Story InReview; Architect QG, epic-state, fan-in, push, PR, publicação e deploy não executados."
+  - "QG independente aprovou o HEAD 2a054a0 com PASS 99/100, confiança 0.99 e zero findings; story encerrada em Done."
 file_list:
   - "scripts/aula-04-release-gate.test.mjs"
   - ".claude/skills/_shared/squad-trafego/source-lock.json"

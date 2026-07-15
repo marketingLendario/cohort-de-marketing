@@ -2,7 +2,7 @@
 
 ## Status
 
-IN_REVIEW — gate técnico W3.2 aprovado; aguarda QG independente `@architect`.
+PASS — W3.2 aprovada por PO, QA e Architect; pronta para fan-in local.
 
 ## Matriz
 
@@ -23,8 +23,8 @@ IN_REVIEW — gate técnico W3.2 aprovado; aguarda QG independente `@architect`.
 - [x] Compatibilidade da Aula 3 preservada.
 - [x] Mirrors das skills são equivalentes.
 - [x] Materiais e exemplos são redistribuíveis.
-- [ ] Veredito PO/Architect/QA registrado.
+- [x] Veredito PO/Architect/QA registrado.
 
 ## Veredito
 
-PO `READY`; QA `PASS técnico`; Architect `PENDING` para QG independente.
+PO `READY`; QA `PASS técnico`; Architect `PASS 99/100`, confiança `0.99`, zero findings.

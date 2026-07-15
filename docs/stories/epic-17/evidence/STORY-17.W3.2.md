@@ -35,7 +35,7 @@ outro drift foi encontrado ou autorizado.
 | AC4 | Focal 4/4, Aula 4 84/84 e full Node 166/166; sete validators e três provas explícitas de mirror passaram. |
 | AC5 | Materiais/outputs passam scan contextual; links são relativos, guia não usa asset remoto, exemplo permanece imutável e nenhum path privado é rastreado. |
 | AC6 | Manifesto registra versões, compatibilidade, comandos, limitações e rollback sem declarar deploy. |
-| AC7 | PO `READY` e QA `PASS técnico` registrados; Architect permanece independente e a story está `InReview`. |
+| AC7 | PO `READY`, QA `PASS técnico` e Architect independente `PASS 99/100` registrados; story em `Done`. |
 
 ## Resultados executáveis
 
@@ -88,10 +88,10 @@ contratos, runtime, exemplos e `epic-17-state.json` não foram alterados.
 
 ## Handoff
 
-- Story: `InReview`.
+- Story: `Done`.
 - Implementação: `01059ba`.
 - Veredito `@po`: `READY`.
 - Veredito `@qa`: `PASS técnico`.
-- Veredito `@architect`: `PENDING`, obrigatoriamente independente.
-- Entity output: `Aula04PublicReleaseGateV1` em `release-ready-for-independent-signoff`.
+- Veredito `@architect`: `PASS 99/100`, confiança `0.99`, zero findings e blockers no HEAD `2a054a05638826cb931b2f8dc21bc35d15961baf`.
+- Entity output: `Aula04PublicReleaseGateV1` aprovado para fan-in local.
 - Fan-in, state, push, PR, publicação e deploy: não executados.
