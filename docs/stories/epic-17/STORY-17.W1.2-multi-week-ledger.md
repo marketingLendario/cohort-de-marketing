@@ -144,7 +144,10 @@ completion_notes:
   - "QG1 reproduziu perda de updates com writers concorrentes e vazamento por source/premise livres; ambos foram congelados em RED no commit bf61b2a."
   - "O commit e3636f6 adiciona lock cross-process com owner/token, timeout, recuperação stale/crash, CAS com retry e projeção referencial minimizada."
   - "O commit fffec23 fecha premiseRef para kind assumption também na validação de ledger prévio e prova preservação byte a byte contra kind forjado."
-  - "Executados 15/15 testes focais e 60/60 testes Node completos; 24 writers preservaram 24 entradas em oito repetições e também partindo de lock stale."
+  - "QG2 confirmou privacidade e concorrência normal, mas reproduziu 22/24 writers sobre lock stale e commit após troca de owner/token; veredito FAIL 64."
+  - "O RED 4bf2f0b congela recovery concorrente, gap mkdir/owner, fencing antes do rename, replay, SIGKILL e symlink."
+  - "O commit 2d354d5 substitui remoção cega por claim do owner em quarantine mais rmdir atômico, repete ENOENT e aplica fencing dev/ino, PID e token antes da leitura, CAS e rename."
+  - "Executados 21/21 testes focais e 66/66 testes Node completos; recovery stale 24/24 passou em oito repetições adicionais e hijack abortou sem commit."
 file_list:
   - "data/contracts/weekly-ledger.v1.schema.json"
   - "scripts/build-weekly-ledger.mjs"
@@ -172,3 +175,5 @@ file_list:
 | 2026-07-15 | @dev | Desenvolvimento e evidências concluídos; story movida para `InReview` com 10/10 testes focais e 55/55 testes Node verdes. |
 | 2026-07-15 | @architect | QG1 `FAIL 52`: concorrência perdia entradas e proveniência livre permitia PII/decisão/conteúdo bruto. |
 | 2026-07-15 | @dev | Remediação RED/GREEN concluída com lock+CAS, recuperação de owner e referências minimizadas; story mantida `InReview` para QG2 independente. |
+| 2026-07-15 | @architect | QG2 `FAIL 64`: recovery stale concorrente removia lock novo e owner antigo ainda commitava após hijack. |
+| 2026-07-15 | @dev | Remediação Round3 concluída com quarantine+rmdir, retry de ENOENT e fencing de owner/token; story mantida `InReview` para QG3 independente. |
