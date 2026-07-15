@@ -95,6 +95,9 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - `sourcePath` relativo do 0.1.0 permanece compatível e é normalizado para
   separadores POSIX em `sourceArtifactId`; traversal, absolutos Unix/Windows,
   URI e referências sensíveis continuam bloqueados pelo mesmo formato AJV.
+- O formato legado aceita `\\` somente na entrada da migração; o formato v1
+  exige `/`, impedindo que o caminho idempotente preserve uma segunda
+  representação da mesma proveniência.
 - A busca de PRs abertos por `ProjectBrief`, `project brief` e `16.W1.1`
   retornou lista vazia antes da implementação.
 
@@ -104,7 +107,7 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
   passou e 5 falharam, confirmando as lacunas do baseline.
 - `node --check scripts/migrate-project-brief.mjs`: PASS.
 - `node --test data/contracts/fixtures/project-brief/project-brief-contract.test.mjs`:
-  PASS, 18/18 após o remediation QG Round 2.
+  PASS, 19/19 após o remediation QG Round 3.
 - `npm ci --prefix scripts --ignore-scripts`: PASS a partir do lockfile.
 - `node scripts/validate-project-brief-rules.mjs`: PASS, 120 campos, 31 skills
   e ambos schemas AJV 2020 compilados.
@@ -115,6 +118,8 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - Compatibilidade R2 coberta com fixture relativa, equivalência POSIX/Windows
   e negativos separados para traversal, absolutos Unix/Windows, URI, segredo,
   privado e valor não-string.
+- Regressão R3 prova que `sourceArtifactId` POSIX passa no no-op v1 e a mesma
+  referência com backslashes falha no formato `portable-artifact-reference`.
 - `git diff --check`: PASS.
 
 ### Commits locais
@@ -125,6 +130,8 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - `b10b94c` - `fix: enforce AJV ProjectBrief validation [Story 16.W1.1]`
 - `a369e64` - `docs: record ProjectBrief QG remediation [Story 16.W1.1]`
 - `fa971fd` - `fix: normalize portable artifact references [Story 16.W1.1]`
+- `9811423` - `docs: record ProjectBrief Round 2 remediation [Story 16.W1.1]`
+- `bb75b99` - `fix: canonicalize v1 artifact references [Story 16.W1.1]`
 
 ## File List real
 
@@ -144,6 +151,12 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
 - `docs/stories/epic-16/epic-16-state.json`
 - `docs/stories/epic-16/STORY-16.W1.1-canonical-project-brief-v1.md`
 
+Delta QG-005-R3 confirmado dentro da File List existente:
+
+- `data/project-brief.schema.json`
+- `scripts/migrate-project-brief.mjs`
+- `data/contracts/fixtures/project-brief/project-brief-contract.test.mjs`
+
 ## QA prep
 
 - Revisar de forma independente a semântica de identidade pública
@@ -154,6 +167,8 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
   o caminho idempotente e todos os casos negativos enumerados nas evidências.
 - No Round 3, revisar `fa971fd` contra QG-003-R2 e confirmar que a normalização
   altera apenas separadores, sem reduzir a validação dos dot-paths canônicos.
+- No Round 4, revisar `bb75b99` contra QG-005-R3: Windows deve continuar aceito
+  no legado, enquanto backslash deve falhar no `sourceArtifactId` v1.
 - O status permanece `InReview`; nenhum veredito de quality gate foi
   autoatribuído pelo executor.
 
@@ -165,3 +180,5 @@ Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
   versionadas, dot-paths canônicos, referências portáveis e regressões exatas.
 - 2026-07-14: QG Round 2 remediado preservando `sourcePath` relativo legítimo,
   com normalização determinística e rejeições de segurança separadamente testadas.
+- 2026-07-14: QG Round 3 remediado separando o formato legado do formato v1,
+  que agora possui uma única representação canônica POSIX de proveniência.
