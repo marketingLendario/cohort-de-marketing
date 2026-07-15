@@ -223,6 +223,27 @@ test('digest verificável rejeita valor e sourceRef adulterados', async (t) => {
   }
 });
 
+test('ordem das chaves dos objetos do index não altera a leitura', async (t) => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'history-index-order-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const originalFile = fixture('history-compatible.ledger.json');
+  const ledger = JSON.parse(await readFile(originalFile, 'utf8'));
+  ledger.index = ledger.index.map((entry) => ({
+    revisions: entry.revisions,
+    weekStart: entry.weekStart,
+    campaignId: entry.campaignId,
+    projectId: entry.projectId,
+  }));
+  const reorderedFile = path.join(directory, 'reordered-index.json');
+  await writeFile(reorderedFile, `${JSON.stringify(ledger, null, 2)}\n`);
+
+  const original = await run(['--ledger', originalFile, ...selection]);
+  const reordered = await run(['--ledger', reorderedFile, ...selection]);
+  assert.equal(original.code, 0, original.stderr || original.stdout);
+  assert.equal(reordered.code, 0, reordered.stderr || reordered.stdout);
+  assert.equal(reordered.stdout, original.stdout);
+});
+
 test('lexemas numéricos inseguros falham antes de JSON.parse e nunca são arredondados', async (t) => {
   const directory = await mkdtemp(path.join(os.tmpdir(), 'history-numeric-'));
   t.after(() => rm(directory, { recursive: true, force: true }));

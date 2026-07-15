@@ -289,6 +289,25 @@ test('ledger legado sem digest é rejeitado explicitamente em vez de ganhar inte
   assert.equal(await readFile(ledgerPath, 'utf8'), bytes);
 });
 
+test('ordem das chaves dos objetos do index não altera sua semântica', async (t) => {
+  const ledgerPath = await withLedger(t);
+  await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath]);
+  const ledger = JSON.parse(await readFile(ledgerPath, 'utf8'));
+  ledger.index = ledger.index.map((entry) => ({
+    revisions: entry.revisions,
+    weekStart: entry.weekStart,
+    campaignId: entry.campaignId,
+    projectId: entry.projectId,
+  }));
+  const reorderedBytes = `${JSON.stringify(ledger, null, 2)}\n`;
+  await writeFile(ledgerPath, reorderedBytes);
+
+  const result = await run([fixture('ledger-idempotent.input.jsonl'), ledgerPath]);
+  assert.equal(result.code, 0, result.stderr || result.stdout);
+  assert.deepEqual(JSON.parse(result.stdout), { added: 0, replayed: 1, total: 4 });
+  assert.equal(await readFile(ledgerPath, 'utf8'), reorderedBytes);
+});
+
 test('lexema numérico inseguro é rejeitado antes de JSON.parse sem arredondar ou escrever', async (t) => {
   const ledgerPath = await withLedger(t);
   const input = path.join(path.dirname(ledgerPath), 'unsafe-number.jsonl');
