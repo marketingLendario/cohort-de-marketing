@@ -4,7 +4,7 @@
   "namespace": "PUB",
   "title": "Projeto canonico como fonte de verdade",
   "status": "InProgress",
-  "verification_verdict": "NOT_RUN",
+  "verification_verdict": "IN_REVIEW",
   "created": "2026-07-14",
   "depends_on": ["GATE-0"],
   "implementation_authorized": true,
@@ -79,7 +79,7 @@
         {
           "story_id": "16.W3.1",
           "title": "Gate público de contrato e distribuição",
-          "status": "Ready",
+          "status": "InReview",
           "task_mode": "VALIDAR",
           "deploy_type": "none",
           "repo_target": "cohort-de-marketing",
