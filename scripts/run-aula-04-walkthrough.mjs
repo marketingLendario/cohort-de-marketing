@@ -24,6 +24,14 @@ const ARTIFACTS = Object.freeze([
   'walkthrough-summary.json',
   'weekly-ledger.json',
 ]);
+const SENSITIVE_TEXT_PATTERNS = Object.freeze([
+  /[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+/i,
+  /\bbearer\s+[a-z0-9._~+/=-]+/i,
+  /\b(?:token|password|secret|api[-_]?key)\b/i,
+  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
+  /(?:^|\s)\/Users\//,
+  /(?:^|\s)[A-Z]:\\/i,
+]);
 const EMPTY_LEDGER = Object.freeze({
   contract: 'WeeklyLedger',
   schemaVersion: '1.1.0',
@@ -38,6 +46,15 @@ function errorWithCode(code) {
   const error = new Error(code);
   error.code = code;
   return error;
+}
+
+function containsSensitiveText(value) {
+  if (typeof value === 'string') {
+    return SENSITIVE_TEXT_PATTERNS.some((pattern) => pattern.test(value));
+  }
+  if (Array.isArray(value)) return value.some(containsSensitiveText);
+  if (!value || typeof value !== 'object') return false;
+  return Object.values(value).some(containsSensitiveText);
 }
 
 async function readSafeJson(file, code) {
@@ -75,7 +92,7 @@ async function parsePanels(file) {
       throw errorWithCode('INVALID_WEEKLY_PANEL');
     }
     const validation = await validateAula04Contract(panel, `week-${index + 1}`);
-    if (panel.contract !== 'WeeklyPanel' || !validation.valid) {
+    if (panel.contract !== 'WeeklyPanel' || !validation.valid || containsSensitiveText(panel)) {
       throw errorWithCode('INVALID_WEEKLY_PANEL');
     }
     panels.push({ panel, line: index + 1 });
@@ -120,6 +137,9 @@ export async function runAula04Walkthrough(exampleDirectory, outputDirectory) {
     readSafeJson(path.join(exampleDirectory, 'previous-decision.json'), 'INVALID_PREVIOUS_DECISION'),
     readSafeJson(path.join(exampleDirectory, 'expected-walkthrough.json'), 'INVALID_EXPECTATION'),
   ]);
+  if (containsSensitiveText(observations)) throw errorWithCode('INVALID_SOURCE_OBSERVATIONS');
+  if (containsSensitiveText(previousDecision)) throw errorWithCode('INVALID_PREVIOUS_DECISION');
+  if (containsSensitiveText(expected)) throw errorWithCode('INVALID_EXPECTATION');
 
   const result = await buildWeeklyLedger(panels, EMPTY_LEDGER);
   if (result.conflict || result.added !== 3 || result.ledger.entries.length !== 3) {
@@ -142,6 +162,14 @@ export async function runAula04Walkthrough(exampleDirectory, outputDirectory) {
   };
   const diagnosis = await diagnoseDecisionOutcome(request);
   if (!diagnosis) throw errorWithCode('INVALID_PREVIOUS_DECISION');
+  if (diagnosis.verdict !== 'inconclusivo'
+    || !isDeepStrictEqual(diagnosis.reasonCodes, ['RECONCILIATION_CONFOUNDING_GAP'])
+    || diagnosis.proposedLevers.length !== 0
+    || diagnosis.humanDecision.status !== 'pending'
+    || diagnosis.guards.mutationAllowed !== false
+    || diagnosis.guards.historicalDecisionImmutable !== true) {
+    throw errorWithCode('UNEXPECTED_WALKTHROUGH_RESULT');
+  }
   const summary = {
     valid: true,
     code: 'WALKTHROUGH_COMPLETE',
@@ -164,6 +192,9 @@ export async function runAula04Walkthrough(exampleDirectory, outputDirectory) {
     ['decision-outcome-diagnosis.json', diagnosis],
     ['walkthrough-summary.json', summary],
   ]);
+  if (containsSensitiveText([...outputs.values()])) {
+    throw errorWithCode('UNSAFE_WALKTHROUGH_OUTPUT');
+  }
   for (const artifact of ARTIFACTS) {
     await writeFile(path.join(outputDirectory, artifact), prettyJson(outputs.get(artifact)), { flag: 'wx' });
   }
@@ -184,6 +215,7 @@ async function main(args) {
       'INVALID_EXAMPLE', 'INVALID_OUTPUT', 'OUTPUT_NOT_EMPTY', 'INVALID_WEEKLY_PANEL',
       'INVALID_SOURCE_OBSERVATIONS', 'INVALID_PREVIOUS_DECISION', 'INVALID_EXPECTATION',
       'INVALID_GENERATED_LEDGER', 'UNEXPECTED_WALKTHROUGH_RESULT',
+      'UNSAFE_WALKTHROUGH_OUTPUT',
     ]);
     const code = inputCodes.has(error.code) ? error.code : 'WALKTHROUGH_ERROR';
     process.stderr.write(`${code}\n`);
