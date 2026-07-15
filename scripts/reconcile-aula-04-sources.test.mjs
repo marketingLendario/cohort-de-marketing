@@ -63,10 +63,12 @@ test('match produz contrato fechado, determinístico e sem fonte verdadeira', as
   assert.deepEqual(output.comparisons.map(({ pair }) => pair), [
     ['platform', 'checkout'], ['platform', 'cash'], ['checkout', 'cash'],
   ]);
-  assert.deepEqual(output.comparisons.map(({ absoluteGap, relativeGap }) => ({ absoluteGap, relativeGap })), [
-    { absoluteGap: '0', relativeGap: '0' },
-    { absoluteGap: '0', relativeGap: '0' },
-    { absoluteGap: '0', relativeGap: '0' },
+  assert.deepEqual(output.comparisons.map(({ absoluteGap, relativeGap, relativeGapExact }) => ({
+    absoluteGap, relativeGap, relativeGapExact,
+  })), [
+    { absoluteGap: '0', relativeGap: '0', relativeGapExact: { numerator: '0', denominator: '1' } },
+    { absoluteGap: '0', relativeGap: '0', relativeGapExact: { numerator: '0', denominator: '1' } },
+    { absoluteGap: '0', relativeGap: '0', relativeGapExact: { numerator: '0', denominator: '1' } },
   ]);
   assert.equal(output.requiresHumanReview, true);
   assert.equal(JSON.stringify(output).includes('truth'), false);
@@ -80,14 +82,17 @@ test('mismatch calcula gaps simétricos com decimal exato e preserva literais', 
     {
       pair: ['platform', 'checkout'], comparable: true, reasonCodes: [],
       absoluteGap: '200', relativeGap: '0.166667',
+      relativeGapExact: { numerator: '1', denominator: '6' },
     },
     {
       pair: ['platform', 'cash'], comparable: true, reasonCodes: [],
       absoluteGap: '210', relativeGap: '0.175',
+      relativeGapExact: { numerator: '7', denominator: '40' },
     },
     {
       pair: ['checkout', 'cash'], comparable: true, reasonCodes: [],
       absoluteGap: '10', relativeGap: '0.01',
+      relativeGapExact: { numerator: '1', denominator: '100' },
     },
   ]);
   assert.equal(output.sources[0].value, '1200.000');
@@ -116,6 +121,7 @@ test('fonte ausente vira nao_fornecido, enquanto zero explícito continua sendo 
     assert.deepEqual(comparison.reasonCodes, ['MISSING_SOURCE']);
     assert.equal(comparison.absoluteGap, null);
     assert.equal(comparison.relativeGap, null);
+    assert.equal(comparison.relativeGapExact, null);
   }
 });
 
@@ -139,6 +145,7 @@ test('moeda, janela, período e confirmação incompatíveis explicam sem calcul
     assert.deepEqual(pair.reasonCodes, expectedReasons, name);
     assert.equal(pair.absoluteGap, null, name);
     assert.equal(pair.relativeGap, null, name);
+    assert.equal(pair.relativeGapExact, null, name);
   }
 });
 
@@ -154,7 +161,9 @@ test('timestamps inválidos, período invertido, duplicata e versão desconhecid
   const cases = [
     ['timestamp', (doc) => { doc.observations[0].observedAt = '2026-02-30T09:00:00Z'; }],
     ['period-order', (doc) => { doc.observations[0].period.end = doc.observations[0].period.start; }],
-    ['duplicate', (doc) => { doc.observations.push(structuredClone(doc.observations[0])); }],
+    ['duplicate', (doc) => { doc.observations = [doc.observations[0], structuredClone(doc.observations[0])]; }],
+    ['currency', (doc) => { doc.observations[0].currency = 'ZZZ'; }],
+    ['provenance-kind', (doc) => { doc.observations[0].provenanceRef.kind = 'cash-export'; }],
     ['version', (doc) => { doc.schemaVersion = '2.0.0'; }],
   ];
   for (const [name, mutate] of cases) {
@@ -173,15 +182,15 @@ test('timestamps inválidos, período invertido, duplicata e versão desconhecid
 test('schema fechado e sanitização bloqueiam PII, credenciais e payload de comprador sem eco', async (t) => {
   const base = await loadFixture('reconciliation-match.json');
   const cases = [
-    ['buyer-name', (doc) => { doc.observations[0].buyerName = 'Pessoa Confidencial'; }],
-    ['email', (doc) => { doc.observations[0].provenanceRef.id = 'aluno@example.invalid'; }],
-    ['token', (doc) => { doc.accessToken = 'token-super-secreto'; }],
-    ['buyer-payload', (doc) => { doc.buyerPayload = { document: '12345678900' }; }],
+    ['buyer-name', (doc) => { doc.observations[0].buyerName = 'Pessoa Confidencial'; }, 'Pessoa Confidencial'],
+    ['email', (doc) => { doc.observations[0].provenanceRef.id = 'aluno@example.invalid'; }, 'aluno@example.invalid'],
+    ['token', (doc) => { doc.accessToken = 'token-super-secreto'; }, 'token-super-secreto'],
+    ['phone-id', (doc) => { doc.observations[0].provenanceRef.id = 'platform-11.99999.8888'; }, '11.99999.8888'],
+    ['buyer-payload', (doc) => { doc.buyerPayload = { document: '12345678900' }; }, '12345678900'],
   ];
-  for (const [name, mutate] of cases) {
+  for (const [name, mutate, sensitive] of cases) {
     const document = structuredClone(base);
     mutate(document);
-    const marker = name === 'email' ? 'aluno@example.invalid' : 'token-super-secreto';
     const file = await withTempDocument(t, document, `${name}.json`);
     const result = await run([file]);
     assert.equal(result.code, 1, name);
@@ -189,10 +198,8 @@ test('schema fechado e sanitização bloqueiam PII, credenciais e payload de com
     assert.deepEqual(JSON.parse(result.stdout), {
       valid: false, code: 'INVALID_SOURCE_OBSERVATION_SET',
     });
-    assert.equal(result.stdout.includes(marker), false, name);
-    assert.equal(result.stderr.includes(marker), false, name);
-    assert.equal(result.stdout.includes('Pessoa Confidencial'), false, name);
-    assert.equal(result.stdout.includes('12345678900'), false, name);
+    assert.equal(result.stdout.includes(sensitive), false, name);
+    assert.equal(result.stderr.includes(sensitive), false, name);
   }
 });
 
@@ -206,6 +213,9 @@ test('decimais maiores que Number.MAX_SAFE_INTEGER mantêm precisão e input nã
   const output = parseSuccess(await run([file]));
   const after = await readFile(file);
   assert.equal(output.comparisons[0].absoluteGap, '1');
+  assert.deepEqual(output.comparisons[0].relativeGapExact, {
+    numerator: '250000000000', denominator: '2251799813685248280864197253',
+  });
   assert.equal(output.comparisons[1].absoluteGap, '0');
   assert.deepEqual(after, before);
 });

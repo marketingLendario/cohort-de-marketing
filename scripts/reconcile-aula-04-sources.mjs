@@ -44,7 +44,7 @@ function containsSensitiveData(value, parentKey = '') {
   if (typeof value === 'string') {
     if (SENSITIVE_VALUE_PATTERNS.some((pattern) => pattern.test(value))) return true;
     if (parentKey === 'id' && /(?:^|[.-])token(?:[.-]|$)/i.test(value)) return true;
-    if (parentKey === 'id' && /\d{10,}/.test(value)) return true;
+    if (parentKey === 'id' && value.replace(/\D/g, '').length >= 10) return true;
     return false;
   }
   if (Array.isArray(value)) return value.some((item) => containsSensitiveData(item, parentKey));
@@ -179,6 +179,28 @@ function relativeGap(numerator, denominator) {
   return fraction ? `0.${fraction}` : '0';
 }
 
+function greatestCommonDivisor(left, right) {
+  let a = left;
+  let b = right;
+  while (b !== 0n) {
+    const remainder = a % b;
+    a = b;
+    b = remainder;
+  }
+  return a;
+}
+
+function exactRelativeGap(numerator, denominator) {
+  if (numerator === 0n || denominator === 0n) {
+    return { numerator: '0', denominator: '1' };
+  }
+  const divisor = greatestCommonDivisor(numerator, denominator);
+  return {
+    numerator: (numerator / divisor).toString(),
+    denominator: (denominator / divisor).toString(),
+  };
+}
+
 function periodsMatch(left, right) {
   return dateTimeMillis(left.period.start) === dateTimeMillis(right.period.start)
     && dateTimeMillis(left.period.end) === dateTimeMillis(right.period.end);
@@ -193,6 +215,7 @@ function comparePair(left, right) {
       reasonCodes: ['MISSING_SOURCE'],
       absoluteGap: null,
       relativeGap: null,
+      relativeGapExact: null,
     };
   }
 
@@ -204,7 +227,10 @@ function comparePair(left, right) {
   const cash = left.source === 'cash' ? left : right.source === 'cash' ? right : null;
   if (cash && !cash.cashConfirmed) reasonCodes.push('UNCONFIRMED_CASH');
   if (reasonCodes.length > 0) {
-    return { pair, comparable: false, reasonCodes, absoluteGap: null, relativeGap: null };
+    return {
+      pair, comparable: false, reasonCodes,
+      absoluteGap: null, relativeGap: null, relativeGapExact: null,
+    };
   }
 
   const aligned = alignDecimals(parseDecimal(left.value), parseDecimal(right.value));
@@ -218,6 +244,7 @@ function comparePair(left, right) {
     reasonCodes: [],
     absoluteGap: canonicalDecimal(difference, aligned.scale),
     relativeGap: relativeGap(difference, denominator),
+    relativeGapExact: exactRelativeGap(difference, denominator),
   };
 }
 
