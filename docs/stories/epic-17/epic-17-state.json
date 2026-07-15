@@ -82,7 +82,7 @@
         {
           "story_id": "17.W2.1",
           "title": "Leitura historica sem invencao",
-          "status": "Ready",
+          "status": "Done",
           "task_mode": "CRIAR",
           "deploy_type": "none",
           "repo_target": "marketingLendario/cohort-de-marketing",
@@ -97,8 +97,7 @@
         {
           "story_id": "17.W2.2",
           "title": "Diagnostico decisao versus resultado",
-          "status": "Blocked",
-          "status_reason": "Dependency gate: 17.W2.1 must be Done with PASS before dispatch.",
+          "status": "Ready",
           "task_mode": "MODIFICAR",
           "deploy_type": "none",
           "repo_target": "marketingLendario/cohort-de-marketing",
