@@ -6,7 +6,7 @@
   const SLUG = "academia-fit";
   const P = (rel) => `projetos/${SLUG}/${rel}`;
 
-  const SAMPLES = "mapa-skills-samples/academia-fit";
+  const SAMPLES = "/mapa-skills-samples/academia-fit";
 
   const md = (id, label, rel, content) => ({
     id, label, path: P(rel), format: "md",
@@ -418,4 +418,206 @@ WhatsApp: "Quer tentar em 2x?"
   }
   return base;
   };
+})();
+
+
+(function () {
+  const REQUIRED_STATES = ["available", "recommended", "almost", "blocked", "not_applicable", "done"];
+
+  class SkillSurfaceContractError extends Error {
+    constructor(code, message) {
+      super(message);
+      this.name = "SkillSurfaceContractError";
+      this.code = code;
+    }
+  }
+
+  const fail = (code, message) => { throw new SkillSurfaceContractError(code, message); };
+  const isRecord = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  const sorted = (values) => [...values].sort();
+  const sameSet = (left, right) => JSON.stringify(sorted(left)) === JSON.stringify(sorted(right));
+
+  function validateContracts(catalog, rules) {
+    if (!isRecord(catalog) || catalog.schemaVersion !== "1.0.0"
+      || !Array.isArray(catalog.skills) || catalog.skills.length === 0
+      || !Array.isArray(catalog.edges)) {
+      fail("INVALID_SKILL_CATALOG", "skill-catalog.json ausente ou malformado.");
+    }
+    if (!isRecord(rules) || !Array.isArray(rules.states)
+      || !isRecord(rules.artifactGlobs) || !isRecord(rules.skills)) {
+      fail("INVALID_UNLOCK_RULES", "skill-unlock-rules.json ausente ou malformado.");
+    }
+    if (!REQUIRED_STATES.every((state) => rules.states.includes(state))) {
+      fail("INVALID_UNLOCK_RULES", "skill-unlock-rules.json não declara todos os estados públicos.");
+    }
+
+    const ids = catalog.skills.map((skill) => skill?.id);
+    if (ids.some((id) => typeof id !== "string" || !/^[a-z0-9][a-z0-9-]*$/.test(id))
+      || new Set(ids).size !== ids.length) {
+      fail("INVALID_SKILL_ID", "O catálogo contém ID de skill inválido ou duplicado.");
+    }
+    for (const skill of catalog.skills) {
+      if (skill.command !== "/" + skill.id
+        || typeof skill.title !== "string"
+        || typeof skill.description !== "string"
+        || typeof skill.phase !== "string"
+        || typeof skill.phaseColor !== "string"
+        || !Number.isInteger(skill.order)
+        || typeof skill.kind !== "string"
+        || typeof skill.level !== "string"
+        || !Array.isArray(skill.prerequisites)
+        || !Array.isArray(skill.outputs)
+        || !Array.isArray(skill.primaryArtifacts)
+        || !Array.isArray(skill.feeds)
+        || typeof skill.guard !== "string"
+        || typeof skill.artifactSummary !== "string") {
+        fail("INVALID_SKILL_CATALOG", "Uma skill do catálogo está incompleta.");
+      }
+    }
+
+    const ruleIds = Object.keys(rules.skills);
+    if (!sameSet(ids, ruleIds)) {
+      fail("SURFACE_ID_MISMATCH", "Catálogo e regras divergem na lista de skills.");
+    }
+    const artifactTypes = new Set(Object.keys(rules.artifactGlobs));
+    for (const [skillId, rule] of Object.entries(rules.skills)) {
+      if (!isRecord(rule) || rule.command !== "/" + skillId) {
+        fail("INVALID_UNLOCK_RULES", "Uma regra de skill está ausente ou incompleta.");
+      }
+      for (const key of ["primaryArtifacts", "requiredArtifacts", "recommendedArtifacts"]) {
+        if (!Array.isArray(rule[key] || [])) {
+          fail("INVALID_UNLOCK_RULES", "Uma lista de artefatos da regra é inválida.");
+        }
+        for (const artifact of rule[key] || []) {
+          if (!artifactTypes.has(artifact)) {
+            fail("RULE_ORPHAN_ARTIFACT", "Uma regra referencia artefato inexistente.");
+          }
+        }
+      }
+      for (const key of ["requiredFields", "recommendedFields"]) {
+        if (!Array.isArray(rule[key] || []) || (rule[key] || []).some((field) => typeof field !== "string" || !field)) {
+          fail("INVALID_UNLOCK_RULES", "Uma lista de campos da regra é inválida.");
+        }
+      }
+    }
+
+    const idSet = new Set(ids);
+    for (const edge of catalog.edges) {
+      if (!isRecord(edge) || !idSet.has(edge.from) || !idSet.has(edge.to)
+        || edge.from === edge.to || !["dependency", "feedback", "utility"].includes(edge.type)) {
+        fail("CATALOG_ORPHAN_EDGE", "O catálogo contém edge órfã ou inválida.");
+      }
+    }
+
+    const skills = catalog.skills.map((skill) => ({
+      ...skill,
+      name: skill.title,
+      type: skill.kind,
+      guards: skill.guard,
+      artifacts: skill.artifactSummary,
+      rule: rules.skills[skill.id],
+    }));
+    return { catalog, rules, skills, edges: catalog.edges.map((edge) => ({ ...edge })) };
+  }
+
+  function valueAt(document, dottedPath) {
+    return dottedPath.split(".").reduce((value, key) => value?.[key], document);
+  }
+
+  function filled(value) {
+    if (Array.isArray(value)) return value.length > 0;
+    if (isRecord(value)) return Object.values(value).some(filled);
+    return value !== undefined && value !== null && value !== "" && value !== false && value !== 0;
+  }
+
+  function validateArtifactIndex(artifactIndex, rules, projectBrief) {
+    if (artifactIndex == null) return {};
+    if (!isRecord(artifactIndex) || artifactIndex.schemaVersion !== "artifact-index-v1"
+      || !Array.isArray(artifactIndex.entries)
+      || !isRecord(artifactIndex.summary)
+      || artifactIndex.summary.total !== artifactIndex.entries.length) {
+      fail("INVALID_ARTIFACT_INDEX", "ArtifactIndex ausente ou malformado.");
+    }
+    const projectSlug = projectBrief?.data?.project?.slug || projectBrief?.project?.slug;
+    if (projectSlug && artifactIndex.project?.slug !== projectSlug) {
+      fail("INVALID_ARTIFACT_INDEX", "ArtifactIndex pertence a outro projeto.");
+    }
+    const artifacts = {};
+    for (const entry of artifactIndex.entries) {
+      if (!isRecord(entry) || !Object.hasOwn(rules.artifactGlobs, entry.artifactType)
+        || !["confirmed", "pending_confirmation"].includes(entry.confirmationStatus)
+        || entry.satisfiesCriticalRequirement !== (entry.confirmationStatus === "confirmed")) {
+        fail("INVALID_ARTIFACT_INDEX", "ArtifactIndex contém entrada inválida.");
+      }
+      if (entry.confirmationStatus === "confirmed") artifacts[entry.artifactType] = true;
+    }
+    const confirmed = artifactIndex.entries.filter((entry) => entry.confirmationStatus === "confirmed").length;
+    if (artifactIndex.summary.confirmed !== confirmed
+      || artifactIndex.summary.pendingConfirmation !== artifactIndex.entries.length - confirmed) {
+      fail("INVALID_ARTIFACT_INDEX", "ArtifactIndex contém resumo divergente.");
+    }
+    return artifacts;
+  }
+
+  function evaluateSkills({ catalog, rules, projectBrief = {}, artifactIndex = null }) {
+    const contract = validateContracts(catalog, rules);
+    const briefData = projectBrief?.data || projectBrief || {};
+    const artifacts = validateArtifactIndex(artifactIndex, rules, projectBrief);
+
+    const conditionMatches = (condition) => {
+      const value = valueAt(briefData, condition.field);
+      if (Object.hasOwn(condition, "equals")) return value === condition.equals;
+      if (Array.isArray(condition.in)) return condition.in.includes(value);
+      return false;
+    };
+    const groupMatches = (group) => {
+      if (group.matches && Object.entries(group.matches).some(([field, expected]) => valueAt(briefData, field) !== expected)) return false;
+      const fieldsOk = (group.fields || []).every((field) => filled(valueAt(briefData, field)));
+      const artifactsOk = (group.artifacts || []).every((artifact) => Boolean(artifacts[artifact]));
+      return fieldsOk && artifactsOk;
+    };
+
+    return contract.skills.map((skill) => {
+      const rule = skill.rule;
+      const primaryDone = (rule.primaryArtifacts || []).length > 0
+        && rule.primaryArtifacts.every((artifact) => artifacts[artifact]);
+      const notApplicable = (rule.notApplicableWhen || []).find(conditionMatches);
+      if (notApplicable) {
+        return { skillId: skill.id, skill, rule, state: "not_applicable", missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [], reason: notApplicable.reason };
+      }
+      if (primaryDone) {
+        return { skillId: skill.id, skill, rule, state: "done", missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [] };
+      }
+      const missingFields = (rule.requiredFields || []).filter((field) => !filled(valueAt(briefData, field)));
+      const missingArtifacts = (rule.requiredArtifacts || []).filter((artifact) => !artifacts[artifact]);
+      const groups = rule.anyOf || [];
+      const missingAnyOf = groups.length === 0 || groups.some(groupMatches)
+        ? []
+        : groups.map((group) => group.label || "Caminho alternativo");
+      const recommendedMissing = [
+        ...(rule.recommendedFields || []).filter((field) => !filled(valueAt(briefData, field))),
+        ...(rule.recommendedArtifacts || []).filter((artifact) => !artifacts[artifact]),
+      ];
+      const hardMissing = missingFields.length + missingArtifacts.length + missingAnyOf.length;
+      let state = "available";
+      if (hardMissing > 0) state = hardMissing <= 2 ? "almost" : "blocked";
+      else if (recommendedMissing.length > 0) state = "recommended";
+      return { skillId: skill.id, skill, rule, state, missingFields, missingArtifacts, missingAnyOf, recommendedMissing };
+    });
+  }
+
+  function buildLayout(skills, columns = 11) {
+    return Object.fromEntries(skills.map((skill, index) => [
+      skill.id,
+      { col: index % columns, row: Math.floor(index / columns) * 2 },
+    ]));
+  }
+
+  window.SkillSurfaceContract = Object.freeze({
+    SkillSurfaceContractError,
+    validateContracts,
+    validateArtifactIndex,
+    evaluateSkills,
+    buildLayout,
+  });
 })();
