@@ -1,0 +1,65 @@
+{
+  "contract": "CampaignPlan",
+  "schemaVersion": "1.0.0",
+  "id": "campaign-plan:acme:1",
+  "projectId": "project-acme",
+  "campaignId": "campaign-acme-launch",
+  "revision": 1,
+  "sourceBrief": {
+    "id": "project-acme:revision:1",
+    "revision": 1
+  },
+  "platform": "meta",
+  "objective": "sales",
+  "landingPageUrl": "https://example.com/oferta",
+  "budget": {
+    "daily": 30,
+    "periodDays": 7,
+    "currency": "BRL"
+  },
+  "angles": [
+    {
+      "id": "angle-problem-aware",
+      "name": "Problema consciente",
+      "awarenessLevel": 2,
+      "source": "brief"
+    }
+  ],
+  "finalists": [
+    {
+      "id": "creative-1",
+      "angleId": "angle-problem-aware",
+      "hook": "Reconheca o gargalo antes de escalar",
+      "copy": "Uma decisao por vez, com evidencia.",
+      "format": "feed",
+      "selectedByHuman": true
+    }
+  ],
+  "tracking": {
+    "status": "OK",
+    "criticalItemsConfirmed": true,
+    "auditArtifactId": "tracking-audit-1",
+    "checks": {
+      "pixel": {
+        "value": true,
+        "evidence": "Confirmado pelo operador",
+        "critical": true
+      }
+    }
+  },
+  "structure": {
+    "schemaVersion": "1.0.0",
+    "optimization": "conversion",
+    "audience": {
+      "mode": "broad_cold_advantage_plus",
+      "umbrellaInterest": null
+    },
+    "creativeIds": [
+      "creative-1"
+    ]
+  },
+  "manualSubmission": {
+    "status": "ready"
+  },
+  "overrides": {}
+}

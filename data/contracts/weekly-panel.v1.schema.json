@@ -5,12 +5,14 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "contract",
     "schemaVersion",
     "id",
     "projectId",
     "campaignId",
     "weekStart",
     "revision",
+    "previousStatus",
     "status",
     "metrics",
     "reader",
@@ -18,31 +20,86 @@
     "events"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.0.0" },
+    "contract": { "type": "string", "const": "WeeklyPanel" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
     "id": { "type": "string", "minLength": 1 },
     "projectId": { "type": "string", "minLength": 1 },
     "campaignId": { "type": "string", "minLength": 1 },
     "weekStart": { "type": "string", "format": "date" },
     "revision": { "type": "integer", "minimum": 1 },
-    "status": { "enum": ["draft", "reading_ready", "diagnosed", "decided", "closed"] },
-    "trackingAuditArtifactId": { "type": "string" },
-    "campaignPlanRevisionId": { "type": "string" },
+    "previousStatus": {
+      "type": ["string", "null"],
+      "enum": [null, "draft", "reading_ready", "diagnosed", "decided", "closed"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "reading_ready", "diagnosed", "decided", "closed"]
+    },
+    "trackingAuditArtifactId": { "type": "string", "minLength": 1 },
+    "campaignPlanRevisionId": { "type": "string", "minLength": 1 },
     "metrics": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "value", "seal", "source", "confirmedByHuman"],
+        "required": [
+          "name",
+          "value",
+          "seal",
+          "source",
+          "attributionWindow",
+          "premise",
+          "confirmedByHuman",
+          "cashConfirmed"
+        ],
         "properties": {
           "name": { "type": "string", "minLength": 1 },
           "value": { "type": ["number", "null"] },
-          "seal": { "enum": ["Real", "Estimado", "nao_fornecido"] },
-          "source": { "type": "string" },
-          "attributionWindow": { "type": ["string", "null"] },
-          "premise": { "type": ["string", "null"] },
+          "seal": { "type": "string", "enum": ["Real", "Estimado", "nao_fornecido"] },
+          "source": { "type": "string", "minLength": 1 },
+          "attributionWindow": { "type": ["string", "null"], "minLength": 1 },
+          "premise": { "type": ["string", "null"], "minLength": 1 },
           "confirmedByHuman": { "type": "boolean" },
           "cashConfirmed": { "type": "boolean" }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "seal": { "const": "nao_fornecido" } },
+              "required": ["seal"]
+            },
+            "then": {
+              "properties": {
+                "value": { "const": null },
+                "attributionWindow": { "const": null },
+                "premise": { "const": null },
+                "confirmedByHuman": { "const": false },
+                "cashConfirmed": { "const": false }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": { "seal": { "const": "Estimado" } },
+              "required": ["seal"]
+            },
+            "then": {
+              "properties": {
+                "value": { "type": "number" },
+                "premise": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": { "seal": { "const": "Real" } },
+              "required": ["seal"]
+            },
+            "then": {
+              "properties": { "value": { "type": "number" } }
+            }
+          }
+        ]
       }
     },
     "reader": {
@@ -50,50 +107,85 @@
       "additionalProperties": false,
       "required": ["literalOnly", "sampleSufficientForCpa", "note"],
       "properties": {
-        "literalOnly": { "const": true },
+        "literalOnly": { "type": "boolean", "const": true },
         "sampleSufficientForCpa": { "type": "boolean" },
         "note": { "type": "string" },
         "reviewedAt": { "type": "string", "format": "date-time" }
       }
     },
     "diagnosis": {
-      "type": ["object", "null"],
-      "additionalProperties": false,
-      "required": ["hypothesis", "singleLever", "successCriterion", "reversalCriterion"],
-      "properties": {
-        "hypothesis": { "type": "string", "minLength": 1 },
-        "singleLever": { "type": "string", "minLength": 1 },
-        "successCriterion": { "type": "string", "minLength": 1 },
-        "reversalCriterion": { "type": "string", "minLength": 1 },
-        "circuitBreakerTriggered": { "type": "boolean" }
-      }
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["hypothesis", "singleLever", "successCriterion", "reversalCriterion"],
+          "properties": {
+            "hypothesis": { "type": "string", "minLength": 1 },
+            "singleLever": { "type": "string", "minLength": 1 },
+            "successCriterion": { "type": "string", "minLength": 1 },
+            "reversalCriterion": { "type": "string", "minLength": 1 },
+            "circuitBreakerTriggered": { "type": "boolean" }
+          }
+        }
+      ]
     },
     "decision": {
       "type": "object",
       "additionalProperties": false,
       "required": ["status"],
       "properties": {
-        "status": { "enum": ["pending", "approved", "rejected"] },
-        "decidedBy": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "decidedBy": { "type": "string", "minLength": 1 },
         "decidedAt": { "type": "string", "format": "date-time" },
-        "humanAction": { "type": "string" }
-      }
+        "humanAction": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "enum": ["approved", "rejected"] } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "decidedBy": { "type": "string", "minLength": 1 },
+              "decidedAt": { "type": "string", "format": "date-time" },
+              "humanAction": { "type": "string", "minLength": 1 }
+            },
+            "required": ["decidedBy", "decidedAt", "humanAction"]
+          }
+        }
+      ]
     },
     "events": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "type", "actor", "createdAt"],
+        "required": ["id", "type", "actor", "createdAt", "payload"],
         "properties": {
-          "id": { "type": "string" },
-          "type": { "type": "string" },
-          "actor": { "enum": ["human", "system", "skill"] },
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "const": "status_transition" },
+          "actor": { "type": "string", "enum": ["human", "system", "skill"] },
           "createdAt": { "type": "string", "format": "date-time" },
-          "payload": true
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["schemaVersion", "previousStatus", "nextStatus"],
+            "properties": {
+              "schemaVersion": { "type": "string", "const": "1.0.0" },
+              "previousStatus": {
+                "type": ["string", "null"],
+                "enum": [null, "draft", "reading_ready", "diagnosed", "decided", "closed"]
+              },
+              "nextStatus": {
+                "type": "string",
+                "enum": ["draft", "reading_ready", "diagnosed", "decided", "closed"]
+              }
+            }
+          }
         }
       }
     }
   }
 }
-

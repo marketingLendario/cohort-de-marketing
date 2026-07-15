@@ -1,0 +1,33 @@
+{
+  "contract": "WeeklyPanel",
+  "schemaVersion": "1.0.0",
+  "id": "weekly-panel:acme:2026-07-13",
+  "projectId": "project-acme",
+  "campaignId": "campaign-acme-launch",
+  "weekStart": "2026-07-13",
+  "revision": 2,
+  "previousStatus": "closed",
+  "status": "draft",
+  "metrics": [],
+  "reader": {
+    "literalOnly": true,
+    "sampleSufficientForCpa": false,
+    "note": "Painel encerrado nao pode voltar a rascunho."
+  },
+  "decision": {
+    "status": "pending"
+  },
+  "events": [
+    {
+      "id": "event-invalid-transition",
+      "type": "status_transition",
+      "actor": "human",
+      "createdAt": "2026-07-13T12:00:00.000Z",
+      "payload": {
+        "schemaVersion": "1.0.0",
+        "previousStatus": "closed",
+        "nextStatus": "draft"
+      }
+    }
+  ]
+}
