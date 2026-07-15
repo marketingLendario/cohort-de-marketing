@@ -447,16 +447,14 @@
     const ACTIVE_PROJECT_KEY = 'cohort.projectBrief.activeProject.v1';
     const SAVE_IDLE_MS = 650;
     const SENSITIVE_CREDENTIAL_KEY = /^(?:api[_-]?key|access[_-]?token|refresh[_-]?token|auth[_-]?token|token|client[_-]?secret|secret|password|senha)$/i;
-    // Assinaturas exigem atribuição ou prefixo de provedor; menções pedagógicas
-    // sem valor e placeholders explícitos continuam permitidos.
+    const SENSITIVE_ASSIGNMENT_SOURCE = '\\b(api[_-]?key|access[_-]?token|refresh[_-]?token|auth[_-]?token|token|client[_-]?secret|secret|password|senha)\\s*[:=]\\s*';
+    const CREDENTIAL_PLACEHOLDERS = new Set([
+      'YOUR_TOKEN_HERE', 'SEU_TOKEN_AQUI', 'YOUR_API_KEY', 'EXAMPLE_TOKEN', '<TOKEN>', '[REDACTED]'
+    ]);
+    // A gramática separa assignments de assinaturas fortes de provedores.
+    // Valores são extraídos até aspas, quebra de linha ou delimitador estrutural;
+    // somente placeholders normalizados com igualdade exata são liberados.
     const CREDENTIAL_PATTERNS = [
-      { label: 'api_key', pattern: /\bapi[_-]?key\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
-      { label: 'access_token', pattern: /\baccess[_-]?token\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
-      { label: 'refresh_token', pattern: /\brefresh[_-]?token\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
-      { label: 'auth_token', pattern: /\bauth[_-]?token\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
-      { label: 'token', pattern: /\btoken\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
-      { label: 'password', pattern: /\b(?:password|senha)\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
-      { label: 'secret', pattern: /\b(?:client[_-]?)?secret\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
       { label: 'bearer token', pattern: /\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+\/-]{12,}/i },
       { label: 'basic auth', pattern: /\bauthorization\s*:\s*basic\s+[A-Za-z0-9+/]{12,}={0,2}/i },
       { label: 'private key', pattern: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/i },
@@ -779,8 +777,60 @@
 
     function clone(value) { return structuredClone(value); }
 
+    function normalizeCredentialPlaceholder(value) {
+      return String(value).trim().replace(/[\s-]+/g, '_').toUpperCase();
+    }
+
+    function isAllowedCredentialPlaceholder(value) {
+      return CREDENTIAL_PLACEHOLDERS.has(normalizeCredentialPlaceholder(value));
+    }
+
+    function extractCredentialAssignmentValue(line, startIndex) {
+      const remainder = line.slice(startIndex).trimStart();
+      if (!remainder) return '';
+      const opener = remainder[0];
+      if (opener === '"' || opener === "'") {
+        let escaped = false;
+        for (let index = 1; index < remainder.length; index++) {
+          if (!escaped && remainder[index] === opener) return remainder.slice(1, index).trim();
+          escaped = !escaped && remainder[index] === '\\';
+          if (remainder[index] !== '\\') escaped = false;
+        }
+        return remainder.slice(1).trim();
+      }
+      if (opener === '<') {
+        const closing = remainder.indexOf('>');
+        if (closing >= 0) return remainder.slice(0, closing + 1).trim();
+      }
+      if (opener === '[') {
+        const closing = remainder.indexOf(']');
+        if (closing >= 0) return remainder.slice(0, closing + 1).trim();
+      }
+      const delimiters = [',', ';', '}', ']']
+        .map((delimiter) => remainder.indexOf(delimiter))
+        .filter((index) => index >= 0);
+      const end = delimiters.length ? Math.min(...delimiters) : remainder.length;
+      return remainder.slice(0, end).trim();
+    }
+
+    function credentialAssignmentFinding(value, path) {
+      for (const line of value.split(/\r?\n/)) {
+        const matcher = new RegExp(SENSITIVE_ASSIGNMENT_SOURCE, 'gi');
+        let match;
+        while ((match = matcher.exec(line))) {
+          const assignedValue = extractCredentialAssignmentValue(line, matcher.lastIndex);
+          if (assignedValue && !isAllowedCredentialPlaceholder(assignedValue)) {
+            return { label: match[1].toLowerCase(), path };
+          }
+        }
+      }
+      return null;
+    }
+
     function credentialFinding(value, path = '$') {
       if (typeof value === 'string') {
+        const assignment = credentialAssignmentFinding(value, path);
+        if (assignment) return assignment;
         const found = CREDENTIAL_PATTERNS.find(({ pattern }) => pattern.test(value));
         return found ? { label: found.label, path } : null;
       }
@@ -793,8 +843,8 @@
       }
       if (value && typeof value === 'object') {
         for (const [key, child] of Object.entries(value)) {
-          if (SENSITIVE_CREDENTIAL_KEY.test(key)
-            && child != null && String(child).trim()) return { label: key, path: `${path}.${key}` };
+          if (SENSITIVE_CREDENTIAL_KEY.test(key) && child != null && String(child).trim()
+            && !isAllowedCredentialPlaceholder(child)) return { label: key, path: `${path}.${key}` };
           const found = credentialFinding(child, `${path}.${key}`);
           if (found) return found;
         }
