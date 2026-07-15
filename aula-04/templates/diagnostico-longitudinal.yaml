@@ -1,0 +1,44 @@
+contract: DecisionOutcomeDiagnosis
+schemaVersion: 1.0.0
+decisionRefs:
+  decisionId: "decision:<data>:<nonce>"
+  hypothesisId: "hypothesis:<nonce>"
+  leverId: "lever:<nonce>"
+  successCriterionId: "criterion:success:<nonce>"
+  measurementWindowId: "window:<inicio>:<fim>:<nonce>"
+  reversalCriterionId: "criterion:reversal:<nonce>"
+  reversalId: "reversal:<nonce>"
+  circuitBreakerId: "circuit-breaker:<nonce>"
+  humanDecisionRef: "operator:<data>:<nonce>"
+evidence:
+  historicalReading:
+    contract: HistoricalMetricsReading
+    schemaVersion: 1.0.0
+    projectId: "<projectId>"
+    campaignId: "<campaignId>"
+    metric: revenue
+    attributionWindow: calendar_week
+    observationRefs: []
+  sourceReconciliation: null
+  # Para cpa, roas, spend e ctr, SourceReconciliationV1 não se aplica e este
+  # campo permanece null; a decisão usa somente as referências aprovadas de W2.1.
+  # Para revenue, orders, refunds, fees e net_revenue, null é substituído pelo
+  # objeto fechado SourceReconciliation 1.0.0 da mesma métrica.
+verdict: nao_mensuravel # sustentou | refutou | inconclusivo | nao_mensuravel
+reasonCodes:
+  - INSUFFICIENT_DISTINCT_WEEKS
+proposedLevers: [] # zero ou uma referência pré-autorizada; nunca uma ação executada
+circuitBreaker:
+  ref: "circuit-breaker:<nonce>"
+  status: preserved_not_executed
+humanDecision:
+  required: true
+  status: pending
+  historicalDecisionRef: "operator:<data>:<nonce>"
+guards:
+  mutationAllowed: false
+  historicalDecisionImmutable: true
+
+# Este é um template de saída. O CLI gera o arquivo a partir de um bundle local
+# fechado DecisionOutcomeEvaluationRequest 1.0.0. Textos e valores usados para
+# comparar não são republicados; o diagnóstico mantém apenas referências.
