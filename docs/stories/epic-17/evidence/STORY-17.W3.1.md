@@ -78,5 +78,11 @@ exit 0
 - Story: `InReview`.
 - Implementação: `94617b3`.
 - Focal: `7/7`; adjacente W2: `44/44`; full Node: `159/159`.
-- QG independente solicitado: `@architect`.
+- QG3 independente rodada 1: `FAIL 76/100`, confiança `0.98`.
+- Blockers reproduzidos em cópia temporária: telefone/CPF/CNPJ não são
+  detectados pelo guard recursivo e podem ser republicados; destino vazio
+  descendente do exemplo é aceito e recebe os outputs.
+- Segundo ciclo RED -> GREEN deve ampliar o detector sem ecoar conteúdo e usar
+  caminho real/canônico para bloquear destino igual, descendente ou symlinkado
+  dentro da árvore do exemplo.
 - `epic-17-state.json`, fan-in, push, PR e deploy: não executados.

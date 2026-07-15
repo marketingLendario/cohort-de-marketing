@@ -179,6 +179,28 @@ file_list:
   - "docs/stories/epic-17/evidence/STORY-17.W3.1.md"
 ```
 
+## QA Results
+
+```yaml
+quality_gate_report:
+  round: 1
+  verdict: "FAIL"
+  score: 76
+  confidence: 0.98
+  blockers:
+    - "Telefone, CPF e CNPJ não fazem parte do detector recursivo de conteúdo sensível; uma hipótese contendo 11987654321 atravessa o runner e é republicada no decision-outcome-request.json."
+    - "A guarda do destino rejeita apenas igualdade lexical com o exemplo; um diretório vazio descendente do exemplo é aceito e recebe os seis artefatos, alterando a árvore-fonte."
+  evidence:
+    - "scripts/run-aula-04-walkthrough.mjs:27-34,109-125,140-142,156-162,187-200"
+    - "scripts/run-aula-04-walkthrough.test.mjs:165-176,189-195,214-225"
+  required_remediation:
+    - "Congelar REDs para telefone/CPF/CNPJ em input e output, sem ecoar o valor nos erros."
+    - "Rejeitar destino igual, descendente ou symlink-resolvido dentro do exemplo e provar imutabilidade da árvore-fonte."
+  reviewed_by: "@architect"
+  reviewed_at: "2026-07-15"
+  reviewed_head: "8a922aef72afd43c652600812a9d30e81eb8cb29"
+```
+
 ## Change Log
 
 | Data | Agente | Mudança |
@@ -186,3 +208,4 @@ file_list:
 | 2026-07-15 | @dev | Preflight e leitura integral concluídos; story rematerializada de `Ready` para `InProgress` antes do código. |
 | 2026-07-15 | @dev | RED/GREEN entregou módulo, exemplo de três semanas, walkthrough local e documentação multiplataforma. |
 | 2026-07-15 | @dev | Trust boundaries endurecidas; 159/159 testes Node verdes e story movida para `InReview`. |
+| 2026-07-15 | @architect | QG3 rodada 1 falhou: telefone republicável e destino descendente do exemplo atravessam os guards atuais. |
