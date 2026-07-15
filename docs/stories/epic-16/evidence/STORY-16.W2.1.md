@@ -12,12 +12,13 @@ independente de `@architect`. Nenhum push, PR, merge ou deploy foi realizado.
 - Cobertura remota antes da execução: nenhum PR aberto no repositório público.
 - Test-first: `c1121f9`.
 - Implementação: `71fdf32`.
+- Hardening de paths sensíveis: teste `948e1df`, correção `66b3909`.
 
 ## Matriz executada
 
 | Prova | Resultado |
 |---|---|
-| Unitários, adversariais, CLI e Playwright | PASS, 12/12 |
+| Unitários, adversariais, CLI e Playwright | PASS, 13/13 |
 | Reprodutibilidade do índice | PASS |
 | Projeto ausente ou raiz inválida | Recusa tipada |
 | Absoluto, traversal e symlink de escape | Recusa tipada e sanitizada |
@@ -25,6 +26,7 @@ independente de `@architect`. Nenhum push, PR, merge ou deploy foi realizado.
 | Ambiguidade entre tipos | Recusa tipada |
 | Confirmação exata | Somente a entrada alvo muda |
 | Conteúdo bruto e path da máquina | Ausentes da serialização |
+| Assinatura forte de credencial em filename | Recusa tipada sem eco |
 | Briefings distribuídos | Byte a byte idênticos |
 | Smoke HTTP das duas URLs | PASS, zero `pageerror` |
 | ProjectBrief rules | PASS, 120 campos e 31 skills |

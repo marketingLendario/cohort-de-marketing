@@ -137,6 +137,8 @@ repo_target: "cohort-de-marketing"
 - O `ArtifactIndex v1` contém somente slug, tipo, path POSIX relativo, SHA-256,
   tamanho, origem declarativa e confirmação. Não inclui timestamp, conteúdo ou
   path da máquina, portanto duas execuções estáveis são semanticamente iguais.
+- Assinaturas fortes de credenciais também são recusadas em paths e patterns;
+  a recusa usa código tipado sem ecoar o filename sensível.
 - `artifactIndex.confirmationRequiredByDefault` torna descoberta inferida
   `pending_confirmation`. `--confirm tipo:path` altera somente a identidade
   exata e recalcula o resumo sem mutar o índice original.
@@ -151,7 +153,7 @@ repo_target: "cohort-de-marketing"
 
 - Test-first: commit `c1121f9`; a suíte falhou inicialmente com
   `ERR_MODULE_NOT_FOUND`, comprovando ausência do indexador no baseline.
-- `node --test scripts/project-artifact-index.test.mjs`: PASS, 12/12.
+- `node --test scripts/project-artifact-index.test.mjs`: PASS, 13/13.
 - Casos adversariais: projeto ausente, raiz inválida, absoluto, traversal,
   duplicidade, ambiguidade entre tipos e symlink de escape.
 - Reprodutibilidade e minimização: duas execuções idênticas; índice sem conteúdo
@@ -171,6 +173,9 @@ repo_target: "cohort-de-marketing"
 
 - `c1121f9` - `test: freeze artifact index contract [Story 16.W2.1]`
 - `71fdf32` - `feat: add confined artifact index [Story 16.W2.1]`
+- `722e851` - `docs: hand off artifact index for review [Story 16.W2.1]`
+- `948e1df` - `test: reject credential signatures in artifact paths [Story 16.W2.1]`
+- `66b3909` - `fix: sanitize artifact path metadata [Story 16.W2.1]`
 
 ## File List real
 
@@ -202,3 +207,4 @@ repo_target: "cohort-de-marketing"
 |---|---|---|
 | 2026-07-15 | @po | Contrato enriquecido e validado para execução na PUB-16 W2. |
 | 2026-07-15 | @dev | Indexador confinado, importação do ArtifactIndex e evidências encaminhados para arquitetura. |
+| 2026-07-15 | @dev | Reprobe adicional passou a recusar assinaturas fortes de credenciais também nos paths serializados. |
