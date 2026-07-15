@@ -42,6 +42,10 @@
     "trafficMetricReading": ["squad-trafego/metric-reading.json", "PAINEL-DA-SEMANA.yaml"],
     "trafficDiagnosis": ["squad-trafego/diagnosis.json", "PAINEL-DA-SEMANA.yaml"]
   },
+  "artifactIndex": {
+    "schemaVersion": "artifact-index-v1",
+    "confirmationRequiredByDefault": true
+  },
   "skills": {
     "comecar": {
       "type": "utility",

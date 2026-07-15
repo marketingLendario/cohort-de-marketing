@@ -29,7 +29,7 @@
         {
           "story_id": "16.W2.1",
           "title": "Descoberta segura de artefatos e proveniência",
-          "status": "Ready",
+          "status": "Done",
           "task_mode": "CRIAR",
           "deploy_type": "none",
           "repo_target": "cohort-de-marketing",
