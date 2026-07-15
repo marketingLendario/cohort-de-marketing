@@ -1,8 +1,29 @@
+---
+story_id: "16.W1.2"
+epic_id: "16"
+wave: "W1"
+status: Ready
+executor: "@dev"
+quality_gate: "@qa"
+quality_gate_tools: ["node:test", "playwright"]
+repo_target: "cohort-de-marketing"
+depends_on:
+  - "16.W1.1"
+effort: "7h"
+deploy_type: "none"
+accountable: "rafaelcosta"
+appetite: "1d"
+hill_phase: "executing"
+confidence_level: "know-how"
+task_mode: "CRIAR"
+involves_ui: true
+---
+
 # STORY-16.W1.2 - Importação e exportação bidirecional do briefing
 
 ## Status
 
-Draft
+Ready
 
 ## Dependências
 
@@ -51,4 +72,3 @@ atualização da story e nova validação de arquitetura.
 
 - Browser exigir acesso irrestrito ao filesystem.
 - Export Markdown passar a ser editável como fonte concorrente.
-

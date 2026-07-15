@@ -1,81 +1,44 @@
 {
-  "schemaVersion": "epic-state-v1",
-  "epicId": "16",
+  "schema_version": "epic-state-v1",
+  "epic_id": "16",
   "namespace": "PUB",
   "title": "Projeto canonico como fonte de verdade",
-  "status": "Draft",
-  "verificationVerdict": "NOT_RUN",
+  "status": "InProgress",
+  "verification_verdict": "NOT_RUN",
   "created": "2026-07-14",
-  "dependsOn": [
-    "GATE-0"
-  ],
-  "implementationAuthorized": false,
+  "depends_on": ["GATE-0"],
+  "implementation_authorized": true,
+  "baseline_ref": "wave/gate-0/public-baseline@5897897",
   "waves": [
     {
-      "id": "W1",
+      "wave_id": "W1",
       "name": "Contrato e round-trip",
-      "status": "planned",
+      "status": "ready",
+      "parallel_groups": [["16.W1.1"], ["16.W1.2"]],
       "stories": [
-        {
-          "id": "16.W1.1",
-          "status": "Draft",
-          "dependsOn": []
-        },
-        {
-          "id": "16.W1.2",
-          "status": "Draft",
-          "dependsOn": [
-            "16.W1.1"
-          ]
-        }
+        { "story_id": "16.W1.1", "status": "Ready", "depends_on": [], "executor": "@dev", "quality_gate": "@architect" },
+        { "story_id": "16.W1.2", "status": "Ready", "depends_on": ["16.W1.1"], "executor": "@dev", "quality_gate": "@qa" }
       ]
     },
     {
-      "id": "W2",
+      "wave_id": "W2",
       "name": "Artefatos e readiness",
       "status": "planned",
+      "parallel_groups": [["16.W2.1"], ["16.W2.2"], ["16.W2.3"]],
       "stories": [
-        {
-          "id": "16.W2.1",
-          "status": "Draft",
-          "dependsOn": [
-            "16.W1.1"
-          ]
-        },
-        {
-          "id": "16.W2.2",
-          "status": "Draft",
-          "dependsOn": [
-            "16.W1.1",
-            "16.W2.1"
-          ]
-        },
-        {
-          "id": "16.W2.3",
-          "status": "Draft",
-          "dependsOn": [
-            "16.W2.1",
-            "16.W2.2"
-          ]
-        }
+        { "story_id": "16.W2.1", "status": "Draft", "depends_on": ["16.W1.1"] },
+        { "story_id": "16.W2.2", "status": "Draft", "depends_on": ["16.W1.1", "16.W2.1"] },
+        { "story_id": "16.W2.3", "status": "Draft", "depends_on": ["16.W2.1", "16.W2.2"] }
       ]
     },
     {
-      "id": "W3",
+      "wave_id": "W3",
       "name": "Release gate",
       "status": "planned",
+      "parallel_groups": [["16.W3.1"]],
       "stories": [
-        {
-          "id": "16.W3.1",
-          "status": "Draft",
-          "dependsOn": [
-            "16.W1.2",
-            "16.W2.2",
-            "16.W2.3"
-          ]
-        }
+        { "story_id": "16.W3.1", "status": "Draft", "depends_on": ["16.W1.2", "16.W2.2", "16.W2.3"] }
       ]
     }
   ]
 }
-

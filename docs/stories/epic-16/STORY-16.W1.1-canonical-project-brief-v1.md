@@ -1,8 +1,28 @@
+---
+story_id: "16.W1.1"
+epic_id: "16"
+wave: "W1"
+status: Ready
+executor: "@dev"
+quality_gate: "@architect"
+quality_gate_tools: ["node:test", "json-schema"]
+repo_target: "cohort-de-marketing"
+depends_on: []
+effort: "6h"
+deploy_type: "none"
+accountable: "rafaelcosta"
+appetite: "1d"
+hill_phase: "executing"
+confidence_level: "know-how"
+task_mode: "CRIAR"
+involves_ui: false
+---
+
 # STORY-16.W1.1 - Contrato canônico ProjectBrief v1
 
 ## Status
 
-Draft
+Ready
 
 ## Dependências
 
@@ -50,4 +70,3 @@ atualização da story e nova validação de arquitetura.
 
 - Perda de campo ou estado válido do contrato 0.1.0.
 - Necessidade de acoplar o schema público a uma tabela privada.
-
