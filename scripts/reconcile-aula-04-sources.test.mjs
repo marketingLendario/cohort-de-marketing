@@ -203,6 +203,58 @@ test('schema fechado e sanitização bloqueiam PII, credenciais e payload de com
   }
 });
 
+test('matriz positiva rejeita texto sensível em toda superfície republicada sem eco', async (t) => {
+  const base = await loadFixture('reconciliation-match.json');
+  const synthetic = {
+    name: 'joao-silva',
+    address: 'rua-alpha-123',
+    document: 'cpf-123.456.789-09',
+    phone: 'phone-11.99999.8888',
+    token: 'token-super-secreto',
+    buyer: 'buyer-order-abc123',
+  };
+  const primarySurfaces = [
+    ['reconciliationId', (document, value) => { document.reconciliationId = `reconciliation:${value}:2026-07`; }],
+    ['metric', (document, value) => { document.metric = value; }],
+    ['window', (document, value) => { document.observations[0].window = value; }],
+    ['provenanceRef.id', (document, value) => { document.observations[0].provenanceRef.id = `platform-${value}`; }],
+  ];
+  const remainingTextSurfaces = [
+    ['source', (document) => { document.observations[0].source = synthetic.buyer; }],
+    ['status', (document) => { document.observations[0].status = synthetic.buyer; }],
+    ['value', (document) => { document.observations[0].value = synthetic.buyer; }],
+    ['currency', (document) => { document.observations[0].currency = synthetic.buyer; }],
+    ['period.start', (document) => { document.observations[0].period.start = synthetic.buyer; }],
+    ['period.end', (document) => { document.observations[0].period.end = synthetic.buyer; }],
+    ['observedAt', (document) => { document.observations[0].observedAt = synthetic.buyer; }],
+    ['provenanceRef.kind', (document) => { document.observations[0].provenanceRef.kind = synthetic.buyer; }],
+  ];
+
+  const cases = [];
+  for (const [surface, mutate] of primarySurfaces) {
+    for (const [kind, value] of Object.entries(synthetic)) {
+      cases.push([`${surface}:${kind}`, value, (document) => mutate(document, value)]);
+    }
+  }
+  for (const [surface, mutate] of remainingTextSurfaces) {
+    cases.push([surface, synthetic.buyer, mutate]);
+  }
+
+  for (const [name, sensitive, mutate] of cases) {
+    const document = structuredClone(base);
+    mutate(document);
+    const file = await withTempDocument(t, document, `privacy-${name.replace(/[^a-z0-9.-]/gi, '-')}.json`);
+    const result = await run([file]);
+    assert.equal(result.code, 1, name);
+    assert.equal(result.stderr, '', name);
+    assert.deepEqual(JSON.parse(result.stdout), {
+      valid: false, code: 'INVALID_SOURCE_OBSERVATION_SET',
+    }, name);
+    assert.equal(result.stdout.includes(sensitive), false, name);
+    assert.equal(result.stderr.includes(sensitive), false, name);
+  }
+});
+
 test('decimais maiores que Number.MAX_SAFE_INTEGER mantêm precisão e input não é alterado', async (t) => {
   const document = await loadFixture('reconciliation-match.json');
   document.observations[0].value = '9007199254740993.123456789012';
