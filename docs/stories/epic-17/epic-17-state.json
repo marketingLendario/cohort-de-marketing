@@ -1,62 +1,106 @@
 {
-  "schemaVersion": "epic-state-v1",
-  "epicId": "17",
+  "schema_version": "epic-state-v1",
+  "epic_id": "17",
   "namespace": "PUB",
   "title": "Fundacao da Aula 4: dados",
-  "status": "Draft",
-  "verificationVerdict": "NOT_RUN",
+  "status": "Ready",
+  "verification_verdict": "NOT_RUN",
   "created": "2026-07-14",
-  "dependsOn": [
+  "autonomy_level": "AL2",
+  "baseline_ref": "f989ce67264b24a29b0b92aeacd30ae61903685e",
+  "depends_on": [
     "GATE-0",
-    "PUB-16.W1.1"
+    "16.W1.1"
   ],
-  "implementationAuthorized": false,
+  "implementation_authorized": true,
   "waves": [
     {
-      "id": "W1",
+      "wave_id": "W1",
       "name": "Contratos e ledger",
-      "status": "planned",
+      "status": "ready",
+      "parallel_groups": [
+        [
+          "17.W1.1"
+        ],
+        [
+          "17.W1.2"
+        ]
+      ],
       "stories": [
         {
-          "id": "17.W1.1",
-          "status": "Draft",
-          "dependsOn": [
-            "PUB-16.W1.1"
+          "story_id": "17.W1.1",
+          "title": "Validadores dos contratos de campanha e semana",
+          "status": "Ready",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "6h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "depends_on": [
+            "16.W1.1"
+          ],
+          "consumes_artifacts_of": [
+            "16.W1.1"
           ]
         },
         {
-          "id": "17.W1.2",
-          "status": "Draft",
-          "dependsOn": [
+          "story_id": "17.W1.2",
+          "title": "Ledger multi-semana com proveniencia",
+          "status": "Ready",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "depends_on": [
+            "17.W1.1"
+          ],
+          "consumes_artifacts_of": [
             "17.W1.1"
           ]
         }
       ]
     },
     {
-      "id": "W2",
+      "wave_id": "W2",
       "name": "Leitura e decisao",
       "status": "planned",
+      "parallel_groups": [
+        [
+          "17.W2.1",
+          "17.W2.3"
+        ],
+        [
+          "17.W2.2"
+        ]
+      ],
       "stories": [
         {
-          "id": "17.W2.1",
+          "story_id": "17.W2.1",
+          "title": "Leitura historica sem invencao",
           "status": "Draft",
-          "dependsOn": [
+          "depends_on": [
             "17.W1.2"
           ]
         },
         {
-          "id": "17.W2.2",
+          "story_id": "17.W2.2",
+          "title": "Diagnostico decisao versus resultado",
           "status": "Draft",
-          "dependsOn": [
+          "depends_on": [
             "17.W1.2",
             "17.W2.1"
           ]
         },
         {
-          "id": "17.W2.3",
+          "story_id": "17.W2.3",
+          "title": "Reconciliacao plataforma, checkout e caixa",
           "status": "Draft",
-          "dependsOn": [
+          "depends_on": [
             "17.W1.1",
             "17.W1.2"
           ]
@@ -64,23 +108,33 @@
       ]
     },
     {
-      "id": "W3",
+      "wave_id": "W3",
       "name": "Material e release",
       "status": "planned",
+      "parallel_groups": [
+        [
+          "17.W3.1"
+        ],
+        [
+          "17.W3.2"
+        ]
+      ],
       "stories": [
         {
-          "id": "17.W3.1",
+          "story_id": "17.W3.1",
+          "title": "Modulo didatico e fluxo local da Aula 4",
           "status": "Draft",
-          "dependsOn": [
+          "depends_on": [
             "17.W2.1",
             "17.W2.2",
             "17.W2.3"
           ]
         },
         {
-          "id": "17.W3.2",
+          "story_id": "17.W3.2",
+          "title": "Gate publico da Aula 4",
           "status": "Draft",
-          "dependsOn": [
+          "depends_on": [
             "17.W3.1"
           ]
         }
@@ -88,4 +142,3 @@
     }
   ]
 }
-

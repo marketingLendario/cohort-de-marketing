@@ -2,7 +2,8 @@
 
 ## Status
 
-Draft. Depende do ProjectBrief v1 de PUB-16 e do Gate 0.
+Ready para W1. O dispatch de 17.W1.1 permanece condicionado ao ProjectBrief v1
+de 16.W1.1 em estado `Done`; W2 e W3 continuam em `Draft`.
 
 ## Problema
 
@@ -54,7 +55,7 @@ leitor histórico          reconciliação de fontes
 
 | Onda | Story | Entrega | Dependências |
 |---|---|---|---|
-| W1 | 17.W1.1 | Validadores dos contratos | PUB-16.W1.1 |
+| W1 | 17.W1.1 | Validadores dos contratos | 16.W1.1 |
 | W1 | 17.W1.2 | Ledger multi-semana | 17.W1.1 |
 | W2 | 17.W2.1 | Leitura histórica | 17.W1.2 |
 | W2 | 17.W2.2 | Diagnóstico decisão/resultado | 17.W1.2, 17.W2.1 |
@@ -67,4 +68,3 @@ leitor histórico          reconciliação de fontes
 A epic só pode ficar `Done` quando um aluno executar três semanas versionadas,
 rastrear fontes e janelas, comparar uma decisão com o resultado e registrar uma
 nova decisão humana sem que nenhum número ausente seja inventado.
-
