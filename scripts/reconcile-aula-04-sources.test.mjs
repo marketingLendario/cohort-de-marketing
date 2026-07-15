@@ -349,7 +349,11 @@ test('allowlists conhecidas e referência opaca do operador não geram falso pos
     }
   }
 
-  for (const [index, nonce] of ['1234567890a', '1234567890123a'].entries()) {
+  const positionedLetterNonces = [
+    'a1234567890', '12345a67890', '1234567890a',
+    'a1234567890123', '123456a8901234', '1234567890123a',
+  ];
+  for (const [index, nonce] of positionedLetterNonces.entries()) {
     const document = structuredClone(base);
     document.reconciliationId = `reconciliation:revenue:2026-07:${nonce}`;
     document.observations[0].provenanceRef.id = `operator:2026-07:${nonce}`;
@@ -357,6 +361,18 @@ test('allowlists conhecidas e referência opaca do operador não geram falso pos
     const output = parseSuccess(await run([file]));
     assert.equal(output.reconciliationId, document.reconciliationId);
     assert.equal(output.sources[0].provenanceRef.id, document.observations[0].provenanceRef.id);
+  }
+});
+
+test('valores monetários de 11 e 14 dígitos não são confundidos com identificadores pessoais', async (t) => {
+  const base = await loadFixture('reconciliation-match.json');
+  for (const value of ['11999998888', '11222333000181']) {
+    const document = structuredClone(base);
+    for (const observation of document.observations) observation.value = value;
+    const file = await withTempDocument(t, document, `monetary-${value.length}-digits.json`);
+    const output = parseSuccess(await run([file]));
+    assert.deepEqual(output.sources.map((source) => source.value), [value, value, value]);
+    assert.deepEqual(output.comparisons.map((comparison) => comparison.absoluteGap), ['0', '0', '0']);
   }
 });
 
