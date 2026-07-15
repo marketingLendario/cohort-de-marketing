@@ -94,6 +94,8 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
   partir do estado canônico e não inclui metadados ou outra fonte editável.
 - O autosave usa `cohort.projectBrief.v1:{projectId}`, mantém artefatos e UI fora
   do contrato e nunca persiste credenciais; import inválido não altera o draft.
+- A validação browser deriva o mesmo conjunto recursivo de dot-paths canônicos
+  da 16.W1.1, incluindo proveniência de objetos aninhados como `offer.upsell.name`.
 - A busca de PRs abertos no repositório público retornou lista vazia antes da
   implementação.
 
@@ -116,6 +118,7 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 
 - `d9ddc8b` - `test: freeze ProjectBrief browser round-trip [Story 16.W1.2]`
 - `021cb01` - `feat: add ProjectBrief v1 import export [Story 16.W1.2]`
+- `b3d9d27` - `fix: accept nested ProjectBrief provenance [Story 16.W1.2]`
 
 ## File List real
 
@@ -141,3 +144,5 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 
 - 2026-07-14: suíte browser congelada, import/export v1 e migração legado
   implementados, regressões aprovadas e story encaminhada para QA independente.
+- 2026-07-14: validação browser alinhada aos dot-paths recursivos do contrato,
+  com round-trip adicional para proveniência de objeto aninhado.
