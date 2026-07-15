@@ -255,6 +255,51 @@ test('matriz positiva rejeita texto sensível em toda superfície republicada se
   }
 });
 
+test('nonces numéricos de telefone, CPF e CNPJ falham fechado em todos os IDs opacos', async (t) => {
+  const base = await loadFixture('reconciliation-match.json');
+  const schema = JSON.parse(await readFile(SCHEMA, 'utf8'));
+  const ajv = new Ajv2020({ allErrors: true, strict: true });
+  addFormats(ajv);
+  const validateOutput = ajv.compile(schema);
+  const sensitiveNumericNonces = [
+    ['phone', '11999998888'],
+    ['cpf', '52998224725'],
+    ['cnpj', '11222333000181'],
+  ];
+  const surfaces = [
+    ['reconciliationId', (document, nonce) => {
+      document.reconciliationId = `reconciliation:revenue:2026-07:${nonce}`;
+    }, (output, nonce) => {
+      output.reconciliationId = `reconciliation:revenue:2026-07:${nonce}`;
+    }],
+    ['provenanceRef.id', (document, nonce) => {
+      document.observations[0].provenanceRef.id = `platform:2026-07:${nonce}`;
+    }, (output, nonce) => {
+      output.sources[0].provenanceRef.id = `platform:2026-07:${nonce}`;
+    }],
+  ];
+
+  const validOutput = parseSuccess(await run([fixture('reconciliation-match.json')]));
+  for (const [kind, nonce] of sensitiveNumericNonces) {
+    for (const [surface, mutateInput, mutateOutput] of surfaces) {
+      const document = structuredClone(base);
+      mutateInput(document, nonce);
+      const file = await withTempDocument(t, document, `numeric-${surface}-${kind}.json`);
+      const result = await run([file]);
+      assert.equal(result.code, 1, `${surface}:${kind}:input`);
+      assert.equal(result.stderr, '', `${surface}:${kind}:input`);
+      assert.deepEqual(JSON.parse(result.stdout), {
+        valid: false, code: 'INVALID_SOURCE_OBSERVATION_SET',
+      }, `${surface}:${kind}:input`);
+      assert.equal(result.stdout.includes(nonce), false, `${surface}:${kind}:input`);
+
+      const output = structuredClone(validOutput);
+      mutateOutput(output, nonce);
+      assert.equal(validateOutput(output), false, `${surface}:${kind}:output`);
+    }
+  }
+});
+
 test('schema de saída também fecha as superfícies republicadas contra texto sintético', async () => {
   const validOutput = parseSuccess(await run([fixture('reconciliation-match.json')]));
   const schema = JSON.parse(await readFile(SCHEMA, 'utf8'));
@@ -302,6 +347,16 @@ test('allowlists conhecidas e referência opaca do operador não geram falso pos
       assert.equal(output.sources[0].window, window);
       assert.deepEqual(output.sources[0].provenanceRef, base.observations[0].provenanceRef);
     }
+  }
+
+  for (const [index, nonce] of ['1234567890a', '1234567890123a'].entries()) {
+    const document = structuredClone(base);
+    document.reconciliationId = `reconciliation:revenue:2026-07:${nonce}`;
+    document.observations[0].provenanceRef.id = `operator:2026-07:${nonce}`;
+    const file = await withTempDocument(t, document, `opaque-numeric-shaped-${index}.json`);
+    const output = parseSuccess(await run([file]));
+    assert.equal(output.reconciliationId, document.reconciliationId);
+    assert.equal(output.sources[0].provenanceRef.id, document.observations[0].provenanceRef.id);
   }
 });
 
