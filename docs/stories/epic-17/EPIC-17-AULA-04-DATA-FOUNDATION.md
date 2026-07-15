@@ -2,8 +2,9 @@
 
 ## Status
 
-Ready para W1. O dispatch de 17.W1.1 permanece condicionado ao ProjectBrief v1
-de 16.W1.1 em estado `Done`; W2 e W3 continuam em `Draft`.
+Em progresso na W2. W1 está concluída; `17.W2.1` e `17.W2.3` estão `Ready`
+no primeiro grupo paralelo. `17.W2.2` permanece bloqueada até `17.W2.1`
+ficar `Done`; W3 continua em `Draft`.
 
 ## Problema
 

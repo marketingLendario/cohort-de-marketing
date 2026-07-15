@@ -68,7 +68,7 @@
     {
       "wave_id": "W2",
       "name": "Leitura e decisao",
-      "status": "planned",
+      "status": "in_progress",
       "parallel_groups": [
         [
           "17.W2.1",
@@ -82,7 +82,14 @@
         {
           "story_id": "17.W2.1",
           "title": "Leitura historica sem invencao",
-          "status": "Draft",
+          "status": "Ready",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
           "depends_on": [
             "17.W1.2"
           ]
@@ -90,7 +97,15 @@
         {
           "story_id": "17.W2.2",
           "title": "Diagnostico decisao versus resultado",
-          "status": "Draft",
+          "status": "Blocked",
+          "status_reason": "Dependency gate: 17.W2.1 must be Done with PASS before dispatch.",
+          "task_mode": "MODIFICAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
           "depends_on": [
             "17.W1.2",
             "17.W2.1"
@@ -99,7 +114,14 @@
         {
           "story_id": "17.W2.3",
           "title": "Reconciliacao plataforma, checkout e caixa",
-          "status": "Draft",
+          "status": "Ready",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
           "depends_on": [
             "17.W1.1",
             "17.W1.2"
