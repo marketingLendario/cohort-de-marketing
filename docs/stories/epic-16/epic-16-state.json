@@ -43,7 +43,7 @@
         {
           "story_id": "16.W2.2",
           "title": "Briefing, mapa e status orientados por catálogo",
-          "status": "Ready",
+          "status": "Done",
           "task_mode": "REFATORAR",
           "deploy_type": "none",
           "repo_target": "cohort-de-marketing",

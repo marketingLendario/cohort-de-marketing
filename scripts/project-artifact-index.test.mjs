@@ -359,8 +359,10 @@ test('validator aplica sanitizacao a toda provenance sem ecoar assinatura', asyn
 test('briefings distribuidos permanecem identicos e declaram consumo de ArtifactIndex v1', async () => {
   const primary = await readFile(new URL('../briefing.html', import.meta.url), 'utf8');
   const distributed = await readFile(new URL('../aula-03/materiais/briefing.html', import.meta.url), 'utf8');
+  const sharedContract = await readFile(new URL('../skill-surface-contract.js', import.meta.url), 'utf8');
   assert.equal(primary, distributed);
-  assert.match(primary, /artifact-index-v1/);
+  assert.match(primary, /skill-surface-contract\.js/);
+  assert.match(sharedContract, /artifact-index-v1/);
   assert.match(primary, /import-artifact-index/);
 });
 
@@ -564,11 +566,10 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
       assert.match(await invalidReload.page.locator('#import-status').textContent(), /índice salvo recusado/i);
       await invalidReload.page.locator('[data-step="project"]').click();
       assert.equal(await invalidReload.page.locator('[data-path="project.name"]').inputValue(), 'Acme Labs');
-      const recovered = await invalidReload.page.evaluate(() => JSON.parse(
-        localStorage.getItem('cohort.projectBrief.v1:project-acme-labs'),
+      const preserved = await invalidReload.page.evaluate(() => (
+        localStorage.getItem('cohort.projectBrief.v1:project-acme-labs')
       ));
-      assert.equal(recovered.artifactIndex, null);
-      assert.equal(Object.values(recovered.artifacts).some(Boolean), false);
+      assert.equal(preserved, JSON.stringify(saved), `${pathname}: ${tamper.label} alterou storage rejeitado`);
       assert.deepEqual(invalidReload.errors, []);
       await invalidReload.page.close();
     }

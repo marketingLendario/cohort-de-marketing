@@ -40,7 +40,7 @@ async function startServer() {
   return { server, origin: `http://127.0.0.1:${server.address().port}` };
 }
 
-async function openBriefing(t, path = '/briefing.html') {
+async function openBriefing(t, path = '/briefing.html', seededStorage = null) {
   const { server, origin } = await startServer();
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ acceptDownloads: true });
@@ -49,6 +49,12 @@ async function openBriefing(t, path = '/briefing.html') {
     else await route.abort();
   });
   const page = await context.newPage();
+  if (seededStorage) {
+    await page.addInitScript(({ activeProjectId, raw }) => {
+      localStorage.setItem('cohort.projectBrief.activeProject.v1', activeProjectId);
+      localStorage.setItem(`cohort.projectBrief.v1:${encodeURIComponent(activeProjectId)}`, raw);
+    }, seededStorage);
+  }
   const pageErrors = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
   await page.goto(`${origin}${path}`, { waitUntil: 'domcontentloaded' });
@@ -234,6 +240,43 @@ test('credenciais em texto livre falham fechado antes de import e autosave', asy
     assert.equal(await page.locator('[data-path="project.name"]').inputValue(), baselineName);
     assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
   }
+  assert.deepEqual(pageErrors, []);
+});
+
+test('credencial rejeitada no índice salvo preserva o storage byte a byte e não libera artefatos', async (t) => {
+  const document = JSON.parse(await readFile(VALID_V1, 'utf8'));
+  const payload = {
+    document,
+    artifacts: {},
+    artifactIndex: {
+      schemaVersion: 'artifact-index-v1',
+      project: { slug: document.data.project.slug },
+      rules: { schemaVersion: '0.1.0', confirmationRequiredByDefault: true },
+      entries: [{
+        artifactType: 'avatar',
+        path: 'token=tok_1234567890abcdefghijklmnop',
+        sha256: 'a'.repeat(64),
+        sizeBytes: 1,
+        origin: { kind: 'declared_glob', rule: 'artifactGlobs.avatar', patterns: ['avatar.md'] },
+        confirmationStatus: 'confirmed',
+        satisfiesCriticalRequirement: true,
+      }],
+      summary: { total: 1, confirmed: 1, pendingConfirmation: 0 },
+    },
+    ui: { activeStep: 'review' },
+  };
+  const raw = JSON.stringify(payload);
+  const { page, pageErrors } = await openBriefing(t, '/briefing.html', {
+    activeProjectId: document.projectId,
+    raw,
+  });
+
+  await page.locator('#import-status').filter({ hasText: 'storage original' }).waitFor();
+  await page.locator('[data-step="review"]').click();
+  assert.equal(await page.locator('[data-artifact="avatar"] input').isChecked(), false);
+  assert.equal(await page.evaluate((projectId) => localStorage.getItem(
+    `cohort.projectBrief.v1:${encodeURIComponent(projectId)}`,
+  ), document.projectId), raw);
   assert.deepEqual(pageErrors, []);
 });
 

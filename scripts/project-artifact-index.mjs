@@ -12,6 +12,8 @@ import {
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import '../skill-surface-contract.js';
+
 const INDEX_SCHEMA_VERSION = 'artifact-index-v1';
 export const ARTIFACT_GLOB_MATCHER_VERSION = '1.0.0';
 const SAFE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -330,53 +332,13 @@ function exactKeys(value, expected) {
 }
 
 export function validateArtifactIndex(index, rules) {
-  const globs = validateRules(rules);
-  if (!exactKeys(index, ['schemaVersion', 'project', 'rules', 'entries', 'summary'])
-    || index.schemaVersion !== INDEX_SCHEMA_VERSION
-    || !exactKeys(index.project, ['slug'])
-    || !SAFE_SLUG.test(index.project.slug)
-    || !exactKeys(index.rules, ['schemaVersion', 'confirmationRequiredByDefault'])
-    || index.rules.schemaVersion !== String(rules.schemaVersion || 'unknown')
-    || index.rules.confirmationRequiredByDefault !== rules.artifactIndex.confirmationRequiredByDefault
-    || !Array.isArray(index.entries)
-    || !exactKeys(index.summary, ['total', 'confirmed', 'pendingConfirmation'])) {
+  validateRules(rules);
+  try {
+    return globalThis.SkillSurfaceContract.validateArtifactIndex(index, rules);
+  } catch (error) {
+    if (error?.code === 'INVALID_ARTIFACT_INDEX') fail('INVALID_INDEX', error.message);
     fail('INVALID_INDEX', 'O ArtifactIndex não corresponde ao contrato v1.');
   }
-  const identities = new Set();
-  for (const entry of index.entries) {
-    if (!exactKeys(entry, ENTRY_KEYS)
-      || !SAFE_TYPE.test(entry.artifactType)
-      || !Object.hasOwn(globs, entry.artifactType)
-      || !isPortableArtifactPath(entry.path)
-      || !/^[a-f0-9]{64}$/.test(entry.sha256)
-      || !Number.isSafeInteger(entry.sizeBytes) || entry.sizeBytes < 0
-      || !exactKeys(entry.origin, ['kind', 'rule', 'patterns'])
-      || entry.origin.kind !== 'declared_glob'
-      || entry.origin.rule !== `artifactGlobs.${entry.artifactType}`
-      || !Array.isArray(entry.origin.patterns) || entry.origin.patterns.length === 0
-      || !['confirmed', 'pending_confirmation'].includes(entry.confirmationStatus)
-      || entry.satisfiesCriticalRequirement !== (entry.confirmationStatus === 'confirmed')) {
-      fail('INVALID_INDEX', 'Uma entrada do ArtifactIndex é inválida.');
-    }
-    for (const reference of [entry.artifactType, entry.path, entry.origin.kind, entry.origin.rule, ...entry.origin.patterns]) {
-      assertSafeReference(reference);
-    }
-    const canonicalPatterns = globs[entry.artifactType];
-    if (!entry.origin.patterns.every((pattern) => isPortableArtifactPath(pattern)
-      && canonicalPatterns.includes(pattern)
-      && matchesArtifactGlob(entry.path, pattern))) {
-      fail('INVALID_INDEX', 'A proveniência de uma entrada não corresponde ao path indexado.');
-    }
-    if (identities.has(entry.path)) fail('INVALID_INDEX', 'O ArtifactIndex contém um path global duplicado.');
-    identities.add(entry.path);
-  }
-  const confirmed = index.entries.filter((entry) => entry.confirmationStatus === 'confirmed').length;
-  if (index.summary.total !== index.entries.length
-    || index.summary.confirmed !== confirmed
-    || index.summary.pendingConfirmation !== index.entries.length - confirmed) {
-    fail('INVALID_INDEX', 'O resumo do ArtifactIndex é inconsistente.');
-  }
-  return index;
 }
 
 export function confirmArtifact(index, { artifactType, path: artifactPath }, rules) {
