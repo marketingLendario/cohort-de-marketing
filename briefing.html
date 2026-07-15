@@ -446,6 +446,18 @@
     const STORAGE_PREFIX = 'cohort.projectBrief.v1:';
     const ACTIVE_PROJECT_KEY = 'cohort.projectBrief.activeProject.v1';
     const SAVE_IDLE_MS = 650;
+    const CREDENTIAL_PATTERNS = [
+      { label: 'api_key', pattern: /\bapi[_-]?key\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
+      { label: 'access_token', pattern: /\baccess[_-]?token\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
+      { label: 'refresh_token', pattern: /\brefresh[_-]?token\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
+      { label: 'secret', pattern: /\b(?:client[_-]?)?secret\s*[:=]\s*["']?[A-Za-z0-9._~+\/-]{8,}/i },
+      { label: 'bearer token', pattern: /\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+\/-]{12,}/i },
+      { label: 'OpenAI token', pattern: /\bsk-(?:live-|test-|proj-)?[A-Za-z0-9_-]{20,}\b/ },
+      { label: 'GitHub token', pattern: /\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/i },
+      { label: 'Slack token', pattern: /\bxox[baprs]-[A-Za-z0-9-]{20,}\b/i },
+      { label: 'Google API key', pattern: /\bAIza[A-Za-z0-9_-]{30,}\b/ },
+      { label: 'JWT', pattern: /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,}\b/ }
+    ];
     const GROUPS = ['project', 'market', 'offer', 'brand', 'funnel', 'channels', 'data', 'integrations'];
     const STATE_LABELS = {
       done: 'gerada',
@@ -754,6 +766,35 @@
 
     function clone(value) { return structuredClone(value); }
 
+    function credentialFinding(value, path = '$') {
+      if (typeof value === 'string') {
+        const found = CREDENTIAL_PATTERNS.find(({ pattern }) => pattern.test(value));
+        return found ? { label: found.label, path } : null;
+      }
+      if (Array.isArray(value)) {
+        for (let index = 0; index < value.length; index++) {
+          const found = credentialFinding(value[index], `${path}[${index}]`);
+          if (found) return found;
+        }
+        return null;
+      }
+      if (value && typeof value === 'object') {
+        for (const [key, child] of Object.entries(value)) {
+          if (/^(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|secret|password)$/i.test(key)
+            && child != null && String(child).trim()) return { label: key, path: `${path}.${key}` };
+          const found = credentialFinding(child, `${path}.${key}`);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    function assertNoPlaintextCredentials(value, operation) {
+      const found = credentialFinding(value);
+      if (!found) return;
+      throw new Error(`${operation} recusado: possível credencial ${found.label} em ${found.path}; nenhuma sanitização automática foi aplicada`);
+    }
+
     function contractData(source = state) {
       const data = clone(source);
       delete data.artifacts;
@@ -781,7 +822,24 @@
     }
 
     function validateFormat(value, format) {
-      if (format === 'date-time') return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && !Number.isNaN(Date.parse(value));
+      if (format === 'date-time') {
+        if (typeof value !== 'string') return false;
+        const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|([+-])(\d{2}):(\d{2}))$/i.exec(value);
+        if (!match) return false;
+        const [, yearText, monthText, dayText, hourText, minuteText, secondText, , offsetHourText, offsetMinuteText] = match;
+        const year = Number(yearText);
+        const month = Number(monthText);
+        const day = Number(dayText);
+        const hour = Number(hourText);
+        const minute = Number(minuteText);
+        const second = Number(secondText);
+        const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+        const daysInMonth = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        if (month < 1 || month > 12 || day < 1 || day > daysInMonth[month - 1]) return false;
+        if (hour > 23 || minute > 59 || second > 60) return false;
+        if (offsetHourText && (Number(offsetHourText) > 23 || Number(offsetMinuteText) > 59)) return false;
+        return true;
+      }
       if (format === 'canonical-field-path') return canonicalFieldPaths.has(value);
       if (format === 'portable-artifact-reference') return portableReference(value, false);
       if (format === 'portable-legacy-source-path') return portableReference(value, true);
@@ -921,14 +979,23 @@
       ensureCurrentDocument();
       currentDocument.data = contractData();
       if (state.project?.slug || importedIdentity) {
-        localStorage.setItem(storageKey(currentDocument.projectId), JSON.stringify({
+        const payload = {
           document: currentDocument,
           artifacts: clone(state.artifacts || {}),
           ui: { activeStep }
-        }));
+        };
+        try {
+          assertNoPlaintextCredentials(payload, 'Autosave');
+        } catch (error) {
+          byId('save-state').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-[10px]"></i> autosave recusado: ${escapeHtml(error.message)}`;
+          showImportStatus(error.message, true);
+          return false;
+        }
+        localStorage.setItem(storageKey(currentDocument.projectId), JSON.stringify(payload));
         localStorage.setItem(ACTIVE_PROJECT_KEY, currentDocument.projectId);
       }
       byId('save-state').innerHTML = '<i class="fa-solid fa-circle text-[7px] text-emerald-400"></i> salvo';
+      return true;
     }
 
     function renderStepNav() {
@@ -1344,6 +1411,7 @@
       if (!file) return;
       try {
         const input = JSON.parse(await file.text());
+        assertNoPlaintextCredentials(input, 'Importação');
         const candidate = input?.document?.schemaVersion === '1.0.0' ? input.document : input;
         let imported;
         let message;
@@ -1373,6 +1441,12 @@
     function exportDocument() {
       ensureCurrentDocument();
       const document = { ...clone(currentDocument), data: contractData() };
+      try {
+        assertNoPlaintextCredentials(document, 'Exportação');
+      } catch (error) {
+        showImportStatus(error.message, true);
+        return null;
+      }
       const errors = validateV1(document);
       if (errors.length) {
         showImportStatus(`Exportação recusada: ${errors.slice(0, 3).join('; ')}`, true);

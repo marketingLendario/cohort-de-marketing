@@ -193,8 +193,7 @@ test('credenciais em texto livre falham fechado antes de import e autosave', asy
     assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
   }
 
-  await page.locator('[data-step="market"]').click();
-  await page.locator('[data-path="market.userResearchMaterials"]').fill('Token real: ghp_1234567890abcdefghijklmnopqrstuvwxyz');
+  await page.locator('[data-path="project.name"]').fill('Token real: ghp_1234567890abcdefghijklmnopqrstuvwxyz');
   await page.waitForTimeout(800);
   assert.match(await page.locator('#save-state').textContent(), /autosave recusado/i);
   assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
