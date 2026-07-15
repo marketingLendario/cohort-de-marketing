@@ -9,7 +9,7 @@
     "recommendedArtifacts": "Arquivos que melhoram qualidade ou reduzem perguntas.",
     "anyOf": "Pelo menos um grupo precisa ser satisfeito.",
     "notApplicableWhen": "Condicoes que transformam a skill em nao aplicavel.",
-    "priority": "Ordem numerica declarada da rota; menor vem antes e empate usa estado e ID estavel.",
+    "priority": "Ordem numerica declarada da rota; menor vem antes e empate usa exclusivamente o ID estavel da skill.",
     "recommendationEligible": "Define explicitamente se a skill pode ser escolhida como proximo passo."
   },
   "artifactGlobs": {

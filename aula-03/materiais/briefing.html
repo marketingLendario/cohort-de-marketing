@@ -589,6 +589,7 @@
     let catalog;
     let rules;
     let readinessEngine;
+    let readinessContractRefs;
     let steps = [];
     let fields = [];
     let canonicalFieldPaths = new Set();
@@ -1371,7 +1372,7 @@
       const almost = evaluated.filter((item) => item.state === 'almost');
       const blocked = evaluated.filter((item) => item.state === 'blocked');
       const projectBrief = currentDocument ? { ...currentDocument, data: contractData() } : null;
-      const decision = readinessEngine.decideNextSkill({ rules, evaluatedSkills: evaluated, projectBrief, artifactIndex });
+      const decision = readinessEngine.decideNextSkill({ rules, contractRefs: readinessContractRefs, evaluatedSkills: evaluated, projectBrief, artifactIndex });
       const next = decision.nextSkill
         ? evaluated.find((item) => item.skillId === decision.nextSkill.id)
         : null;
@@ -1620,7 +1621,7 @@
       const data = contractData();
       const evaluated = evaluateSkills();
       const projectBrief = currentDocument ? { ...currentDocument, data } : null;
-      const decision = readinessEngine.decideNextSkill({ rules, evaluatedSkills: evaluated, projectBrief, artifactIndex });
+      const decision = readinessEngine.decideNextSkill({ rules, contractRefs: readinessContractRefs, evaluatedSkills: evaluated, projectBrief, artifactIndex });
       const ready = evaluated.filter((item) => ['done', 'available', 'recommended'].includes(item.state)).map((item) => item.skillId);
       const almost = evaluated.filter((item) => item.state === 'almost').map((item) => item.skillId);
       return [
@@ -1654,14 +1655,7 @@
     }
 
     async function loadReadinessEngine() {
-      const response = await fetch('/scripts/lib/skill-readiness.mjs');
-      if (!response.ok) throw new Error('O motor público de próxima skill não foi encontrado.');
-      const moduleUrl = URL.createObjectURL(new Blob([await response.text()], { type: 'text/javascript' }));
-      try {
-        return await import(moduleUrl);
-      } finally {
-        URL.revokeObjectURL(moduleUrl);
-      }
+      return import('/scripts/lib/skill-readiness.mjs');
     }
 
     async function init() {
@@ -1681,12 +1675,14 @@
         catalog = await catalogRes.json();
         rules = await rulesRes.json();
         readinessEngine = await loadReadinessEngine();
-        window.SkillSurfaceContract.validateContracts({
+        const contractInputs = {
           catalog,
           rules,
           legacySchema: schema,
           projectBriefSchema: v1Schema,
-        });
+        };
+        window.SkillSurfaceContract.validateContracts(contractInputs);
+        readinessContractRefs = window.SkillSurfaceContract.createReadinessContractRefs(contractInputs);
         validateArtifactRulesContract(rules);
         byId('briefing-surface-count').textContent = `${catalog.skills.length} skills · ${steps?.length || schema['x-steps'].length} etapas · autosave por projeto`;
       } catch (error) {

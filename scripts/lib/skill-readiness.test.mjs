@@ -46,6 +46,10 @@ const contractRefsFor = (rules) => ({
   rulesSchemaVersion: '0.1.0',
   projectBriefSchemaVersion: '1.0.0',
   artifactIndexSchemaVersion: 'artifact-index-v1',
+  artifactTypes: [...new Set(Object.values(rules.skills).flatMap((skillRule) => [
+    ...(skillRule.requiredArtifacts || []),
+    ...(skillRule.recommendedArtifacts || []),
+  ]))].sort(),
   skills: Object.fromEntries(Object.entries(rules.skills).map(([skillId, skillRule]) => [skillId, {
     requiredFields: [...(skillRule.requiredFields || [])],
     requiredArtifacts: [...(skillRule.requiredArtifacts || [])],
@@ -75,7 +79,7 @@ const evidence = {
   },
   artifactIndex: {
     schemaVersion: 'artifact-index-v1',
-    summary: { total: 2, confirmed: 1, pendingConfirmation: 1 },
+    summary: { total: 0, confirmed: 0, pendingConfirmation: 0 },
     entries: [],
   },
 };
@@ -154,7 +158,7 @@ test('prioridade declarada torna a escolha independente da ordem do objeto e do 
   assert.equal(tiedAcrossStates.nextSkill.id, 'alpha', 'estado não participa do desempate declarado');
 
   const gatedRoute = decide({
-    rules: rulesFor({ foundation: rule(1, { command: '/foundation' }), later: rule(20, { command: '/later' }) }),
+    rules: rulesFor({ foundation: rule(1, { command: '/foundation', requiredFields: ['project.slug'] }), later: rule(20, { command: '/later' }) }),
     evaluatedSkills: [evaluated('later', 'available'), evaluated('foundation', 'blocked', { missingFields: ['project.slug'] })],
     ...evidence,
   });
@@ -206,6 +210,31 @@ test('versões, comando canônico e referências públicas falham fechado', () =
     () => decide({ ...base, evaluatedSkills: [evaluated('fixture', 'blocked', { missingFields: ['../../token'] })] }),
     (error) => error?.code === 'UNDECLARED_REQUIREMENT_REFERENCE',
   );
+  for (const [key, value] of [
+    ['missingArtifacts', ['private-key']],
+    ['missingAnyOf', ['../../credenciais']],
+    ['metAnyOf', ['token']],
+    ['recommendedMissing', ['password']],
+  ]) {
+    assert.throws(
+      () => decide({ ...base, evaluatedSkills: [evaluated('fixture', 'blocked', { [key]: value })] }),
+      (error) => error?.code === 'UNDECLARED_REQUIREMENT_REFERENCE',
+    );
+  }
+  const artifactRules = rulesFor({ fixture: rule(1, { requiredArtifacts: ['avatar'] }) });
+  assert.throws(
+    () => decide({
+      ...base,
+      rules: artifactRules,
+      evaluatedSkills: [evaluated('fixture', 'available')],
+      artifactIndex: {
+        schemaVersion: 'artifact-index-v1',
+        entries: [{ artifactType: 'avatar', path: 'private/token.txt', confirmationStatus: 'confirmed' }],
+        summary: { total: 1, confirmed: 1, pendingConfirmation: 0 },
+      },
+    }),
+    (error) => error?.code === 'INVALID_ARTIFACT_INDEX',
+  );
   assert.throws(
     () => decideNextSkill(base),
     (error) => error?.code === 'INVALID_CONTRACT_REFS',
@@ -239,6 +268,7 @@ test('decisão explica requisitos, ausências e evidências sem copiar valores d
         requiredArtifacts: ['avatar'],
         recommendedFields: ['offer.name'],
         recommendedArtifacts: ['design'],
+        anyOf: [{ label: 'Projeto com alvo definido', fields: ['market.niche'] }],
       }),
     }),
     evaluatedSkills: [evaluated('fixture', 'almost', {
@@ -267,7 +297,7 @@ test('decisão explica requisitos, ausências e evidências sem copiar valores d
   });
   assert.deepEqual(decision.evidence, {
     projectBrief: { present: true, contract: 'project-brief-v1', status: 'draft' },
-    artifactIndex: { present: true, contract: 'artifact-index-v1', total: 2, confirmed: 1, pendingConfirmation: 1 },
+    artifactIndex: { present: true, contract: 'artifact-index-v1', total: 0, confirmed: 0, pendingConfirmation: 0 },
   });
   assert.match(decision.reason, /\/fixture/);
   assert.doesNotMatch(JSON.stringify(decision), /segredo-do-cliente|dado-sensivel-do-cliente/);
@@ -277,15 +307,15 @@ test('golden matrix entrega decisão byte-equivalente nas quatro superfícies', 
   const input = {
     rules: rulesFor({
       comecar: rule(0, { command: '/comecar', recommendationEligible: false }),
-      avatar: rule(1, { command: '/avatar-funil' }),
-      offerbook: rule(5, { command: '/offerbook' }),
-      status: rule(99, { command: '/status-funil', recommendationEligible: false }),
+      'avatar-funil': rule(1, { command: '/avatar-funil' }),
+      offerbook: rule(5, { command: '/offerbook', recommendedFields: ['offer.promise'] }),
+      'status-funil': rule(99, { command: '/status-funil', recommendationEligible: false }),
     }),
     evaluatedSkills: [
       evaluated('comecar', 'available'),
-      evaluated('avatar', 'done'),
+      evaluated('avatar-funil', 'done'),
       evaluated('offerbook', 'recommended', { recommendedMissing: ['offer.promise'] }),
-      evaluated('status', 'available'),
+      evaluated('status-funil', 'available'),
     ],
     ...evidence,
   };
@@ -298,21 +328,21 @@ test('golden matrix entrega decisão byte-equivalente nas quatro superfícies', 
 
 test('not_applicable e perfis mudam a rota sem mutar artefatos; chamada direta segue autônoma', async () => {
   const rules = rulesFor({
-    avatar: rule(1, { command: '/avatar-funil' }),
+    'avatar-funil': rule(1, { command: '/avatar-funil' }),
     offerbook: rule(5, { command: '/offerbook' }),
-    backend: rule(14, { command: '/backend-funil' }),
+    'backend-funil': rule(14, { command: '/backend-funil' }),
   });
   const artifactIndex = structuredClone(evidence.artifactIndex);
   const before = JSON.stringify(artifactIndex);
   const ownOffer = decide({
     rules,
-    evaluatedSkills: [evaluated('avatar', 'done'), evaluated('offerbook', 'recommended'), evaluated('backend', 'almost')],
+    evaluatedSkills: [evaluated('avatar-funil', 'done'), evaluated('offerbook', 'recommended'), evaluated('backend-funil', 'almost')],
     projectBrief: evidence.projectBrief,
     artifactIndex,
   });
   const affiliate = decide({
     rules,
-    evaluatedSkills: [evaluated('avatar', 'done'), evaluated('offerbook', 'done'), evaluated('backend', 'not_applicable')],
+    evaluatedSkills: [evaluated('avatar-funil', 'done'), evaluated('offerbook', 'done'), evaluated('backend-funil', 'not_applicable')],
     projectBrief: evidence.projectBrief,
     artifactIndex,
   });
@@ -379,8 +409,16 @@ test('briefing e mapa, raiz e Aula 3, exibem o mesmo comando e razão no browser
       localStorage.setItem('cohort.projectBrief.activeProject.v1', projectId);
       localStorage.setItem(`cohort.projectBrief.v1:${encodeURIComponent(projectId)}`, raw);
     }, { projectId: projectBrief.projectId, raw: payload });
-    await page.goto(`${origin}${pathname}`, { waitUntil: 'networkidle' });
+    let readinessResponse = null;
+    page.on('response', (response) => {
+      if (new URL(response.url()).pathname === '/scripts/lib/skill-readiness.mjs') readinessResponse = response;
+    });
+    const navigation = await page.goto(`${origin}${pathname}`, { waitUntil: 'networkidle' });
+    const csp = navigation.headers()['content-security-policy'];
+    assert.match(csp, /script-src 'self'/);
+    assert.doesNotMatch(csp.split(';').find((directive) => directive.trim().startsWith('script-src')) || '', /blob:/);
     await page.waitForFunction(() => window.__SKILL_SURFACE_STATUS?.status === 'ready');
+    assert.match(readinessResponse?.headers()['content-type'] || '', /^application\/javascript/);
     const result = await page.evaluate(() => ({
       decision: window.__SKILL_READINESS_DECISION,
       command: document.getElementById('next-skill-command')?.textContent

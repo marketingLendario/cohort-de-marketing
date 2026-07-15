@@ -8,7 +8,18 @@ const PUBLIC_STATES = Object.freeze([
 ]);
 
 const SELECTABLE_STATES = new Set(['available', 'recommended', 'almost', 'blocked']);
-const STATE_PRIORITY = Object.freeze({ available: 0, recommended: 1, almost: 2, blocked: 3 });
+const SUPPORTED_CONTRACTS = Object.freeze({
+  refs: 'skill-readiness-contract-refs-v1',
+  rules: '0.1.0',
+  projectBrief: '1.0.0',
+  artifactIndex: 'artifact-index-v1',
+});
+const PROJECT_BRIEF_STATUSES = new Set(['draft', 'active', 'superseded']);
+const SENSITIVE_PATH_TOKENS = new Set([
+  'credential', 'credentials', 'credencial', 'credenciais', 'env', 'password', 'passwords',
+  'private', 'privado', 'secret', 'secrets', 'segredo', 'segredos', 'senha', 'senhas',
+  'token', 'tokens',
+]);
 
 export class SkillReadinessError extends Error {
   constructor(code, message) {
@@ -23,31 +34,68 @@ const fail = (code, message) => {
 };
 
 const isRecord = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-const sortedStrings = (values) => [...new Set([...values].filter((value) => typeof value === 'string' && value))].sort();
+const sortedStrings = (values) => [...new Set(values)].sort();
 const sameSet = (left, right) => JSON.stringify(sortedStrings(left)) === JSON.stringify(sortedStrings(right));
+const exactKeys = (value, expected) => isRecord(value)
+  && Object.keys(value).sort().join('|') === [...expected].sort().join('|');
 
-function valueAt(document, dottedPath) {
-  return dottedPath.split('.').reduce((value, key) => value?.[key], document);
+function safeIdentifierList(values) {
+  return Array.isArray(values)
+    && values.every((value) => typeof value === 'string' && value.length > 0)
+    && new Set(values).size === values.length;
 }
 
-function filled(value) {
-  if (Array.isArray(value)) return value.length > 0;
-  if (isRecord(value)) return Object.values(value).some(filled);
-  return value !== undefined && value !== null && value !== '' && value !== false && value !== 0;
+function isSafePortablePath(value) {
+  return typeof value === 'string'
+    && value.length > 0
+    && value.length <= 512
+    && !value.startsWith('/')
+    && !/^[A-Za-z]:[\\/]/.test(value)
+    && !value.includes('\\')
+    && !/[\u0000-\u001F\u007F-\u009F]/u.test(value)
+    && value.split('/').every((segment) => segment && segment !== '.' && segment !== '..'
+      && !segment.toLowerCase().split(/[._-]+/).some((token) => SENSITIVE_PATH_TOKENS.has(token)));
 }
 
-function validateInputs(rules, evaluatedSkills) {
-  if (!isRecord(rules) || !Array.isArray(rules.states) || !isRecord(rules.skills)
+function validateContractRefs(contractRefs, rules) {
+  if (!exactKeys(contractRefs, [
+    'schemaVersion',
+    'rulesSchemaVersion',
+    'projectBriefSchemaVersion',
+    'artifactIndexSchemaVersion',
+    'artifactTypes',
+    'skills',
+  ])
+    || contractRefs.schemaVersion !== SUPPORTED_CONTRACTS.refs
+    || contractRefs.rulesSchemaVersion !== SUPPORTED_CONTRACTS.rules
+    || contractRefs.projectBriefSchemaVersion !== SUPPORTED_CONTRACTS.projectBrief
+    || contractRefs.artifactIndexSchemaVersion !== SUPPORTED_CONTRACTS.artifactIndex
+    || !isRecord(contractRefs.skills)
+    || !safeIdentifierList(contractRefs.artifactTypes)) {
+    fail('INVALID_CONTRACT_REFS', 'As referências do contrato público estão ausentes ou em versão não suportada.');
+  }
+  if (!sameSet(Object.keys(contractRefs.skills), Object.keys(rules.skills))) {
+    fail('INVALID_CONTRACT_REFS', 'As referências públicas divergem das skills declaradas.');
+  }
+  for (const [skillId, refs] of Object.entries(contractRefs.skills)) {
+    if (!exactKeys(refs, ['requiredFields', 'requiredArtifacts', 'anyOfLabels', 'recommended'])
+      || ![refs.requiredFields, refs.requiredArtifacts, refs.anyOfLabels, refs.recommended].every(safeIdentifierList)) {
+      fail('INVALID_CONTRACT_REFS', `As referências públicas de ${skillId} são inválidas.`);
+    }
+  }
+}
+
+function validateRules(rules, contractRefs) {
+  if (!isRecord(rules) || rules.schemaVersion !== SUPPORTED_CONTRACTS.rules
+    || !Array.isArray(rules.states) || !isRecord(rules.skills)
     || !sameSet(rules.states, PUBLIC_STATES)) {
-    fail('INVALID_READINESS_RULES', 'As regras não declaram exatamente os seis estados públicos.');
+    fail('INVALID_READINESS_RULES', 'As regras não correspondem ao contrato público suportado.');
   }
-  if (!Array.isArray(evaluatedSkills) || evaluatedSkills.length === 0) {
-    fail('INVALID_SKILL_EVALUATION', 'A avaliação de skills está ausente ou vazia.');
-  }
-
+  validateContractRefs(contractRefs, rules);
   for (const [skillId, rule] of Object.entries(rules.skills)) {
-    if (!isRecord(rule) || typeof rule.command !== 'string' || !rule.command.startsWith('/')) {
-      fail('INVALID_READINESS_RULES', `A regra de ${skillId} está ausente ou malformada.`);
+    if (!isRecord(rule)) fail('INVALID_READINESS_RULES', `A regra de ${skillId} está ausente.`);
+    if (rule.command !== `/${skillId}`) {
+      fail('INVALID_SKILL_COMMAND', `O comando canônico de ${skillId} não corresponde ao ID.`);
     }
     if (!Number.isSafeInteger(rule.priority) || rule.priority < 0) {
       fail('INVALID_SKILL_PRIORITY', `A prioridade declarada de ${skillId} é inválida.`);
@@ -55,8 +103,31 @@ function validateInputs(rules, evaluatedSkills) {
     if (typeof rule.recommendationEligible !== 'boolean') {
       fail('INVALID_RECOMMENDATION_POLICY', `A elegibilidade do recomendador para ${skillId} não é explícita.`);
     }
+    const refs = contractRefs.skills[skillId];
+    const declared = {
+      requiredFields: rule.requiredFields || [],
+      requiredArtifacts: rule.requiredArtifacts || [],
+      anyOfLabels: (rule.anyOf || []).map((group) => group?.label),
+      recommended: [...(rule.recommendedFields || []), ...(rule.recommendedArtifacts || [])],
+    };
+    for (const key of Object.keys(declared)) {
+      if (!safeIdentifierList(declared[key]) || !sameSet(declared[key], refs[key])) {
+        fail('INVALID_CONTRACT_REFS', `A regra de ${skillId} diverge das referências públicas em ${key}.`);
+      }
+    }
   }
+}
 
+function assertSubset(values, allowed, skillId, key) {
+  if (!safeIdentifierList(values) || values.some((value) => !allowed.includes(value))) {
+    fail('UNDECLARED_REQUIREMENT_REFERENCE', `A avaliação de ${skillId} contém referência não declarada em ${key}.`);
+  }
+}
+
+function validateEvaluations(rules, contractRefs, evaluatedSkills) {
+  if (!Array.isArray(evaluatedSkills) || evaluatedSkills.length === 0) {
+    fail('INVALID_SKILL_EVALUATION', 'A avaliação de skills está ausente ou vazia.');
+  }
   const seen = new Set();
   for (const item of evaluatedSkills) {
     if (!isRecord(item) || typeof item.skillId !== 'string' || seen.has(item.skillId)
@@ -67,72 +138,73 @@ function validateInputs(rules, evaluatedSkills) {
     if (!PUBLIC_STATES.includes(item.state)) {
       fail('INVALID_SKILL_STATE', `A skill ${item.skillId} retornou um estado desconhecido.`);
     }
-    for (const key of ['missingFields', 'missingArtifacts', 'missingAnyOf', 'recommendedMissing']) {
-      if (!Array.isArray(item[key]) || item[key].some((value) => typeof value !== 'string')) {
-        fail('INVALID_SKILL_EVALUATION', `A avaliação de ${item.skillId} não declara ${key} corretamente.`);
-      }
-    }
+    const refs = contractRefs.skills[item.skillId];
+    assertSubset(item.missingFields, refs.requiredFields, item.skillId, 'missingFields');
+    assertSubset(item.missingArtifacts, refs.requiredArtifacts, item.skillId, 'missingArtifacts');
+    assertSubset(item.missingAnyOf, refs.anyOfLabels, item.skillId, 'missingAnyOf');
+    assertSubset(item.metAnyOf, refs.anyOfLabels, item.skillId, 'metAnyOf');
+    assertSubset(item.recommendedMissing, refs.recommended, item.skillId, 'recommendedMissing');
   }
   if (!sameSet(seen, Object.keys(rules.skills))) {
     fail('INVALID_SKILL_EVALUATION', 'Regras e avaliações divergem na lista de skills.');
   }
 }
 
+function validateEvidence(projectBrief, artifactIndex, contractRefs) {
+  if (projectBrief != null && (!isRecord(projectBrief)
+    || projectBrief.schemaVersion !== SUPPORTED_CONTRACTS.projectBrief
+    || !PROJECT_BRIEF_STATUSES.has(projectBrief.status)
+    || !isRecord(projectBrief.data))) {
+    fail('INVALID_PROJECT_BRIEF_VERSION', 'O ProjectBrief está ausente, malformado ou em versão não suportada.');
+  }
+  if (artifactIndex != null) {
+    if (!isRecord(artifactIndex) || artifactIndex.schemaVersion !== SUPPORTED_CONTRACTS.artifactIndex) {
+      fail('INVALID_ARTIFACT_INDEX_VERSION', 'O ArtifactIndex está ausente, malformado ou em versão não suportada.');
+    }
+    const summary = artifactIndex.summary;
+    if (!isRecord(summary) || !Array.isArray(artifactIndex.entries)
+      || !['total', 'confirmed', 'pendingConfirmation'].every((key) => Number.isSafeInteger(summary[key]) && summary[key] >= 0)
+      || summary.total !== summary.confirmed + summary.pendingConfirmation
+      || summary.total !== artifactIndex.entries.length) {
+      fail('INVALID_ARTIFACT_INDEX', 'O resumo do ArtifactIndex é inconsistente.');
+    }
+    for (const entry of artifactIndex.entries) {
+      if (!isRecord(entry) || !contractRefs.artifactTypes.includes(entry.artifactType)
+        || !['confirmed', 'pending_confirmation'].includes(entry.confirmationStatus)
+        || !isSafePortablePath(entry.path)) {
+        fail('INVALID_ARTIFACT_INDEX', 'Uma entrada do ArtifactIndex não corresponde às categorias públicas.');
+      }
+    }
+  }
+}
+
 function evidenceSummary(projectBrief, artifactIndex) {
-  const briefStatus = ['draft', 'complete', 'final', 'ready'].includes(projectBrief?.status)
-    ? projectBrief.status
-    : 'unknown';
-  const summary = artifactIndex?.summary;
-  const safeCount = (value) => Number.isSafeInteger(value) && value >= 0 ? value : 0;
   return {
     projectBrief: {
-      present: isRecord(projectBrief),
-      schemaVersion: typeof projectBrief?.schemaVersion === 'string' ? projectBrief.schemaVersion : 'unknown',
-      status: briefStatus,
+      present: projectBrief != null,
+      contract: projectBrief == null ? 'none' : 'project-brief-v1',
+      status: projectBrief == null ? 'not_present' : projectBrief.status,
     },
     artifactIndex: {
-      present: isRecord(artifactIndex),
-      schemaVersion: typeof artifactIndex?.schemaVersion === 'string' ? artifactIndex.schemaVersion : 'unknown',
-      total: safeCount(summary?.total),
-      confirmed: safeCount(summary?.confirmed),
-      pendingConfirmation: safeCount(summary?.pendingConfirmation),
+      present: artifactIndex != null,
+      contract: artifactIndex == null ? 'none' : 'artifact-index-v1',
+      total: artifactIndex?.summary?.total || 0,
+      confirmed: artifactIndex?.summary?.confirmed || 0,
+      pendingConfirmation: artifactIndex?.summary?.pendingConfirmation || 0,
     },
   };
 }
 
-function confirmedArtifactTypes(artifactIndex) {
-  return new Set((artifactIndex?.entries || [])
-    .filter((entry) => entry?.confirmationStatus === 'confirmed' && typeof entry?.artifactType === 'string')
-    .map((entry) => entry.artifactType));
-}
-
-function satisfiedPaths(rule, projectBrief, artifactIndex) {
-  const briefData = projectBrief?.data || {};
-  const artifacts = confirmedArtifactTypes(artifactIndex);
-  const groupMatches = (group) => {
-    if (!isRecord(group)) return false;
-    if (group.matches && Object.entries(group.matches).some(([field, expected]) => {
-      const value = valueAt(briefData, field);
-      return Array.isArray(expected) ? !expected.includes(value) : value !== expected;
-    })) return false;
-    return (group.fields || []).every((field) => filled(valueAt(briefData, field)))
-      && (group.artifacts || []).every((artifact) => artifacts.has(artifact));
-  };
-  return sortedStrings((rule.anyOf || []).filter(groupMatches).map((group) => group.label));
-}
-
-function requirementSummary(item, rule, projectBrief, artifactIndex) {
-  const missingFields = sortedStrings(item.missingFields);
-  const missingArtifacts = sortedStrings(item.missingArtifacts);
+function requirementSummary(item, rule) {
   return {
     metRequirements: {
-      fields: sortedStrings((rule.requiredFields || []).filter((field) => !missingFields.includes(field))),
-      artifacts: sortedStrings((rule.requiredArtifacts || []).filter((artifact) => !missingArtifacts.includes(artifact))),
-      paths: satisfiedPaths(rule, projectBrief, artifactIndex),
+      fields: sortedStrings((rule.requiredFields || []).filter((field) => !item.missingFields.includes(field))),
+      artifacts: sortedStrings((rule.requiredArtifacts || []).filter((artifact) => !item.missingArtifacts.includes(artifact))),
+      paths: sortedStrings(item.metAnyOf),
     },
     missingRequirements: {
-      fields: missingFields,
-      artifacts: missingArtifacts,
+      fields: sortedStrings(item.missingFields),
+      artifacts: sortedStrings(item.missingArtifacts),
       paths: sortedStrings(item.missingAnyOf),
       recommended: sortedStrings(item.recommendedMissing),
     },
@@ -166,16 +238,18 @@ function terminalState(evaluatedSkills, rules) {
 
 export function decideNextSkill({
   rules,
+  contractRefs,
   evaluatedSkills,
   projectBrief = null,
   artifactIndex = null,
 }) {
-  validateInputs(rules, evaluatedSkills);
+  validateRules(rules, contractRefs);
+  validateEvaluations(rules, contractRefs, evaluatedSkills);
+  validateEvidence(projectBrief, artifactIndex, contractRefs);
   const candidates = evaluatedSkills
     .filter((item) => rules.skills[item.skillId].recommendationEligible && SELECTABLE_STATES.has(item.state))
     .map((item) => ({ item, rule: rules.skills[item.skillId] }))
     .sort((left, right) => left.rule.priority - right.rule.priority
-      || STATE_PRIORITY[left.item.state] - STATE_PRIORITY[right.item.state]
       || left.item.skillId.localeCompare(right.item.skillId));
 
   const selected = candidates[0] || null;
@@ -190,7 +264,7 @@ export function decideNextSkill({
     } : null,
   };
   const requirements = selected
-    ? requirementSummary(selected.item, selected.rule, projectBrief, artifactIndex)
+    ? requirementSummary(selected.item, selected.rule)
     : {
       metRequirements: { fields: [], artifacts: [], paths: [] },
       missingRequirements: { fields: [], artifacts: [], paths: [], recommended: [] },

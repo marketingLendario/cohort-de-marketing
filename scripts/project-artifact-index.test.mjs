@@ -382,7 +382,10 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
       const bytes = await readFile(target);
       const contentType = target.endsWith('.html')
         ? 'text/html; charset=utf-8'
-        : target.endsWith('.json') ? 'application/json' : 'application/octet-stream';
+        : target.endsWith('.json') ? 'application/json'
+          : target.endsWith('.js') ? 'text/javascript; charset=utf-8'
+            : target.endsWith('.mjs') ? 'application/javascript; charset=utf-8'
+              : 'application/octet-stream';
       response.writeHead(200, { 'content-type': contentType }).end(bytes);
     } catch {
       response.writeHead(404).end('not found');

@@ -1455,9 +1455,9 @@ function showLegend() {
 // ═══════════════════════════════════════════════════════════
 function loadSavedProjectState() {
   const activeProjectId = localStorage.getItem('cohort.projectBrief.activeProject.v1');
-  if (!activeProjectId) return { projectBrief: {}, artifactIndex: null };
+  if (!activeProjectId) return { projectBrief: null, artifactIndex: null };
   const raw = localStorage.getItem(`cohort.projectBrief.v1:${encodeURIComponent(activeProjectId)}`);
-  if (!raw) return { projectBrief: {}, artifactIndex: null };
+  if (!raw) return { projectBrief: null, artifactIndex: null };
   try {
     const saved = JSON.parse(raw);
     if (!saved || typeof saved !== 'object' || !saved.document) {
@@ -1491,18 +1491,11 @@ async function loadSurfaceContracts() {
   ]);
   const inputs = { catalog, rules, legacySchema, projectBriefSchema };
   const contract = window.SkillSurfaceContract.validateContracts(inputs);
+  const contractRefs = window.SkillSurfaceContract.createReadinessContractRefs(inputs);
   const { projectBrief, artifactIndex } = loadSavedProjectState();
   const evaluated = window.SkillSurfaceContract.evaluateSkills({ ...inputs, projectBrief, artifactIndex });
-  const readinessResponse = await fetch('/scripts/lib/skill-readiness.mjs');
-  if (!readinessResponse.ok) throw new Error('O motor público de próxima skill não foi encontrado.');
-  const readinessModuleUrl = URL.createObjectURL(new Blob([await readinessResponse.text()], { type: 'text/javascript' }));
-  let readinessEngine;
-  try {
-    readinessEngine = await import(readinessModuleUrl);
-  } finally {
-    URL.revokeObjectURL(readinessModuleUrl);
-  }
-  SKILL_READINESS_DECISION = readinessEngine.decideNextSkill({ rules, evaluatedSkills: evaluated, projectBrief, artifactIndex });
+  const readinessEngine = await import('/scripts/lib/skill-readiness.mjs');
+  SKILL_READINESS_DECISION = readinessEngine.decideNextSkill({ rules, contractRefs, evaluatedSkills: evaluated, projectBrief, artifactIndex });
 
   SKILLS = contract.skills;
   FLOW_EDGES = contract.edges.map((edge) => [edge.from, edge.to, edge.type]);
