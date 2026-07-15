@@ -10,6 +10,25 @@ const V1_SOURCES = new Set(['user', 'artifact', 'inferred', 'migration']);
 const LEGACY_SCHEMA_PATH = new URL('../data/project-brief.schema.json', import.meta.url);
 const V1_SCHEMA_PATH = new URL('../data/contracts/project-brief.v1.schema.json', import.meta.url);
 const ANNOTATION_KEYWORDS = ['x-step', 'x-control', 'x-sensitive', 'x-unit', 'x-steps'];
+const SENSITIVE_REFERENCE_TOKENS = new Set([
+  'credential',
+  'credentials',
+  'credencial',
+  'credenciais',
+  'env',
+  'password',
+  'passwords',
+  'private',
+  'privado',
+  'secret',
+  'secrets',
+  'segredo',
+  'segredos',
+  'senha',
+  'senhas',
+  'token',
+  'tokens',
+]);
 
 function isPlainObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -34,6 +53,29 @@ function canonicalFieldPaths(schema) {
   return fields;
 }
 
+function isPortableArtifactReference(value) {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 256) return false;
+  const normalized = value.replaceAll('\\', '/');
+  if (normalized.startsWith('/') || /^[A-Za-z]:\//.test(normalized)) return false;
+  if (/^[A-Za-z][A-Za-z0-9+.-]*:/.test(normalized)) return false;
+
+  const segments = normalized.split('/');
+  if (segments.some((segment) => !segment || segment === '.' || segment === '..')) return false;
+  for (const segment of segments) {
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(segment)) return false;
+    const tokens = segment.toLowerCase().split(/[._-]+/);
+    if (tokens.some((token) => SENSITIVE_REFERENCE_TOKENS.has(token))) return false;
+  }
+  return true;
+}
+
+export function normalizePortableArtifactReference(value) {
+  if (!isPortableArtifactReference(value)) {
+    throw new Error('Artifact reference must be a portable relative reference.');
+  }
+  return value.replaceAll('\\', '/');
+}
+
 export function createProjectBriefValidators() {
   const legacySchema = readJson(LEGACY_SCHEMA_PATH);
   const v1Schema = readJson(V1_SCHEMA_PATH);
@@ -48,6 +90,10 @@ export function createProjectBriefValidators() {
   ajv.addFormat('canonical-field-path', {
     type: 'string',
     validate: (path) => fieldPaths.has(path),
+  });
+  ajv.addFormat('portable-artifact-reference', {
+    type: 'string',
+    validate: isPortableArtifactReference,
   });
   ajv.addSchema(legacySchema);
   const validateLegacy = ajv.getSchema(legacySchema.$id);
@@ -108,7 +154,7 @@ export function migrateLegacyProjectBrief(input, options = {}) {
     fieldSources[path] = {
       source: V1_SOURCES.has(meta.source) ? meta.source : 'migration',
       confirmation: meta.source === 'pending_confirmation' ? 'pending' : meta.source === 'not_applicable' ? 'not_applicable' : 'confirmed',
-      ...(meta.sourcePath ? { sourceArtifactId: meta.sourcePath } : {}),
+      ...(meta.sourcePath ? { sourceArtifactId: normalizePortableArtifactReference(meta.sourcePath) } : {}),
       updatedAt: meta.updatedAt ?? now,
     };
   }

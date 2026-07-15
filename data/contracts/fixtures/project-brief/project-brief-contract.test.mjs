@@ -105,6 +105,7 @@ test('AJV 2020 compila os dois schemas e valida fixtures positivas e negativas',
   assert.equal(legacySchema.schemaVersion, undefined);
   assert.equal(fieldPaths.size, 120);
   assert.equal(validateLegacy(fixture('legacy-0.1.0.valid.json')), true);
+  assert.equal(validateLegacy(fixture('relative-source-path.valid.json')), true);
   assert.equal(validateV1(fixture('project-brief-1.0.0.valid.json')), true);
   assert.equal(validateLegacy(fixture('critical-field.invalid.json')), false);
   assert.equal(validateLegacy(fixture('unknown-version.invalid.json')), false);
@@ -147,11 +148,6 @@ test('schema legado rejeita todos os campos criticos citados pelo QG', () => {
       },
       expected: /canonical-field-path/,
     },
-    {
-      name: 'absolute sourcePath',
-      mutate: (document) => { document.fieldMeta['project.name'].sourcePath = '/Users/private/avatar.md'; },
-      expected: /sourcePath.*pattern/,
-    },
   ];
 
   for (const scenario of cases) {
@@ -165,6 +161,57 @@ test('schema legado rejeita todos os campos criticos citados pelo QG', () => {
   }
 });
 
+test('sourcePath relativo valido migra para referencia portatil deterministica', () => {
+  const posix = fixture('relative-source-path.valid.json');
+  const windowsRelative = structuredClone(posix);
+  windowsRelative.fieldMeta['project.slug'].sourcePath = 'projetos\\acme\\avatar\\avatar-funil.md';
+
+  const first = migrateLegacyProjectBrief(posix);
+  const second = migrateLegacyProjectBrief(posix);
+  const normalizedWindows = migrateLegacyProjectBrief(windowsRelative);
+
+  assert.deepEqual(first, second);
+  assert.deepEqual(normalizedWindows, first);
+  assert.equal(
+    first.document.fieldSources['project.slug'].sourceArtifactId,
+    'projetos/acme/avatar/avatar-funil.md',
+  );
+});
+
+function assertLegacySourcePathRejected(sourcePath, expected = /portable-artifact-reference/) {
+  const document = fixture('relative-source-path.valid.json');
+  document.fieldMeta['project.slug'].sourcePath = sourcePath;
+  assert.throws(() => migrateLegacyProjectBrief(document), expected);
+}
+
+test('sourcePath rejeita traversal', () => {
+  assertLegacySourcePathRejected('projetos/acme/../segredos.json');
+});
+
+test('sourcePath rejeita path absoluto Unix', () => {
+  assertLegacySourcePathRejected('/Users/private/avatar.md');
+});
+
+test('sourcePath rejeita path absoluto Windows', () => {
+  assertLegacySourcePathRejected('C:\\Users\\private\\avatar.md');
+});
+
+test('sourcePath rejeita URI', () => {
+  assertLegacySourcePathRejected('https://studio.example/avatar.md');
+});
+
+test('sourcePath rejeita referencia de segredo', () => {
+  assertLegacySourcePathRejected('projetos/acme/secrets/token.json');
+});
+
+test('sourcePath rejeita referencia privada', () => {
+  assertLegacySourcePathRejected('projetos/acme/private/customer.json');
+});
+
+test('sourcePath rejeita valor nao-string', () => {
+  assertLegacySourcePathRejected(42, /sourcePath.*string/);
+});
+
 test('caminho idempotente v1 valida proveniencia e paths antes do no-op', () => {
   const cases = [
     {
@@ -175,7 +222,7 @@ test('caminho idempotente v1 valida proveniencia e paths antes do no-op', () => 
     {
       name: 'sourceArtifactId absoluto',
       mutate: (document) => { document.fieldSources['market.niche'].sourceArtifactId = '/Users/private/avatar.md'; },
-      expected: /sourceArtifactId.*pattern/,
+      expected: /sourceArtifactId.*portable-artifact-reference/,
     },
     {
       name: 'dot-path privado',

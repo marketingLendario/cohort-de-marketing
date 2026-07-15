@@ -89,6 +89,7 @@ function main() {
 
   const fixtureChecks = [
     ['legacy-0.1.0.valid.json', validators.validateLegacy, true],
+    ['relative-source-path.valid.json', validators.validateLegacy, true],
     ['project-brief-1.0.0.valid.json', validators.validateV1, true],
     ['critical-field.invalid.json', validators.validateLegacy, false],
     ['unknown-version.invalid.json', validators.validateLegacy, false],
