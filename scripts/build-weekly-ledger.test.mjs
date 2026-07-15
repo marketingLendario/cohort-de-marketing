@@ -202,6 +202,27 @@ test('ledger existente invalido falha fechado sem ser reparado ou reformatado', 
   assert.equal(result.stderr, '');
   assert.deepEqual(JSON.parse(result.stdout), { valid: false, code: 'INVALID_EXISTING_LEDGER' });
   assert.equal(await readFile(ledgerPath, 'utf8'), forged);
+
+  const wrongPremisePath = path.join(path.dirname(ledgerPath), 'wrong-premise-ledger.json');
+  const wrongPremise = JSON.parse(
+    await readFile(fixture('ledger-three-weeks.expected.json'), 'utf8'),
+  );
+  wrongPremise.entries[0].metrics[0].premiseRef = {
+    kind: 'platform-export',
+    id: 'must-not-be-a-premise',
+  };
+  const wrongPremiseBytes = `${JSON.stringify(wrongPremise, null, 2)}\n`;
+  await writeFile(wrongPremisePath, wrongPremiseBytes);
+  const premiseResult = await run([
+    fixture('ledger-idempotent.input.jsonl'),
+    wrongPremisePath,
+  ]);
+  assert.equal(premiseResult.code, 1);
+  assert.deepEqual(JSON.parse(premiseResult.stdout), {
+    valid: false,
+    code: 'INVALID_EXISTING_LEDGER',
+  });
+  assert.equal(await readFile(wrongPremisePath, 'utf8'), wrongPremiseBytes);
 });
 
 test('saida omite conteudo bruto, decisoes, eventos, leitor e dados pessoais', async (t) => {
