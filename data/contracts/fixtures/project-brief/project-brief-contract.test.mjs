@@ -3,7 +3,10 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { migrateLegacyProjectBrief } from '../../../../scripts/migrate-project-brief.mjs';
+import {
+  createProjectBriefValidators,
+  migrateLegacyProjectBrief,
+} from '../../../../scripts/migrate-project-brief.mjs';
 
 const fixture = (name) => JSON.parse(
   readFileSync(fileURLToPath(new URL(name, import.meta.url)), 'utf8'),
@@ -88,5 +91,122 @@ test('contrato publico nao carrega acoplamentos do Studio privado', () => {
   for (const privateMarker of ['supabase', 'academia-lendaria-ads-studio', '/Users/', 'studioProjectId']) {
     assert.equal(contract.includes(privateMarker), false, `schema contem marcador privado: ${privateMarker}`);
     assert.equal(migration.includes(privateMarker), false, `migracao contem marcador privado: ${privateMarker}`);
+  }
+});
+
+test('AJV 2020 compila os dois schemas e valida fixtures positivas e negativas', () => {
+  const {
+    fieldPaths,
+    legacySchema,
+    validateLegacy,
+    validateV1,
+  } = createProjectBriefValidators();
+
+  assert.equal(legacySchema.schemaVersion, undefined);
+  assert.equal(fieldPaths.size, 120);
+  assert.equal(validateLegacy(fixture('legacy-0.1.0.valid.json')), true);
+  assert.equal(validateV1(fixture('project-brief-1.0.0.valid.json')), true);
+  assert.equal(validateLegacy(fixture('critical-field.invalid.json')), false);
+  assert.equal(validateLegacy(fixture('unknown-version.invalid.json')), false);
+});
+
+test('schema legado rejeita todos os campos criticos citados pelo QG', () => {
+  const cases = [
+    {
+      name: 'startingPoint',
+      mutate: (document) => { document.project.startingPoint = 'invalido'; },
+      expected: /\/project\/startingPoint/,
+    },
+    {
+      name: 'awarenessLevel',
+      mutate: (document) => { document.market.awarenessLevel = 6; },
+      expected: /\/market\/awarenessLevel/,
+    },
+    {
+      name: 'exactPrice',
+      mutate: (document) => { document.offer = { exactPrice: -1 }; },
+      expected: /\/offer\/exactPrice/,
+    },
+    {
+      name: 'additional property',
+      mutate: (document) => { document.project.privateProjectId = 'studio-1'; },
+      expected: /additional properties/,
+    },
+    {
+      name: 'timestamp',
+      mutate: (document) => { document.meta.updatedAt = 'ontem'; },
+      expected: /\/meta\/updatedAt.*date-time/,
+    },
+    {
+      name: 'private dot-path',
+      mutate: (document) => {
+        document.fieldMeta['private.customerId'] = {
+          source: 'user',
+          updatedAt: '2026-06-02T15:30:00.000Z',
+        };
+      },
+      expected: /canonical-field-path/,
+    },
+    {
+      name: 'absolute sourcePath',
+      mutate: (document) => { document.fieldMeta['project.name'].sourcePath = '/Users/private/avatar.md'; },
+      expected: /sourcePath.*pattern/,
+    },
+  ];
+
+  for (const scenario of cases) {
+    const document = fixture('legacy-0.1.0.valid.json');
+    scenario.mutate(document);
+    assert.throws(
+      () => migrateLegacyProjectBrief(document),
+      scenario.expected,
+      scenario.name,
+    );
+  }
+});
+
+test('caminho idempotente v1 valida proveniencia e paths antes do no-op', () => {
+  const cases = [
+    {
+      name: 'sourceArtifactId numerico',
+      mutate: (document) => { document.fieldSources['market.niche'].sourceArtifactId = 42; },
+      expected: /sourceArtifactId.*string/,
+    },
+    {
+      name: 'sourceArtifactId absoluto',
+      mutate: (document) => { document.fieldSources['market.niche'].sourceArtifactId = '/Users/private/avatar.md'; },
+      expected: /sourceArtifactId.*pattern/,
+    },
+    {
+      name: 'dot-path privado',
+      mutate: (document) => {
+        document.fieldSources['private.customerId'] = {
+          source: 'migration',
+          confirmation: 'confirmed',
+          updatedAt: '2026-06-02T15:30:00.000Z',
+        };
+      },
+      expected: /canonical-field-path/,
+    },
+    {
+      name: 'timestamp v1',
+      mutate: (document) => { document.updatedAt = 'ontem'; },
+      expected: /\/updatedAt.*date-time/,
+    },
+    {
+      name: 'additional property v1',
+      mutate: (document) => { document.privateProjectId = 'studio-1'; },
+      expected: /additional properties/,
+    },
+  ];
+
+  for (const scenario of cases) {
+    const document = fixture('project-brief-1.0.0.valid.json');
+    scenario.mutate(document);
+    assert.throws(
+      () => migrateLegacyProjectBrief(document),
+      scenario.expected,
+      scenario.name,
+    );
   }
 });

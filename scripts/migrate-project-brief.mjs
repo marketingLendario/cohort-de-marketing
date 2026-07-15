@@ -1,125 +1,89 @@
+import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const LEGACY_VERSION = '0.1.0';
 const CURRENT_VERSION = '1.0.0';
 const MIGRATION_EPOCH = '1970-01-01T00:00:00.000Z';
-const LEGACY_SOURCES = new Set(['user', 'artifact', 'inferred', 'pending_confirmation', 'not_applicable']);
 const V1_SOURCES = new Set(['user', 'artifact', 'inferred', 'migration']);
-const CONFIRMATIONS = new Set(['confirmed', 'pending', 'not_applicable']);
-const STATUSES = new Set(['draft', 'active', 'superseded']);
-const COMPLETION_STATUSES = new Set(['draft', 'ready_for_research', 'ready_for_offer', 'ready_for_funnel', 'ready_for_optimization']);
-const LEGACY_ROOT_KEYS = new Set([
-  'schemaVersion',
-  'meta',
-  'project',
-  'market',
-  'offer',
-  'brand',
-  'funnel',
-  'channels',
-  'data',
-  'integrations',
-  'fieldMeta',
-  'artifacts',
-]);
+const LEGACY_SCHEMA_PATH = new URL('../data/project-brief.schema.json', import.meta.url);
+const V1_SCHEMA_PATH = new URL('../data/contracts/project-brief.v1.schema.json', import.meta.url);
+const ANNOTATION_KEYWORDS = ['x-step', 'x-control', 'x-sensitive', 'x-unit', 'x-steps'];
 
 function isPlainObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-function assertNonEmptyString(value, path) {
-  if (typeof value !== 'string' || value.length === 0) {
-    throw new Error(`${path} must be a non-empty string.`);
-  }
+function readJson(url) {
+  return JSON.parse(readFileSync(url, 'utf8'));
 }
 
-function assertDateTime(value, path) {
-  assertNonEmptyString(value, path);
-  if (Number.isNaN(Date.parse(value))) {
-    throw new Error(`${path} must be a valid date-time.`);
+function canonicalFieldPaths(schema) {
+  const fields = new Set();
+  const walk = (prefix, definition) => {
+    for (const [name, child] of Object.entries(definition.properties ?? {})) {
+      const path = prefix ? `${prefix}.${name}` : name;
+      fields.add(path);
+      if (child?.type === 'object' && child.properties) walk(path, child);
+    }
+  };
+  for (const [group, definition] of Object.entries(schema.properties ?? {})) {
+    if (definition?.type === 'object' && definition.properties) walk(group, definition);
   }
+  return fields;
 }
 
-function validateLegacyDocument(input) {
-  for (const key of Object.keys(input)) {
-    if (!LEGACY_ROOT_KEYS.has(key)) throw new Error(`Legacy ProjectBrief property is not allowed: ${key}.`);
-  }
-  if (!isPlainObject(input.project)) {
-    throw new Error('Legacy ProjectBrief must contain project.');
-  }
-  if (typeof input.project.slug !== 'string' || !/^[a-z0-9][a-z0-9-]*$/.test(input.project.slug)) {
-    throw new Error('Legacy ProjectBrief project.slug is invalid.');
-  }
-  if (input.meta !== undefined && !isPlainObject(input.meta)) {
-    throw new Error('Legacy ProjectBrief meta must be an object.');
-  }
-  for (const key of ['createdAt', 'updatedAt', 'lastSavedAt']) {
-    if (input.meta?.[key] !== undefined) assertDateTime(input.meta[key], `meta.${key}`);
-  }
-  if (input.meta?.completionStatus !== undefined && !COMPLETION_STATUSES.has(input.meta.completionStatus)) {
-    throw new Error(`meta.completionStatus is invalid: ${input.meta.completionStatus}.`);
-  }
-  if (input.fieldMeta !== undefined && !isPlainObject(input.fieldMeta)) {
-    throw new Error('Legacy ProjectBrief fieldMeta must be an object.');
-  }
-  for (const [path, meta] of Object.entries(input.fieldMeta ?? {})) {
-    if (!isPlainObject(meta) || !LEGACY_SOURCES.has(meta.source)) {
-      throw new Error(`Legacy ProjectBrief fieldMeta.${path}.source is invalid.`);
-    }
-    if (meta.sourcePath !== undefined) assertNonEmptyString(meta.sourcePath, `fieldMeta.${path}.sourcePath`);
-    if (meta.updatedAt !== undefined) assertDateTime(meta.updatedAt, `fieldMeta.${path}.updatedAt`);
-  }
-  if (input.artifacts !== undefined) {
-    if (!isPlainObject(input.artifacts) || Object.values(input.artifacts).some((value) => typeof value !== 'boolean')) {
-      throw new Error('Legacy ProjectBrief artifacts must map artifact types to booleans.');
-    }
-  }
+export function createProjectBriefValidators() {
+  const legacySchema = readJson(LEGACY_SCHEMA_PATH);
+  const v1Schema = readJson(V1_SCHEMA_PATH);
+  const fieldPaths = canonicalFieldPaths(legacySchema);
+  const ajv = new Ajv2020({
+    allErrors: true,
+    strict: true,
+    validateFormats: true,
+  });
+  addFormats(ajv);
+  for (const keyword of ANNOTATION_KEYWORDS) ajv.addKeyword({ keyword });
+  ajv.addFormat('canonical-field-path', {
+    type: 'string',
+    validate: (path) => fieldPaths.has(path),
+  });
+  ajv.addSchema(legacySchema);
+  const validateLegacy = ajv.getSchema(legacySchema.$id);
+  const validateV1 = ajv.compile(v1Schema);
+  return { ajv, fieldPaths, legacySchema, v1Schema, validateLegacy, validateV1 };
 }
 
-function validateV1Document(document) {
-  if (!isPlainObject(document) || document.schemaVersion !== CURRENT_VERSION) {
-    throw new Error(`Unsupported ProjectBrief schemaVersion: ${document?.schemaVersion ?? 'missing'}.`);
-  }
-  for (const key of ['id', 'workspaceId', 'projectId']) assertNonEmptyString(document[key], key);
-  if (!Number.isInteger(document.revision) || document.revision < 1) {
-    throw new Error('revision must be an integer greater than zero.');
-  }
-  if (!STATUSES.has(document.status)) throw new Error(`status is invalid: ${document.status}.`);
-  assertDateTime(document.createdAt, 'createdAt');
-  assertDateTime(document.updatedAt, 'updatedAt');
-  if (!isPlainObject(document.data) || document.data.schemaVersion !== LEGACY_VERSION) {
-    throw new Error('data must contain a ProjectBrief 0.1.0 payload.');
-  }
-  validateLegacyDocument(document.data);
-  if (document.data.fieldMeta !== undefined) {
-    throw new Error('data.fieldMeta is not allowed in v1; use fieldSources.');
-  }
-  if (!isPlainObject(document.fieldSources)) throw new Error('fieldSources must be an object.');
-  for (const [path, provenance] of Object.entries(document.fieldSources)) {
-    if (!isPlainObject(provenance) || !V1_SOURCES.has(provenance.source)) {
-      throw new Error(`fieldSources.${path}.source is invalid.`);
-    }
-    if (!CONFIRMATIONS.has(provenance.confirmation)) {
-      throw new Error(`fieldSources.${path}.confirmation is invalid.`);
-    }
-    assertDateTime(provenance.updatedAt, `fieldSources.${path}.updatedAt`);
+const validators = createProjectBriefValidators();
+
+function validationDetails(errors) {
+  return (errors ?? [])
+    .map((error) => `${error.instancePath || '/'} ${error.message}`)
+    .join('; ');
+}
+
+function assertValid(validate, document, label) {
+  if (!validate(document)) {
+    throw new Error(`${label} validation failed: ${validationDetails(validate.errors)}`);
   }
 }
 
 function normalizedMigrationResult(input, options) {
   if (isPlainObject(input.document)) {
-    validateV1Document(input.document);
+    assertValid(validators.validateV1, input.document, 'ProjectBrief v1');
     if (!Array.isArray(input.declaredArtifacts)) {
       throw new Error('declaredArtifacts must be an array.');
     }
     return structuredClone(input);
   }
-  validateV1Document(input);
-  return {
+  assertValid(validators.validateV1, input, 'ProjectBrief v1');
+  const result = {
     document: structuredClone(input),
     declaredArtifacts: structuredClone(options.declaredArtifacts ?? []),
   };
+  if (!Array.isArray(result.declaredArtifacts)) throw new Error('declaredArtifacts must be an array.');
+  return result;
 }
 
 export function migrateLegacyProjectBrief(input, options = {}) {
@@ -133,13 +97,10 @@ export function migrateLegacyProjectBrief(input, options = {}) {
   if (!input || input.schemaVersion !== LEGACY_VERSION) {
     throw new Error(`Unsupported ProjectBrief schemaVersion: ${input?.schemaVersion ?? 'missing'}.`);
   }
-  validateLegacyDocument(input);
+  assertValid(validators.validateLegacy, input, 'ProjectBrief 0.1.0');
 
   const now = options.now ?? input.meta?.updatedAt ?? input.meta?.createdAt ?? MIGRATION_EPOCH;
-  assertDateTime(now, 'migration timestamp');
   const data = structuredClone(input);
-  const declaredArtifacts = data.artifacts ?? {};
-  delete data.artifacts;
   delete data.fieldMeta;
 
   const fieldSources = {};
@@ -169,11 +130,9 @@ export function migrateLegacyProjectBrief(input, options = {}) {
       data,
       fieldSources,
     },
-    declaredArtifacts: Object.entries(declaredArtifacts)
-      .filter(([, declared]) => Boolean(declared))
-      .map(([artifactType]) => ({ artifactType, verification: 'pending' })),
+    declaredArtifacts: [],
   };
-  validateV1Document(result.document);
+  assertValid(validators.validateV1, result.document, 'ProjectBrief v1');
   return result;
 }
 
