@@ -184,7 +184,41 @@ Peça pro aluno digitar, no chat do Claude Code / Codex, só o caractere de coma
 
 ### Passo 4 — O primeiro comando (UM só)
 
-Aponte **um único** próximo passo, conforme a aula do aluno. Não liste vários; não crie ansiedade. Pergunte só se não der pra inferir:
+Aponte **um único** próximo passo. Quando já existir ProjectBrief v1 e/ou
+ArtifactIndex v1 do projeto, a fonte obrigatória da decisão é o motor puro
+`scripts/lib/skill-readiness.mjs`. Carregue também `skill-surface-contract.js` e
+os quatro contratos públicos (`catalog`, `rules`, `legacySchema` e
+`projectBriefSchema`), então execute este padrão sem omitir `contractRefs`:
+
+```js skill-readiness-probe
+const contractInputs = { catalog, rules, legacySchema, projectBriefSchema };
+const contractRefs = SkillSurfaceContract.createReadinessContractRefs(contractInputs);
+const evaluatedSkills = SkillSurfaceContract.evaluateSkills({
+  ...contractInputs,
+  projectBrief,
+  artifactIndex,
+  allowPartialProjectBrief: true,
+});
+const decision = decideNextSkill({
+  rules,
+  contractRefs,
+  evaluatedSkills,
+  projectBrief,
+  artifactIndex,
+});
+```
+
+Apresente **exatamente** `decision.nextSkill.command` e `decision.reason`. O motor lê a prioridade
+de `data/skill-unlock-rules.json`; nunca escolha pela ordem do JSON, do diretório
+ou do DOM. Se contrato, regra ou estado forem inválidos, falhe fechado e explique
+que a rota precisa ser revalidada — não improvise um comando.
+
+O recomendador orienta a retomada, mas **não é um bloqueador**: a invocação direta
+de qualquer skill continua autônoma e segue o próprio `SKILL.md`.
+
+No primeiro onboarding, quando ainda não existe estado canônico para avaliar,
+use somente o fallback de aula abaixo. Não liste vários; não crie ansiedade.
+Pergunte só se não der pra inferir:
 
 - **Aula 1 (pesquisa → oferta):** o primeiro comando é **`/avatar-funil`** (no Codex, `@avatar-funil`). É a pesquisa de mercado e de avatar — a fundação de tudo. Não tem pré-requisito.
 - **Aula 2 (identidade → funil):** o primeiro comando é **`/design-md`** (no Codex, `@design-md`). É a identidade visual da marca, que as peças do funil vão usar.
@@ -204,5 +238,5 @@ Feche assim, com o prefixo da ferramenta do aluno:
 3. **Apify é central, não opcional.** Faltou a chave → ajude a configurar (console → grave `APIFY_API_TOKEN` no `.env`; `APIFY_API_KEY` também é aceito — o check procura os dois). Fallback só quando o Apify realmente falha.
 4. **git pull na pasta que existe, NUNCA clone novo.** Nunca sobrescreva o trabalho do aluno; conflito = preservar e seguir.
 5. **Nunca assuma macOS.** Detecte o SO no Passo 0 e mostre só os caminhos do SO do aluno.
-6. **Um único próximo passo no fim.** Sempre `/avatar-funil` (Aula 1) ou `/design-md` (Aula 2) — nunca uma lista.
+6. **Um único próximo passo no fim.** Com estado canônico, use `nextSkill.command` + `reason` do motor; sem estado, use `/avatar-funil` (Aula 1) ou `/design-md` (Aula 2) — nunca uma lista.
 7. **Não infantilize o avançado.** Explicações extras vão curtas e entre parênteses; quem sabe passa reto.

@@ -233,7 +233,10 @@ test('mapa revalida localStorage e não renderiza done para índice forjado', { 
     if (!file.startsWith(`${ROOT}${path.sep}`)) return response.writeHead(403).end('forbidden');
     try {
       const body = await readFile(file);
-      const type = extname(file) === '.json' ? 'application/json' : extname(file) === '.js' ? 'text/javascript' : 'text/html';
+      const type = extname(file) === '.json' ? 'application/json'
+        : extname(file) === '.js' ? 'text/javascript'
+          : extname(file) === '.mjs' ? 'application/javascript'
+            : 'text/html';
       response.writeHead(200, { 'content-type': type }).end(body);
     } catch {
       response.writeHead(404).end('not found');

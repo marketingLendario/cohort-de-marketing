@@ -106,6 +106,10 @@
         </div>
         <div id="tour-step">—</div>
       </div>
+      <div id="readiness-banner" class="hub-panel" style="margin:0 16px 12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start">
+        <strong id="next-skill-command" style="white-space:nowrap">Calculando rota...</strong>
+        <span id="next-skill-reason" class="muted"></span>
+      </div>
       <div id="flow-viewport">
         <div class="flow-hint">
           <i class="iconoir-hand-drag mr-1"></i> Arraste · Scroll zoom · Minimap · Tour N12
@@ -255,6 +259,7 @@ let tourState = { active: false, index: 0, timer: null };
 
 let REF_TO_SKILL = {};
 let SKILL_READINESS = new Map();
+let SKILL_READINESS_DECISION = null;
 
 // ═══════════════════════════════════════════════════════════
 // FLOW CANVAS
@@ -384,6 +389,10 @@ function renderFlowCanvas() {
     el.style.top = origin.y + 'px';
     const readiness = SKILL_READINESS.get(skill.id)?.state || 'blocked';
     el.dataset.state = readiness;
+    if (SKILL_READINESS_DECISION?.nextSkill?.id === skill.id) {
+      el.setAttribute('aria-current', 'step');
+      el.style.boxShadow = '0 0 0 2px #d6b98c, 0 0 24px rgba(214,185,140,.28)';
+    }
     el.innerHTML = `
       <div class="fn-head">
         <div class="fn-phase-dot" style="background:${skill.phaseColor}"></div>
@@ -1446,9 +1455,9 @@ function showLegend() {
 // ═══════════════════════════════════════════════════════════
 function loadSavedProjectState() {
   const activeProjectId = localStorage.getItem('cohort.projectBrief.activeProject.v1');
-  if (!activeProjectId) return { projectBrief: {}, artifactIndex: null };
+  if (!activeProjectId) return { projectBrief: null, artifactIndex: null };
   const raw = localStorage.getItem(`cohort.projectBrief.v1:${encodeURIComponent(activeProjectId)}`);
-  if (!raw) return { projectBrief: {}, artifactIndex: null };
+  if (!raw) return { projectBrief: null, artifactIndex: null };
   try {
     const saved = JSON.parse(raw);
     if (!saved || typeof saved !== 'object' || !saved.document) {
@@ -1482,8 +1491,11 @@ async function loadSurfaceContracts() {
   ]);
   const inputs = { catalog, rules, legacySchema, projectBriefSchema };
   const contract = window.SkillSurfaceContract.validateContracts(inputs);
+  const contractRefs = window.SkillSurfaceContract.createReadinessContractRefs(inputs);
   const { projectBrief, artifactIndex } = loadSavedProjectState();
   const evaluated = window.SkillSurfaceContract.evaluateSkills({ ...inputs, projectBrief, artifactIndex });
+  const readinessEngine = await import('/scripts/lib/skill-readiness.mjs');
+  SKILL_READINESS_DECISION = readinessEngine.decideNextSkill({ rules, contractRefs, evaluatedSkills: evaluated, projectBrief, artifactIndex });
 
   SKILLS = contract.skills;
   FLOW_EDGES = contract.edges.map((edge) => [edge.from, edge.to, edge.type]);
@@ -1496,7 +1508,10 @@ async function loadSurfaceContracts() {
   ]));
   document.getElementById('surface-count').textContent = `${SKILLS.length} skills · ${FLOW_EDGES.length} conexões · catálogo canônico`;
   document.getElementById('catalog-skill-count').textContent = SKILLS.length;
-  window.__SKILL_SURFACE_DATA = { skills: SKILLS, edges: contract.edges, evaluated };
+  document.getElementById('next-skill-command').textContent = SKILL_READINESS_DECISION.nextSkill?.command || 'Sem próxima skill';
+  document.getElementById('next-skill-reason').textContent = SKILL_READINESS_DECISION.reason;
+  window.__SKILL_READINESS_DECISION = SKILL_READINESS_DECISION;
+  window.__SKILL_SURFACE_DATA = { skills: SKILLS, edges: contract.edges, evaluated, decision: SKILL_READINESS_DECISION };
 }
 
 async function init() {

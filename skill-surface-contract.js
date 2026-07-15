@@ -363,6 +363,26 @@
     return { catalog, rules, legacySchema, projectBriefSchema, skills, edges: catalog.edges.map((edge) => ({ ...edge })) };
   }
 
+  function createReadinessContractRefs(inputs) {
+    const contract = validateContracts(inputs);
+    return Object.freeze({
+      schemaVersion: 'skill-readiness-contract-refs-v1',
+      rulesSchemaVersion: RULES_VERSION,
+      projectBriefSchemaVersion: PROJECT_BRIEF_VERSION,
+      artifactIndexSchemaVersion: ARTIFACT_INDEX_VERSION,
+      artifactTypes: sorted(Object.keys(contract.rules.artifactGlobs)),
+      skills: Object.fromEntries(contract.skills.map((skill) => [skill.id, Object.freeze({
+        requiredFields: sorted(skill.rule.requiredFields || []),
+        requiredArtifacts: sorted(skill.rule.requiredArtifacts || []),
+        anyOfLabels: sorted((skill.rule.anyOf || []).map((group) => group.label)),
+        recommended: sorted([
+          ...(skill.rule.recommendedFields || []),
+          ...(skill.rule.recommendedArtifacts || []),
+        ]),
+      })])),
+    });
+  }
+
   function validateArtifactIndex(artifactIndex, rules, projectBrief = null) {
     const globs = validateArtifactRules(rules);
     if (!exactKeys(artifactIndex, ['schemaVersion', 'project', 'rules', 'entries', 'summary'])
@@ -450,12 +470,13 @@
       const rule = skill.rule;
       const primaryDone = (rule.primaryArtifacts || []).length > 0 && rule.primaryArtifacts.every((artifact) => artifacts[artifact]);
       const notApplicable = (rule.notApplicableWhen || []).find(conditionMatches);
-      if (notApplicable) return { skillId: skill.id, skill, rule, state: 'not_applicable', missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [], reason: notApplicable.reason };
-      if (primaryDone) return { skillId: skill.id, skill, rule, state: 'done', missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [] };
+      if (notApplicable) return { skillId: skill.id, skill, rule, state: 'not_applicable', missingFields: [], missingArtifacts: [], missingAnyOf: [], metAnyOf: [], recommendedMissing: [], reason: notApplicable.reason };
+      if (primaryDone) return { skillId: skill.id, skill, rule, state: 'done', missingFields: [], missingArtifacts: [], missingAnyOf: [], metAnyOf: [], recommendedMissing: [] };
       const missingFields = (rule.requiredFields || []).filter((field) => !filled(valueAt(briefData, field)));
       const missingArtifacts = (rule.requiredArtifacts || []).filter((artifact) => !artifacts[artifact]);
       const groups = rule.anyOf || [];
-      const missingAnyOf = groups.length === 0 || groups.some(groupMatches) ? [] : groups.map((group) => group.label);
+      const metAnyOf = groups.filter(groupMatches).map((group) => group.label);
+      const missingAnyOf = groups.length === 0 || metAnyOf.length > 0 ? [] : groups.map((group) => group.label);
       const recommendedMissing = [
         ...(rule.recommendedFields || []).filter((field) => !filled(valueAt(briefData, field))),
         ...(rule.recommendedArtifacts || []).filter((artifact) => !artifacts[artifact]),
@@ -464,7 +485,7 @@
       let state = 'available';
       if (hardMissing > 0) state = hardMissing <= 2 ? 'almost' : 'blocked';
       else if (recommendedMissing.length > 0) state = 'recommended';
-      return { skillId: skill.id, skill, rule, state, missingFields, missingArtifacts, missingAnyOf, recommendedMissing };
+      return { skillId: skill.id, skill, rule, state, missingFields, missingArtifacts, missingAnyOf, metAnyOf, recommendedMissing };
     });
   }
 
@@ -481,6 +502,7 @@
     validateArtifactRules,
     validateProjectBrief,
     validateContracts,
+    createReadinessContractRefs,
     validateArtifactIndex,
     evaluateSkills,
     buildLayout,

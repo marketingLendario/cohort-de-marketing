@@ -22,7 +22,7 @@ Todo o trabalho de um nicho fica em **`projetos/{slug}/`** (um slug por nicho). 
 
 ---
 
-## Como funciona (determinístico — só checa arquivos)
+## Como funciona (determinístico — contratos + arquivos)
 
 1. Descubra o projeto ativo (acima).
 2. Verifique a existência de cada peça em `projetos/{slug}/`:
@@ -41,8 +41,38 @@ ls projetos/{slug}/avatar.md \
    projetos/{slug}/cro.md 2>/dev/null
 ```
 
-3. Monte o checklist na ordem do funil, marcando `[x]` o que existe e `[ ]` o que falta.
-4. Aponte **"você está aqui"** na primeira peça que falta, e diga qual skill roda essa peça.
+3. Gere/valide o ArtifactIndex v1 com `scripts/project-artifact-index.mjs` e
+   avalie catálogo, regras, ProjectBrief e índice com o contrato público. Artefato
+   apenas detectado, mas ainda `pending_confirmation`, não libera requisito crítico.
+4. Carregue `skill-surface-contract.js`, `scripts/lib/skill-readiness.mjs` e os
+   quatro contratos públicos. Derive `contractRefs` do mesmo SOT e execute:
+
+```js skill-readiness-probe
+const contractInputs = { catalog, rules, legacySchema, projectBriefSchema };
+const contractRefs = SkillSurfaceContract.createReadinessContractRefs(contractInputs);
+const evaluatedSkills = SkillSurfaceContract.evaluateSkills({
+  ...contractInputs,
+  projectBrief,
+  artifactIndex,
+  allowPartialProjectBrief: true,
+});
+const decision = decideNextSkill({
+  rules,
+  contractRefs,
+  evaluatedSkills,
+  projectBrief,
+  artifactIndex,
+});
+```
+
+   Mostre exatamente `decision.nextSkill.command` e `decision.reason`; prioridade vem somente de
+   `data/skill-unlock-rules.json`, nunca da ordem abaixo nem do filesystem.
+5. Monte o checklist na ordem do funil, marcando `[x]` o que existe e `[ ]` o
+   que falta. Marque **"você está aqui"** na skill retornada pelo motor. Se o
+   motor falhar por regra/estado inválido, falhe fechado e não invente rota.
+
+O recomendador orienta o próximo passo, mas a invocação direta de qualquer skill
+continua autônoma: `/status-funil` nunca bloqueia um comando chamado pelo aluno.
 
 ---
 
@@ -113,19 +143,22 @@ Funil: {slug}   ({N}/11 peças)
 [ ] 11. CRO            cro.md
 
 Próximo passo: rode /pagina-vendas-funil — monta a página de vendas com a copy + o DESIGN.md.
+Razão: Próxima skill: /pagina-vendas-funil (estado recommended, prioridade 9). Requisitos obrigatórios atendidos; 2 recomendações de qualidade seguem pendentes.
 ```
 
-Sempre termine com a linha **"Próximo passo:"** apontando a skill da primeira peça que falta. Se estiver tudo pronto (11/11), diga que o funil está completo e sugira `/cro-funil` pra otimizar quando tiver dados.
+Sempre termine com as linhas **"Próximo passo:"** e **"Razão:"** copiadas da
+decisão do motor. Se `nextSkill` for `null`, explique a ausência explícita com a
+razão retornada; não force `/cro-funil` quando a regra disser `done`,
+`not_applicable` ou `blocked`.
 
 ---
 
 ## Regras
 
-**SEMPRE:** só ler (nunca criar/alterar) · marcar `[x]`/`[ ]` pela existência real do arquivo · apontar "você está aqui" na primeira lacuna · fechar com o próximo passo.
+**SEMPRE:** só ler (nunca criar/alterar peças) · marcar `[x]`/`[ ]` pela existência real do arquivo · apontar "você está aqui" pela decisão canônica · fechar com comando e razão do motor.
 
-**NUNCA:** inventar que uma peça existe sem checar o arquivo · alterar qualquer peça · pular a descoberta do projeto ativo.
+**NUNCA:** inventar que uma peça existe sem checar o arquivo · alterar qualquer peça · pular a descoberta do projeto ativo · escolher a primeira lacuna por ordem hardcoded quando o motor estiver disponível.
 
 ## Entrega padrão (texto completo em `.claude/skills/_shared/entrega-padrao.md` — LEIA-o ao fechar a entrega)
 
-Esta skill só LÊ o projeto, mas a entrega do checklist segue o padrão: abra o resultado renderizado (detecte o SO — macOS `open` · Windows `start ""` · Linux `xdg-open`; se não abrir sozinho, ex. Codex, imprima o caminho + como abrir) e envie na conversa; nunca encerre entregando só o caminho. Feche SEMPRE apontando UM próximo comando (a primeira lacuna do checklist, pela ordem canônica do mapa). Ferramentas: check antes de usar (Chrome pro PDF, fallback imprimir em PDF — `_shared/nunca-travar.md`).
-
+Esta skill só LÊ o projeto, mas a entrega do checklist segue o padrão: abra o resultado renderizado (detecte o SO — macOS `open` · Windows `start ""` · Linux `xdg-open`; se não abrir sozinho, ex. Codex, imprima o caminho + como abrir) e envie na conversa; nunca encerre entregando só o caminho. Feche SEMPRE apontando o único comando e a razão retornados por `scripts/lib/skill-readiness.mjs`. Ferramentas: check antes de usar (Chrome pro PDF, fallback imprimir em PDF — `_shared/nunca-travar.md`).
