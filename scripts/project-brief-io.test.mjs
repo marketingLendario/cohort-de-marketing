@@ -209,7 +209,8 @@ test('credenciais em texto livre falham fechado antes de import e autosave', asy
   assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
 
   const unexpectedDownload = page.waitForEvent('download', { timeout: 750 }).then(() => true, () => false);
-  await page.locator('#export-json-btn').click();
+  await page.evaluate(() => exportJson());
+  await page.locator('#import-status').filter({ hasText: 'Exportação recusada' }).waitFor();
   assert.equal(await unexpectedDownload, false);
   assert.match(await page.locator('#import-status').textContent(), /exportação recusada/i);
   assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
