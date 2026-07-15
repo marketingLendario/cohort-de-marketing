@@ -1,0 +1,61 @@
+{
+  "contract": "WeeklyLedger",
+  "schemaVersion": "1.0.0",
+  "hashAlgorithm": "sha256",
+  "entries": [
+    {
+      "projectId": "project-history",
+      "campaignId": "campaign-history",
+      "weekStart": "2026-06-01",
+      "revision": 1,
+      "weeklyPanelId": "weekly-panel:history:2026-06-01:r1",
+      "schemaVersion": "1.0.0",
+      "canonicalHash": "5555555555555555555555555555555555555555555555555555555555555555",
+      "metrics": [{
+        "name": "spend",
+        "value": 210,
+        "seal": "Real",
+        "sourceRef": { "kind": "platform-export", "id": "week-1" },
+        "attributionWindow": "7d_click_1d_view",
+        "premiseRef": null,
+        "confirmedByHuman": true,
+        "cashConfirmed": true
+      }]
+    },
+    {
+      "projectId": "project-history",
+      "campaignId": "campaign-history",
+      "weekStart": "2026-06-08",
+      "revision": 1,
+      "weeklyPanelId": "weekly-panel:history:2026-06-08:r1",
+      "schemaVersion": "1.0.0",
+      "canonicalHash": "6666666666666666666666666666666666666666666666666666666666666666",
+      "metrics": [
+        {
+          "name": "cpa",
+          "value": null,
+          "seal": "nao_fornecido",
+          "sourceRef": { "kind": "operator-declaration", "id": "not-provided" },
+          "attributionWindow": null,
+          "premiseRef": null,
+          "confirmedByHuman": false,
+          "cashConfirmed": false
+        },
+        {
+          "name": "spend",
+          "value": null,
+          "seal": "nao_fornecido",
+          "sourceRef": { "kind": "operator-declaration", "id": "not-provided" },
+          "attributionWindow": null,
+          "premiseRef": null,
+          "confirmedByHuman": false,
+          "cashConfirmed": false
+        }
+      ]
+    }
+  ],
+  "index": [
+    { "projectId": "project-history", "campaignId": "campaign-history", "weekStart": "2026-06-01", "revisions": [{ "revision": 1, "entryIndex": 0 }] },
+    { "projectId": "project-history", "campaignId": "campaign-history", "weekStart": "2026-06-08", "revisions": [{ "revision": 1, "entryIndex": 1 }] }
+  ]
+}

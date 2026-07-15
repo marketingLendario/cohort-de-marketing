@@ -1,0 +1,13 @@
+contract: HistoricalMetricsReading
+schemaVersion: 1.0.0
+selection:
+  projectId: "<projectId explícito>"
+  campaignId: "<campaignId explícito>"
+  weekStart: null
+source:
+  contract: WeeklyLedger
+  schemaVersion: 1.0.0
+  hashAlgorithm: sha256
+entries: []
+series: []
+warnings: []
