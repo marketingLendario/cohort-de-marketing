@@ -558,6 +558,7 @@
     let rules;
     let steps = [];
     let fields = [];
+    let canonicalFieldPaths = new Set();
     let activeStep = 'project';
     let selectedSkill = null;
     let saveTimer = null;
@@ -736,6 +737,21 @@
       return output;
     }
 
+    function collectCanonicalFieldPaths() {
+      const output = new Set();
+      function walk(prefix, definition) {
+        for (const [name, child] of Object.entries(definition.properties || {})) {
+          const path = `${prefix}.${name}`;
+          output.add(path);
+          if (child.type === 'object' && child.properties) walk(path, child);
+        }
+      }
+      for (const [group, definition] of Object.entries(schema.properties || {})) {
+        if (definition.type === 'object' && definition.properties) walk(group, definition);
+      }
+      return output;
+    }
+
     function clone(value) { return structuredClone(value); }
 
     function contractData(source = state) {
@@ -766,7 +782,7 @@
 
     function validateFormat(value, format) {
       if (format === 'date-time') return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && !Number.isNaN(Date.parse(value));
-      if (format === 'canonical-field-path') return fields.some((field) => field.path === value);
+      if (format === 'canonical-field-path') return canonicalFieldPaths.has(value);
       if (format === 'portable-artifact-reference') return portableReference(value, false);
       if (format === 'portable-legacy-source-path') return portableReference(value, true);
       return true;
@@ -1437,6 +1453,7 @@
       }
       steps = schema['x-steps'];
       fields = flattenSchemaFields();
+      canonicalFieldPaths = collectCanonicalFieldPaths();
       loadDraft();
       render();
       saveNow();

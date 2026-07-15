@@ -79,6 +79,11 @@ test('ProjectBrief v1 faz round-trip JSON e Markdown sem perder metadados', asyn
   const { page, pageErrors } = await openBriefing(t);
   const fixture = JSON.parse(await readFile(VALID_V1, 'utf8'));
   fixture.data.project.currentStage = 'trafego';
+  fixture.fieldSources['offer.upsell.name'] = {
+    source: 'user',
+    confirmation: 'confirmed',
+    updatedAt: '2026-06-02T15:20:00.000Z',
+  };
   const input = join(tmpdir(), `project-brief-v1-${process.pid}.json`);
   await writeFile(input, JSON.stringify(fixture));
 
