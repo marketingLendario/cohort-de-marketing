@@ -2,7 +2,7 @@
 story_id: "16.W1.2"
 epic_id: "16"
 wave: "W1"
-status: Ready
+status: InProgress
 executor: "@dev"
 quality_gate: "@qa"
 quality_gate_tools: ["node:test", "playwright"]
@@ -23,7 +23,7 @@ involves_ui: true
 
 ## Status
 
-Ready
+InProgress
 
 ## Dependências
 
@@ -43,8 +43,8 @@ Permitir que o briefing público importe e exporte ProjectBrief v1 em JSON e Mar
 
 ## Tasks
 
-- [ ] Confirmar baseline e ausência de PR cobrindo o escopo.
-- [ ] Congelar contrato e testes antes da implementação.
+- [x] Confirmar baseline e ausência de PR cobrindo o escopo.
+- [x] Congelar contrato e testes antes da implementação.
 - [ ] Implementar somente dentro da File List aprovada.
 - [ ] Rodar validações incrementais e registrar evidências sanitizadas.
 - [ ] Atualizar checkboxes, File List real e state JSON.
@@ -56,10 +56,16 @@ Permitir que o briefing público importe e exporte ProjectBrief v1 em JSON e Mar
 - `scripts/migrate-project-brief.mjs`
 - `data/contracts/project-brief.v1.schema.json`
 - `scripts/validate-mapa-wiring.mjs`
+- `scripts/project-brief-io.test.mjs`
 - `docs/stories/epic-16/**`
 
 A File List é uma allow-list inicial. Criação ou alteração fora dela exige
 atualização da story e nova validação de arquitetura.
+
+Ampliação aprovada no preflight de arquitetura: `scripts/project-brief-io.test.mjs`
+entra na allow-list para congelar, antes da implementação, o round-trip real no
+navegador das duas cópias distribuídas. O teste reutiliza o Playwright já
+versionado em `scripts/package-lock.json` e não adiciona dependência de runtime.
 
 ## Validação
 
