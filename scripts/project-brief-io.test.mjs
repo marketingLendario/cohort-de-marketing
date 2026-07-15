@@ -177,8 +177,18 @@ test('credenciais em texto livre falham fechado antes de import e autosave', asy
     'access_token: eyJhbGciOiJIUzI1NiJ9.payload.signature',
     'refresh_token=rt_1234567890abcdefghijklmnop',
     'secret = super-secret-value-1234567890',
+    'token=tok_1234567890abcdefghijklmnop',
+    'auth_token: auth_1234567890abcdefghijklmnop',
+    'password=nao-e-uma-senha-real-1234567890',
+    'senha: valor-ficticio-1234567890',
     'Authorization: Bearer abcdefghijklmnopqrstuvwxyz.1234567890',
+    'Authorization: Basic ZmljdGljaW86dmFsb3ItZGUtdGVzdGU=',
     'sk-proj-1234567890abcdefghijklmnopqrstuvwxyz',
+    'AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE',
+    'STRIPE_SECRET_KEY=sk_live_1234567890abcdefghijklmnop',
+    '-----BEGIN PRIVATE KEY-----\nvalor-ficticio\n-----END PRIVATE KEY-----',
+    'npm_1234567890abcdefghijklmnopqrstuvwxyz',
+    'glpat-1234567890abcdefghijklmnop',
   ];
 
   for (const [index, credential] of credentialSamples.entries()) {
@@ -197,6 +207,40 @@ test('credenciais em texto livre falham fechado antes de import e autosave', asy
   await page.waitForTimeout(800);
   assert.match(await page.locator('#save-state').textContent(), /autosave recusado/i);
   assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
+
+  const unexpectedDownload = page.waitForEvent('download', { timeout: 750 }).then(() => true, () => false);
+  await page.locator('#export-json-btn').click();
+  assert.equal(await unexpectedDownload, false);
+  assert.match(await page.locator('#import-status').textContent(), /exportação recusada/i);
+  assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
+
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#save-state').filter({ hasText: 'salvo' }).waitFor();
+  assert.equal(await page.locator('[data-path="project.name"]').inputValue(), baselineName);
+  assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
+  assert.deepEqual(pageErrors, []);
+});
+
+test('politica de credenciais permite controles pedagogicos benignos', async (t) => {
+  const { page, pageErrors } = await openBriefing(t);
+  const fixture = JSON.parse(await readFile(VALID_V1, 'utf8'));
+  const benignSamples = [
+    'Este módulo explica o que é access_token sem exibir valor.',
+    'Use um password manager e nunca cole sua senha no briefing.',
+    'A variável api_key deve ficar no arquivo .env.',
+    'Exemplo redigido: token=[REDACTED].',
+    'Authorization: Bearer <TOKEN> é apenas a sintaxe documentada.',
+    'Nunca publique uma PRIVATE KEY em materiais de aula.',
+  ];
+
+  for (const [index, content] of benignSamples.entries()) {
+    const candidate = structuredClone(fixture);
+    candidate.data.market.userResearchMaterials = content;
+    const input = join(tmpdir(), `project-brief-benign-${process.pid}-${index}.json`);
+    await writeFile(input, JSON.stringify(candidate));
+    await page.setInputFiles('#import-file', input);
+    await page.locator('#import-status').filter({ hasText: 'ProjectBrief v1 importado' }).waitFor();
+  }
   assert.deepEqual(pageErrors, []);
 });
 
