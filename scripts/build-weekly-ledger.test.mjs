@@ -153,6 +153,36 @@ test('qualquer metrica sem proveniencia valida aborta o lote antes de escrever',
   assert.deepEqual(await readFile(ledgerPath), before);
 });
 
+test('conflito no fim de um lote nao anexa candidatos anteriores', async (t) => {
+  const ledgerPath = await withLedger(t);
+  await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath]);
+  const before = await readFile(ledgerPath);
+  const newPanel = JSON.parse((await readFile(fixture('ledger-idempotent.input.jsonl'), 'utf8')).trim());
+  newPanel.id = 'weekly-panel:zeta:2026-07-13:r1';
+  newPanel.projectId = 'project-zeta';
+  newPanel.campaignId = 'campaign-zeta';
+  const conflict = (await readFile(fixture('ledger-conflict.input.jsonl'), 'utf8')).trim();
+  const batch = path.join(path.dirname(ledgerPath), 'new-then-conflict.jsonl');
+  await writeFile(batch, `${JSON.stringify(newPanel)}\n${conflict}\n`);
+
+  const result = await run([batch, ledgerPath]);
+  assert.equal(result.code, 1);
+  assert.equal(JSON.parse(result.stdout).code, 'LEDGER_IDENTITY_CONFLICT');
+  assert.deepEqual(await readFile(ledgerPath), before);
+});
+
+test('ledger existente invalido falha fechado sem ser reparado ou reformatado', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const forged = '{"contract":"WeeklyLedger","schemaVersion":"1.0.0","hashAlgorithm":"sha256","entries":[],"index":[{"projectId":"forged"}]}\n';
+  await writeFile(ledgerPath, forged);
+
+  const result = await run([fixture('ledger-idempotent.input.jsonl'), ledgerPath]);
+  assert.equal(result.code, 1);
+  assert.equal(result.stderr, '');
+  assert.deepEqual(JSON.parse(result.stdout), { valid: false, code: 'INVALID_EXISTING_LEDGER' });
+  assert.equal(await readFile(ledgerPath, 'utf8'), forged);
+});
+
 test('saida omite conteudo bruto, decisoes, eventos, leitor e dados pessoais', async (t) => {
   const ledgerPath = await withLedger(t);
   await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath]);
@@ -182,4 +212,10 @@ test('uso, I/O e JSONL invalido usam exit 2 e nunca criam saida parcial', async 
   assert.equal(parsed.stdout, '');
   assert.equal(parsed.stderr, 'Unable to parse ledger input at line 1.\n');
   await assert.rejects(readFile(ledgerPath));
+
+  const impossibleOutput = path.join(path.dirname(ledgerPath), 'missing', 'ledger.json');
+  const writeFailure = await run([fixture('ledger-idempotent.input.jsonl'), impossibleOutput]);
+  assert.equal(writeFailure.code, 2);
+  assert.equal(writeFailure.stdout, '');
+  assert.equal(writeFailure.stderr, 'Unable to write ledger atomically.\n');
 });

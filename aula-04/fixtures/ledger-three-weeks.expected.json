@@ -94,8 +94,14 @@
       "campaignId": "campaign-acme-launch",
       "weekStart": "2026-07-13",
       "revisions": [
-        { "revision": 1, "entryIndex": 0 },
-        { "revision": 2, "entryIndex": 1 }
+        {
+          "revision": 1,
+          "entryIndex": 0
+        },
+        {
+          "revision": 2,
+          "entryIndex": 1
+        }
       ]
     },
     {
@@ -103,7 +109,10 @@
       "campaignId": "campaign-acme-launch",
       "weekStart": "2026-07-20",
       "revisions": [
-        { "revision": 1, "entryIndex": 2 }
+        {
+          "revision": 1,
+          "entryIndex": 2
+        }
       ]
     },
     {
@@ -111,7 +120,10 @@
       "campaignId": "campaign-acme-launch",
       "weekStart": "2026-07-27",
       "revisions": [
-        { "revision": 1, "entryIndex": 3 }
+        {
+          "revision": 1,
+          "entryIndex": 3
+        }
       ]
     }
   ]
