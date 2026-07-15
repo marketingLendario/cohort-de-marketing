@@ -64,7 +64,7 @@ affected_paths:
 
 ## Status
 
-InReview — implementação e evidência local concluídas; aguarda QG independente `@architect`.
+InReview — blockers da rodada 1 remediados e evidência local concluída; aguarda QG3 rodada 2 independente `@architect`.
 
 ## Story
 
@@ -147,6 +147,7 @@ Esta lista é uma allowlist exata. Não há `**`, diretório implícito ou autor
 - `node --test scripts/run-aula-04-walkthrough.test.mjs`
 - `node --test --test-concurrency=1 scripts/run-aula-04-walkthrough.test.mjs scripts/read-aula-04-history.test.mjs scripts/reconcile-aula-04-sources.test.mjs scripts/diagnose-aula-04-decision.test.mjs`
 - `node --test --test-concurrency=1 data/contracts/fixtures/project-brief/project-brief-contract.test.mjs scripts/*.test.mjs scripts/lib/skill-readiness.test.mjs services/meta-ads/index.test.js`
+- RED/GREEN adversarial para PII recursiva e contenção lexical/canônica/simbólica do destino.
 - Walkthrough em dois diretórios temporários vazios e comparação byte a byte.
 - `git diff --check aa1745d..HEAD` e auditoria da File List.
 
@@ -160,8 +161,10 @@ completion_notes:
   - "RED bc90b11 congelou sete grupos; 0/7 passaram antes do módulo, runner, exemplo e template existirem."
   - "GREEN beb163a compõe somente as funções públicas W2 e entrega README, guia HTML, template, exemplo e seis outputs determinísticos."
   - "RED 579e2cb fechou confiança no expected e texto sensível em decisão; GREEN 94617b3 exige invariantes inconclusivo/zero alavancas/pending e bloqueia republicação sensível."
-  - "Focal 7/7, adjacente W2 44/44 e gate Node completo 159/159 passaram; inputs permanecem imutáveis e duas execuções são byte-equivalentes."
-  - "Story movida para InReview; QG, fechamento, epic-state, fan-in, push e deploy permanecem fora da autoridade do executor."
+  - "QG3 rodada 1 FAIL 76 foi reproduzido com REDs: PII compacta atravessava e destino igual/descendente não era fechado antes da escrita."
+  - "GREEN 224b085 cobre telefone, CPF e CNPJ compactos/pontuados sem eco, preserva IDs opacos alfanuméricos e rejeita destino igual, descendente ou symlink-resolvido, inclusive com leaf ausente."
+  - "Focal 9/9, adjacente W2 46/46 e gate Node completo 161/161 passaram; árvore do exemplo permanece byte a byte imutável."
+  - "Story permanece InReview para QG3 rodada 2; fechamento, epic-state, fan-in, push, PR e deploy permanecem fora da autoridade do executor."
 file_list:
   - "aula-04/README.md"
   - "aula-04/GUIA-DO-ALUNO.html"
@@ -199,6 +202,15 @@ quality_gate_report:
   reviewed_by: "@architect"
   reviewed_at: "2026-07-15"
   reviewed_head: "8a922aef72afd43c652600812a9d30e81eb8cb29"
+remediation_handoff:
+  requested_round: 2
+  implementation_head: "224b085"
+  status: "InReview"
+  evidence:
+    - "RED focal 0/2 antes da implementação: PII compacta retornava sucesso; destino igual retornava OUTPUT_NOT_EMPTY."
+    - "GREEN focal 9/9, adjacente W2 46/46 e full Node 161/161."
+    - "Seis formatos PII falham sem eco; IDs opacos alfanuméricos de 11/14 caracteres passam."
+    - "Destino igual, descendente, symlink lexical/real e leaf ausente falham sem escrita; snapshots da árvore permanecem idênticos."
 ```
 
 ## Change Log
@@ -209,3 +221,4 @@ quality_gate_report:
 | 2026-07-15 | @dev | RED/GREEN entregou módulo, exemplo de três semanas, walkthrough local e documentação multiplataforma. |
 | 2026-07-15 | @dev | Trust boundaries endurecidas; 159/159 testes Node verdes e story movida para `InReview`. |
 | 2026-07-15 | @architect | QG3 rodada 1 falhou: telefone republicável e destino descendente do exemplo atravessam os guards atuais. |
+| 2026-07-15 | @dev | Rodada 1 remediada em `224b085`: PII shaped recursiva e contenção canônica/simbólica cobertas; 161/161 testes verdes e story devolvida a `InReview` para QG3 rodada 2. |
