@@ -125,9 +125,11 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 - Execução combinada dos testes browser e contrato: PASS, 27/27.
 - Matriz RFC3339 browser/AJV: 2 datas válidas e 4 datas impossíveis/fora do
   calendário com a mesma decisão nos dois validadores.
-- Matriz de credenciais: 21 imports adversariais cobrindo assignments, headers,
+- Matriz de credenciais: 24 imports adversariais cobrindo assignments, headers,
   chave privada e formatos de provedores recusados sem alterar draft ou
   `localStorage`; edição sensível bloqueia autosave e export antes do download.
+- Placeholders com sufixo após aspas, `>` ou `]` também falham; somente pontuação
+  terminal isolada ou delimitador estrutural encerra um placeholder permitido.
 - Regressões de superfície: os quatro valores com pontuação, aspas ou segmentos
   separados por `:` falham em import, autosave e export sem ecoar conteúdo.
 - Controles benignos: 12 frases pedagógicas/placeholders explícitos aceitos;
@@ -135,7 +137,7 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
   bloqueios restaura o draft seguro e o storage byte a byte original.
 - `node scripts/validate-project-brief-rules.mjs`: PASS, 120 campos, 31 skills e
   schemas AJV 2020 compilados.
-- `MAP_SCRATCH=/tmp/story-16-w1-2-qg-r3 MAP_PORT=8875 node scripts/validate-mapa-wiring.mjs`:
+- `MAP_SCRATCH=/tmp/story-16-w1-2-qg-r3-final MAP_PORT=8876 node scripts/validate-mapa-wiring.mjs`:
   PASS, 69/69 `sampleUrl`, HTTP e PDF válidos.
 - `npm audit --prefix scripts --audit-level=moderate`: PASS, 0 vulnerabilidades.
 - `cmp -s briefing.html aula-03/materiais/briefing.html`: PASS.
@@ -156,6 +158,9 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 - `a7c471f` - `docs: record credential policy remediation [Story 16.W1.2]`
 - `9837bb8` - `test: reproduce credential value parsing gaps [Story 16.W1.2]`
 - `76c6b6a` - `fix: parse credential assignments deterministically [Story 16.W1.2]`
+- `38cf5fc` - `docs: record deterministic credential parsing [Story 16.W1.2]`
+- `409ea1c` - `test: reject placeholder lookalike suffixes [Story 16.W1.2]`
+- `2cbc052` - `fix: require exact placeholder boundaries [Story 16.W1.2]`
 
 ## File List real
 
@@ -174,7 +179,7 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
   insegura; o draft anterior deve permanecer intacto em todos os casos.
 - Confirmar isolamento entre dois `projectId`, reload do projeto ativo e ausência
   de nomes usuais de tokens nas entradas do `localStorage`.
-- Revalidar no Round 4 os 21 padrões adversariais, os 12 controles benignos, a
+- Revalidar no Round 4 os 24 padrões adversariais, os 12 controles benignos, a
   igualdade exata da allow-list e a preservação byte a byte do storage/draft em
   import, autosave, export e reload.
 - O executor mantém a story em `InReview`; somente o PASS independente de `@qa`
@@ -192,6 +197,8 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
   bloquear conteúdo pedagógico benigno e cobrindo export/reload do draft seguro.
 - 2026-07-15: QG Round 3 remediado separando extração completa de assignment da
   classificação e introduzindo allow-list exata de placeholders normalizados.
+- 2026-07-15: hardening adicional rejeita placeholders permitidos quando há
+  sufixo não delimitado, preservando somente pontuação terminal pedagógica.
 
 ## QA Results
 
