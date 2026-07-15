@@ -148,6 +148,10 @@ repo_target: "cohort-de-marketing"
 - O matcher glob segmentado possui versão explícita e a mesma implementação no
   Node e nas duas cópias do browser. Cada `entry.path` precisa casar ao menos um
   pattern de origem canônico; paths são únicos globalmente, inclusive entre tipos.
+- A gramática portátil recusa NUL e controles C0/C1 de forma idêntica nas duas
+  runtimes. Todos os patterns declarados na provenance precisam casar o path.
+- `**` terminal é rejeitado pelas rules, pelo matcher e pelo validator antes do
+  discovery; nenhuma regra canônica depende dessa forma ambígua.
 - A policy do índice precisa ser idêntica à policy carregada das unlock rules e
   toda a provenance passa pela verificação de referências sensíveis.
 - `loadDraft()` revalida o ArtifactIndex persistido integralmente. Índice
@@ -161,7 +165,7 @@ repo_target: "cohort-de-marketing"
 
 - Test-first: commit `c1121f9`; a suíte falhou inicialmente com
   `ERR_MODULE_NOT_FOUND`, comprovando ausência do indexador no baseline.
-- `node --test scripts/project-artifact-index.test.mjs`: PASS, 16/16.
+- `node --test scripts/project-artifact-index.test.mjs`: PASS, 18/18.
 - Casos adversariais: projeto ausente, raiz inválida, absoluto, traversal,
   duplicidade, ambiguidade entre tipos e symlink de escape.
 - Reprodutibilidade e minimização: duas execuções idênticas; índice sem conteúdo
@@ -190,6 +194,9 @@ repo_target: "cohort-de-marketing"
 - `9827ced` - `docs: record artifact path hardening [Story 16.W2.1]`
 - `dcca6e7` - `test: reproduce artifact index provenance gaps [Story 16.W2.1]`
 - `c5030e6` - `fix: bind artifact provenance to canonical rules [Story 16.W2.1]`
+- `d4fd577` - `docs: record artifact index QG remediation [Story 16.W2.1]`
+- `50f3f92` - `test: reproduce artifact matcher parity gaps [Story 16.W2.1]`
+- `f99f4bc` - `fix: align artifact matcher semantics [Story 16.W2.1]`
 
 ## File List real
 
@@ -223,6 +230,7 @@ repo_target: "cohort-de-marketing"
 | 2026-07-15 | @dev | Indexador confinado, importação do ArtifactIndex e evidências encaminhados para arquitetura. |
 | 2026-07-15 | @dev | Reprobe adicional passou a recusar assinaturas fortes de credenciais também nos paths serializados. |
 | 2026-07-15 | @dev | QG Round 1 remediado com matcher espelhado, provenance canônica e reidratação fail-closed. |
+| 2026-07-15 | @dev | QG Round 2 remediado com path portátil paritário, provenance integral e `**` terminal fail-closed. |
 
 ## QA Results
 
@@ -238,3 +246,15 @@ repo_target: "cohort-de-marketing"
 - Remediation: matcher determinístico espelhado, vínculo canônico completo,
   path global único e reidratação fail-closed com 16 testes Node/Playwright.
 - Estado: `InReview`, aguardando QG Round 2 independente de `@architect`.
+
+### Round 2
+
+- Quality Gate independente: FAIL.
+- Score: 82/100.
+- QG-001: browser não recusava NUL e controles com a mesma gramática do Node.
+- QG-002: o validator exigia apenas um pattern de provenance compatível,
+  permitindo outro pattern canônico, porém falso, na mesma entrada.
+- QG-003: `**` terminal possuía interpretação divergente entre matcher e discovery.
+- Remediation: matriz portátil compartilhada com C0/C1, `every()` para todos os
+  patterns e rejeição explícita de `**` terminal em rules/matcher/validator/builder.
+- Estado: `InReview`, aguardando QG Round 3 independente de `@architect`.

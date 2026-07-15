@@ -14,12 +14,13 @@ independente de `@architect`. Nenhum push, PR, merge ou deploy foi realizado.
 - Implementação: `71fdf32`.
 - Hardening de paths sensíveis: teste `948e1df`, correção `66b3909`.
 - QG Round 1: FAIL 68/100; reprodução `dcca6e7`, correção `c5030e6`.
+- QG Round 2: FAIL 82/100; reprodução `50f3f92`, correção `f99f4bc`.
 
 ## Matriz executada
 
 | Prova | Resultado |
 |---|---|
-| Unitários, adversariais, CLI e Playwright | PASS, 16/16 |
+| Unitários, adversariais, CLI e Playwright | PASS, 18/18 |
 | Reprodutibilidade do índice | PASS |
 | Projeto ausente ou raiz inválida | Recusa tipada |
 | Absoluto, traversal e symlink de escape | Recusa tipada e sanitizada |
@@ -35,6 +36,9 @@ independente de `@architect`. Nenhum push, PR, merge ou deploy foi realizado.
 | Storage com schema v999 ou propriedade extra | Unlocks limpos; ProjectBrief preservado |
 | Storage com path/pattern/policy adulterado | Unlocks limpos; ProjectBrief preservado |
 | Storage com índice válido | Confirmações derivadas novamente |
+| NUL e controles C0/C1 em path | Mesma recusa em Node e browser |
+| Provenance parcialmente falsa | Recusa: todos os patterns precisam casar |
+| Glob `**` terminal com `file.md` | Recusa em matcher/rules/validator/builder |
 | Briefings distribuídos | Byte a byte idênticos |
 | Smoke HTTP das duas URLs | PASS, zero `pageerror` |
 | ProjectBrief rules | PASS, 120 campos e 31 skills |
@@ -56,6 +60,8 @@ independente de `@architect`. Nenhum push, PR, merge ou deploy foi realizado.
   alinhado à versão corrente de `skill-unlock-rules.json`.
 - Node e browser usam o matcher `1.0.0` espelhado e provado pela mesma matriz;
   provenance canônica não é apenas declarada, precisa casar o path.
+- A gramática portátil também é compartilhada e cobre controles C0/C1. Patterns
+  de origem são uma conjunção verificável, não uma lista com um único álibi válido.
 - O storage nunca restaura o mapa booleano legado como autoridade. Somente um
   índice integralmente revalidado pode reconstruir os desbloqueios.
 
