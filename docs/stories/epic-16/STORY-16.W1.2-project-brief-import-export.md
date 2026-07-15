@@ -99,8 +99,12 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 - O formato `date-time` não usa mais `Date.parse`: ano bissexto, dias do mês,
   relógio e offset são validados de forma estrita antes de aceitar RFC3339.
 - Uma única política recursiva de credenciais roda antes de import, autosave e
-  export. `api_key`, `access_token`, `refresh_token`, `secret`, Bearer e formatos
-  reais de provedores falham fechado sem ecoar o valor ou sanitizar semântica.
+  export. Assignments sensíveis, headers de autenticação, chave privada e
+  assinaturas específicas de provedores falham fechado sem ecoar o valor ou
+  sanitizar semântica.
+- Limite deliberado: a política não é um scanner de entropia ou DLP genérico.
+  Ela exige assignment com valor ou prefixo forte conhecido, permitindo menções
+  pedagógicas e placeholders redigidos; formatos novos exigem ampliar a matriz.
 - A busca de PRs abertos no repositório público retornou lista vazia antes da
   implementação.
 
@@ -108,18 +112,20 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 
 - Testes congelados primeiro no commit `d9ddc8b`; no baseline, somente a
   paridade byte a byte passava e os seletores de import/export ainda não existiam.
-- `node --test scripts/project-brief-io.test.mjs`: PASS, 7/7.
+- `node --test scripts/project-brief-io.test.mjs`: PASS, 8/8.
 - `node --test data/contracts/fixtures/project-brief/project-brief-contract.test.mjs`:
   PASS, 19/19 (regressão integral da 16.W1.1).
-- Execução combinada dos testes browser e contrato: PASS, 26/26.
+- Execução combinada dos testes browser e contrato: PASS, 27/27.
 - Matriz RFC3339 browser/AJV: 2 datas válidas e 4 datas impossíveis/fora do
   calendário com a mesma decisão nos dois validadores.
-- Matriz de credenciais: 6 imports adversariais (`api_key`, `access_token`,
-  `refresh_token`, `secret`, Bearer e `sk-proj`) recusados sem alterar draft ou
-  `localStorage`; token GitHub em edição também bloqueia o autosave.
+- Matriz de credenciais: 16 imports adversariais cobrindo assignments, headers,
+  chave privada e formatos de provedores recusados sem alterar draft ou
+  `localStorage`; edição sensível bloqueia autosave e export antes do download.
+- Controles benignos: 6 frases pedagógicas/placeholders redigidos aceitos. Reload
+  após os bloqueios restaura o draft seguro e o storage byte a byte original.
 - `node scripts/validate-project-brief-rules.mjs`: PASS, 120 campos, 31 skills e
   schemas AJV 2020 compilados.
-- `MAP_SCRATCH=/tmp/story-16-w1-2-qg-r1 MAP_PORT=8873 node scripts/validate-mapa-wiring.mjs`:
+- `MAP_SCRATCH=/tmp/story-16-w1-2-qg-r2 MAP_PORT=8874 node scripts/validate-mapa-wiring.mjs`:
   PASS, 69/69 `sampleUrl`, HTTP e PDF válidos.
 - `npm audit --prefix scripts --audit-level=moderate`: PASS, 0 vulnerabilidades.
 - `cmp -s briefing.html aula-03/materiais/briefing.html`: PASS.
@@ -134,6 +140,9 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 - `2ce1d04` - `docs: record ProjectBrief IO hardening [Story 16.W1.2]`
 - `553224e` - `test: reproduce ProjectBrief IO QG findings [Story 16.W1.2]`
 - `5b5fb5c` - `fix: close ProjectBrief IO security gaps [Story 16.W1.2]`
+- `c2dc188` - `docs: record ProjectBrief IO QG remediation [Story 16.W1.2]`
+- `078d9ac` - `test: reproduce credential policy gaps [Story 16.W1.2]`
+- `803eed5` - `fix: broaden credential policy safely [Story 16.W1.2]`
 
 ## File List real
 
@@ -145,16 +154,15 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 
 ## QA prep
 
-- Reexecutar os 7 testes Playwright nas duas URLs e inspecionar os downloads
+- Reexecutar os 8 testes Playwright nas duas URLs e inspecionar os downloads
   JSON/Markdown, incluindo metadados, `currentStage` e ausência de `fieldSources`
   no resumo derivado.
 - Forçar schema desconhecido, propriedade adicional e referência de artefato
   insegura; o draft anterior deve permanecer intacto em todos os casos.
 - Confirmar isolamento entre dois `projectId`, reload do projeto ativo e ausência
   de nomes usuais de tokens nas entradas do `localStorage`.
-- Revalidar no Round 2 o calendário impossível sem `Date.parse`, a matriz de
-  conformidade AJV e a preservação byte a byte do storage diante dos sete
-  padrões de credencial exercitados por import e autosave.
+- Revalidar no Round 3 os 16 padrões adversariais, os 6 controles benignos e a
+  preservação byte a byte do storage/draft em import, autosave, export e reload.
 - O executor mantém a story em `InReview`; somente o PASS independente de `@qa`
   autoriza `Done` e o fan-in da wave.
 
@@ -166,6 +174,8 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
   com round-trip adicional para proveniência de objeto aninhado.
 - 2026-07-15: QG Round 1 remediado com calendário RFC3339 estrito, matriz
   browser/AJV e política fail-closed de credenciais antes de toda persistência.
+- 2026-07-15: QG Round 2 remediado ampliando assinaturas de credenciais sem
+  bloquear conteúdo pedagógico benigno e cobrindo export/reload do draft seguro.
 
 ## QA Results
 
@@ -178,4 +188,15 @@ versionado em `scripts/package-lock.json` e não adiciona dependência de runtim
 - QG-002 HIGH: ausência de política pré-persistência para credenciais em texto
   livre; remediado por rejeição recursiva fail-closed em import/autosave/export.
 - QG-003 LOW: inventário de commits incompleto; corrigido nesta atualização.
-- Estado após remediation: `InReview`, aguardando QG Round 2 independente.
+- Estado após remediation: `InReview`.
+
+### Round 2
+
+- Quality Gate independente: FAIL.
+- Score: 78/100.
+- QG-001 e QG-003: fechados.
+- QG-002 HIGH: detector ainda possuía falsos negativos para assignments genéricos,
+  autenticação Basic, chave privada e formatos redistribuíveis comuns.
+- Remediation: política centralizada ampliada, 16 negativos, 6 controles benignos
+  e prova de import/autosave/export/reload sem alterar o storage persistido.
+- Estado após remediation: `InReview`, aguardando QG Round 3 independente.
