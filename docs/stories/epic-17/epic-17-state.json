@@ -17,7 +17,7 @@
     {
       "wave_id": "W1",
       "name": "Contratos e ledger",
-      "status": "in_progress",
+      "status": "completed",
       "parallel_groups": [
         [
           "17.W1.1"
@@ -48,7 +48,7 @@
         {
           "story_id": "17.W1.2",
           "title": "Ledger multi-semana com proveniencia",
-          "status": "Ready",
+          "status": "Done",
           "task_mode": "CRIAR",
           "deploy_type": "none",
           "repo_target": "marketingLendario/cohort-de-marketing",
