@@ -18,6 +18,9 @@
 | Allow-list Round2 | `647e66e` | Builder, schema, testes e fixture autorizados antes das mudanças. |
 | RED Round2 | `0aaf771` | 14 falhas reproduziram os três blockers e a rejeição explícita do ledger legado. |
 | GREEN Round2 | `ad63a79` | WeeklyLedger 1.1.0, digest da projeção, semanas distintas e lexer pré-parse. |
+| QG2 | `d689f81` | `FAIL 88`: ordem de chaves dos objetos do index era falsamente semântica. |
+| RED Round3 | `d26301b` | Builder e reader reproduzem a rejeição ao permutar somente chaves de objetos. |
+| GREEN Round3 | `975571b` | Igualdade estrutural usa `canonicalSerialize` compartilhado; arrays permanecem ordenados. |
 
 ## Contrato observado
 
@@ -31,19 +34,30 @@
 - Comparabilidade requer pelo menos dois `weekStart` distintos; duas revisões da mesma semana retornam `INSUFFICIENT_HISTORY`.
 - O lexer JSON ignora strings e rejeita antes de `JSON.parse` inteiros fora de `Number.MAX_SAFE_INTEGER`, decimais com precisão insegura, overflow e underflow para zero.
 - Erros públicos são apenas códigos fechados e não ecoam conteúdo, seleção, token ou valor do ledger.
+- A igualdade do index ordena recursivamente apenas chaves de objetos. A ordem de entradas do index, revisões e demais arrays continua semântica e os probes existentes de tamper, duplicidade e ordem permanecem verdes.
 
 ## Validações executadas
 
 ```text
 node --test scripts/read-aula-04-history.test.mjs scripts/build-weekly-ledger.test.mjs
-35 tests, 35 pass, 0 fail
+37 tests, 37 pass, 0 fail
 
-node --test scripts/*.test.mjs
-82 tests, 82 pass, 0 fail
+node --test --test-concurrency=1 \
+  data/contracts/fixtures/project-brief/project-brief-contract.test.mjs \
+  scripts/*.test.mjs \
+  scripts/lib/skill-readiness.test.mjs \
+  services/meta-ads/index.test.js
+127 tests, 127 pass, 0 fail
 
 cmp -s .claude/skills/leitor-de-metricas/SKILL.md .agents/skills/leitor-de-metricas/SKILL.md
 exit 0
 ```
+
+Uma execução agregada concorrente anterior apresentou uma única instabilidade
+temporal no probe de `SIGKILL` do lock, sem falha focal ou mudança funcional. O
+gate foi repetido com `--test-concurrency=1` para remover contenção entre suites:
+127/127 passaram. Nenhuma remediação de código foi aplicada entre esse ruído e o
+rerun controlado.
 
 Hash dos mirrors:
 
@@ -70,10 +84,12 @@ Os probes Round2 também confirmaram:
   `UNSAFE_JSON_NUMBER` antes do parse;
 - o builder rejeita input numérico inseguro e ledger legado/adulterado sem tocar
   o destino.
+- permutar somente as chaves de cada objeto do index mantém o mesmo output do
+  reader e replay idempotente do builder; arrays adulterados continuam inválidos.
 
 ## Estado para handoff
 
 - Story: `InReview`.
-- QG independente: Round1 `FAIL 58`; remediação pronta para Round2.
+- QG independente: Round1 `FAIL 58`, Round2 `FAIL 88`; remediação pronta para Round3.
 - Deploy/push/merge: não executados.
 - `epic-17-state.json`: contém somente a materialização da W2; a transição da story pertence ao fan-in depois do QG.

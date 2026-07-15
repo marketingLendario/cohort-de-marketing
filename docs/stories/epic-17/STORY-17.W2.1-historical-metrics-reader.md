@@ -164,6 +164,9 @@ completion_notes:
   - "A allow-list foi expandida no commit 647e66e antes de tocar builder/schema; RED Round2 no commit 0aaf771 reproduziu 14 falhas."
   - "O commit ad63a79 versiona WeeklyLedger 1.1.0, preserva canonicalHash, adiciona digest recomputável, conta semanas distintas e bloqueia números inseguros antes do parse."
   - "Remediação passou em 35/35 testes focais e 82/82 testes Node completos; story permanece InReview para QG2 independente."
+  - "QG2 reprovou o HEAD d689f81 com FAIL 88 porque JSON.stringify tratava apenas a ordem das chaves dos objetos do index como semântica."
+  - "RED Round3 no commit d26301b reproduziu a falsa rejeição no builder e reader; o commit 975571b compartilha canonicalSerialize para igualdade estrutural preservando a ordem dos arrays."
+  - "Round3 passou em 37/37 testes focais e 127/127 no gate completo controlado; story permanece InReview para QG3 independente."
 file_list:
   - ".claude/skills/leitor-de-metricas/SKILL.md"
   - ".agents/skills/leitor-de-metricas/SKILL.md"
@@ -187,7 +190,7 @@ file_list:
 quality_gate_report:
   story_id: "17.W2.1"
   verdict: "FAIL"
-  score: 58
+  score: 88
   rounds:
     - round: 1
       verdict: "FAIL"
@@ -196,11 +199,20 @@ quality_gate_report:
         - "A projeção persistida não tinha digest recomputável; valor ou sourceRef adulterado passava na leitura."
         - "Múltiplas revisões da mesma semana eram contadas como histórico suficiente."
         - "Lexemas numéricos fora da faixa JSON segura podiam ser arredondados antes da saída."
+    - round: 2
+      verdict: "FAIL"
+      score: 88
+      reviewed_head: "d689f81"
+      blocking_findings:
+        - "A ordem das chaves de objetos do index era tratada como semântica por JSON.stringify."
   remediation:
-    status: "READY_FOR_QG2"
-    implementation_head: "ad63a79"
-    focal_tests: "35/35"
-    full_tests: "82/82"
+    status: "READY_FOR_QG3"
+    round2_implementation_head: "ad63a79"
+    round3:
+      red_head: "d26301b"
+      implementation_head: "975571b"
+      focal_tests: "37/37"
+      full_gate_tests: "127/127"
 ```
 
 ## Stop conditions
@@ -218,3 +230,5 @@ quality_gate_report:
 | 2026-07-15 | @architect | QG1 `FAIL 58`: digest de projeção ausente, contagem por revisão e arredondamento de lexema numérico bloquearam o fan-in. |
 | 2026-07-15 | @dev | File List expandida antes da remediação para versionar WeeklyLedger, builder, schema e fixture esperada. |
 | 2026-07-15 | @dev | Round2 RED/GREEN concluído com digest versionado, semanas distintas e lexer numérico seguro; story mantida em `InReview` para QG2. |
+| 2026-07-15 | @architect | QG2 `FAIL 88`: igualdade via `JSON.stringify` rejeitava index semanticamente idêntico com chaves reordenadas. |
+| 2026-07-15 | @dev | Round3 usa canonicalização compartilhada para objetos e preserva arrays posicionais; 37/37 focais e 127/127 completos verdes. |
