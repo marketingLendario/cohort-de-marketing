@@ -12,6 +12,7 @@ import {
   ArtifactIndexError,
   buildArtifactIndex,
   confirmArtifact,
+  isPortableArtifactPath,
   matchesArtifactGlob,
   validateArtifactIndex,
 } from './project-artifact-index.mjs';
@@ -217,10 +218,25 @@ test('matcher glob segmentado e deterministico cobre a matriz usada pelo Node e 
     ['avatar.md', '**/*.md', true],
     ['avatar.md', '../*.md', false],
     ['avatar.md', '/tmp/*.md', false],
+    ['file.md', '**', false],
   ];
   for (const [candidate, pattern, expected] of matrix) {
     assert.equal(matchesArtifactGlob(candidate, pattern), expected, `${candidate} :: ${pattern}`);
   }
+});
+
+test('path portatil rejeita NUL e controles com a mesma matriz do browser', () => {
+  const matrix = [
+    ['avatar.md', true],
+    ['nested/avatar.md', true],
+    ['avatar\0.md', false],
+    ['avatar\n.md', false],
+    ['avatar\t.md', false],
+    [`avatar${String.fromCharCode(0x1f)}.md`, false],
+    [`avatar${String.fromCharCode(0x7f)}.md`, false],
+    [`avatar${String.fromCharCode(0x85)}.md`, false],
+  ];
+  for (const [candidate, expected] of matrix) assert.equal(isPortableArtifactPath(candidate), expected);
 });
 
 test('validator vincula path, provenance, unicidade e policy as regras canonicas', async (t) => {
@@ -239,6 +255,13 @@ test('validator vincula path, provenance, unicidade e policy as regras canonicas
   mismatchedPattern.entries[0].origin.patterns = ['nested/avatar.md'];
   assert.throws(
     () => validateArtifactIndex(mismatchedPattern, RULES),
+    (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_INDEX',
+  );
+
+  const partiallyMismatched = structuredClone(valid);
+  partiallyMismatched.entries[0].origin.patterns = ['avatar.md', 'nested/avatar.md'];
+  assert.throws(
+    () => validateArtifactIndex(partiallyMismatched, RULES),
     (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_INDEX',
   );
 
@@ -278,6 +301,39 @@ test('validator vincula path, provenance, unicidade e policy as regras canonicas
   assert.throws(
     () => validateArtifactIndex(duplicate, sharedPathRules),
     (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_INDEX',
+  );
+});
+
+test('globstar terminal e rejeitado por matcher, rules, validator e builder', async (t) => {
+  const { projectRoot } = await fixture(t);
+  await writeFile(path.join(projectRoot, 'file.md'), 'fabricated');
+  const terminalRules = {
+    ...RULES,
+    artifactGlobs: { fabricated: ['**'] },
+  };
+  assert.equal(matchesArtifactGlob('file.md', '**'), false);
+  await assert.rejects(
+    buildArtifactIndex({ projectRoot, rules: terminalRules }),
+    (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_GLOB',
+  );
+  const fabricated = {
+    schemaVersion: 'artifact-index-v1',
+    project: { slug: 'demo-seguro' },
+    rules: { schemaVersion: 'test', confirmationRequiredByDefault: true },
+    entries: [{
+      artifactType: 'fabricated',
+      path: 'file.md',
+      sha256: 'c'.repeat(64),
+      sizeBytes: 10,
+      origin: { kind: 'declared_glob', rule: 'artifactGlobs.fabricated', patterns: ['**'] },
+      confirmationStatus: 'pending_confirmation',
+      satisfiesCriticalRequirement: false,
+    }],
+    summary: { total: 1, confirmed: 0, pendingConfirmation: 1 },
+  };
+  assert.throws(
+    () => validateArtifactIndex(fabricated, terminalRules),
+    (error) => error instanceof ArtifactIndexError && error.code === 'INVALID_GLOB',
   );
 });
 
@@ -382,6 +438,17 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
     ['nested/deep/avatar.md', 'nested/*.md'],
     ['nested/deep/avatar.md', 'nested/**/*.md'],
     ['avatar.md', '**/*.md'],
+    ['file.md', '**'],
+  ];
+  const portableMatrix = [
+    'avatar.md',
+    'nested/avatar.md',
+    'avatar\0.md',
+    'avatar\n.md',
+    'avatar\t.md',
+    `avatar${String.fromCharCode(0x1f)}.md`,
+    `avatar${String.fromCharCode(0x7f)}.md`,
+    `avatar${String.fromCharCode(0x85)}.md`,
   ];
 
   const duplicatePath = {
@@ -420,6 +487,22 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
       })(),
     },
     {
+      label: 'provenance parcialmente falsa',
+      value: (() => {
+        const value = structuredClone(index);
+        value.entries[0].origin.patterns = ['avatar.md', 'relatorio-avatar.md'];
+        return value;
+      })(),
+    },
+    {
+      label: 'path com NUL',
+      value: (() => {
+        const value = structuredClone(index);
+        value.entries[0].path = 'avatar\0.md';
+        return value;
+      })(),
+    },
+    {
       label: 'policy divergente',
       value: (() => {
         const value = structuredClone(index);
@@ -434,6 +517,8 @@ test('smoke HTTP importa o mesmo ArtifactIndex nas duas copias sem pageerror', {
     const { page, errors } = await openPage(pathname);
     const browserMatches = await page.evaluate((matrix) => matrix.map(([candidate, pattern]) => matchesArtifactGlob(candidate, pattern)), matcherMatrix);
     assert.deepEqual(browserMatches, matcherMatrix.map(([candidate, pattern]) => matchesArtifactGlob(candidate, pattern)));
+    const browserPortable = await page.evaluate((matrix) => matrix.map((candidate) => isPortableArtifactPath(candidate)), portableMatrix);
+    assert.deepEqual(browserPortable, portableMatrix.map((candidate) => isPortableArtifactPath(candidate)));
     await page.locator('#import-artifact-index-file').setInputFiles({
       name: 'artifact-index.json',
       mimeType: 'application/json',
