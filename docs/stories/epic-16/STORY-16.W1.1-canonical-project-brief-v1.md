@@ -54,11 +54,17 @@ Congelar um único contrato versionado para projeto, com envelope persistente e 
 - `data/contracts/project-brief.v1.schema.json`
 - `scripts/migrate-project-brief.mjs`
 - `scripts/validate-project-brief-rules.mjs`
+- `scripts/package.json`
+- `scripts/package-lock.json`
 - `data/contracts/fixtures/project-brief/**`
 - `docs/stories/epic-16/**`
 
 A File List é uma allow-list inicial. Criação ou alteração fora dela exige
 atualização da story e nova validação de arquitetura.
+
+Ampliação aprovada no remediation do QG Round 1: `scripts/package.json` e
+`scripts/package-lock.json` passam a fazer parte da allow-list para fixar AJV
+2020 e `ajv-formats`, eliminando dependência transitória de `npx`.
 
 ## Validação
 
@@ -81,6 +87,11 @@ atualização da story e nova validação de arquitetura.
   reprocessamento de documento/resultado v1 como no-op e não altera o input.
 - Versões desconhecidas, downgrade solicitado, slug/status/proveniência
   críticos inválidos e envelope v1 inconsistente falham fechado.
+- Legacy, v1 gerado e caminho idempotente passam pela mesma instância AJV
+  draft 2020-12 com `ajv-formats`, `additionalProperties` e formatos ativos.
+- `fieldMeta` e `fieldSources` aceitam somente dot-paths extraídos dos 120
+  campos canônicos; referências de artefato são IDs redistribuíveis, nunca
+  paths absolutos ou privados.
 - A busca de PRs abertos por `ProjectBrief`, `project brief` e `16.W1.1`
   retornou lista vazia antes da implementação.
 
@@ -90,15 +101,22 @@ atualização da story e nova validação de arquitetura.
   passou e 5 falharam, confirmando as lacunas do baseline.
 - `node --check scripts/migrate-project-brief.mjs`: PASS.
 - `node --test data/contracts/fixtures/project-brief/project-brief-contract.test.mjs`:
-  PASS, 7/7.
-- `node scripts/validate-project-brief-rules.mjs`: PASS, 120 campos e 31 skills.
-- AJV draft 2020-12 + `ajv-formats`: fixtures legada 0.1.0 e v1 válidas.
+  PASS, 10/10 após o remediation QG Round 1.
+- `npm ci --prefix scripts --ignore-scripts`: PASS a partir do lockfile.
+- `node scripts/validate-project-brief-rules.mjs`: PASS, 120 campos, 31 skills
+  e ambos schemas AJV 2020 compilados.
+- `npm audit --prefix scripts --audit-level=moderate`: PASS, 0 vulnerabilidades.
+- Casos negativos cobertos: `startingPoint`, `awarenessLevel`, `exactPrice`,
+  propriedade adicional, timestamp, `sourceArtifactId` numérico, dot-path
+  privado e path absoluto.
 - `git diff --check`: PASS.
 
 ### Commits locais
 
 - `f2ff135` - `test: freeze ProjectBrief v1 contract [Story 16.W1.1]`
 - `5011ca6` - `feat: harden ProjectBrief v1 migration [Story 16.W1.1]`
+- `f619e6e` - `docs: hand off ProjectBrief v1 for review [Story 16.W1.1]`
+- `b10b94c` - `fix: enforce AJV ProjectBrief validation [Story 16.W1.1]`
 
 ## File List real
 
@@ -109,7 +127,11 @@ atualização da story e nova validação de arquitetura.
 - `data/contracts/fixtures/project-brief/unknown-version.invalid.json`
 - `data/contracts/fixtures/project-brief/critical-field.invalid.json`
 - `data/contracts/fixtures/project-brief/project-brief-contract.test.mjs`
+- `data/project-brief.schema.json`
 - `scripts/migrate-project-brief.mjs`
+- `scripts/validate-project-brief-rules.mjs`
+- `scripts/package.json`
+- `scripts/package-lock.json`
 - `docs/stories/epic-16/epic-16-state.json`
 - `docs/stories/epic-16/STORY-16.W1.1-canonical-project-brief-v1.md`
 
@@ -119,6 +141,8 @@ atualização da story e nova validação de arquitetura.
   (`standalone`, `project-{slug}` e revisão) e a política de idempotência.
 - Reexecutar Node tests e AJV draft 2020-12; validar especialmente que
   `fieldMeta` não reaparece em `data` e que origem/confirmation não se perdem.
+- Revalidar os findings QG-001 a QG-003 contra o commit `b10b94c`, incluindo
+  o caminho idempotente e todos os casos negativos enumerados nas evidências.
 - O status permanece `InReview`; nenhum veredito de quality gate foi
   autoatribuído pelo executor.
 
@@ -126,3 +150,5 @@ atualização da story e nova validação de arquitetura.
 
 - 2026-07-14: contrato e fixtures congelados, migração v1 endurecida,
   validações registradas e story encaminhada para revisão independente.
+- 2026-07-14: QG Round 1 remediado com validação AJV única, dependências
+  versionadas, dot-paths canônicos, referências portáveis e regressões exatas.
