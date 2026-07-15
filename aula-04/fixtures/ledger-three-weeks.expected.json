@@ -1,7 +1,9 @@
 {
   "contract": "WeeklyLedger",
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "hashAlgorithm": "sha256",
+  "projectionDigestVersion": "1.0.0",
+  "projectionDigestAlgorithm": "sha256",
   "entries": [
     {
       "projectId": "project-acme",
@@ -11,6 +13,7 @@
       "weeklyPanelId": "weekly-panel:acme:2026-07-13:r1",
       "schemaVersion": "1.0.0",
       "canonicalHash": "e5b89af7293f5c94dfde9538232790dbcd24314f9e626515a9bd31fe1f92b57c",
+      "projectionDigest": "c2752299c13dbf5eb94bb7b27480ec8bd490d3c7239860080dd741ef2310f3b6",
       "metrics": [
         {
           "name": "spend",
@@ -35,6 +38,7 @@
       "weeklyPanelId": "weekly-panel:acme:2026-07-13:r2",
       "schemaVersion": "1.0.0",
       "canonicalHash": "d12078f13989160ebe22339ca0e7961ed4b9e8e335b4fbee6d5071eaa4b6cee4",
+      "projectionDigest": "4611dfb3b79522526699af0bf1098cab924a8058244ca2cfa861202f4e2f4c99",
       "metrics": [
         {
           "name": "spend",
@@ -59,6 +63,7 @@
       "weeklyPanelId": "weekly-panel:acme:2026-07-20:r1",
       "schemaVersion": "1.0.0",
       "canonicalHash": "a35688a9ce03571f024f552c97a7271cca372e51b29779dc2803560e12e0bae0",
+      "projectionDigest": "ba387057e768591ed5ec8520a99d45b21278bead74bb3df78ff8948406fa1e37",
       "metrics": [
         {
           "name": "cpa",
@@ -83,6 +88,7 @@
       "weeklyPanelId": "weekly-panel:acme:2026-07-27:r1",
       "schemaVersion": "1.0.0",
       "canonicalHash": "eee115d440c60a13c6265d526c567bdcb7a77ef7dd2fa6364239057af4eee6c4",
+      "projectionDigest": "0766a5745766177edc1bbcc544fb48918c8ff632a87b5497cd11efaa660a2d2b",
       "metrics": [
         {
           "name": "revenue",

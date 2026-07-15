@@ -10,6 +10,7 @@ import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { canonicalHash } from './build-weekly-ledger.mjs';
 
 const execFileAsync = promisify(execFile);
 const SCRIPT = fileURLToPath(new URL('./build-weekly-ledger.mjs', import.meta.url));
@@ -88,7 +89,16 @@ test('constroi ledger de tres semanas conforme schema e fixture congelada', asyn
   addFormats(ajv);
   const validate = ajv.compile(schema);
   assert.equal(validate(ledger), true, JSON.stringify(validate.errors));
+  assert.equal(ledger.schemaVersion, '1.1.0');
+  assert.equal(ledger.hashAlgorithm, 'sha256');
+  assert.equal(ledger.projectionDigestVersion, '1.0.0');
+  assert.equal(ledger.projectionDigestAlgorithm, 'sha256');
   assert.equal(ledger.entries.length, 4);
+  for (const entry of ledger.entries) {
+    const { projectionDigest, ...projection } = entry;
+    assert.equal(projectionDigest, canonicalHash(projection));
+    assert.match(entry.canonicalHash, /^[a-f0-9]{64}$/);
+  }
   assert.deepEqual(ledger.index.map(({ weekStart, revisions }) => ({ weekStart, revisions })), [
     { weekStart: '2026-07-13', revisions: [{ revision: 1, entryIndex: 0 }, { revision: 2, entryIndex: 1 }] },
     { weekStart: '2026-07-20', revisions: [{ revision: 1, entryIndex: 2 }] },
@@ -240,6 +250,59 @@ test('ledger existente invalido falha fechado sem ser reparado ou reformatado', 
     code: 'INVALID_EXISTING_LEDGER',
   });
   assert.equal(await readFile(wrongPremisePath, 'utf8'), wrongPremiseBytes);
+});
+
+test('digest da projeção detecta adulteração de valor e sourceRef sem substituir canonicalHash', async (t) => {
+  const ledgerPath = await withLedger(t);
+  await run([fixture('ledger-three-weeks.input.jsonl'), ledgerPath]);
+  const original = JSON.parse(await readFile(ledgerPath, 'utf8'));
+
+  for (const mutate of [
+    (ledger) => { ledger.entries[0].metrics[0].value = 999; },
+    (ledger) => { ledger.entries[0].metrics[0].sourceRef.id = 'tampered'; },
+  ]) {
+    const tampered = structuredClone(original);
+    mutate(tampered);
+    const bytes = `${JSON.stringify(tampered, null, 2)}\n`;
+    await writeFile(ledgerPath, bytes);
+    const result = await run([fixture('ledger-idempotent.input.jsonl'), ledgerPath]);
+    assert.equal(result.code, 1);
+    assert.deepEqual(JSON.parse(result.stdout), { valid: false, code: 'INVALID_EXISTING_LEDGER' });
+    assert.equal(await readFile(ledgerPath, 'utf8'), bytes);
+    assert.equal(tampered.entries[0].canonicalHash, original.entries[0].canonicalHash);
+  }
+});
+
+test('ledger legado sem digest é rejeitado explicitamente em vez de ganhar integridade retroativa', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const legacy = JSON.parse(await readFile(fixture('ledger-three-weeks.expected.json'), 'utf8'));
+  legacy.schemaVersion = '1.0.0';
+  delete legacy.projectionDigestVersion;
+  delete legacy.projectionDigestAlgorithm;
+  for (const entry of legacy.entries) delete entry.projectionDigest;
+  const bytes = `${JSON.stringify(legacy, null, 2)}\n`;
+  await writeFile(ledgerPath, bytes);
+
+  const result = await run([fixture('ledger-idempotent.input.jsonl'), ledgerPath]);
+  assert.equal(result.code, 1);
+  assert.deepEqual(JSON.parse(result.stdout), { valid: false, code: 'INVALID_EXISTING_LEDGER' });
+  assert.equal(await readFile(ledgerPath, 'utf8'), bytes);
+});
+
+test('lexema numérico inseguro é rejeitado antes de JSON.parse sem arredondar ou escrever', async (t) => {
+  const ledgerPath = await withLedger(t);
+  const input = path.join(path.dirname(ledgerPath), 'unsafe-number.jsonl');
+  const safe = (await readFile(fixture('ledger-three-weeks.input.jsonl'), 'utf8'))
+    .split('\n')
+    .find((line) => line.includes('"value":210'));
+  assert.match(safe, /"value":210/);
+  await writeFile(input, `${safe.replace('"value":210', '"value":9007199254740993')}\n`);
+
+  const result = await run([input, ledgerPath]);
+  assert.equal(result.code, 2);
+  assert.equal(result.stdout, '');
+  assert.equal(result.stderr, 'Unsafe JSON number at line 1.\n');
+  await assert.rejects(readFile(ledgerPath));
 });
 
 test('saida omite conteudo bruto, decisoes, eventos, leitor e dados pessoais', async (t) => {

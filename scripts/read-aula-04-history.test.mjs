@@ -51,7 +51,8 @@ test('leitura compatível é determinística, ordenada e não deriva números', 
     projectId: 'project-history', campaignId: 'campaign-history', weekStart: null,
   });
   assert.deepEqual(output.source, {
-    contract: 'WeeklyLedger', schemaVersion: '1.0.0', hashAlgorithm: 'sha256',
+    contract: 'WeeklyLedger', schemaVersion: '1.1.0', hashAlgorithm: 'sha256',
+    projectionDigestVersion: '1.0.0', projectionDigestAlgorithm: 'sha256',
   });
   assert.deepEqual(output.series.map((series) => series.name), ['cpa', 'spend']);
   assert.deepEqual(output.series.map((series) => series.comparison), [
@@ -75,6 +76,7 @@ test('preserva literalmente proveniência, revisão, hashes, selos e confirmaç�
     revision: 1,
     weeklyPanelId: 'weekly-panel:history:2026-06-01:r1',
     canonicalHash: '1111111111111111111111111111111111111111111111111111111111111111',
+    projectionDigest: '69883a1a0de957c57f913682010231bb3e40fbfda644fab62006aba00a775040',
     metrics: [
       {
         name: 'cpa', value: 42, seal: 'Real',
@@ -120,6 +122,7 @@ test('ausência explícita e slot ausente permanecem null e nao_fornecido', asyn
     weekStart: '2026-06-01', revision: 1,
     weeklyPanelId: 'weekly-panel:history:2026-06-01:r1',
     canonicalHash: '5555555555555555555555555555555555555555555555555555555555555555',
+    projectionDigest: '2811b736a33377f899af54bb5ff20be8f7d978c83a6447a71923cf59fc5dfd32',
     metricPresent: false, value: null, seal: 'nao_fornecido', sourceRef: null,
     attributionWindow: null, premiseRef: null, confirmedByHuman: false, cashConfirmed: false,
   });
@@ -139,6 +142,21 @@ test('filtro de uma semana usa o mesmo contrato e marca histórico insuficiente'
   ]));
   assert.equal(output.entries.length, 1);
   assert.equal(output.selection.weekStart, '2026-06-01');
+  assert.deepEqual(output.series[0].comparison, {
+    status: 'insufficient_history', requiresHumanDecision: true,
+    warningCodes: ['INSUFFICIENT_HISTORY'],
+  });
+});
+
+test('duas revisões da mesma semana continuam sendo histórico insuficiente', async () => {
+  const output = parseOutput(await run([
+    '--ledger', fixture('ledger-three-weeks.expected.json'),
+    '--project-id', 'project-acme',
+    '--campaign-id', 'campaign-acme-launch',
+    '--week-start', '2026-07-13',
+  ]));
+  assert.equal(output.entries.length, 2);
+  assert.deepEqual(output.entries.map(({ revision }) => revision), [1, 2]);
   assert.deepEqual(output.series[0].comparison, {
     status: 'insufficient_history', requiresHumanDecision: true,
     warningCodes: ['INSUFFICIENT_HISTORY'],
@@ -182,6 +200,46 @@ test('ledger, seleção e argumentos inválidos falham fechado sem ecoar valores
     assert.match(result.stderr, new RegExp(`^${code}\\n$`));
     assert.equal(result.stderr.includes('token-super-secreto'), false);
     assert.equal(result.stderr.includes('missing-secret'), false);
+  }
+});
+
+test('digest verificável rejeita valor e sourceRef adulterados', async (t) => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'history-integrity-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const original = JSON.parse(await readFile(fixture('history-compatible.ledger.json'), 'utf8'));
+
+  for (const [name, mutate] of [
+    ['value', (ledger) => { ledger.entries[0].metrics[0].value = 900; }],
+    ['source', (ledger) => { ledger.entries[0].metrics[0].sourceRef.id = 'tampered'; }],
+  ]) {
+    const ledger = structuredClone(original);
+    mutate(ledger);
+    const file = path.join(directory, `${name}.json`);
+    await writeFile(file, JSON.stringify(ledger));
+    const result = await run(['--ledger', file, ...selection]);
+    assert.equal(result.code, 1);
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, 'INVALID_LEDGER_SEMANTICS\n');
+  }
+});
+
+test('lexemas numéricos inseguros falham antes de JSON.parse e nunca são arredondados', async (t) => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'history-numeric-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const original = await readFile(fixture('history-compatible.ledger.json'), 'utf8');
+  const cases = [
+    ['unsafe-integer.json', '"value": 210', '"value": 9007199254740993'],
+    ['unsafe-decimal.json', '"value": 210', '"value": 0.12345678901234567'],
+    ['overflow.json', '"value": 210', '"value": 1e309'],
+  ];
+  for (const [name, from, to] of cases) {
+    assert.ok(original.includes(from));
+    const file = path.join(directory, name);
+    await writeFile(file, original.replace(from, to));
+    const result = await run(['--ledger', file, ...selection]);
+    assert.equal(result.code, 2);
+    assert.equal(result.stdout, '');
+    assert.equal(result.stderr, 'UNSAFE_JSON_NUMBER\n');
   }
 });
 
