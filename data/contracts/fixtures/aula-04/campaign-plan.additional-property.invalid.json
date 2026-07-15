@@ -1,0 +1,32 @@
+{
+  "contract": "CampaignPlan",
+  "schemaVersion": "1.0.0",
+  "id": "campaign-plan:acme:1",
+  "projectId": "project-acme",
+  "campaignId": "campaign-acme-launch",
+  "revision": 1,
+  "sourceBrief": {
+    "id": "project-acme:revision:1",
+    "revision": 1
+  },
+  "platform": "meta",
+  "objective": "sales",
+  "budget": {
+    "daily": 30,
+    "periodDays": 7,
+    "currency": "BRL"
+  },
+  "angles": [],
+  "finalists": [],
+  "tracking": {
+    "status": "OK",
+    "criticalItemsConfirmed": true,
+    "checks": {}
+  },
+  "structure": null,
+  "manualSubmission": {
+    "status": "ready"
+  },
+  "overrides": {},
+  "studioProjectId": "private-studio-project"
+}

@@ -1,0 +1,32 @@
+{
+  "contract": "WeeklyPanel",
+  "schemaVersion": "1.0.0",
+  "id": "weekly-panel:acme:2026-07-20",
+  "projectId": "project-acme",
+  "campaignId": "campaign-acme-launch",
+  "weekStart": "2026-07-20",
+  "revision": 1,
+  "previousStatus": null,
+  "status": "draft",
+  "metrics": [
+    {
+      "name": "cpa",
+      "value": null,
+      "seal": "nao_fornecido",
+      "source": "Operador nao forneceu a metrica.",
+      "attributionWindow": null,
+      "premise": null,
+      "confirmedByHuman": false,
+      "cashConfirmed": false
+    }
+  ],
+  "reader": {
+    "literalOnly": true,
+    "sampleSufficientForCpa": false,
+    "note": "CPA permanece nao fornecido."
+  },
+  "decision": {
+    "status": "pending"
+  },
+  "events": []
+}
