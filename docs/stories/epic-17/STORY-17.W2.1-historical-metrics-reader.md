@@ -1,5 +1,5 @@
 ---
-status: Ready
+status: InReview
 story_id: "17.W2.1"
 title: "Leitura histórica sem invenção"
 epic: 17
@@ -8,7 +8,7 @@ parent_epic: "docs/stories/epic-17/EPIC-17-AULA-04-DATA-FOUNDATION.md"
 effort: 7h
 deploy_type: none
 appetite: 1d
-hill_phase: uphill
+hill_phase: downhill
 confidence_level: know-how
 involves_ui: false
 task_mode: CRIAR
@@ -67,7 +67,7 @@ affected_paths:
 
 ## Status
 
-Ready
+InReview
 
 ## Dependências
 
@@ -75,20 +75,20 @@ Ready
 
 ## Acceptance Criteria
 
-- [ ] AC1: O CLI aceita apenas um `weekly-ledger.v1` válido, exige seleção explícita de `projectId` e `campaignId` e emite envelope versionado em ordem `weekStart`, `revision`, nome de métrica; ledger, seleção ou JSON inválidos falham fechado com exit code não zero e sem valores no erro.
-- [ ] AC2: Cada observação preserva literalmente `value` ou `null`, `seal`, `sourceRef`, `premiseRef`, `attributionWindow`, `confirmedByHuman`, `cashConfirmed`, `weekStart`, `revision`, `weeklyPanelId` e `canonicalHash`; nenhuma métrica, fonte, premissa ou revisão é inferida.
-- [ ] AC3: A saída separa séries `Real`, `Estimado` e `nao_fornecido`. Valores ausentes nunca viram zero, e métricas ausentes em uma semana permanecem `nao_fornecido` somente quando há um slot nominal já observado no ledger selecionado.
-- [ ] AC4: Comparação só fica `comparable` quando as observações selecionadas têm o mesmo nome, a mesma janela literal não nula e valores numéricos confirmados. Janela divergente/nula, selo ausente, valor ausente ou falta de confirmação humana gera estado explícito, aviso e `requiresHumanDecision: true`, sem delta, agregação ou tendência.
-- [ ] AC5: CPA, ROAS e qualquer tendência são apenas ecoados como observações quando existem no ledger; nunca são derivados. A saída de uma única semana usa o mesmo contrato e retorna comparação `insufficient_history`, preservando compatibilidade de leitura da Aula 3.
-- [ ] AC6: A skill canônica e seu espelho documentam o modo histórico, o comando, o contrato não-inferir e a fronteira pública; mirror parity e golden outputs cobrem semanas compatíveis, incompatíveis, ausências e uma única semana.
+- [x] AC1: O CLI aceita apenas um `weekly-ledger.v1` válido, exige seleção explícita de `projectId` e `campaignId` e emite envelope versionado em ordem `weekStart`, `revision`, nome de métrica; ledger, seleção ou JSON inválidos falham fechado com exit code não zero e sem valores no erro.
+- [x] AC2: Cada observação preserva literalmente `value` ou `null`, `seal`, `sourceRef`, `premiseRef`, `attributionWindow`, `confirmedByHuman`, `cashConfirmed`, `weekStart`, `revision`, `weeklyPanelId` e `canonicalHash`; nenhuma métrica, fonte, premissa ou revisão é inferida.
+- [x] AC3: A saída separa séries `Real`, `Estimado` e `nao_fornecido`. Valores ausentes nunca viram zero, e métricas ausentes em uma semana permanecem `nao_fornecido` somente quando há um slot nominal já observado no ledger selecionado.
+- [x] AC4: Comparação só fica `comparable` quando as observações selecionadas têm o mesmo nome, a mesma janela literal não nula e valores numéricos confirmados. Janela divergente/nula, selo ausente, valor ausente ou falta de confirmação humana gera estado explícito, aviso e `requiresHumanDecision: true`, sem delta, agregação ou tendência.
+- [x] AC5: CPA, ROAS e qualquer tendência são apenas ecoados como observações quando existem no ledger; nunca são derivados. A saída de uma única semana usa o mesmo contrato e retorna comparação `insufficient_history`, preservando compatibilidade de leitura da Aula 3.
+- [x] AC6: A skill canônica e seu espelho documentam o modo histórico, o comando, o contrato não-inferir e a fronteira pública; mirror parity e golden outputs cobrem semanas compatíveis, incompatíveis, ausências e uma única semana.
 
 ## Tasks
 
-- [ ] Confirmar baseline `d0bc5ed`, 17.W1.2 `Done`, contrato WeeklyLedger v1 e ausência de PR cobrindo o escopo.
-- [ ] Congelar por TDD RED o envelope, ordenação, proveniência, estados ausentes e matriz de compatibilidade antes do código.
-- [ ] Implementar reader e modo histórico da skill somente dentro da File List aprovada.
-- [ ] Executar testes focais, adjacentes do ledger/validators, mirror parity e golden outputs.
-- [ ] Registrar evidência sanitizada; atualizar checkboxes e File List real sem editar o epic state fora do fan-in.
+- [x] Confirmar baseline `d0bc5ed`, 17.W1.2 `Done`, contrato WeeklyLedger v1 e ausência de PR cobrindo o escopo.
+- [x] Congelar por TDD RED o envelope, ordenação, proveniência, estados ausentes e matriz de compatibilidade antes do código.
+- [x] Implementar reader e modo histórico da skill somente dentro da File List aprovada.
+- [x] Executar testes focais, adjacentes do ledger/validators, mirror parity e golden outputs.
+- [x] Registrar evidência sanitizada; atualizar checkboxes e File List real sem editar o epic state fora do fan-in.
 
 ## File List
 
@@ -137,8 +137,24 @@ model: "sonnet"
 
 ```yaml
 agent_model: "GPT-5 Codex"
-completion_notes: []
-file_list: []
+completion_notes:
+  - "Preflight confirmou baseline d0bc5ed, 17.W1.2 Done e nenhum PR aberto cobrindo o escopo."
+  - "Materialização W2 foi isolada no commit 9e9fa73; W2.1 e W2.3 estão Ready em paralelo e W2.2 segue bloqueada."
+  - "TDD RED no commit bcc67c9 congelou envelope, fixtures, compatibilidade, ausências, single-week e erros sanitizados; 8/8 testes falharam pela ausência do reader."
+  - "O commit d3b7842 implementa validação AJV 2020-12 e semântica do índice, projeção read-only, agrupamento por selo e estados sem cálculo derivado."
+  - "Testes focais 8/8, adjacentes 37/37 e suíte Node completa 76/76 passaram; mirrors têm SHA-256 idêntico."
+  - "Story movida para InReview; epic state permanece reservado ao fan-in após QG independente."
+file_list:
+  - ".claude/skills/leitor-de-metricas/SKILL.md"
+  - ".agents/skills/leitor-de-metricas/SKILL.md"
+  - "scripts/read-aula-04-history.mjs"
+  - "scripts/read-aula-04-history.test.mjs"
+  - "aula-04/templates/leitura-historica.yaml"
+  - "aula-04/fixtures/history-compatible.ledger.json"
+  - "aula-04/fixtures/history-incompatible.ledger.json"
+  - "aula-04/fixtures/history-missing.ledger.json"
+  - "docs/stories/epic-17/STORY-17.W2.1-historical-metrics-reader.md"
+  - "docs/stories/epic-17/evidence/STORY-17.W2.1.md"
 ```
 
 ## QA Results
@@ -160,3 +176,4 @@ quality_gate_report:
 | Data | Agente | Mudança |
 |---|---|---|
 | 2026-07-15 | @po | Contrato W2.1 materializado na baseline `d0bc5ed`; story pronta para execução paralela com 17.W2.3. |
+| 2026-07-15 | @dev | TDD RED, implementação fail-closed e documentação da skill concluídos; 76/76 testes Node verdes e story movida para `InReview`. |
