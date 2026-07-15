@@ -1556,7 +1556,9 @@
       event.target.value = '';
       if (!file) return;
       try {
-        const candidate = validateArtifactIndexDocument(JSON.parse(await file.text()));
+        const parsed = JSON.parse(await file.text());
+        assertNoPlaintextCredentials(parsed);
+        const candidate = validateArtifactIndexDocument(parsed);
         if (state.project?.slug && candidate.project.slug !== state.project.slug) {
           throw new Error('o índice pertence a outro projeto');
         }

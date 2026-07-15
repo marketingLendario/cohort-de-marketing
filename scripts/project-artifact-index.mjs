@@ -15,6 +15,18 @@ import { pathToFileURL } from 'node:url';
 const INDEX_SCHEMA_VERSION = 'artifact-index-v1';
 const SAFE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const SAFE_TYPE = /^[A-Za-z][A-Za-z0-9]*$/;
+const SENSITIVE_REFERENCE_PATTERNS = [
+  /\bAKIA[0-9A-Z]{16}\b/,
+  /\bsk_(?:live|test)_[A-Za-z0-9]{16,}\b/,
+  /\bsk-(?:live-|test-|proj-)?[A-Za-z0-9_-]{20,}\b/,
+  /\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/i,
+  /\bglpat-[A-Za-z0-9_-]{20,}\b/i,
+  /\bnpm_[A-Za-z0-9]{30,}\b/i,
+  /\bpypi-[A-Za-z0-9_-]{20,}\b/i,
+  /\bxox[baprs]-[A-Za-z0-9-]{20,}\b/i,
+  /\bAIza[A-Za-z0-9_-]{30,}\b/,
+  /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,}\b/,
+];
 const ENTRY_KEYS = [
   'artifactType',
   'path',
@@ -47,6 +59,12 @@ function portablePath(value) {
     && !value.split('/').some((part) => part === '' || part === '.' || part === '..');
 }
 
+function assertSafeReference(value) {
+  if (SENSITIVE_REFERENCE_PATTERNS.some((pattern) => pattern.test(value))) {
+    fail('SENSITIVE_PATH', 'Um path de artefato contém uma assinatura sensível.');
+  }
+}
+
 function insideRoot(root, candidate) {
   const relative = path.relative(root, candidate);
   return relative === '' || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
@@ -73,6 +91,7 @@ function validateRules(rules) {
       if (!portablePath(pattern) || pattern.split('/').some((part) => part === '**' ? false : part.includes('**'))) {
         fail('INVALID_GLOB', 'Um glob de artefato não é portátil ou confinado.');
       }
+      assertSafeReference(pattern);
     }
   }
   const declaration = rules.artifactIndex;
@@ -212,6 +231,7 @@ export async function buildArtifactIndex({ projectRoot, rules }) {
     for (const pattern of [...globs[artifactType]].sort()) {
       for (const match of await expandPattern(root, pattern)) {
         if (!portablePath(match.relative)) fail('PATH_ESCAPE', 'Um artefato não pôde ser normalizado com segurança.');
+        assertSafeReference(match.relative);
         const known = byPath.get(match.relative);
         if (known && known.artifactType !== artifactType) {
           fail('AMBIGUOUS_ARTIFACT', 'Um arquivo corresponde a mais de um tipo de artefato.');
@@ -279,6 +299,7 @@ export function validateArtifactIndex(index) {
   }
   const identities = new Set();
   for (const entry of index.entries) {
+    assertSafeReference(entry.path || '');
     if (!exactKeys(entry, ENTRY_KEYS)
       || !SAFE_TYPE.test(entry.artifactType)
       || !portablePath(entry.path)
