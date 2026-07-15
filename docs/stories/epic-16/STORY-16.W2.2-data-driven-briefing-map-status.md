@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "16.W2.2"
 title: "Briefing, mapa e status orientados por catálogo"
 epic: 16
@@ -8,7 +8,7 @@ parent_epic: "docs/stories/epic-16/EPIC-16-CANONICAL-PROJECT.md"
 effort: 8h
 deploy_type: none
 appetite: 1d
-hill_phase: executing
+hill_phase: done
 confidence_level: know-how
 involves_ui: true
 task_mode: REFATORAR
@@ -146,8 +146,15 @@ a transição obrigatória `Ready` → `InReview`.
 
 ## QA Results
 
-Pendente de Quality Gate independente por `@qa`. A story permanece `InReview`;
-somente o protocolo de close pode movê-la para `Done`.
+- Veredito independente: PASS.
+- Rodada final: 4.
+- Score: 100/100.
+- Findings bloqueantes: nenhum.
+- R1-R3 permaneceram fechados; predicados aninhados, estruturas profundas,
+  objetos e `null` falham fechado, enquanto escalares válidos permanecem aceitos.
+- Gates: 56/56 testes, 35 fixtures adversariais, catálogo 31/41, ProjectBrief
+  120/31, wiring 69/69, quatro URLs e auditoria aprovados.
+- AC1-AC5 e stop conditions: PASS; story encerrada como `Done`.
 
 ## Dev Notes
 
@@ -190,3 +197,4 @@ repo_target: "cohort-de-marketing"
 | 2026-07-15 | @dev | QG Round 1 remediado: validator único completo, ProjectBrief/120 refs, contagens runtime e storage rejeitado imutável; pronto para QG2. |
 | 2026-07-15 | @dev | QG Round 2 remediado: grupos anyOf efetivos, predicados XOR e 32 fixtures adversariais; pronto para QG3. |
 | 2026-07-15 | @dev | QG Round 3 remediado: equals/in restritos a escalares diretos e matriz ampliada para 35 fixtures; pronto para QG4. |
+| 2026-07-15 | @qa | QG Round 4 PASS 100/100; zero findings bloqueantes e story encerrada como Done. |
