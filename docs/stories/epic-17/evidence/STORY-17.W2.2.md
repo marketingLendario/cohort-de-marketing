@@ -85,10 +85,12 @@ c4a1c42434f2ecd27e55ad04203eb7685bc4a916f97c84634b79bd8c3a90127f
 
 ## Estado para handoff
 
-- Story: `InReview`.
+- Story: `Done`.
 - QG3 independente rodada 1: `FAIL 84/100`, confiança `0.98`, preservado como histórico.
 - Blocker remediado: `cpa`, `roas`, `spend` e `ctr` agora atravessam o contrato W2.1 sem exigir nem fabricar `SourceReconciliationV1`; métricas financeiras continuam exigindo o contrato W2.3 válido e compatível.
 - RED de remediação: `3b43af2`; GREEN de remediação: `59019d3`.
 - Focal `10/10`, adjacente `70/70`, full Node `152/152`, mirror e diff check verdes.
-- Handoff: `InReview`, pronto para QG3 independente rodada 2 por `@architect`.
+- QG3 independente rodada 2: `PASS 98/100`, confiança `0.99`, zero blockers;
+  focal `10/10` reexecutado pelo revisor e matriz condicional inspecionada.
+- Handoff: pronto para fan-in local por `@devops`.
 - `epic-17-state.json`, merge, push e deploy: não executados; reservados ao fan-in `@devops` após QG PASS.

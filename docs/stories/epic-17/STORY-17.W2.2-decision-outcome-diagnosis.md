@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "17.W2.2"
 title: "Diagnóstico decisão versus resultado"
 epic: 17
@@ -8,7 +8,7 @@ parent_epic: "docs/stories/epic-17/EPIC-17-AULA-04-DATA-FOUNDATION.md"
 effort: 7h
 deploy_type: none
 appetite: 1d
-hill_phase: downhill
+hill_phase: done
 confidence_level: know-how
 involves_ui: false
 task_mode: MODIFICAR
@@ -60,7 +60,7 @@ affected_paths:
 
 ## Status
 
-InReview — implementação e evidência local concluídas; aguarda QG independente `@architect`.
+Done — QG3 rodada 2 aprovado; fan-in permanece reservado a `@devops`.
 
 ## Dependências
 
@@ -174,6 +174,21 @@ remediation_handoff:
   adjacent_tests: "70/70"
   full_node_tests: "152/152"
   requested_reviewer: "@architect"
+
+quality_gate_round_2:
+  verdict: "PASS"
+  score: 98
+  confidence: 0.99
+  blockers: []
+  probes:
+    focused: "10/10"
+    full_node: "152/152"
+    diff_check: "PASS"
+    mirror_parity: "PASS"
+  conclusion: "Métricas financeiras exigem SourceReconciliationV1 válida; CPA, ROAS, spend e CTR consomem somente a proveniência W2.1 e produzem null explícito, sem reconciliação sintética ou narrativa causal."
+  reviewed_by: "@architect"
+  reviewed_at: "2026-07-15"
+  reviewed_head: "e0c31d00799112dc14c32f297028c00aaf7e3f0b"
 ```
 
 ## Change Log
@@ -185,6 +200,7 @@ remediation_handoff:
 | 2026-07-15 | @dev | Implementação determinística concluída; 149/149 testes Node verdes e story movida para `InReview`. |
 | 2026-07-15 | @architect | QG3 rodada 1 falhou: métricas não financeiras de W2.1 não atravessam a reconciliação financeira obrigatória de W2.3. |
 | 2026-07-15 | @dev | Remediação preservou CPA/ROAS/spend/CTR com proveniência W2.1, reconciliação condicional e 152/152 testes Node verdes; retorna a InReview para QG3 rodada 2. |
+| 2026-07-15 | @architect | QG3 rodada 2 aprovado com 98/100; blocker contratual fechado e story movida para `Done`. |
 
 ## Stop conditions adicionais
 
