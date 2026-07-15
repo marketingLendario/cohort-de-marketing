@@ -64,7 +64,7 @@ affected_paths:
 
 ## Status
 
-InReview — blockers da rodada 1 remediados e evidência local concluída; aguarda QG3 rodada 2 independente `@architect`.
+InReview — blocker da rodada 2 remediado e evidência local concluída; aguarda QG3 rodada 3 independente `@architect`.
 
 ## Story
 
@@ -163,8 +163,10 @@ completion_notes:
   - "RED 579e2cb fechou confiança no expected e texto sensível em decisão; GREEN 94617b3 exige invariantes inconclusivo/zero alavancas/pending e bloqueia republicação sensível."
   - "QG3 rodada 1 FAIL 76 foi reproduzido com REDs: PII compacta atravessava e destino igual/descendente não era fechado antes da escrita."
   - "GREEN 224b085 cobre telefone, CPF e CNPJ compactos/pontuados sem eco, preserva IDs opacos alfanuméricos e rejeita destino igual, descendente ou symlink-resolvido, inclusive com leaf ausente."
-  - "Focal 9/9, adjacente W2 46/46 e gate Node completo 161/161 passaram; árvore do exemplo permanece byte a byte imutável."
-  - "Story permanece InReview para QG3 rodada 2; fechamento, epic-state, fan-in, push, PR e deploy permanecem fora da autoridade do executor."
+  - "QG3 rodada 2 FAIL reproduziu dois telefones compactos ainda publicáveis: fixo com DDD em 10 dígitos e celular internacional em 13 dígitos."
+  - "GREEN 7beb539 amplia apenas o padrão numérico delimitado para 10/11 e 13/14 dígitos; campos de medição continuam isentos e IDs opacos alfanuméricos canônicos seguem aceitos."
+  - "Focal 10/10, adjacente W2 47/47 e gate Node completo 162/162 passaram; erros não ecoam valores e inputs permanecem imutáveis."
+  - "Story permanece InReview para QG3 rodada 3; fechamento, epic-state, fan-in, push, PR e deploy permanecem fora da autoridade do executor."
 file_list:
   - "aula-04/README.md"
   - "aula-04/GUIA-DO-ALUNO.html"
@@ -202,7 +204,7 @@ quality_gate_report:
   reviewed_by: "@architect"
   reviewed_at: "2026-07-15"
   reviewed_head: "8a922aef72afd43c652600812a9d30e81eb8cb29"
-remediation_handoff:
+remediation_handoff_round_2:
   requested_round: 2
   implementation_head: "224b085"
   status: "InReview"
@@ -211,6 +213,25 @@ remediation_handoff:
     - "GREEN focal 9/9, adjacente W2 46/46 e full Node 161/161."
     - "Seis formatos PII falham sem eco; IDs opacos alfanuméricos de 11/14 caracteres passam."
     - "Destino igual, descendente, symlink lexical/real e leaf ausente falham sem escrita; snapshots da árvore permanecem idênticos."
+quality_gate_report_round_2:
+  round: 2
+  verdict: "FAIL"
+  blocker:
+    - "Telefone fixo compacto com DDD (10 dígitos) e celular internacional compacto (13 dígitos) atravessavam o detector e eram republicados nos artefatos."
+  required_remediation:
+    - "Adicionar RED explícito para ambos os comprimentos, fechar sem eco e preservar métricas e IDs opacos alfanuméricos canônicos."
+  reviewed_by: "@architect"
+  reviewed_at: "2026-07-15"
+  reviewed_head: "3a05a5a38fadf4ed4e79a45e6e3cb8e32a1e19f7"
+remediation_handoff_round_3:
+  requested_round: 3
+  implementation_head: "7beb539"
+  status: "InReview"
+  evidence:
+    - "RED focal 0/1: os dois probes retornavam sucesso e escreviam os seis artefatos."
+    - "GREEN focal 10/10, adjacente W2 47/47 e full Node 162/162."
+    - "Telefones compactos de 10 e 13 dígitos falham com código sanitizado, sem eco e sem output."
+    - "IDs opacos alfanuméricos de 10/11/13/14 caracteres e campos contratuais de medição permanecem aceitos."
 ```
 
 ## Change Log
@@ -222,3 +243,5 @@ remediation_handoff:
 | 2026-07-15 | @dev | Trust boundaries endurecidas; 159/159 testes Node verdes e story movida para `InReview`. |
 | 2026-07-15 | @architect | QG3 rodada 1 falhou: telefone republicável e destino descendente do exemplo atravessam os guards atuais. |
 | 2026-07-15 | @dev | Rodada 1 remediada em `224b085`: PII shaped recursiva e contenção canônica/simbólica cobertas; 161/161 testes verdes e story devolvida a `InReview` para QG3 rodada 2. |
+| 2026-07-15 | @architect | QG3 rodada 2 falhou: telefones compactos de 10 e 13 dígitos ainda eram republicáveis. |
+| 2026-07-15 | @dev | Rodada 2 remediada em `7beb539`: RED conjunto cobre os dois formatos, 162/162 testes verdes e story devolvida a `InReview` para QG3 rodada 3. |
