@@ -17,30 +17,50 @@
     "fieldSources"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.0.0" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
     "id": { "type": "string", "minLength": 1 },
     "workspaceId": { "type": "string", "minLength": 1 },
     "projectId": { "type": "string", "minLength": 1 },
     "revision": { "type": "integer", "minimum": 1 },
-    "status": { "enum": ["draft", "active", "superseded"] },
+    "status": { "type": "string", "enum": ["draft", "active", "superseded"] },
     "createdAt": { "type": "string", "format": "date-time" },
     "updatedAt": { "type": "string", "format": "date-time" },
-    "data": { "$ref": "../project-brief.schema.json" },
+    "data": {
+      "type": "object",
+      "$ref": "https://marketinglendario.local/cohort/project-brief.schema.json",
+      "description": "Os 120 campos canônicos são reutilizados por referência; fieldMeta migra para fieldSources.",
+      "properties": {
+        "fieldMeta": false
+      }
+    },
     "fieldSources": {
       "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "format": "canonical-field-path"
+      },
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
         "required": ["source", "confirmation", "updatedAt"],
         "properties": {
-          "source": { "enum": ["user", "artifact", "inferred", "migration"] },
-          "confirmation": { "enum": ["confirmed", "pending", "not_applicable"] },
-          "sourceArtifactId": { "type": "string" },
-          "sourceRevisionId": { "type": "string" },
+          "source": { "type": "string", "enum": ["user", "artifact", "inferred", "migration"] },
+          "confirmation": { "type": "string", "enum": ["confirmed", "pending", "not_applicable"] },
+          "sourceArtifactId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "format": "portable-artifact-reference"
+          },
+          "sourceRevisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
           "updatedAt": { "type": "string", "format": "date-time" }
         }
       }
     }
   }
 }
-

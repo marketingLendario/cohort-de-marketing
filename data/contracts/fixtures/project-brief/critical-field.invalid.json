@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "0.1.0",
+  "project": {
+    "slug": "Slug Invalido"
+  },
+  "fieldMeta": {
+    "project.slug": {
+      "source": "unknown"
+    }
+  }
+}
