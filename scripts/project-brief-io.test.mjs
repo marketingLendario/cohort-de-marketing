@@ -6,6 +6,7 @@ import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { chromium } from 'playwright';
+import { createProjectBriefValidators } from './migrate-project-brief.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const VALID_V1 = join(ROOT, 'data/contracts/fixtures/project-brief/project-brief-1.0.0.valid.json');
@@ -133,6 +134,70 @@ test('arquivo invalido preserva o rascunho e oferece recuperacao', async (t) => 
   assert.equal(await page.locator('[data-path="project.slug"]').inputValue(), 'rascunho-seguro');
   assert.equal(await page.locator('[data-path="project.name"]').inputValue(), 'Não perder');
   assert.match(await page.locator('#import-status').textContent(), /Revise o arquivo e tente novamente/);
+  assert.deepEqual(pageErrors, []);
+});
+
+test('datas RFC3339 mantem conformidade de calendario entre browser e AJV', async (t) => {
+  const { page, pageErrors } = await openBriefing(t);
+  const fixture = JSON.parse(await readFile(VALID_V1, 'utf8'));
+  const { validateV1 } = createProjectBriefValidators();
+  const matrix = [
+    '2024-02-29T23:59:59Z',
+    '2026-06-02T15:30:00.123+03:30',
+    '2023-02-29T12:00:00Z',
+    '2026-13-01T12:00:00Z',
+    '2026-04-31T12:00:00Z',
+    '2026-06-02T25:00:00Z',
+  ];
+
+  for (const [index, dateTime] of matrix.entries()) {
+    const candidate = structuredClone(fixture);
+    candidate.updatedAt = dateTime;
+    const input = join(tmpdir(), `project-brief-date-${process.pid}-${index}.json`);
+    await writeFile(input, JSON.stringify(candidate));
+    const ajvAccepted = validateV1(candidate);
+    await page.setInputFiles('#import-file', input);
+    await page.waitForFunction(() => /ProjectBrief v1 importado|Importação recusada/.test(document.querySelector('#import-status')?.textContent || ''));
+    const status = await page.locator('#import-status').textContent();
+    assert.equal(status.includes('ProjectBrief v1 importado'), ajvAccepted, `${dateTime} divergiu do AJV`);
+  }
+  assert.deepEqual(pageErrors, []);
+});
+
+test('credenciais em texto livre falham fechado antes de import e autosave', async (t) => {
+  const { page, pageErrors } = await openBriefing(t);
+  await page.locator('[data-path="project.slug"]').fill('draft-protegido');
+  await page.locator('[data-path="project.name"]').fill('Conteúdo seguro');
+  await page.waitForTimeout(800);
+  const baselineStorage = await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort()));
+  const baselineName = await page.locator('[data-path="project.name"]').inputValue();
+  const fixture = JSON.parse(await readFile(VALID_V1, 'utf8'));
+  const credentialSamples = [
+    'api_key=sk-live-1234567890abcdefghijklmnop',
+    'access_token: eyJhbGciOiJIUzI1NiJ9.payload.signature',
+    'refresh_token=rt_1234567890abcdefghijklmnop',
+    'secret = super-secret-value-1234567890',
+    'Authorization: Bearer abcdefghijklmnopqrstuvwxyz.1234567890',
+    'sk-proj-1234567890abcdefghijklmnopqrstuvwxyz',
+  ];
+
+  for (const [index, credential] of credentialSamples.entries()) {
+    const candidate = structuredClone(fixture);
+    candidate.data.market.userResearchMaterials = `Material enviado\n${credential}`;
+    const input = join(tmpdir(), `project-brief-credential-${process.pid}-${index}.json`);
+    await writeFile(input, JSON.stringify(candidate));
+    await page.setInputFiles('#import-file', input);
+    await page.locator('#import-status').filter({ hasText: 'Importação recusada' }).waitFor();
+    assert.match(await page.locator('#import-status').textContent(), /credencial/i);
+    assert.equal(await page.locator('[data-path="project.name"]').inputValue(), baselineName);
+    assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
+  }
+
+  await page.locator('[data-step="market"]').click();
+  await page.locator('[data-path="market.userResearchMaterials"]').fill('Token real: ghp_1234567890abcdefghijklmnopqrstuvwxyz');
+  await page.waitForTimeout(800);
+  assert.match(await page.locator('#save-state').textContent(), /autosave recusado/i);
+  assert.equal(await page.evaluate(() => JSON.stringify(Object.entries(localStorage).sort())), baselineStorage);
   assert.deepEqual(pageErrors, []);
 });
 
