@@ -134,6 +134,10 @@ completion_notes:
   - "O RED Round2 7a265cb cobre 32 mutações de input e todas as superfícies textuais republicadas; o caso reconciliationId:name reproduziu o vazamento."
   - "O GREEN Round2 82e6abf troca charsets genéricos por IDs opacos tipados, enums de métrica/janela/moeda/referência e aplica o guard textual recursivo também à saída."
   - "Round2 passou em 13/13 focais, matriz positiva 5 métricas x 8 janelas sem falsos positivos e gate Node adjacente controlado; story permanece InReview para QG2."
+  - "QG2 reprovou o HEAD 7aa10e5 com FAIL 84: nonces hex exclusivamente numéricos de 11/14 dígitos ainda podiam transportar telefone, CPF ou CNPJ em reconciliationId e provenanceRef.id."
+  - "O RED Round3 24fd5c3 reproduz telefone numérico de 11 dígitos aceito com exit 0 e cobre telefone, CPF e CNPJ nas duas superfícies, no input e no schema de saída."
+  - "O GREEN Round3 92fbcc2 exige ao menos uma letra a-f em todo nonce opaco e adiciona ao guard recursivo sequências numéricas isoladas de 11/14 dígitos."
+  - "Round3 passou em 14/14 focais, gate Node adjacente, seis casos numéricos novos de input e output e dois nonces numeric-shaped válidos sem falso positivo; story permanece InReview para QG3."
 file_list:
   - "data/contracts/source-reconciliation.v1.schema.json"
   - "scripts/reconcile-aula-04-sources.mjs"
@@ -152,7 +156,7 @@ file_list:
 quality_gate_report:
   story_id: "17.W2.3"
   verdict: "FAIL"
-  score: 78
+  score: 84
   rounds:
     - round: 1
       verdict: "FAIL"
@@ -160,14 +164,20 @@ quality_gate_report:
       reviewed_head: "eba476b"
       blocking_findings:
         - "Campos textuais republicados aceitavam nomes, endereços e identificadores sensíveis sob charsets genéricos; scan heurístico não provava ausência de PII."
+    - round: 2
+      verdict: "FAIL"
+      score: 84
+      reviewed_head: "7aa10e5"
+      blocking_findings:
+        - "Nonces hex exclusivamente numéricos de 11/14 dígitos ainda aceitavam telefone, CPF ou CNPJ em reconciliationId e provenanceRef.id."
   remediation:
-    status: "READY_FOR_QG2"
-    red_head: "7a265cb"
-    implementation_head: "82e6abf"
-    focal_tests: "13/13"
-    privacy_input_cases: 32
-    privacy_output_cases: 8
-    false_positive_cases: 40
+    status: "READY_FOR_QG3"
+    red_head: "24fd5c3"
+    implementation_head: "92fbcc2"
+    focal_tests: "14/14"
+    privacy_input_cases: 38
+    privacy_output_cases: 14
+    false_positive_cases: 42
   reviewed_by: "@architect"
   reviewed_at: "2026-07-15"
 ```
@@ -181,3 +191,5 @@ quality_gate_report:
 | 2026-07-15 | @dev | Implementação e evidência concluídas; 10/10 focais e gate Node adjacente verdes; status movido para `InReview`. |
 | 2026-07-15 | @architect | QG1 `FAIL 78`: superfícies textuais permitiam republicação de PII sob charsets genéricos. |
 | 2026-07-15 | @dev | Round2 RED/GREEN fecha todas as superfícies com allowlists positivas, 13/13 focais e matriz sem falsos positivos; story mantida em `InReview`. |
+| 2026-07-15 | @architect | QG2 `FAIL 84`: nonces exclusivamente numéricos ainda comportavam telefone, CPF e CNPJ. |
+| 2026-07-15 | @dev | Round3 RED/GREEN exige letra em nonce opaco, fecha sequências de 11/14 dígitos e passa 14/14 focais; story mantida em `InReview`. |

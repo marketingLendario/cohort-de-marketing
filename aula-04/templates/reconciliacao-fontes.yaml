@@ -2,7 +2,7 @@
 # Salve como JSON antes de executar a CLI. Este YAML é apenas um guia preenchível.
 contract: SourceObservationSet
 schemaVersion: 1.0.0
-reconciliationId: reconciliation:revenue:2026-07:a1b2c3d4
+reconciliationId: reconciliation:revenue:2026-07:a1b2c3d4 # nonce hex de 8-32 caracteres com ao menos uma letra a-f
 metric: revenue
 observations:
   - source: platform
@@ -18,7 +18,7 @@ observations:
     cashConfirmed: false # valor explícito; a CLI nunca o infere
     provenanceRef:
       kind: platform-export
-      id: platform:2026-07:a1b2c3d4
+      id: platform:2026-07:a1b2c3d4 # mesma regra de nonce opaco não exclusivamente numérico
   - source: checkout
     status: nao_fornecido
     value: null
