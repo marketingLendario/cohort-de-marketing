@@ -52,7 +52,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ### Aula 4 · Dados
 
-**Status:** em breve. A operação semanal da Aula 3 já preserva métricas, selos, diagnóstico e decisões como base do futuro painel.
+**Status:** módulo local disponível. Siga o [README da Aula 4](./aula-04/README.md) para executar o exemplo público de três semanas, gerar ledger, leitura histórica, reconciliação e diagnóstico inconclusivo sem Studio ou serviço privado.
 
 ---
 

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aula 4 — Guia do Aluno</title>
+  <style>
+    :root { color-scheme: light; --ink: #172033; --muted: #526079; --line: #dce2ec; --paper: #ffffff; --accent: #3157d5; --soft: #f3f6fc; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--soft); color: var(--ink); font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { width: min(920px, calc(100% - 32px)); margin: 32px auto; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: clamp(24px, 5vw, 56px); }
+    h1, h2 { line-height: 1.2; }
+    h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.5rem); }
+    h2 { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+    p, li { max-width: 72ch; }
+    .lead { color: var(--muted); font-size: 1.15rem; }
+    .step { display: grid; grid-template-columns: 44px 1fr; gap: 16px; align-items: start; margin: 24px 0; }
+    .number { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: white; font-weight: 700; }
+    .step h3 { margin: 6px 0 8px; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    pre { overflow-x: auto; padding: 16px; background: #101827; color: #f5f7fb; border-radius: 10px; }
+    a { color: var(--accent); }
+    .warning { border-left: 4px solid #ad5a00; background: #fff7e8; padding: 12px 16px; }
+    .systems { display: grid; gap: 12px; }
+    .systems div { padding: 12px 16px; border: 1px solid var(--line); border-radius: 10px; }
+    footer { margin-top: 40px; color: var(--muted); font-size: .9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p>Aula 4 · Dados</p>
+    <h1>Três semanas, uma decisão revisável</h1>
+    <p class="lead">Você vai transformar três painéis públicos em ledger, leitura histórica, reconciliação e diagnóstico inconclusivo. O fluxo é local, determinístico e mantém a decisão final com uma pessoa.</p>
+  </header>
+
+  <section aria-labelledby="antes">
+    <h2 id="antes">Antes de começar</h2>
+    <ul>
+      <li>Use Node.js 18 ou superior e npm.</li>
+      <li>Abra o terminal na raiz do checkout.</li>
+      <li>Não use Studio, API, credenciais ou dados reais neste exemplo.</li>
+      <li>Leia o <a href="./README.md">README da Aula 4</a> para os critérios de parada.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="fluxo">
+    <h2 id="fluxo">Fluxo único</h2>
+    <div class="step"><span class="number">1</span><div><h3>Prepare</h3><p>Instale o lockfile local e crie um diretório de saída vazio.</p><pre><code>npm --prefix scripts ci --ignore-scripts
+mkdir -p projetos/exemplo-aula-04/saida-1</code></pre></div></div>
+    <div class="step"><span class="number">2</span><div><h3>Execute</h3><pre><code>node scripts/run-aula-04-walkthrough.mjs \
+  aula-04/exemplos/projeto-tres-semanas \
+  projetos/exemplo-aula-04/saida-1</code></pre><p>O runner escreve somente no diretório informado e recusa um destino não vazio.</p></div></div>
+    <div class="step"><span class="number">3</span><div><h3>Revise</h3><p>Confira `weekly-ledger.json`, `historical-reading.json`, `source-reconciliation.json` e `decision-outcome-diagnosis.json`. O resultado congelado é inconclusivo porque as fontes divergem; nenhuma delas vira verdade automática.</p></div></div>
+    <div class="step"><span class="number">4</span><div><h3>Registre a decisão humana</h3><p>Use o <a href="./exemplos/projeto-tres-semanas/previous-decision.json">registro estruturado de referência</a> no próximo ciclo. Gere IDs opacos novos e preserve o histórico. O módulo não executa a decisão.</p></div></div>
+  </section>
+
+  <section aria-labelledby="contratos">
+    <h2 id="contratos">Mapas dos contratos</h2>
+    <ul>
+      <li><a href="./templates/weekly-ledger.yaml">WeeklyLedger</a></li>
+      <li><a href="./templates/leitura-historica.yaml">HistoricalMetricsReading</a></li>
+      <li><a href="./templates/reconciliacao-fontes.yaml">SourceReconciliation</a></li>
+      <li><a href="./templates/diagnostico-longitudinal.yaml">DecisionOutcomeDiagnosis</a></li>
+    </ul>
+    <p class="warning">Não calcule hashes, gaps, tendências ou causas manualmente. Se faltar fonte, janela ou confirmação, pare e marque a ausência.</p>
+  </section>
+
+  <section aria-labelledby="abrir">
+    <h2 id="abrir">Abrir este arquivo local</h2>
+    <p>O runner não abre navegador. Depois de localizar `aula-04/GUIA-DO-ALUNO.html`, execute manualmente a opção do seu sistema:</p>
+    <div class="systems">
+      <div><strong>macOS</strong><br><code>open aula-04/GUIA-DO-ALUNO.html</code></div>
+      <div><strong>Windows PowerShell</strong><br><code>Start-Process aula-04/GUIA-DO-ALUNO.html</code></div>
+      <div><strong>Linux</strong><br><code>xdg-open aula-04/GUIA-DO-ALUNO.html</code></div>
+    </div>
+  </section>
+
+  <footer>Material público da Academia Lendária. Execução local, sem integração privada ou mutação de campanha.</footer>
+</main>
+</body>
+</html>

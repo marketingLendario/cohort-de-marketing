@@ -1,0 +1,19 @@
+{
+  "valid": true,
+  "code": "WALKTHROUGH_COMPLETE",
+  "projectId": "project-aula04-example",
+  "campaignId": "campaign-aula04-example",
+  "distinctWeeks": 3,
+  "artifacts": [
+    "decision-outcome-diagnosis.json",
+    "decision-outcome-request.json",
+    "historical-reading.json",
+    "source-reconciliation.json",
+    "walkthrough-summary.json",
+    "weekly-ledger.json"
+  ],
+  "verdict": "inconclusivo",
+  "reasonCode": "RECONCILIATION_CONFOUNDING_GAP",
+  "proposedLeverCount": 0,
+  "humanDecisionStatus": "pending"
+}
