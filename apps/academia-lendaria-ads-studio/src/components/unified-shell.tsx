@@ -225,6 +225,7 @@ export function UnifiedShell({ projectId, children }: UnifiedShellProps) {
                         params={params}
                         className="asx-step__link"
                         aria-disabled="true"
+                        title={campaignsBlockedTitle}
                         onClick={(event) => event.preventDefault()}
                       >
                         <span className="asx-step__index"><Icon name={item.icon} size={13} /></span>
