@@ -25,7 +25,38 @@ describe('campaign plan', () => {
     const plan = createInitialCampaignPlan('project-1', 'campaign-1', brief, '2026-07-09T00:00:00.000Z');
     expect(plan.sourceBrief).toEqual({ id: 'brief-1', revision: 1 });
     expect(plan.angles[0]?.name).toBe('Dor real');
+    expect(plan.angles[0]?.awarenessLevel).toBe(2);
     expect(plan.landingPageUrl).toBe('https://example.com');
+  });
+
+  it('does not fabricate an angle when dominant pain or awareness is absent (AC3)', () => {
+    const emptyBrief: ProjectBriefRevision = {
+      ...brief,
+      data: { schemaVersion: '0.1.0', project: { slug: 'demo' } },
+    };
+    const plan = createInitialCampaignPlan('project-1', 'campaign-1', emptyBrief);
+    expect(plan.angles).toEqual([]);
+  });
+
+  it('does not fabricate an angle when only pain OR only awareness is provided (AC3)', () => {
+    const painOnly: ProjectBriefRevision = {
+      ...brief,
+      data: { schemaVersion: '0.1.0', project: { slug: 'demo' }, market: { dominantPain: 'Dor real' } },
+    };
+    expect(createInitialCampaignPlan('project-1', 'campaign-1', painOnly).angles).toEqual([]);
+
+    const awarenessOnly: ProjectBriefRevision = {
+      ...brief,
+      data: { schemaVersion: '0.1.0', project: { slug: 'demo' }, market: { awarenessLevel: 3 } },
+    };
+    expect(createInitialCampaignPlan('project-1', 'campaign-1', awarenessOnly).angles).toEqual([]);
+  });
+
+  it('never defaults budget to a plausible-looking value (AC3 — sentinel, not fabricated data)', () => {
+    const plan = createInitialCampaignPlan('project-1', 'campaign-1', brief);
+    expect(plan.budget).toEqual({ daily: 0, periodDays: 1, currency: 'BRL' });
+    // The sentinel keeps the existing structuring gate correctly blocked.
+    expect(canStructureCampaign(plan)).toBe(false);
   });
 
   it('requires literal evidence for every critical tracking check', () => {

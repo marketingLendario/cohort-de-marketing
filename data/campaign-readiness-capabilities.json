@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1.0",
+  "source": "docs/architecture/ADR-002-campaign-readiness-gate.md",
+  "description": "Mapeamento declarativo capability -> fonte canonica de prontidao (campaign-readiness.v1, STORY-12.W1.1). Nao duplica a matriz de skill-unlock-rules.json: cada capability skill aponta para a mesma skill avaliada por evaluateProjectSkills. A copia versionada consumida pelo Studio vive em apps/academia-lendaria-ads-studio/shared/campaign-readiness.ts e e validada contra este arquivo em shared/campaign-readiness.test.ts.",
+  "capabilities": {
+    "campaign.create": {
+      "label": "Criar campanha",
+      "kind": "structural"
+    },
+    "campaign.tracking": {
+      "label": "Tracking da campanha",
+      "kind": "skill",
+      "skillId": "zelador"
+    },
+    "campaign.brief": {
+      "label": "Briefing de criativos",
+      "kind": "skill",
+      "skillId": "briefista"
+    },
+    "campaign.structure": {
+      "label": "Estrutura da campanha",
+      "kind": "skill",
+      "skillId": "estruturador"
+    },
+    "campaign.measure": {
+      "label": "Leitura de métricas",
+      "kind": "skill",
+      "skillId": "leitor-de-metricas"
+    },
+    "campaign.diagnose": {
+      "label": "Diagnóstico da campanha",
+      "kind": "skill",
+      "skillId": "diagnosticador"
+    }
+  }
+}

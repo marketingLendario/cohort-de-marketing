@@ -17,14 +17,36 @@ export function trackingStatus(checks: CampaignPlanRevision['tracking']['checks'
   return 'OK';
 }
 
+/**
+ * Cria o plano inicial de uma campanha SEM fabricar dados (AC3 — STORY-12.W1.1).
+ *
+ * `awareness`/`dor` (o primeiro ângulo) só são preenchidos quando o brief tem
+ * um `market.dominantPain` e um `market.awarenessLevel` genuinamente
+ * fornecidos — nunca um placeholder ("Ângulo principal do projeto") nem um
+ * nível de consciência assumido (`?? 2`). Sem os dois, `angles` permanece
+ * vazio: o dado ausente permanece ausente, e o ângulo real nasce quando
+ * `campaign.brief`/`campaign.tracking` liberarem a etapa (readiness contract
+ * em `src/lib/campaign-readiness.ts`).
+ *
+ * `budget` continua um objeto obrigatório (o tipo `CampaignPlanRevision` e os
+ * consumidores existentes — `traffic-campaign-workspace.tsx`, fora do
+ * file_scope desta story — leem `plan.budget.daily` sem checagem de nulidade),
+ * mas o valor inicial é `{ daily: 0, periodDays: 1 }`: um sentinela
+ * inequivocamente "não preenchido", nunca um número plausível como 30/dia que
+ * poderia passar por dado real. `canStructureCampaign` já exige
+ * `budget.daily >= 20`, então esse sentinela mantém a etapa corretamente
+ * bloqueada até um humano digitar a verba real (W2/W4 UX).
+ */
 export function createInitialCampaignPlan(
   projectId: string,
   campaignId: string,
   brief: ProjectBriefRevision,
   now = new Date().toISOString(),
 ): CampaignPlanRevision {
-  const awareness = Number(getPath(brief.data, 'market.awarenessLevel').value ?? 2);
-  const pain = String(getPath(brief.data, 'market.dominantPain').value ?? 'Ângulo principal do projeto');
+  const awarenessLookup = getPath(brief.data, 'market.awarenessLevel');
+  const painLookup = getPath(brief.data, 'market.dominantPain');
+  const hasAwareness = awarenessLookup.exists && typeof awarenessLookup.value === 'number' && Number.isFinite(awarenessLookup.value);
+  const hasPain = painLookup.exists && typeof painLookup.value === 'string' && painLookup.value.trim().length > 0;
   const landingPageUrl = getPath(brief.data, 'channels.primaryCtaUrl').value;
   const checks = Object.fromEntries(
     TRACKING_CHECKS.map((check) => [check.id, { value: null, evidence: '', critical: check.critical }]),
@@ -39,8 +61,10 @@ export function createInitialCampaignPlan(
     platform: 'meta',
     objective: 'sales',
     ...(typeof landingPageUrl === 'string' && landingPageUrl ? { landingPageUrl } : {}),
-    budget: { daily: 30, periodDays: 7, currency: 'BRL' },
-    angles: [{ id: 'angle-1', name: pain, awarenessLevel: Number.isFinite(awareness) ? awareness : 2, source: 'brief' }],
+    budget: { daily: 0, periodDays: 1, currency: 'BRL' },
+    angles: hasPain && hasAwareness
+      ? [{ id: 'angle-1', name: String(painLookup.value), awarenessLevel: Number(awarenessLookup.value), source: 'brief' }]
+      : [],
     finalists: [],
     tracking: { status: 'PENDING', criticalItemsConfirmed: false, checks },
     structure: null,

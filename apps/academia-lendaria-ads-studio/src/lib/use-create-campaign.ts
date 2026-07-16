@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
+import { evaluateCampaignReadiness, toReadinessBlockedError } from '@/lib/campaign-readiness';
 import { createDemoCampaign, DEMO_AUTH_ENABLED } from '@/lib/demo-mode';
+import { projectRepository } from '@/lib/project-repository';
 import { supabase } from '@/lib/supabase';
 import type { AdsCampaign } from '@/lib/types';
 
@@ -16,13 +18,24 @@ import type { AdsCampaign } from '@/lib/types';
  * CPA/ROAS/gasto vêm ao vivo no Epic 5 (FR33). O wizard de 8 passos é das
  * stories 1.5+; aqui a responsabilidade termina ao criar o draft e devolver
  * o `step_current` para o caller navegar.
+ *
+ * Preflight `campaign.create` (AC4 — STORY-12.W1.1): quando um `projectId` é
+ * informado (jornada de Campanhas dentro do projeto — 12.W2.1), o mesmo
+ * contrato `campaign-readiness.v1` usado pelo briefing/jornada é consultado
+ * ANTES do insert. Bloqueado → `READINESS_BLOCKED`, `null`, zero mutação. O
+ * atalho legado sem projeto (dashboard) não tem contexto de projeto para
+ * avaliar e permanece inalterado. Este preflight é client-side apenas — a
+ * fronteira de segurança (transação atômica + re-leitura server-side) é
+ * explicitamente da 12.W4.2/12.W4 (Dev Notes da story); um bypass direto do
+ * client não é coberto até essa wave.
  */
 export interface UseCreateCampaignResult {
   creating: boolean;
   error: string | null;
   /**
    * Cria o draft no spoke informado. Resolve com a campanha criada (inclui
-   * `step_current` para o caller rotear ao passo do wizard) ou `null` em erro.
+   * `step_current` para o caller rotear ao passo do wizard) ou `null` em erro
+   * (inclusive quando o preflight de prontidão bloqueia a criação).
    */
   createCampaign: (workspaceId: string, name: string, projectId?: string) => Promise<AdsCampaign | null>;
 }
@@ -40,6 +53,22 @@ export function useCreateCampaign(): UseCreateCampaignResult {
         setCreating(false);
         return draft;
       }
+
+      if (projectId) {
+        const [project, brief, artifacts, runs] = await Promise.all([
+          projectRepository.getProject(workspaceId, projectId),
+          projectRepository.getActiveBrief(workspaceId, projectId),
+          projectRepository.listArtifacts(workspaceId, projectId),
+          projectRepository.listSkillRuns(workspaceId, projectId),
+        ]);
+        const snapshot = evaluateCampaignReadiness('campaign.create', { project, brief, artifacts, runs });
+        if (snapshot.state === 'blocked') {
+          setCreating(false);
+          setError(toReadinessBlockedError(snapshot).message);
+          return null;
+        }
+      }
+
       const { data, error: err } = await supabase
         .from('ads_campaigns')
         .insert({ workspace_id: workspaceId, ...(projectId ? { project_id: projectId } : {}), name, status: 'draft', step_current: 1 })

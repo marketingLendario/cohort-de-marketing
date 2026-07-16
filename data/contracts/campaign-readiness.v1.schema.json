@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/campaign-readiness.v1.schema.json",
+  "title": "Campaign Readiness Snapshot v1",
+  "description": "Contrato campaign-readiness.v1 (STORY-12.W1.1 / ADR-002-campaign-readiness-gate.md). Snapshot de prontidao por capability, sem booleano global.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "target",
+    "state",
+    "capability",
+    "blocking",
+    "warnings",
+    "satisfied",
+    "nextAction",
+    "inputFingerprint",
+    "sourceRevision",
+    "computedAt"
+  ],
+  "properties": {
+    "contractVersion": { "const": "campaign-readiness.v1" },
+    "target": {
+      "enum": [
+        "campaign.create",
+        "campaign.tracking",
+        "campaign.brief",
+        "campaign.structure",
+        "campaign.measure",
+        "campaign.diagnose"
+      ]
+    },
+    "state": { "enum": ["blocked", "ready_with_warnings", "ready"] },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed", "label"],
+      "properties": {
+        "allowed": { "type": "boolean" },
+        "label": { "type": "string", "minLength": 1 },
+        "skillId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "blocking": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/blockingEntry" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/note" }
+    },
+    "satisfied": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/note" }
+    },
+    "nextAction": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "target"],
+          "properties": {
+            "label": { "type": "string", "minLength": 1 },
+            "target": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "inputFingerprint": { "type": "string", "minLength": 1 },
+    "sourceRevision": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }] },
+    "computedAt": { "type": "string", "format": "date-time" }
+  },
+  "definitions": {
+    "blockingEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label", "source", "action"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "source": { "enum": ["briefing", "artifact", "skill", "tracking"] },
+        "field": { "type": "string" },
+        "artifactType": { "type": "string" },
+        "action": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "target"],
+          "properties": {
+            "kind": { "enum": ["inline", "briefing", "journey"] },
+            "target": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "note": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label", "source"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
