@@ -3,6 +3,12 @@ import { Icon } from '@/lib/lendaria-ds';
 import { skillCatalog } from '@/generated/skill-catalog';
 import { evaluateProjectSkills, nextProjectAction } from '@/lib/readiness';
 import { getDemoCampaigns } from '@/lib/demo-mode';
+import {
+  buildCampaignReadinessContext,
+  campaignReadinessRouteHint,
+  campaignReadinessSourceLabel,
+  evaluateCampaignReadiness,
+} from '@/lib/campaign-readiness';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
 
 const READINESS_LABELS = {
@@ -39,6 +45,7 @@ function studentMissingLabel(value: string | undefined) {
 
 export function ProjectOverview({ projectId }: { projectId: string }) {
   const project = useProjectStore((state) => state.projects.find((candidate) => candidate.id === projectId));
+  const projects = useProjectStore((state) => state.projects);
   const revisions = useProjectStore((state) => state.briefRevisions);
   const allArtifacts = useProjectStore((state) => state.artifacts);
   const allRuns = useProjectStore((state) => state.skillRuns);
@@ -46,6 +53,23 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
   const runs = allRuns.filter((run) => run.projectId === projectId);
   const brief = activeBriefFor(projectId, revisions);
   if (!project || !brief) return null;
+
+  /**
+   * Snapshot `campaign-readiness.v1` para `campaign.create` (STORY-12.W2.1 —
+   * AC2). Usa o MESMO `buildCampaignReadinessContext` que `ProjectCampaigns`/
+   * `CampaignReadinessPanel` e `UnifiedShell` — é o que garante que os três
+   * exponham o mesmo `inputFingerprint`/`capability`/`nextAction.target` para
+   * a mesma revisão do briefing.
+   */
+  const campaignReadiness = evaluateCampaignReadiness(
+    'campaign.create',
+    buildCampaignReadinessContext(projectId, {
+      projects,
+      briefRevisions: revisions,
+      artifacts: allArtifacts,
+      skillRuns: allRuns,
+    }),
+  );
 
   const evaluations = evaluateProjectSkills(brief, artifacts, runs);
   const next = nextProjectAction(evaluations);
@@ -156,7 +180,64 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
             ))}
           </div>
         </section>
+
+        <section
+          className="cms-section"
+          data-testid="project-overview-campaign-readiness"
+          data-panel-state={campaignReadiness.state}
+          data-fingerprint={campaignReadiness.inputFingerprint}
+          data-capability-allowed={String(campaignReadiness.capability.allowed)}
+          data-next-action-target={campaignReadiness.nextAction?.target ?? ''}
+        >
+          <div className="cms-section__head">
+            <div>
+              <span className="cms-kicker">Campanhas</span>
+              <h2>{campaignReadiness.state === 'blocked' ? 'Ainda bloqueada' : 'Pronta para criar'}</h2>
+            </div>
+            <Link to="/projects/$projectId/campaigns" params={{ projectId }}>Ver campanhas</Link>
+          </div>
+          {campaignReadiness.state === 'blocked' ? (
+            <div className="cms-compact-list">
+              {campaignReadiness.blocking.map((entry) => (
+                <div key={entry.code} className="cms-compact-row">
+                  <span className="cms-state-dot is-locked" />
+                  <div><strong>{entry.label}</strong><span>{campaignReadinessSourceLabel(entry.source)}</span></div>
+                  <OverviewCampaignFixLink projectId={projectId} action={entry.action} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="cms-readiness-panel__ready-note">
+              <Icon name="check-circle" size={14} /> Seu projeto pode criar uma campanha agora.
+            </p>
+          )}
+        </section>
       </div>
     </div>
+  );
+}
+
+function OverviewCampaignFixLink({
+  projectId,
+  action,
+}: {
+  projectId: string;
+  action: { kind: 'inline' | 'briefing' | 'journey'; target: string };
+}) {
+  const hint = campaignReadinessRouteHint(action);
+  if (hint.kind === 'projects') {
+    return <Link to="/projects" className="cms-action-link">Corrigir</Link>;
+  }
+  if (hint.kind === 'briefing') {
+    return (
+      <Link to="/projects/$projectId/briefing/$sectionId" params={{ projectId, sectionId: hint.sectionId }} className="cms-action-link">
+        Corrigir
+      </Link>
+    );
+  }
+  return (
+    <Link to="/projects/$projectId/journey" params={{ projectId }} className="cms-action-link">
+      Corrigir
+    </Link>
   );
 }

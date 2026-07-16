@@ -1,6 +1,7 @@
 import { skillCatalog, skillUnlockRules } from '@/generated/skill-catalog';
 import { evaluateProjectSkills } from '@/lib/readiness';
 import type { MarketingProject, ProjectArtifact, ProjectBriefRevision, SkillRun } from '@/lib/project-domain';
+import { activeBriefFor } from '@/stores/project-store';
 import {
   assertAcyclicSkillGraph,
   CAMPAIGN_READINESS_CAPABILITIES,
@@ -9,6 +10,7 @@ import {
   stableHash,
   toReadinessBlockedError,
   type CampaignCapability,
+  type CampaignReadinessBlockingEntry,
   type CampaignReadinessError,
   type CampaignReadinessSnapshot,
 } from '../../shared/campaign-readiness';
@@ -138,4 +140,70 @@ export function readinessBlockedErrorFor(
 ): CampaignReadinessError | null {
   const snapshot = evaluateCampaignReadiness(target, context);
   return snapshot.state === 'blocked' ? toReadinessBlockedError(snapshot) : null;
+}
+
+// ---------------------------------------------------------------------------
+// Consumo por UI (STORY-12.W2.1) — único ponto que monta o contexto e
+// interpreta a ação de bloqueio, para que `UnifiedShell`, `ProjectOverview` e
+// `ProjectCampaigns`/`CampaignReadinessPanel` nunca divirjam (AC2: mesmo
+// `inputFingerprint`/`capability`/`nextAction.target` para a mesma revisão).
+// ---------------------------------------------------------------------------
+
+export interface CampaignReadinessStoreSlices {
+  projects: MarketingProject[];
+  briefRevisions: ProjectBriefRevision[];
+  artifacts: ProjectArtifact[];
+  skillRuns: SkillRun[];
+}
+
+/**
+ * Filtra as quatro fatias do store por `projectId` exatamente uma vez (AC2).
+ * `UnifiedShell`, `ProjectOverview` e `ProjectCampaigns`/`CampaignReadinessPanel`
+ * chamam esta função em vez de reimplementar `.find`/`activeBriefFor`/`.filter`
+ * cada um à sua maneira — divergência de filtro é exatamente a classe de bug
+ * que o teste de AC2 existe para pegar.
+ */
+export function buildCampaignReadinessContext(
+  projectId: string,
+  store: CampaignReadinessStoreSlices,
+): CampaignReadinessContext {
+  return {
+    project: store.projects.find((candidate) => candidate.id === projectId) ?? null,
+    brief: activeBriefFor(projectId, store.briefRevisions),
+    artifacts: store.artifacts.filter((artifact) => artifact.projectId === projectId),
+    runs: store.skillRuns.filter((run) => run.projectId === projectId),
+  };
+}
+
+/**
+ * Dica de rota agnóstica de TanStack Router para uma ação de bloqueio
+ * (AC1/AC3). A tipagem de rotas do TanStack exige literais em `<Link to="...">`,
+ * então cada consumidor ainda escreve seu próprio JSX de navegação — mas todos
+ * decidem QUAL rota a partir desta única função, nunca duplicando a
+ * interpretação "para onde eu levo o operador" em condicionais locais.
+ */
+export type CampaignReadinessRouteHint =
+  | { kind: 'projects' }
+  | { kind: 'briefing'; sectionId: string }
+  | { kind: 'journey' };
+
+export function campaignReadinessRouteHint(
+  action: CampaignReadinessBlockingEntry['action'] | null | undefined,
+): CampaignReadinessRouteHint {
+  if (!action) return { kind: 'journey' };
+  if (action.target === 'project.select') return { kind: 'projects' };
+  if (action.kind === 'briefing') return { kind: 'briefing', sectionId: action.target.split('.')[0] || 'project' };
+  return { kind: 'journey' };
+}
+
+const CAMPAIGN_READINESS_SOURCE_LABELS: Record<CampaignReadinessBlockingEntry['source'], string> = {
+  briefing: 'Briefing',
+  artifact: 'Artefato',
+  skill: 'Etapa',
+  tracking: 'Tracking',
+};
+
+/** Rótulo humano da fonte de uma lacuna (AC3 — "cada lacuna com fonte"). */
+export function campaignReadinessSourceLabel(source: CampaignReadinessBlockingEntry['source']): string {
+  return CAMPAIGN_READINESS_SOURCE_LABELS[source] ?? source;
 }

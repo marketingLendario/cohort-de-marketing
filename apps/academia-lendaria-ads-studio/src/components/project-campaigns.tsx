@@ -5,14 +5,19 @@ import { DEMO_AUTH_ENABLED, getDemoCampaigns } from '@/lib/demo-mode';
 import { supabase } from '@/lib/supabase';
 import { useCreateCampaign } from '@/lib/use-create-campaign';
 import { createInitialCampaignPlan } from '@/lib/campaign-plan';
+import { buildCampaignReadinessContext, evaluateCampaignReadiness } from '@/lib/campaign-readiness';
+import { CampaignReadinessPanel } from '@/components/campaign-readiness-panel';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
 import type { AdsCampaign } from '@/lib/types';
 
 export function ProjectCampaigns({ projectId }: { projectId: string }) {
   const navigate = useNavigate();
   const project = useProjectStore((state) => state.projects.find((candidate) => candidate.id === projectId));
+  const projects = useProjectStore((state) => state.projects);
   const revisions = useProjectStore((state) => state.briefRevisions);
   const brief = activeBriefFor(projectId, revisions);
+  const allArtifacts = useProjectStore((state) => state.artifacts);
+  const allRuns = useProjectStore((state) => state.skillRuns);
   const upsertPlan = useProjectStore((state) => state.upsertCampaignPlan);
   const allPlans = useProjectStore((state) => state.campaignPlans);
   const plans = allPlans.filter((plan) => plan.projectId === projectId);
@@ -45,8 +50,26 @@ export function ProjectCampaigns({ projectId }: { projectId: string }) {
   const workspaceId = project.workspaceId;
   const activeBrief = brief;
 
+  /**
+   * Preflight de UI de `campaign.create` (STORY-12.W2.1 — AC4). O ÚNICO
+   * bloqueador real do draft mínimo, por invariante do ADR-002 ("Campanha
+   * bloqueada para campaign.create não gera ads_campaigns, campaign_plan nem
+   * run; bloqueios das capabilities posteriores mantêm o draft mínimo válido,
+   * mas impedem a etapa correspondente" — daí o painel abaixo, não este botão,
+   * listar as lacunas de tracking/brief/estrutura). `useCreateCampaign` já
+   * reforça este mesmo preflight no momento do insert (12.W1.1); aqui o botão
+   * fica desabilitado ANTES da tentativa, para o operador nunca ver um CTA
+   * habilitado que resultaria em erro.
+   */
+  const campaignCreateReadiness = evaluateCampaignReadiness(
+    'campaign.create',
+    buildCampaignReadinessContext(projectId, { projects, briefRevisions: revisions, artifacts: allArtifacts, skillRuns: allRuns }),
+  );
+  const createBlocked = campaignCreateReadiness.state === 'blocked';
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (createBlocked) return;
     const campaignName = name.trim();
     if (!campaignName) return;
     const campaign = await createCampaign(workspaceId, campaignName, projectId);
@@ -66,16 +89,23 @@ export function ProjectCampaigns({ projectId }: { projectId: string }) {
           <div className="asx-page-head__eyebrow">Ads Studio · {project.slug}</div>
           <h1 className="asx-page-head__title">Campanhas do <em>projeto</em></h1>
         </div>
-        <Button onClick={() => setCreatingForm((value) => !value)}>
+        <Button onClick={() => setCreatingForm((value) => !value)} disabled={createBlocked && !creatingForm}>
           <Icon name={creatingForm ? 'xmark' : 'plus'} size={13} /> {creatingForm ? 'Cancelar' : 'Nova campanha'}
         </Button>
       </div>
+
+      <CampaignReadinessPanel projectId={projectId} />
 
       {creatingForm ? (
         <form className="cms-new-campaign" onSubmit={submit}>
           <label><span>Nome da campanha</span><input className="al-input" value={name} onChange={(event) => setName(event.target.value)} placeholder="Ex.: Validação A3 - Julho" autoFocus /></label>
           <div className="cms-inheritance-note"><Icon name="link" size={14} /><span>Oferta, público, voz e destino serão herdados da revisão {brief.revision} do briefing.</span></div>
-          <Button type="submit" disabled={creating || !name.trim()}>{creating ? 'Criando...' : 'Criar campanha'}</Button>
+          {createBlocked ? (
+            <div className="cms-inline-error">
+              {campaignCreateReadiness.blocking[0]?.label ?? 'Projeto incompleto para criar campanha.'}
+            </div>
+          ) : null}
+          <Button type="submit" disabled={creating || !name.trim() || createBlocked}>{creating ? 'Criando...' : 'Criar campanha'}</Button>
         </form>
       ) : null}
 
