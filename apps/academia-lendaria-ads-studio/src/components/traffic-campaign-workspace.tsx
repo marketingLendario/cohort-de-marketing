@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Button, Icon } from '@/lib/lendaria-ds';
 import { DEMO_AUTH_ENABLED, getDemoCampaign } from '@/lib/demo-mode';
@@ -6,9 +6,55 @@ import { supabase } from '@/lib/supabase';
 import type { AdsCampaign } from '@/lib/types';
 import { canStructureCampaign, createInitialCampaignPlan, TRACKING_CHECKS, updateTrackingCheck } from '@/lib/campaign-plan';
 import { getPath, type CampaignPlanRevision } from '@/lib/project-domain';
-import { executeLocalSkill, type SkillProposal } from '@/lib/skill-runtime';
+import { startSkillRun, type SkillRunDonePayload } from '@/lib/skill-runtime';
+import {
+  buildCampaignReadinessContext,
+  campaignReadinessRouteHint,
+  evaluateCampaignReadiness,
+  type CampaignCapability,
+  type CampaignReadinessSnapshot,
+} from '@/lib/campaign-readiness';
+import {
+  classifyReadinessBlocked,
+  classifyStaleReadiness,
+  isCampaignReadinessSnapshotStale,
+  type CampaignRunClassifiedError,
+} from '@/lib/campaign-run-errors';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
 import { TrafficSimulationBanner } from '@/components/traffic-simulation-banner';
+import { CampaignRunStatus } from '@/components/campaign-run-status';
+
+/**
+ * Local-only run bookkeeping (STORY-12.W3.1 AC3 — "reaparece após
+ * reload/restart"). The durable source of truth is always the skill-run job
+ * journal (server/jobs); this is only the pointer that lets a browser reload
+ * on THIS page re-attach `observeSkillRun` to the SAME `jobId` instead of
+ * losing track of an in-flight run. Losing it (private browsing, storage
+ * disabled) degrades gracefully — the operator just sees "Gerar" again.
+ */
+function runStorageKey(campaignId: string, skillId: 'briefista' | 'estruturador'): string {
+  return `cms-campaign-run:${campaignId}:${skillId}`;
+}
+
+function readPersistedJobId(campaignId: string, skillId: 'briefista' | 'estruturador'): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return window.localStorage.getItem(runStorageKey(campaignId, skillId));
+  } catch {
+    return null;
+  }
+}
+
+function persistJobId(campaignId: string, skillId: 'briefista' | 'estruturador', jobId: string | null): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (jobId) window.localStorage.setItem(runStorageKey(campaignId, skillId), jobId);
+    else window.localStorage.removeItem(runStorageKey(campaignId, skillId));
+  } catch {
+    // Storage unavailable — the observation still works for this tab; only
+    // the reload-resume convenience is lost (never a functional failure).
+  }
+}
 
 const STAGES = [
   { id: 'foundations', label: 'Fundamentos', icon: 'database' },
@@ -38,16 +84,44 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
   const revisions = useProjectStore((state) => state.briefRevisions);
   const brief = activeBriefFor(projectId, revisions);
   const project = useProjectStore((state) => state.projects.find((candidate) => candidate.id === projectId));
+  const projects = useProjectStore((state) => state.projects);
+  const artifacts = useProjectStore((state) => state.artifacts);
+  const skillRuns = useProjectStore((state) => state.skillRuns);
   const plans = useProjectStore((state) => state.campaignPlans);
   const upsertPlan = useProjectStore((state) => state.upsertCampaignPlan);
   const addArtifact = useProjectStore((state) => state.addArtifact);
   const [campaign, setCampaign] = useState<AdsCampaign | null>(() => getDemoCampaign(campaignId));
   const plan = plans.find((candidate) => candidate.campaignId === campaignId);
   const currentStage = (STAGES.some((stage) => stage.id === stageId) ? stageId : 'foundations') as StageId;
-  const [proposal, setProposal] = useState<{ skillId: 'briefista' | 'estruturador'; value: SkillProposal; hash: string } | null>(null);
+  const [proposal, setProposal] = useState<{ skillId: 'briefista' | 'estruturador'; value: SkillRunDonePayload['proposal']; hash: string } | null>(null);
   const [running, setRunning] = useState(false);
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [draftFinalist, setDraftFinalist] = useState({ hook: '', copy: '', format: 'reels-9x16' as 'feed' | 'reels-9x16' });
+
+  // STORY-12.W3.1: durable, observable run tracking per skill (AC1-AC4).
+  const [runJobIds, setRunJobIds] = useState<Record<'briefista' | 'estruturador', string | null>>(() => ({
+    briefista: readPersistedJobId(campaignId, 'briefista'),
+    estruturador: readPersistedJobId(campaignId, 'estruturador'),
+  }));
+  const [preflightErrors, setPreflightErrors] = useState<Record<'briefista' | 'estruturador', CampaignRunClassifiedError | null>>({
+    briefista: null,
+    estruturador: null,
+  });
+  // The readiness snapshot captured at the moment each run STARTED (AC4 —
+  // compared against a fresh evaluation before an in-place retry is allowed
+  // to fire, so a retry never blindly reuses a since-gone-stale go-ahead).
+  const startedSnapshotsRef = useRef<Record<'briefista' | 'estruturador', CampaignReadinessSnapshot | null>>({
+    briefista: null,
+    estruturador: null,
+  });
+
+  function readinessContext() {
+    return buildCampaignReadinessContext(projectId, { projects, briefRevisions: revisions, artifacts, skillRuns });
+  }
+
+  function capabilityFor(skillId: 'briefista' | 'estruturador'): CampaignCapability {
+    return skillId === 'briefista' ? 'campaign.brief' : 'campaign.structure';
+  }
 
   useEffect(() => {
     if (DEMO_AUTH_ENABLED) {
@@ -95,11 +169,26 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
     navigate({ to: '/projects/$projectId/campaigns/$campaignId/$stageId', params: { projectId, campaignId, stageId: stage } });
   }
 
+  /** Clears the run being tracked for a skill (terminal handoff or a stale-blocked retry). */
+  function clearRun(skillId: 'briefista' | 'estruturador') {
+    setRunJobIds((prevIds) => ({ ...prevIds, [skillId]: null }));
+    persistJobId(campaignId, skillId, null);
+    startedSnapshotsRef.current[skillId] = null;
+  }
+
   async function runSkill(skillId: 'briefista' | 'estruturador') {
     setRuntimeError(null);
+    const capability = capabilityFor(skillId);
+    const snapshot = evaluateCampaignReadiness(capability, readinessContext());
+    if (snapshot.state === 'blocked') {
+      setPreflightErrors((prevErrors) => ({ ...prevErrors, [skillId]: classifyReadinessBlocked(snapshot) }));
+      return;
+    }
+    setPreflightErrors((prevErrors) => ({ ...prevErrors, [skillId]: null }));
+    startedSnapshotsRef.current[skillId] = snapshot;
     setRunning(true);
     try {
-      const result = await executeLocalSkill(skillId, {
+      const result = await startSkillRun(skillId, {
         projectId,
         brief: activeBrief.data as unknown as Record<string, unknown>,
         context: { campaignPlan: activePlan },
@@ -107,12 +196,48 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
           ? 'Gere a bateria para os ângulos do CampaignPlan. Não escolha finalistas.'
           : 'Monte o default sagrado usando somente os finalistas curados. Não publique.',
       });
-      setProposal({ skillId, value: result.proposal, hash: result.skillHash });
+      setRunJobIds((prevIds) => ({ ...prevIds, [skillId]: result.jobId }));
+      persistJobId(campaignId, skillId, result.jobId);
     } catch (error) {
       setRuntimeError(error instanceof Error ? error.message : 'Falha no runner local.');
     } finally {
       setRunning(false);
     }
+  }
+
+  /** AC4 — before an in-place retry fires, prove the readiness snapshot has not gone stale since the run started. */
+  function beforeRetry(skillId: 'briefista' | 'estruturador'): boolean {
+    const started = startedSnapshotsRef.current[skillId];
+    if (!started) return true;
+    const capability = capabilityFor(skillId);
+    const fresh = evaluateCampaignReadiness(capability, readinessContext());
+    if (isCampaignReadinessSnapshotStale(started, fresh)) {
+      setPreflightErrors((prevErrors) => ({ ...prevErrors, [skillId]: classifyStaleReadiness(capability, fresh) }));
+      clearRun(skillId);
+      return false;
+    }
+    return true;
+  }
+
+  function retryPreflight(skillId: 'briefista' | 'estruturador') {
+    const classified = preflightErrors[skillId];
+    if (!classified) return;
+    if (classified.action.kind === 'inline') {
+      // STALE_READINESS — just clear the notice; the operator retries via "Gerar".
+      setPreflightErrors((prevErrors) => ({ ...prevErrors, [skillId]: null }));
+      return;
+    }
+    const hint = campaignReadinessRouteHint({
+      kind: classified.action.kind as 'briefing' | 'journey',
+      target: classified.action.target ?? '',
+    });
+    if (hint.kind === 'projects') navigate({ to: '/projects' });
+    else if (hint.kind === 'briefing') navigate({ to: '/projects/$projectId/briefing/$sectionId', params: { projectId, sectionId: hint.sectionId } });
+    else navigate({ to: '/projects/$projectId/journey', params: { projectId } });
+  }
+
+  function handleRunDone(skillId: 'briefista' | 'estruturador', payload: SkillRunDonePayload) {
+    setProposal({ skillId, value: payload.proposal, hash: payload.skillHash });
   }
 
   function approveProposal() {
@@ -134,6 +259,7 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
     if (proposal.skillId === 'estruturador') {
       save({ structure: { artifactId, markdown: proposal.value.resultMarkdown }, manualSubmission: { status: 'ready' } });
     }
+    clearRun(proposal.skillId);
     setProposal(null);
   }
 
@@ -204,7 +330,15 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
     <section className="cms-campaign-stage">
       <div className="cms-stage-intro"><span className="cms-kicker">Geração com revisão</span><h2>Bateria do Briefista</h2><p>Os ângulos vêm do projeto. A skill gera opções; a escolha final continua humana.</p></div>
       <div className="cms-angle-list">{plan.angles.map((angle) => <div key={angle.id}><strong>{angle.name}</strong><span>Consciência {angle.awarenessLevel} · {angle.source}</span></div>)}</div>
-      <Button onClick={() => void runSkill('briefista')} disabled={running}><Icon name="spark" size={13} /> {running ? 'Gerando...' : 'Gerar bateria'}</Button>
+      <Button onClick={() => void runSkill('briefista')} disabled={running || Boolean(runJobIds.briefista)}><Icon name="spark" size={13} /> {running ? 'Gerando...' : 'Gerar bateria'}</Button>
+      <CampaignRunStatus
+        jobId={runJobIds.briefista}
+        skillLabel="Briefista"
+        preflightError={preflightErrors.briefista}
+        onRetryPreflight={() => retryPreflight('briefista')}
+        onDone={(payload) => handleRunDone('briefista', payload)}
+        onBeforeRetry={() => beforeRetry('briefista')}
+      />
     </section>
   ) : currentStage === 'curation' ? (
     <section className="cms-campaign-stage">
@@ -217,7 +351,15 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
     <section className="cms-campaign-stage">
       <div className="cms-stage-intro"><span className="cms-kicker">Default sagrado</span><h2>Estrutura da campanha</h2><p>Uma campanha, um conjunto e os finalistas curados. Nenhuma publicação será executada.</p></div>
       <div className="cms-structure-summary"><div><span>Tipo</span><strong>{plan.objective === 'sales' ? 'Vendas' : 'Cadastro'}</strong></div><div><span>Público</span><strong>Amplo/frio + Advantage+</strong></div><div><span>Criativos</span><strong>{plan.finalists.length}</strong></div><div><span>Verba</span><strong>R$ {plan.budget.daily}/dia</strong></div></div>
-      <Button onClick={() => void runSkill('estruturador')} disabled={running || !canStructureCampaign(plan)}><Icon name="network" size={13} /> {running ? 'Estruturando...' : 'Gerar plano campo a campo'}</Button>
+      <Button onClick={() => void runSkill('estruturador')} disabled={running || Boolean(runJobIds.estruturador) || !canStructureCampaign(plan)}><Icon name="network" size={13} /> {running ? 'Estruturando...' : 'Gerar plano campo a campo'}</Button>
+      <CampaignRunStatus
+        jobId={runJobIds.estruturador}
+        skillLabel="Estruturador"
+        preflightError={preflightErrors.estruturador}
+        onRetryPreflight={() => retryPreflight('estruturador')}
+        onDone={(payload) => handleRunDone('estruturador', payload)}
+        onBeforeRetry={() => beforeRetry('estruturador')}
+      />
     </section>
   ) : currentStage === 'submission' ? (
     <section className="cms-campaign-stage">

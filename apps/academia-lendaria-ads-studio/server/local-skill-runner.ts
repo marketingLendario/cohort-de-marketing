@@ -85,6 +85,24 @@ export function isLocalSkillRunAbortError(error: unknown): error is LocalSkillRu
   return error instanceof LocalSkillRunAbortError || (error instanceof Error && (error as { aborted?: boolean }).aborted === true);
 }
 
+/**
+ * Error raised when a run is killed for exceeding its ms budget (STORY-12.W3.1
+ * AC2). Distinct from a manual cancel (`LocalSkillRunAbortError`) and from any
+ * other runner failure so the worker/UI can classify `RUN_TIMEOUT` separately
+ * from a generic `RUN_FAILED` instead of pattern-matching the message text.
+ */
+export class LocalSkillRunTimeoutError extends Error {
+  readonly timedOut = true as const;
+  constructor(message: string) {
+    super(message);
+    this.name = 'LocalSkillRunTimeoutError';
+  }
+}
+
+export function isLocalSkillRunTimeoutError(error: unknown): error is LocalSkillRunTimeoutError {
+  return error instanceof LocalSkillRunTimeoutError || (error instanceof Error && (error as { timedOut?: boolean }).timedOut === true);
+}
+
 interface CatalogSkill {
   id: string;
   title: string;
@@ -327,7 +345,7 @@ function defaultCodexExecutor(codexPath: string): CodexExecutor {
     };
     const timer = setTimeout(() => {
       escalateKill();
-      reject(new Error(`Codex CLI excedeu o limite de ${Math.round(timeoutMs / 1000)} segundos.`));
+      reject(new LocalSkillRunTimeoutError(`Codex CLI excedeu o limite de ${Math.round(timeoutMs / 1000)} segundos.`));
     }, timeoutMs);
     // Cancelamento em voo (AC4/STORY-8.W2.2): mesmo kill escalonado do timeout.
     const onAbort = () => {

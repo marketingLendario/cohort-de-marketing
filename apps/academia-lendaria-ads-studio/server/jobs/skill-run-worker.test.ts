@@ -1,9 +1,11 @@
+import { spawn } from 'node:child_process'
 import { describe, expect, it } from 'vitest'
 import { createInMemorySkillRunJobStore, type SkillRunJobStore } from './store.js'
 import { createSkillRunEventBus, type SkillRunEvent } from './events.js'
 import { createSkillRunWorker } from './skill-run-worker.js'
 import {
   LocalSkillRunAbortError,
+  LocalSkillRunTimeoutError,
   type LocalSkillRunInput,
   type LocalSkillRunner,
   type LocalSkillRunResult,
@@ -132,6 +134,112 @@ describe('skill-run worker', () => {
     expect(record?.attempt).toBe(2)
     // Attempt audit: attempt #1 failed, attempt #2 succeeded.
     expect(record?.attempts.map((a) => a.status)).toEqual(['failed', 'succeeded'])
+  })
+
+  it('classifies a timeout as RUN_TIMEOUT (kind: "timeout"), distinct from a plain runner failure (AC2)', async () => {
+    const store = createInMemorySkillRunJobStore()
+    const { bus, worker } = collect(store)
+    void bus
+    const timingOutRunner: LocalSkillRunner = {
+      async run() {
+        throw new LocalSkillRunTimeoutError('Codex CLI excedeu o limite de 60 segundos.')
+      },
+    }
+    const job = await store.create({ workspaceId: 'ws-1', projectId: 'project-1', skillId: 'estruturador', input: INPUT })
+    const timeoutWorker = createSkillRunWorker({ store, runner: timingOutRunner, bus: createSkillRunEventBus(), ownerId: 'worker-a', leaseMs: 30_000 })
+    void worker
+
+    await timeoutWorker.run(job.jobId)
+
+    const record = await store.get(job.jobId)
+    expect(record?.status).toBe('failed')
+    expect(record?.error?.kind).toBe('timeout')
+    expect(record?.error?.reason).toContain('excedeu')
+  })
+
+  it('a plain runner failure is classified as "runner_error", never confused with a timeout (AC2)', async () => {
+    const store = createInMemorySkillRunJobStore()
+    const failingRunner: LocalSkillRunner = {
+      async run() {
+        throw new Error('backend indisponível')
+      },
+    }
+    const job = await store.create({ workspaceId: 'ws-1', projectId: 'project-1', skillId: 'estruturador', input: INPUT })
+    const worker = createSkillRunWorker({ store, runner: failingRunner, bus: createSkillRunEventBus(), ownerId: 'worker-a', leaseMs: 30_000 })
+
+    await worker.run(job.jobId)
+
+    const record = await store.get(job.jobId)
+    expect(record?.status).toBe('failed')
+    expect(record?.error?.kind).toBe('runner_error')
+    expect(record?.error?.reason).toBe('backend indisponível')
+  })
+
+  it('cancelling an in-flight run terminates the REAL child process — no orphan left behind (AC3)', async () => {
+    const store = createInMemorySkillRunJobStore()
+    const bus = createSkillRunEventBus()
+    let childPid: number | undefined
+    // A runner that spawns a real, independent OS process and only exits when
+    // told to — the only way to actually prove "no orphan" is to check a real
+    // PID's liveness after cancel, not a mock's call count.
+    const realProcessRunner: LocalSkillRunner = {
+      run(_skillId, _input, options) {
+        return new Promise((_resolve, reject) => {
+          const child = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'])
+          childPid = child.pid
+          options?.signal?.addEventListener('abort', () => {
+            child.kill('SIGKILL')
+            reject(new LocalSkillRunAbortError())
+          })
+        })
+      },
+    }
+    const job = await store.create({ workspaceId: 'ws-1', projectId: 'project-1', skillId: 'estruturador', input: INPUT })
+    const worker = createSkillRunWorker({ store, runner: realProcessRunner, bus, ownerId: 'worker-a', leaseMs: 30_000 })
+
+    const running = worker.run(job.jobId)
+    await tick()
+    expect(childPid).toBeTypeOf('number')
+    expect(() => process.kill(childPid!, 0)).not.toThrow() // alive before cancel
+
+    const result = await worker.cancel(job.jobId)
+    await running
+
+    expect(result.ok).toBe(true)
+    expect((await store.get(job.jobId))?.status).toBe('cancelled')
+    expect(worker.isRunning(job.jobId)).toBe(false)
+    // Give the OS a moment to reap the SIGKILL before asserting liveness.
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    expect(() => process.kill(childPid!, 0)).toThrow() // ESRCH — process is gone, not orphaned
+  })
+
+  it('a retry started twice concurrently produces exactly one new attempt — idempotent by jobId (correlationId) (AC4)', async () => {
+    const store = createInMemorySkillRunJobStore()
+    const failingRunner: LocalSkillRunner = {
+      async run() {
+        throw new Error('falhou')
+      },
+    }
+    const job = await store.create({ workspaceId: 'ws-1', projectId: 'project-1', skillId: 'estruturador', input: INPUT })
+    const worker = createSkillRunWorker({ store, runner: failingRunner, bus: createSkillRunEventBus(), ownerId: 'worker-a', leaseMs: 30_000 })
+    await worker.run(job.jobId)
+    const before = await store.get(job.jobId)
+    expect(before?.attempts).toHaveLength(1)
+
+    const [first, second] = await Promise.all([store.startRetry(job.jobId), store.startRetry(job.jobId)])
+    const winners = [first, second].filter((candidate) => candidate !== undefined)
+
+    // Exactly one caller wins the terminal->queued transition; the loser sees a
+    // non-terminal job and gets undefined (no duplicate attempt is minted).
+    expect(winners).toHaveLength(1)
+    const after = await store.get(job.jobId)
+    expect(after?.attempt).toBe(2)
+    expect(after?.attempts).toHaveLength(1) // still just the failed attempt #1 — #2 starts on next claim/run
+    // correlationId (jobId) is stable across the retry; only the idempotencyKey
+    // (jobId + attempt) changes, proving the SAME run identity was reused
+    // rather than a new run/campaign being created.
+    expect(after?.jobId).toBe(before?.jobId)
+    expect(after?.attempt).not.toBe(before?.attempt)
   })
 
   it('recovery reclaims an expired lease as a fresh attempt without duplicating (AC5)', async () => {

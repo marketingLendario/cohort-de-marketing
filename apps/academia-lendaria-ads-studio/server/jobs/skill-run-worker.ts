@@ -17,7 +17,7 @@
  * `app.ts` — the worker executes exactly one job per `run()` call.
  */
 import type { LocalSkillRunner, LocalSkillRunStep } from '../local-skill-runner.js'
-import { isLocalSkillRunAbortError } from '../local-skill-runner.js'
+import { isLocalSkillRunAbortError, isLocalSkillRunTimeoutError } from '../local-skill-runner.js'
 import type { SkillRunJobStore } from './store.js'
 import type { SkillRunEventBus } from './events.js'
 import { isSkillRunTerminal, type SkillRunJobError, type SkillRunStep } from './types.js'
@@ -140,6 +140,7 @@ export function createSkillRunWorker(deps: SkillRunWorkerDeps): SkillRunWorker {
           const failure: SkillRunJobError = {
             reason: error instanceof Error ? error.message : 'Falha inesperada no runner local.',
             capabilityUnavailable: false,
+            ...(isLocalSkillRunTimeoutError(error) ? { kind: 'timeout' as const } : { kind: 'runner_error' as const }),
           }
           await store.fail(jobId, failure)
           bus.publish(jobId, {

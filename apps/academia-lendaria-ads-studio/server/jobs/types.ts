@@ -148,10 +148,19 @@ export interface SkillRunAttempt {
   endedAt?: string
 }
 
+/**
+ * Fine-grained failure classification (STORY-12.W3.1 AC2), orthogonal to
+ * `status` (`cancelled` already covers the operator-cancel case). `timeout`
+ * lets the UI show `RUN_TIMEOUT` instead of a generic `RUN_FAILED`; absent
+ * (or any other value) means an ordinary runner failure.
+ */
+export type SkillRunErrorKind = 'timeout' | 'runner_error'
+
 /** Treatable error envelope (never a mute error). */
 export interface SkillRunJobError {
   reason: string
   capabilityUnavailable: boolean
+  kind?: SkillRunErrorKind
 }
 
 /** The persisted durable skill-run job record (row of `skill_run_jobs`). */

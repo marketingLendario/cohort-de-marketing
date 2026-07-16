@@ -30,9 +30,20 @@ export interface SkillRunLogView {
   timestamp: string;
 }
 
+/**
+ * Fine-grained failure classification (STORY-12.W3.1 AC2), orthogonal to the
+ * run `status` (`cancelled` already covers the operator-cancel case). `kind:
+ * 'timeout'` lets the UI classify `RUN_TIMEOUT` distinctly from a generic
+ * `RUN_FAILED` instead of pattern-matching the message text. Mirrors
+ * `SkillRunJobError`/`SkillRunErrorKind` in `server/jobs/types.ts` across the
+ * HTTP/SSE boundary.
+ */
+export type SkillRunErrorKind = 'timeout' | 'runner_error';
+
 export interface SkillRunError {
   reason: string;
   capabilityUnavailable: boolean;
+  kind?: SkillRunErrorKind;
 }
 
 /** Durable projection returned by the poll endpoint and the SSE snapshot. */
@@ -329,4 +340,53 @@ export function isSkillProposal(value: unknown): value is SkillProposal {
     && Array.isArray(proposal.fields)
     && Array.isArray(proposal.questions)
     && Array.isArray(proposal.warnings);
+}
+
+// ---------------------------------------------------------------------------
+// Observable progress (STORY-12.W3.1 AC1) — "progresso determinado ou
+// indeterminado sem percentual fictício" (Dev Notes: the loader is state
+// feedback, never a fabricated ETA/percentage).
+// ---------------------------------------------------------------------------
+
+export interface SkillRunPhase {
+  id: string;
+  label: string;
+}
+
+/**
+ * The local Codex runner's fixed phase contract (`server/local-skill-runner.ts`:
+ * `resolve` -> `codex` -> `parse`, always in this order, for every skill). This
+ * is a REAL, code-guaranteed total, not an invented percentage. If a step
+ * outside this known set is ever observed, {@link computeSkillRunProgress}
+ * degrades to indeterminate instead of reporting a wrong fraction.
+ */
+export const CANONICAL_SKILL_RUN_PHASES: readonly SkillRunPhase[] = [
+  { id: 'resolve', label: 'Resolver skill canônica' },
+  { id: 'codex', label: 'Executar Codex CLI' },
+  { id: 'parse', label: 'Validar proposta estruturada' },
+];
+
+export interface SkillRunProgress {
+  /** `true` only when every observed step id belongs to the known phase set. */
+  determinate: boolean;
+  completed: number;
+  total: number;
+  /** Label of the phase currently `running`, else the last known step's label. */
+  currentPhaseLabel: string | null;
+}
+
+export function computeSkillRunProgress(steps: readonly SkillRunStepView[]): SkillRunProgress {
+  const knownIds = new Set(CANONICAL_SKILL_RUN_PHASES.map((phase) => phase.id));
+  // No step observed yet (still queued) — there is nothing to measure against
+  // the known total, so this is indeterminate, not vacuously "0 of 3 done".
+  const determinate = steps.length > 0 && steps.every((step) => knownIds.has(step.id));
+  const completed = steps.filter((step) => step.status === 'done').length;
+  const running = [...steps].reverse().find((step) => step.status === 'running');
+  const last = steps.at(-1);
+  return {
+    determinate,
+    completed: determinate ? completed : 0,
+    total: determinate ? CANONICAL_SKILL_RUN_PHASES.length : 0,
+    currentPhaseLabel: running?.label ?? last?.label ?? null,
+  };
 }

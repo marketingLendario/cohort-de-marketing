@@ -1,12 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   cancelSkillRun,
+  computeSkillRunProgress,
   executeLocalSkill,
   getSkillRunView,
   observeSkillRun,
   retrySkillRun,
   startSkillRun,
   type EventSourceLike,
+  type SkillRunStepView,
   type SkillRunView,
 } from './skill-runtime';
 
@@ -167,5 +169,55 @@ describe('skill-runtime client', () => {
     fetchMock.mockResolvedValueOnce(jsonResponse({ jobId: 'job-1', status: 'queued' }, { status: 202 }));
     fetchMock.mockResolvedValueOnce(jsonResponse(view({ status: 'failed', error: { reason: 'boom', capabilityUnavailable: false } })));
     await expect(executeLocalSkill('offerbook', { projectId: 'project-1', brief: {} }, { pollIntervalMs: 1 })).rejects.toThrow('boom');
+  });
+
+  describe('computeSkillRunProgress (AC1 — determinate/indeterminate, never a fake percentage)', () => {
+    function step(overrides: Partial<SkillRunStepView>): SkillRunStepView {
+      return { id: 'resolve', label: 'Resolver skill canônica', status: 'done', timestamp: 't', ...overrides };
+    }
+
+    it('reports indeterminate progress with no steps yet (queued)', () => {
+      expect(computeSkillRunProgress([])).toEqual({
+        determinate: false,
+        completed: 0,
+        total: 0,
+        currentPhaseLabel: null,
+      });
+    });
+
+    it('is determinate (2 of 3) while the known "codex" phase is running', () => {
+      const progress = computeSkillRunProgress([
+        step({ id: 'resolve', status: 'done' }),
+        step({ id: 'codex', label: 'Executar Codex CLI', status: 'running' }),
+      ]);
+      expect(progress).toEqual({
+        determinate: true,
+        completed: 1,
+        total: 3,
+        currentPhaseLabel: 'Executar Codex CLI',
+      });
+    });
+
+    it('reaches 3 of 3 once every known phase is done', () => {
+      const progress = computeSkillRunProgress([
+        step({ id: 'resolve', status: 'done' }),
+        step({ id: 'codex', label: 'Executar Codex CLI', status: 'done' }),
+        step({ id: 'parse', label: 'Validar proposta estruturada', status: 'done' }),
+      ]);
+      expect(progress.determinate).toBe(true);
+      expect(progress.completed).toBe(3);
+      expect(progress.total).toBe(3);
+    });
+
+    it('degrades to indeterminate (never a wrong fraction) when an unknown step id appears', () => {
+      const progress = computeSkillRunProgress([
+        step({ id: 'resolve', status: 'done' }),
+        step({ id: 'some-future-phase', label: 'Nova fase', status: 'running' }),
+      ]);
+      expect(progress.determinate).toBe(false);
+      expect(progress.total).toBe(0);
+      expect(progress.completed).toBe(0);
+      expect(progress.currentPhaseLabel).toBe('Nova fase');
+    });
   });
 });
