@@ -10,6 +10,7 @@ import type { AdsCampaign } from '@/lib/types';
 import { projectMonitorAlerts } from '@/lib/monitor-alerts';
 import { resolveUnifiedProjectsHref } from '@/lib/legacy-cutover';
 import { useProjectStore } from '@/stores/project-store';
+import { evaluateCampaignReadiness } from '@/lib/campaign-readiness';
 
 /**
  * Dashboard / Home — Tela 0 (STORY-AL-ADS-1.4).
@@ -26,6 +27,21 @@ import { useProjectStore } from '@/stores/project-store';
  * REUSE da 1.2: `supabase` (cliente RLS-aware), `useSpokeStore` (spoke ativo).
  * Esta tela aposenta o uso de `CampaignsList` (1.2) no shell — o grid aqui é a
  * superfície rica (métricas + ações).
+ *
+ * Gate de `campaign.create` (STORY-12.W4.1 — cutover legado): este dashboard é
+ * a superfície LEGADA sem contexto de projeto explícito na URL. Em vez de
+ * inventar uma segunda regra de "projeto ausente", reusa O MESMO contrato
+ * `campaign-readiness.v1` da jornada nova (STORY-12.W1.1/W2.1):
+ *  - Nenhum projeto visível no spoke, ou mais de um (ambíguo) → avalia com
+ *    `project: null`, que a regra estrutural do ADR-002 já trata como
+ *    `PROJECT_NOT_FOUND` — bloqueado, com a MESMA ação `project.select` que a
+ *    jornada nova usa, apontando para `/projects` (escolher ou criar um).
+ *  - Exatamente um projeto visível → o botão herda o `workspaceId`/`projectId`
+ *    desse projeto (sem inventar seleção) e o `campaign.create` real desse
+ *    projeto decide se o CTA fica habilitado.
+ * `useCreateCampaign` reforça o MESMO preflight de novo antes da chamada de
+ * rede e nunca mais insere direto em `ads_campaigns` — ver Dev Notes daquele
+ * módulo.
  */
 export interface DashboardProps {
   /**
@@ -93,10 +109,29 @@ export function Dashboard({ onNavigateToWizard }: DashboardProps) {
     queryCampaignId,
   );
 
+  // STORY-12.W4.1: só um projeto candidato inequívoco pode ser o alvo do
+  // atalho "+ Nova campanha" deste dashboard sem contexto de projeto na URL —
+  // zero, ou mais de um, é tratado como "nenhum projeto selecionado" (mesmo
+  // código estrutural `PROJECT_NOT_FOUND` da jornada nova).
+  const visibleProjects = projects.filter((project) => !activeSpokeId || project.workspaceId === activeSpokeId);
+  const targetProject = visibleProjects.length === 1 ? visibleProjects[0] : null;
+  const campaignCreateReadiness = evaluateCampaignReadiness('campaign.create', {
+    project: targetProject,
+    brief: null,
+    artifacts: [],
+    runs: [],
+  });
+  const createBlocked = campaignCreateReadiness.state === 'blocked';
+  const blockingReason = campaignCreateReadiness.blocking[0];
+  // Dashboard não tem sub-rota de briefing por projeto; qualquer bloqueio
+  // aqui (nenhum/vários projetos, ou projeto sem nome válido) é resolvido no
+  // mesmo lugar — o workspace unificado de projetos.
+  const blockedCtaHref = unifiedHref;
+
   async function handleNewCampaign() {
-    if (!activeSpokeId) return;
+    if (!activeSpokeId || !targetProject || createBlocked) return;
     // Nome provisório; o wizard (1.5+) deixa o usuário renomear no passo 1.
-    const draft = await createCampaign(activeSpokeId, 'Nova campanha');
+    const draft = await createCampaign(activeSpokeId, 'Nova campanha', targetProject.id);
     if (draft) {
       setCampaigns((prev) => [draft, ...prev]);
       onNavigateToWizard?.(draft);
@@ -139,10 +174,26 @@ export function Dashboard({ onNavigateToWizard }: DashboardProps) {
         >
           Campanhas
         </h2>
-        <Button onClick={handleNewCampaign} disabled={!activeSpokeId || creating}>
+        <Button
+          onClick={handleNewCampaign}
+          disabled={!activeSpokeId || creating || createBlocked}
+          aria-busy={creating}
+          title={createBlocked ? (blockingReason?.label ?? 'Escolha um projeto para criar uma campanha.') : undefined}
+        >
           {creating ? 'Criando…' : '+ Nova campanha'}
         </Button>
       </div>
+
+      {/* STORY-12.W4.1 — gate de `campaign.create` (mesmo contrato da jornada nova).
+          `role="alert"` (via `Alert`) garante que leitores de tela anunciem o
+          bloqueio sem exigir navegação manual; o CTA abaixo é um link real,
+          alcançável e ativável por teclado. */}
+      {createBlocked && (
+        <Alert variant="warning" style={{ marginBottom: '1rem' }} data-testid="dashboard-campaign-create-blocked">
+          <span>{blockingReason?.label ?? 'Escolha um projeto para criar uma campanha.'}</span>{' '}
+          <a className="al-btn al-btn--outline cms-action-link" href={blockedCtaHref}>Ir para projetos</a>
+        </Alert>
+      )}
 
       {createError && (
         <Alert variant="destructive" style={{ marginBottom: '1rem' }}>
@@ -156,7 +207,11 @@ export function Dashboard({ onNavigateToWizard }: DashboardProps) {
       ) : error ? (
         <Alert variant="destructive">Não foi possível carregar campanhas: {error}</Alert>
       ) : campaigns.length === 0 ? (
-        <p style={{ opacity: 0.7 }}>Nenhuma campanha ainda. Crie a primeira com “+ Nova campanha”.</p>
+        <p style={{ opacity: 0.7 }}>
+          {createBlocked
+            ? 'Nenhuma campanha ainda. Escolha ou crie um projeto para liberar "+ Nova campanha".'
+            : 'Nenhuma campanha ainda. Crie a primeira com “+ Nova campanha”.'}
+        </p>
       ) : (
         <div
           style={{

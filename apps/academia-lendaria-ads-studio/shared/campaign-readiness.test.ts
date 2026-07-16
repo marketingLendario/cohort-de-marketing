@@ -10,7 +10,7 @@ import {
   stableHash,
   toReadinessBlockedError,
   type CapabilitySkillInput,
-} from './campaign-readiness';
+} from './campaign-readiness.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 // shared/ -> academia-lendaria-ads-studio/ -> apps/ -> repo root -> data/...

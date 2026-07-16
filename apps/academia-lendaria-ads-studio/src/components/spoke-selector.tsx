@@ -34,7 +34,7 @@ export function SpokeSelector() {
         className="al-input"
         value={activeSpokeId ?? ''}
         onChange={(e) => setActiveSpoke(e.target.value)}
-        style={{ minWidth: '12rem' }}
+        style={{ minWidth: '0', maxWidth: '12rem', width: '100%' }}
       >
         {spokes.map((spoke) => (
           <option key={spoke.id} value={spoke.id}>

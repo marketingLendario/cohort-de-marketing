@@ -168,3 +168,37 @@ test.describe('Campaign readiness gate (STORY-12.W2.1)', () => {
     await assertNoHorizontalOverflow(page);
   });
 });
+
+/**
+ * Gate legado — dashboard (STORY-12.W4.1 — cutover legado e acessibilidade).
+ *
+ * `/dashboard` é a superfície LEGADA sem contexto de projeto na URL. O
+ * fixture demo tem exatamente UM projeto ativo no spoke ativo
+ * (`DEMO_PROJECT_ID`, nome válido) — o mesmo caso "inequívoco" que o
+ * dashboard resolve automaticamente (ver Dev Notes de `dashboard.tsx`):
+ * `campaign.create` fica pronta e o CTA "+ Nova campanha" permanece
+ * habilitado, agora criando via a RPC transacional
+ * `campaign_create_readiness_rpc` (STORY-12.W4.2) em vez de um insert direto
+ * (o "side door" fechado por esta story). Os cenários de zero/múltiplos
+ * projetos (bloqueio) têm cobertura de componente em `dashboard.test.tsx` —
+ * o fixture demo não permite simular essas contagens sem mexer no store por
+ * fora do `file_scope` desta story (mesmo limite documentado pela 12.W2.1
+ * para o caso de nome de projeto vazio).
+ */
+test.describe('Campaign readiness gate — dashboard legado (STORY-12.W4.1)', () => {
+  test('projeto único e válido: CTA "+ Nova campanha" habilitado, foco por teclado e sem overflow em 390px', async ({ page }) => {
+    await signInDemo(page);
+    await page.goto(`${baseURL}/dashboard`);
+
+    const toggle = page.getByRole('button', { name: /\+ Nova campanha/i });
+    await expect(toggle).toBeVisible({ timeout: 15_000 });
+    await expect(toggle).toBeEnabled();
+    // Nenhum aviso de bloqueio quando há exatamente um projeto válido.
+    await expect(page.getByTestId('dashboard-campaign-create-blocked')).toHaveCount(0);
+
+    await toggle.focus();
+    await expect(toggle).toBeFocused();
+
+    await assertNoHorizontalOverflow(page);
+  });
+});

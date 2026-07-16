@@ -57,6 +57,7 @@ function DashboardPage() {
       <header
         style={{
           display: 'flex',
+          flexWrap: 'wrap',
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: '1rem',
@@ -64,7 +65,7 @@ function DashboardPage() {
         }}
       >
         <h1 style={{ fontSize: '1.25rem', margin: 0 }}>Academia Lendária Ads Studio</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem' }}>
           <SpokeSelector />
           <Button variant="ghost" size="sm" onClick={handleSignOut}>
             Sair

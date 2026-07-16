@@ -2,10 +2,11 @@
  * Backend repository for the transactional/idempotent `campaign.create`
  * enforcement path (STORY-12.W4.2 / ADR-002).
  *
- * `src/lib/use-create-campaign.ts` (STORY-12.W1.1 AC4) already runs the
- * `campaign-readiness.v1` preflight client-side, but that story's own Dev
- * Notes are explicit the client preflight is NOT the security boundary. This
- * repo is the thin seam over the boundary that IS: the SQL migration
+ * `src/lib/use-create-campaign.ts` (STORY-12.W1.1 AC4, rewired in STORY-12.W4.1
+ * to call the RPC directly) already runs the `campaign-readiness.v1` preflight
+ * client-side, but that story's own Dev Notes are explicit the client preflight
+ * is NOT the security boundary. This repo is the thin seam over the boundary
+ * that IS: the SQL migration
  * `supabase/migrations/20260716120000_campaign_create_readiness_rpc.sql`,
  * whose `campaign_create_readiness_rpc` re-reads the authoritative project row
  * INSIDE one transaction, rejects `READINESS_BLOCKED`/`STALE_READINESS`, and
@@ -17,49 +18,25 @@
  *
  * Boundary (mirrors `campaign-economics-repo.ts`): backend-only, service-role.
  * The public Vercel host never holds this key nor reaches this code — it only
- * speaks tRPC to the BFF.
+ * speaks tRPC to the BFF. The RPC itself is ALSO reachable directly by an
+ * `authenticated` browser session (see the migration's grants) — that is the
+ * surface `src/lib/use-create-campaign.ts` calls for the normal UI flow
+ * (STORY-12.W4.1); this repo exists for a future backend-triggered creation
+ * path and is exercised today only by this file's own tests.
+ *
+ * Payload interpretation (`isRpcPayload`/error-code mapping) is shared with the
+ * browser call site via `shared/campaign-create.ts` (STORY-12.W4.1) — reuse,
+ * not a second hand-rolled copy of the same jsonb contract.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { buildCampaignCreateRpcParams, mapCampaignCreateRpcResponse, type CampaignCreateResult } from '../../shared/campaign-create.js'
 
-export type CampaignCreateSuccessCode = 'CREATED' | 'IDEMPOTENT_REPLAY'
-
-/**
- * `READINESS_BLOCKED` / `STALE_READINESS` / `CAMPAIGN_CREATE_CONFLICT` are the
- * sanitized codes the RPC itself returns (Dev Notes: never paths, tokens or
- * private content). `UNAUTHORIZED` is added by this repo when the RPC raises
- * the RLS/workspace-membership rejection (Postgres `42501`, AC3) — the
- * database layer signals that as a thrown error, not a result payload.
- */
-export type CampaignCreateErrorCode =
-  | 'READINESS_BLOCKED'
-  | 'STALE_READINESS'
-  | 'CAMPAIGN_CREATE_CONFLICT'
-  | 'UNAUTHORIZED'
-
-export interface CampaignCreateDraft {
-  id: string
-  workspaceId: string
-  projectId: string | null
-  name: string
-  status: string
-  stepCurrent: number
-  createdAt: string
-}
-
-export interface CampaignCreateSuccess {
-  ok: true
-  code: CampaignCreateSuccessCode
-  campaign: CampaignCreateDraft
-}
-
-export interface CampaignCreateFailure {
-  ok: false
-  code: CampaignCreateErrorCode
-  /** Sanitized, operator-safe message — never a path, token or private content. */
-  message: string
-}
-
-export type CampaignCreateResult = CampaignCreateSuccess | CampaignCreateFailure
+export type {
+  CampaignCreateDraft,
+  CampaignCreateErrorCode,
+  CampaignCreateResult,
+  CampaignCreateSuccessCode,
+} from '../../shared/campaign-create.js'
 
 export interface CampaignCreateInput {
   workspaceId: string
@@ -86,43 +63,6 @@ export interface CampaignCreateRepo {
   createCampaign(input: CampaignCreateInput): Promise<CampaignCreateResult>
 }
 
-interface RpcCampaignRow {
-  id: string
-  workspaceId: string
-  projectId: string | null
-  name: string
-  status: string
-  stepCurrent: number
-  createdAt: string
-}
-
-interface RpcSuccessPayload {
-  ok: true
-  code: CampaignCreateSuccessCode
-  campaign: RpcCampaignRow
-}
-
-interface RpcFailurePayload {
-  ok: false
-  code: 'READINESS_BLOCKED' | 'STALE_READINESS' | 'CAMPAIGN_CREATE_CONFLICT'
-  message: string
-  blockingCode?: string
-}
-
-type RpcPayload = RpcSuccessPayload | RpcFailurePayload
-
-function isRpcPayload(value: unknown): value is RpcPayload {
-  return (
-    Boolean(value) &&
-    typeof value === 'object' &&
-    typeof (value as Record<string, unknown>).ok === 'boolean' &&
-    typeof (value as Record<string, unknown>).code === 'string'
-  )
-}
-
-/** Postgres `insufficient_privilege` — the RLS/workspace-membership rejection (AC3). */
-const INSUFFICIENT_PRIVILEGE = '42501'
-
 /**
  * Supabase-backed repo (service-role). Backend-only, mirrors
  * `createSupabaseCampaignRepo` in `campaign-economics-repo.ts`.
@@ -130,35 +70,21 @@ const INSUFFICIENT_PRIVILEGE = '42501'
 export function createSupabaseCampaignCreateRepo(client: SupabaseClient): CampaignCreateRepo {
   return {
     async createCampaign(input) {
-      const { data, error } = await client.rpc('campaign_create_readiness_rpc', {
-        p_workspace_id: input.workspaceId,
-        p_project_id: input.projectId,
-        p_name: input.name,
-        p_idempotency_key: input.idempotencyKey,
-        p_expected_project_name: input.expectedProjectName ?? null,
-      })
+      const { data, error } = await client.rpc(
+        'campaign_create_readiness_rpc',
+        buildCampaignCreateRpcParams({
+          workspaceId: input.workspaceId,
+          projectId: input.projectId,
+          name: input.name,
+          idempotencyKey: input.idempotencyKey,
+          expectedProjectName: input.expectedProjectName,
+        }),
+      )
 
-      if (error) {
-        if (error.code === INSUFFICIENT_PRIVILEGE) {
-          return {
-            ok: false,
-            code: 'UNAUTHORIZED',
-            message: 'Sem permissão para criar campanha neste workspace.',
-          }
-        }
-        // Any other DB error (invalid input, connectivity) is an
-        // infrastructure failure, not a domain rejection — propagate.
-        throw new Error(`[campaign-create-repo] rpc failed: ${error.message}`)
-      }
-
-      if (!isRpcPayload(data)) {
-        throw new Error('[campaign-create-repo] rpc returned an unexpected payload')
-      }
-
-      if (data.ok) {
-        return { ok: true, code: data.code, campaign: data.campaign }
-      }
-      return { ok: false, code: data.code, message: data.message }
+      // Any DB error other than the RLS/membership rejection (Postgres
+      // `42501`, AC3) is an infrastructure failure, not a domain rejection —
+      // `mapCampaignCreateRpcResponse` propagates it via throw.
+      return mapCampaignCreateRpcResponse(data, error)
     },
   }
 }

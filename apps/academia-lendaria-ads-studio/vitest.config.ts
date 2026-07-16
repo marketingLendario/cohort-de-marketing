@@ -14,7 +14,12 @@ export default defineConfig({
         resolve: { alias },
         test: {
           name: 'server',
-          include: ['server/**/*.test.ts'],
+          // `shared/**` is environment-agnostic (no DOM, no `node:*`) and was
+          // never picked up by either project's glob before STORY-12.W4.1 —
+          // `shared/campaign-readiness.test.ts` (STORY-12.W1.1) silently never
+          // ran. Fixed here rather than left silently broken (see Dev Notes,
+          // STORY-12.W4.1): the `node` environment already suits pure modules.
+          include: ['server/**/*.test.ts', 'shared/**/*.test.ts'],
           environment: 'node',
         },
       },

@@ -6,7 +6,7 @@
     "moduleResolution": "NodeNext",
     "types": ["node"],
     "outDir": "./dist/server",
-    "rootDir": "./server",
+    "rootDir": ".",
     "skipLibCheck": true,
     "declaration": false,
     "sourceMap": true,
@@ -20,6 +20,6 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["server/**/*"],
+  "include": ["server/**/*", "shared/**/*"],
   "exclude": ["server/**/__tests__/**", "node_modules", "dist"]
 }
