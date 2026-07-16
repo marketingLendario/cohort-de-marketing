@@ -15,6 +15,7 @@ import {
   type CampaignReadinessSnapshot,
 } from '@/lib/campaign-readiness';
 import {
+  campaignRunIdempotencyKey,
   classifyReadinessBlocked,
   classifyStaleReadiness,
   isCampaignReadinessSnapshotStale,
@@ -114,6 +115,11 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
     briefista: null,
     estruturador: null,
   });
+  // AC4 — a duplicate `done` delivery for the SAME attempt (SSE/reconciliation
+  // race documented in `observeSkillRun`) must never hand the SAME proposal to
+  // the operator twice; keyed by jobId+attempt (`campaignRunIdempotencyKey`),
+  // never by jobId alone, so a genuinely NEW attempt is never suppressed.
+  const handledDoneKeysRef = useRef<Set<string>>(new Set());
 
   function readinessContext() {
     return buildCampaignReadinessContext(projectId, { projects, briefRevisions: revisions, artifacts, skillRuns });
@@ -237,6 +243,9 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
   }
 
   function handleRunDone(skillId: 'briefista' | 'estruturador', payload: SkillRunDonePayload) {
+    const key = campaignRunIdempotencyKey(payload.jobId, payload.attempt ?? 0);
+    if (handledDoneKeysRef.current.has(key)) return; // already handed this attempt's proposal to the operator once
+    handledDoneKeysRef.current.add(key);
     setProposal({ skillId, value: payload.proposal, hash: payload.skillHash });
   }
 

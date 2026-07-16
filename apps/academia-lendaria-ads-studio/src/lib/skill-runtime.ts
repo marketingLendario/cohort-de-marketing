@@ -145,6 +145,12 @@ export interface SkillRunProgressPayload {
 
 export interface SkillRunDonePayload {
   jobId: string;
+  /**
+   * Which attempt succeeded — pairs with `jobId` as the retry idempotency key
+   * (STORY-12.W3.1 AC4). Optional for backward compatibility with existing
+   * call sites (`project-journey.tsx`) built before this field existed.
+   */
+  attempt?: number;
   proposal: SkillProposal;
   skillHash: string;
   model: string;
@@ -194,7 +200,7 @@ export function observeSkillRun(
 
   const settleTerminal = (view: SkillRunView) => {
     if (view.status === 'succeeded' && view.proposal && view.skillHash && view.model) {
-      handlers.onDone?.({ jobId: view.jobId, proposal: view.proposal, skillHash: view.skillHash, model: view.model });
+      handlers.onDone?.({ jobId: view.jobId, attempt: view.attempt, proposal: view.proposal, skillHash: view.skillHash, model: view.model });
     } else if (view.error || view.status === 'cancelled') {
       const cancelledAttempt = [...view.attempts].reverse().find((attempt) => attempt.status === 'cancelled');
       handlers.onError?.(

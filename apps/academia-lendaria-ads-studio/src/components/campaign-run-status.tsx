@@ -95,9 +95,9 @@ function formatTimestamp(iso: string | undefined): string {
 
 function lastEventMessage(view: SkillRunView | null): string {
   if (!view) return 'Aguardando o runner iniciar.';
-  const lastLog = view.logs.at(-1);
+  const lastLog = view.logs?.at(-1);
   if (lastLog) return lastLog.message;
-  const lastStep = view.steps.at(-1);
+  const lastStep = view.steps?.at(-1);
   if (lastStep) return lastStep.label;
   return 'Aguardando o runner iniciar.';
 }
@@ -140,7 +140,7 @@ export function CampaignRunStatus({
           attemptRef.current = snapshot.attempt;
           setLastEventAt(now());
           if (snapshot.status === 'succeeded' && snapshot.proposal && snapshot.skillHash && snapshot.model) {
-            onDone?.({ jobId: snapshot.jobId, proposal: snapshot.proposal, skillHash: snapshot.skillHash, model: snapshot.model });
+            onDone?.({ jobId: snapshot.jobId, attempt: snapshot.attempt, proposal: snapshot.proposal, skillHash: snapshot.skillHash, model: snapshot.model });
           }
         },
         onProgress: (payload) => {
@@ -149,14 +149,14 @@ export function CampaignRunStatus({
             if (!current) return current;
             const steps = payload.step
               ? (() => {
-                  const next = [...current.steps];
+                  const next = [...(current.steps ?? [])];
                   const idx = next.findIndex((step) => step.id === payload.step!.id);
                   if (idx >= 0) next[idx] = payload.step!;
                   else next.push(payload.step!);
                   return next;
                 })()
               : current.steps;
-            const logs = payload.log ? [...current.logs, payload.log] : current.logs;
+            const logs = payload.log ? [...(current.logs ?? []), payload.log] : current.logs;
             return { ...current, status: payload.status, attempt: payload.attempt, steps, logs, updatedAt: payload.timestamp };
           });
         },

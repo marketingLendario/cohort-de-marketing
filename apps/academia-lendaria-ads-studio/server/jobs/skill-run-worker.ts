@@ -117,6 +117,7 @@ export function createSkillRunWorker(deps: SkillRunWorkerDeps): SkillRunWorker {
           payload: {
             jobId,
             status: 'succeeded',
+            attempt: claimed.attempt,
             proposal: result.proposal,
             skillHash: result.skillHash,
             model: result.model,

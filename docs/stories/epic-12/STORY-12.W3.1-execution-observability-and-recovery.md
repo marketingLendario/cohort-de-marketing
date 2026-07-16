@@ -1,5 +1,5 @@
 ---
-status: Ready
+status: Done
 story_id: "12.W3.1"
 title: "Execução observável, erros classificados e recovery"
 epic: 12
@@ -209,6 +209,7 @@ created.
 - `apps/academia-lendaria-ads-studio/server/jobs/types.ts` (MODIFY)
 - `apps/academia-lendaria-ads-studio/server/jobs/skill-run-worker.ts` (MODIFY)
 - `apps/academia-lendaria-ads-studio/server/jobs/skill-run-worker.test.ts` (MODIFY)
+- `apps/academia-lendaria-ads-studio/server/jobs/events.ts` (MODIFY — threaded `attempt` through the `done` event for AC4's idempotency key; see QA Results)
 - `apps/academia-lendaria-ads-studio/src/lib/skill-runtime.ts` (MODIFY)
 - `apps/academia-lendaria-ads-studio/src/lib/skill-runtime.test.ts` (MODIFY)
 - `apps/academia-lendaria-ads-studio/src/lib/campaign-run-errors.ts` (ADD)
@@ -216,14 +217,48 @@ created.
 - `apps/academia-lendaria-ads-studio/src/components/campaign-run-status.tsx` (ADD)
 - `apps/academia-lendaria-ads-studio/src/components/campaign-run-status.test.tsx` (ADD)
 - `apps/academia-lendaria-ads-studio/src/components/traffic-campaign-workspace.tsx` (MODIFY)
+- `apps/academia-lendaria-ads-studio/src/components/traffic-campaign-workspace.test.tsx` (ADD — beyond the original touched_paths list; added during the QA loop, see QA Results F1)
 - `docs/stories/epic-12/STORY-12.W3.1-execution-observability-and-recovery.md` (MODIFY)
 
 Not modified (touched_paths allowed but no change was needed —
-`server/jobs/store.ts`, `server/jobs/events.ts`,
-`server/jobs/supabase-skill-job-store.ts`,
+`server/jobs/store.ts`, `server/jobs/supabase-skill-job-store.ts`,
 `server/jobs/supabase-skill-job-store.test.ts`): `SkillRunJobError.kind` flows
 through these generically (an opaque field of the existing `error`
 object/jsonb column) — no code there inspects or needs to special-case it.
+
+## QA Results
+
+### Independent review (@qa, first pass)
+
+Gate: **CONCERNS** — 74/100. All 6 `quality_gate_tools` verified genuinely
+green (re-run independently, not trusted from the Dev Agent Record). Per-AC:
+AC1/AC2/AC3 PASS; AC4/AC5 CONCERNS. Findings below, per
+`.claude/rules/complete-findings-resolution.md`-style discipline — every
+finding resolved, none silently dropped.
+
+### Resolution Tracking
+
+| Finding | Severity | Status | Action |
+|---|---|---|---|
+| F1 — No test coverage for `traffic-campaign-workspace.tsx` (the actual wiring point for the readiness preflight + stale-retry guard) | MEDIUM | FIXED | Added `traffic-campaign-workspace.test.tsx` (3 tests): READINESS_BLOCKED with zero mutation, happy-path start observing the returned `jobId`, and the STALE_READINESS retry guard end-to-end. Writing this test uncovered and fixed a REAL bug: the workspace's own `localStorage` reload-resume pointer (AC3) leaked an active `jobId` across test renders sharing the same `campaignId`, causing a stray early `observeSkillRun` subscription. Not a production bug (each real campaign has a distinct `campaignId`), but the hunt validated the AC3 persistence mechanism is real and load-bearing enough to cause exactly this kind of subtle cross-instance effect if ever reused for the same id. |
+| F2 — `onCancelled` prop is tested on `campaign-run-status.tsx` but never wired by the workspace | MEDIUM | WON'T_FIX | Traced the effect: wiring `onCancelled` to clear `runJobIds[skillId]` would flip `CampaignRunStatus`'s `jobId` prop to `null`, which its own effect (`if (!jobId) { setView(null); setClassifiedError(null); return; }`) uses to reset internal state — wiping the just-shown `RUN_CANCELLED` card before the operator can read it or use "Executar novamente". The correct, already-wired, already-tested recovery path for a cancelled run IS that retry button (same `jobId`), not silently re-enabling "Gerar" for a brand-new job. `onCancelled` stays a supported prop on the component (useful to other future consumers) but is intentionally not wired here. |
+| F3 — `campaignRunIdempotencyKey` unit-tested in isolation but never invoked in production code | MEDIUM | FIXED | Threaded `attempt` through the `done` event end-to-end (`SkillRunEventDone.payload.attempt` in `events.ts`, published by `skill-run-worker.ts`, typed on `SkillRunDonePayload` in `skill-runtime.ts`, forwarded by `campaign-run-status.tsx`'s `onSnapshot`). `traffic-campaign-workspace.tsx#handleRunDone` now computes `campaignRunIdempotencyKey(payload.jobId, payload.attempt ?? 0)` and drops a repeated/late `done` delivery for an already-handled attempt via a `Set` ref — preventing a duplicate SSE/reconciliation race (the exact race `observeSkillRun`'s own comments describe) from resurrecting an already-approved proposal. `attempt` is optional on `SkillRunDonePayload` (not required) to stay backward-compatible with the pre-existing `project-journey.tsx`/`project-journey.test.tsx` call sites, which are outside this story's `file_scope`. |
+| F4 — Defensive duck-typing fallback in `isLocalSkillRunTimeoutError` looks unreachable | LOW | WON'T_FIX | Mirrors the pre-existing `isLocalSkillRunAbortError` pattern in the SAME file (untouched, from STORY-8.W2.2) — kept for consistency and as a defense against cross-realm/HMR module-duplication `instanceof` failures. Low cost, no evidence it is actually dead in production. |
+
+Total: 4/4 resolved (2 FIXED, 2 WON'T_FIX with written justification).
+
+### Quality Gate Tools — final re-verification (post-fix)
+
+| Tool | Result |
+|---|---|
+| `npm --prefix apps/academia-lendaria-ads-studio test` | PASS — 49 test files, 381 tests |
+| `npm --prefix apps/academia-lendaria-ads-studio run typecheck` | PASS — `tsc -b` clean |
+| `npm --prefix apps/academia-lendaria-ads-studio run lint` | PASS — `eslint .` clean |
+| `npm --prefix apps/academia-lendaria-ads-studio run build` | PASS |
+| `npm --prefix apps/academia-lendaria-ads-studio run build:server` | PASS |
+| `git diff --check` | PASS |
+
+### Final gate decision: **PASS**
 
 ## Change Log
 
@@ -238,3 +273,13 @@ object/jsonb column) — no code there inspects or needs to special-case it.
 - 2026-07-16 — @dev: implementação completa das 5 ACs reusando o runtime
   existente (ver Dev Agent Record). `npm test`/`typecheck`/`lint`/`build`/
   `build:server`/`git diff --check` verdes localmente antes do handoff para QA.
+- 2026-07-16 — @qa: revisão independente (primeira passada) — gate CONCERNS,
+  74/100. Todas as 6 `quality_gate_tools` reexecutadas de verdade (não apenas
+  aceitas do Dev Agent Record) e verdes; achados listados em "QA Results".
+- 2026-07-16 — @dev: resolução completa dos 4 achados do QA (ver Resolution
+  Tracking) — F1 e F3 corrigidos (novo teste de integração do workspace, que
+  revelou e corrigiu um vazamento real de `jobId` via `localStorage` entre
+  instâncias de teste com o mesmo `campaignId`; idempotencyKey agora
+  efetivamente usado como guarda contra `done` duplicado); F2 e F4 mantidos
+  como `WON'T_FIX` com justificativa escrita. Gate final re-executado: PASS.
+  Story fechada como `Done`.

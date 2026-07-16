@@ -139,6 +139,8 @@ export interface SkillRunEventDone {
   payload: {
     jobId: string
     status: 'succeeded'
+    /** Which attempt succeeded — pairs with `jobId` as the retry idempotency key (STORY-12.W3.1 AC4). */
+    attempt: number
     proposal: SkillProposal
     skillHash: string
     model: string
