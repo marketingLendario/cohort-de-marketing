@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "12.W4.1"
 title: "Cutover legado e acessibilidade do gate de campanhas"
 epic: 12
@@ -375,7 +375,101 @@ Ver seção `## File List` acima.
 
 ## QA Results
 
-_Pendente — preenchido pelo quality gate independente (`@architect`)._
+Independent quality gate — `@architect` (Aria), 2026-07-16. Every tool in
+`quality_gate_tools` was **re-executed independently in this worktree** (not
+trusted from the Dev Agent Record), including the local Docker Supabase stack
+(`supabase start -x logflare,vector`, `127.0.0.1` only, stopped afterward — no
+remote/hosted project touched). The diff was re-derived from `git diff --cached`
+and the AC claims re-verified against the actual code, not the prose.
+
+**Verdict: PASS** (1 low-severity, non-blocking documentation note).
+
+### quality_gate_tools — independent reproduction
+
+| Command | Result (re-run by @architect) |
+|---|---|
+| `npm test` | PASS — **52 files, 431 tests** (exit 0) |
+| `npm run typecheck` | PASS — `tsc -b` exit 0 (catalog generate/validate OK: 30 skills, 40 edges) |
+| `npm run lint` | PASS — `eslint .` exit 0 |
+| `npm run build` | PASS — `vite build` exit 0 (built in ~770ms) |
+| `npm run build:server` | PASS — `tsc -p tsconfig.server.json` exit 0 (confirms `server/` → `shared/` import compiles under broadened `rootDir`) |
+| `git diff --check` | PASS — no whitespace errors |
+| `npm run test:db` | PASS — `supabase test db`: **7 files / 75 assertions**, Result PASS; `campaign_create_readiness.sql` ok (identical to the 12.W4.2 baseline) |
+| `npm run lint:db` | PASS — "No schema errors found" (extensions/private/public) |
+| `npx playwright ... --project=desktop --project=mobile` | PASS — **8/8** (4 tests × 2 projects); **run TWICE** (11.6s, 9.1s), no flake |
+
+### AC-by-AC independent assessment
+
+- **AC1 (single readiness contract, no side door) — MET.** Verified by reading
+  the code, not the Dev Notes. `grep` across `src/`/`shared/`/`server/` finds
+  **zero** `.from('ads_campaigns').insert(...)` (the only `ads_campaigns` string
+  hits are a test comment and a doc-comment). The legacy route
+  `campaigns/$campaignId.$step.tsx` was read in full: `LegacyCutoverBridge`
+  performs only a `.select(...).maybeSingle()` — it never creates a campaign, so
+  the "verified, no change needed" claim is honest. `dashboard.tsx` now gates
+  `+ Nova campanha` through the SAME `evaluateCampaignReadiness('campaign.create', …)`
+  contract as the new surface (12.W2.1), reusing `PROJECT_NOT_FOUND`/`project.select`
+  rather than inventing a code.
+- **AC2 (consumes the transactional RPC) — MET.** `useCreateCampaign` calls
+  `supabase.rpc('campaign_create_readiness_rpc', …)` for every real creation
+  path (with or without `projectId`); the payload interpretation is extracted to
+  the pure `shared/campaign-create.ts` and reused by both the browser hook and
+  `server/lib/campaign-create-repo.ts` (refactored, no second hand-rolled copy).
+  The `fromSpy`-not-called assertion in `use-create-campaign.test.ts` proves the
+  closed side door **by construction**, not merely by code reading. Existing
+  campaigns remain readable (legacy route still `select`s them).
+- **AC3 (zero mutation on block; actionable conflicts) — MET.** Client preflight
+  returns `null` with zero network round-trip for both the no-project and
+  blocked-project cases (`rpcSpy`/`fromSpy` asserted not-called). Every RPC
+  response code (`READINESS_BLOCKED`, `STALE_READINESS`, `CAMPAIGN_CREATE_CONFLICT`,
+  `42501`→`UNAUTHORIZED`, plus generic-throw on unknown infra error) is mapped
+  and sanitized (no path/token/raw-DB-message leak — explicitly asserted). The
+  DB-level concurrency/idempotency/staleness proof remains the 12.W4.2 pgTAP
+  suite (14 assertions, re-run green here), correctly **not** duplicated; this
+  story proves the call-site + pure-mapper contract, which is the right seam for
+  a client-bypass test.
+- **AC4 (a11y + 390px) — MET.** Diffs re-read: `Alert` (native `role="alert"`),
+  button `title`/`aria-busy`, CTA is a real `<a>` (keyboard-reachable, asserted).
+  The 390px overflow fix is genuinely minimal — `spoke-selector.tsx` swaps a
+  fixed `min-width: 12rem` for `min-width:0; max-width:12rem; width:100%`, and
+  `dashboard/index.tsx` adds `flexWrap: 'wrap'` to two flex rows. Playwright
+  independently proves zero horizontal overflow at 390px on the touched
+  dashboard surface, desktop + mobile, twice, no flake.
+- **AC5 (compatibility, no silent promotion, no schema touched) — MET.**
+  `dashboard.test.tsx` covers zero (blocked)/one (creates via RPC)/multiple
+  (blocked, explicit choice required) project scenarios plus keyboard
+  reachability. `git diff --cached --stat -- .../supabase/` is **empty** — no
+  migration/schema/RLS touched; the RPC is consumed exactly as 12.W4.2
+  (commit `122e7d7`) left it. No existing draft is deleted and no campaign is
+  promoted to "ready" without provenance (creation goes through the RPC's own
+  structural gate).
+
+### Scope & hygiene integrity
+
+- 14 staged files, **all** within `touched_paths`. The 3 out-of-original-scope
+  changes are honestly disclosed in Dev Notes and verified minimal/necessary:
+  `tsconfig.server.json` + `vitest.config.ts` (pre-condition for `server/` to
+  import the new `shared/` module and for the orphaned-since-12.W1.1
+  `shared/campaign-readiness.test.ts` to actually run), and
+  `spoke-selector.tsx` + `dashboard/index.tsx` (a genuine pre-existing 390px
+  overflow bug that directly blocked this story's own AC4 Playwright assertion).
+- `node_modules` is a **symlink** to the 12.W4.2 sibling worktree (not a copy,
+  not staged). No stray build artifacts (`.js`/`.js.map` in `shared/`,
+  `test-results/`) staged. Builds left the working tree clean; the regenerated
+  `src/generated/skill-catalog.ts` is gitignored (not staged).
+
+### Resolution Tracking
+
+| # | Finding | Severity | Status | Action |
+|---|---|---|---|---|
+| A1 | `## File List` describes `shared/campaign-create.test.ts` as "11 tests"; the file actually contains **15** (`buildCampaignCreateRpcParams` ×3, `isCampaignCreateRpcPayload` ×3, `mapCampaignCreateRpcResponse` ×9). Coverage exceeds the documented count (safe direction). | LOW (doc) | WON'T_FIX | Documentation-only understatement, not a code defect; the extra coverage strengthens AC3. Left as-is to avoid a doc-only churn edit on a passing story; noted here for the record. |
+
+**Total: 1/1 resolved (100%)** — 0 FIXED, 1 WON'T_FIX (justified), 0 DEFERRED.
+No blocking findings. All 5 ACs substantiated against code + independently
+re-run tooling. **Quality score: 95/100** (−5: the doc test-count inaccuracy
+above, and AC3's DB-level concurrency guarantee is inherited from 12.W4.2's
+pgTAP rather than re-proven in this diff — an appropriate delegation given zero
+schema change, noted for completeness).
 
 ## Change Log
 
@@ -405,3 +499,19 @@ _Pendente — preenchido pelo quality gate independente (`@architect`)._
   foram, mesmo assim, verificados individualmente contra o resultado final,
   não assumidos. Verdict: **GO**. Status `Draft` → `Ready` → `InProgress` →
   `InReview` (implementação e evidência já registradas no Dev Agent Record).
+- 2026-07-16 — @architect: quality gate independente. Todos os 9
+  `quality_gate_tools` re-executados neste worktree, sem confiar no Dev Agent
+  Record — `npm test` (52 arquivos / 431 testes), `typecheck`, `lint`, `build`,
+  `build:server`, `git diff --check`, `test:db` (7 arquivos / 75 asserts, stack
+  Docker local `-x logflare,vector`, parada ao final — nenhum projeto remoto
+  tocado), `lint:db` ("No schema errors found") e Playwright desktop+mobile 8/8
+  reproduzido 2× sem flake. AC1-AC5 re-verificadas contra o código real: side
+  door fechado (grep confirma zero `.insert('ads_campaigns')`; rota legada só
+  lê; `fromSpy` prova por construção), RPC transacional consumida, mapper puro
+  compartilhado sem duplicação, bloqueio com zero mutação, a11y/390px corrigido
+  e provado, e nenhuma migration/schema tocada (`supabase/` staged diff vazio).
+  Escopo íntegro (14 arquivos, 3 desvios divulgados e mínimos), `node_modules`
+  symlink não commitado, sem artefatos órfãos. 1 achado LOW não-bloqueante
+  (contagem de testes subestimada no File List — WON'T_FIX, cobertura real
+  maior que a documentada). **Verdict: PASS. Quality score 95/100.** Status
+  `InReview` → `Done`.
