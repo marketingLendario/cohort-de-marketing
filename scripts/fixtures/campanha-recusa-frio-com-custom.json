@@ -1,0 +1,23 @@
+{
+  "_comentario": "Recusa local: tipo frio com custom_audiences — não se 'tempera' o kit frio (amplo) com público por fora.",
+  "nome": "[COHORT1]_projeto-fit_2026-07-15",
+  "objetivo": "OUTCOME_SALES",
+  "evento_conversao": "PURCHASE",
+  "verba_diaria_reais": 30,
+  "periodo_dias": 7,
+  "pais": "BR",
+  "interesse_guarda_chuva": null,
+  "link_destino": "https://exemplo.com/oferta?utm_source=meta&utm_medium=paid",
+  "cta": "LEARN_MORE",
+  "pixel_id": "111",
+  "page_id": "222",
+  "publico": {
+    "tipo": "frio",
+    "custom_audiences": [{"id": "900000000000001", "name": "Vídeo View 3s - Distribuição"}]
+  },
+  "criativos": [
+    {"id": "hook-1", "titulo": "Título 1", "copy": "Copy do anúncio 1", "image_hash": "abc123"},
+    {"id": "hook-2", "titulo": "Título 2", "copy": "Copy do anúncio 2", "image_hash": "def456"}
+  ],
+  "aprovado_pelo_aluno_em": "2026-07-15"
+}

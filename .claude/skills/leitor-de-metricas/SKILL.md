@@ -39,6 +39,24 @@ Esse limite segue o contrato autoritativo do PRD-A3: o Leitor traduz e rotula o
 que foi informado, sem transformar campos brutos em novos numeros. Prefira dizer
 "não fornecido" cem vezes a inventar ou derivar uma vez.
 
+## Régua por temperatura (Modo API)
+
+O público não é sempre frio. Em retargeting (morno/quente) a frequência sobe e o CPM fica mais caro — isso é **esperado**, não sinal vermelho. Leia a temperatura de `estruturador.publico_tipo` no Painel (o Estruturador grava no Passo 0.5) e passe a régua certa com `--publico-tipo`:
+
+```bash
+node scripts/leitor-metricas.mjs --campaign-id=<id> --publico-tipo=quente --json
+node scripts/leitor-metricas.mjs --campaign-id=<id> --publico-tipo=morno --fadiga --json
+```
+
+| Régua | Alerta de frequência | CPM alto |
+|---|---|---|
+| **frio** (default) | > 3,0/semana | tratado como sinal comum |
+| **morno / quente** | > 6,0/semana | no quente, selado como "esperado para retargeting (público pequeno e disputado)" |
+
+- **Sem `estruturador.publico_tipo` no Painel → frio.** Sem a flag, a saída é byte a byte igual à do v1.
+- A régua muda **apenas o limiar de alerta e a rotulagem** — nenhuma métrica nova é inferida. O contrato "não-inferir" continua valendo: frequência e CPM seguem vindo prontos da API; a régua só decide quando aquilo vira alerta.
+- O novo limiar de frequência vale também no `--fadiga` (fadiga de criativo em público quente é questão de dias, não de semanas).
+
 ## O que você faz
 
 1. Pede ao aluno o bloco de campos nomeados (gasto, impressões, cliques, conversões, ROAS-do-gerenciador, CTR, CPM — o que ele tiver copiado do gerenciador). Se ele quiser CTR, CPM ou CPA na leitura, deve incluir esses campos prontos no bloco.

@@ -1,0 +1,23 @@
+{
+  "_comentario": "Recusa AO VIVO: plano morno válido, mas o público tem lower_bound 20 (contagem oculta pela Meta = público pequeno) no fetcher mock.",
+  "nome": "[COHORT1]_projeto-fit_[morno]_2026-07-15",
+  "objetivo": "OUTCOME_SALES",
+  "evento_conversao": "PURCHASE",
+  "verba_diaria_reais": 30,
+  "periodo_dias": 7,
+  "pais": "BR",
+  "interesse_guarda_chuva": null,
+  "link_destino": "https://exemplo.com/oferta?utm_source=meta&utm_medium=paid",
+  "cta": "LEARN_MORE",
+  "pixel_id": "111",
+  "page_id": "222",
+  "publico": {
+    "tipo": "morno",
+    "custom_audiences": [{"id": "900000000000003", "name": "[SA] InitiateCheckout 30D menos Purchase"}]
+  },
+  "criativos": [
+    {"id": "hook-1", "titulo": "Título 1", "copy": "Copy do anúncio 1", "image_hash": "abc123"},
+    {"id": "hook-2", "titulo": "Título 2", "copy": "Copy do anúncio 2", "image_hash": "def456"}
+  ],
+  "aprovado_pelo_aluno_em": "2026-07-15"
+}

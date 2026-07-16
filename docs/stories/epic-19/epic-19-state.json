@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "epic-state-v1",
+  "epicId": "19",
+  "namespace": "PUB",
+  "title": "Estruturador v2: publicos mornos/quentes + matriz de funil",
+  "status": "InReview",
+  "verificationVerdict": "PASS_LOCAL",
+  "verificationNotes": "4/4 stories Done com QA do orquestrador (53/53 testes, espelhos ok, smokes read-only). Epic nao vira Done ate o gate 3 (E2E PAUSED supervisionado na conta real) e sign-off humano.",
+  "created": "2026-07-15",
+  "sourcePlan": "plans/estruturador-funil-publicos-v2.md",
+  "dependsOn": [],
+  "implementationAuthorized": true,
+  "waves": [
+    {
+      "id": "W1",
+      "name": "Inventario de publicos e matriz de decisao",
+      "status": "done",
+      "stories": [
+        {
+          "id": "19.W1.1",
+          "status": "Done",
+          "dependsOn": []
+        },
+        {
+          "id": "19.W1.2",
+          "status": "Done",
+          "dependsOn": []
+        }
+      ]
+    },
+    {
+      "id": "W2",
+      "name": "Executor de publicacao v2",
+      "status": "done",
+      "stories": [
+        {
+          "id": "19.W2.1",
+          "status": "Done",
+          "dependsOn": [
+            "19.W1.1",
+            "19.W1.2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "W3",
+      "name": "Reguas por temperatura",
+      "status": "done",
+      "stories": [
+        {
+          "id": "19.W3.1",
+          "status": "Done",
+          "dependsOn": [
+            "19.W2.1"
+          ]
+        }
+      ]
+    }
+  ]
+}

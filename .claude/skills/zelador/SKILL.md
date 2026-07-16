@@ -51,6 +51,29 @@ Erros comuns do script:
 - **código 100 (permissão/ID errado)** → confira os IDs no `.env` (`META_AD_ACCOUNT_ID` sem `act_`, `META_PIXEL_ID`, `META_BUSINESS_MANAGER_ID`) e se o System User tem acesso ao ativo no BM.
 - **códigos 4/17/32/613 (rate limit)** → aguarde alguns minutos e re-rode; o próprio script já orienta na `acao`.
 
+## Auditoria de públicos (opt-in: `--publicos`)
+
+Para o Squad de Tráfego v2 (públicos mornos/quentes — matéria da Aula 4), o Zelador inventaria os públicos personalizados da conta **sem nenhuma escrita**:
+
+```bash
+node scripts/zelador-audit.mjs --publicos
+```
+
+Ele pagina `GET /act_X/customaudiences` (a conta pode ter centenas — a real tem 331), classifica cada público por **temperatura** e avalia **elegibilidade** para retargeting.
+
+- **Temperatura** (matriz do `metodo-funil`, destilada em `plans/estruturador-funil-publicos-v2.md`):
+  - **morno** — ENGAGEMENT (vídeo/página/IG) e WEBSITE de topo (visitantes/PageView);
+  - **quente** — WEBSITE de fundo (InitiateCheckout/checkout) e CUSTOM (listas de clientes/CSV);
+  - **não aplicável** — LOOKALIKE (expansão de frio, fora do escopo v2) e subtypes desconhecidos.
+- **Elegibilidade** (exige TUDO): `operation_status.code == 200` **E** `delivery_status.code == 200` **E** `approximate_count_lower_bound >= 1.000` **E** atualizado nos últimos **90 dias**.
+  - `lower_bound == 20` é o placeholder da Meta para **público pequeno/oculto** — inelegível, porque a contagem está escondida e a entrega tende a estagnar.
+  - Lista CSV (subtype CUSTOM) sem atualização há mais de 90 dias vira **warning de envelhecimento**, com a data da última atualização ("reenvie a lista antes de usar").
+  - Contagens são sempre **aproximadas** (bounds da Meta), nunca exatas.
+
+A saída traz o resumo por temperatura (elegíveis com id, nome, subtype, tamanho aproximado e data; inelegíveis com o motivo) e um bloco YAML `zelador.publicos` pronto para colar no `PAINEL-DA-SEMANA.yaml` (selo `fonte: api`). Em `--json`, o bloco `publicos` entra no relatório.
+
+Esse inventário alimenta o **Estruturador v2** (kits morno/quente da story 19.W2.1): ele reusa a mesma regra de elegibilidade (`scripts/lib/publicos.mjs`) para não montar campanha em cima de público inelegível. A flag é **opt-in** — sem ela, a auditoria padrão do Zelador não muda.
+
 ## Modo Manual (fallback — sem credenciais no .env)
 
 Você não tem acesso direto às ferramentas de diagnóstico do gerenciador — você guia o aluno pelo checklist e registra o que ele confirma.

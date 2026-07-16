@@ -12,11 +12,16 @@
  *   node scripts/leitor-metricas.mjs --campaign-id=123        # leitura da campanha
  *   node scripts/leitor-metricas.mjs --campaign-id=123 --fadiga   # análise por anúncio (Briefista)
  *   node scripts/leitor-metricas.mjs --account                # conta inteira
- *   Flags: --date-preset=last_7d|last_3d|last_14d|... --json --env=/caminho/.env
+ *   Flags: --publico-tipo=frio|morno|quente (default frio) --date-preset=last_7d|... --json --env=/caminho/.env
+ *
+ * A régua por temperatura (--publico-tipo) só muda o LIMIAR de alerta de
+ * frequência e a ROTULAGEM do CPM — nunca calcula métrica nova (contrato
+ * "não-inferir" preservado). Sem a flag: comportamento e saída idênticos ao v1.
  *
  * Somente leitura (GET). Requer META_ACCESS_TOKEN (+ META_AD_ACCOUNT_ID) no .env.
  */
 
+import { realpathSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -35,8 +40,43 @@ const FADIGA_FREQUENCIA = 3.0;
 const FADIGA_IDADE_DIAS = 14;
 const FADIGA_MIN_IMPRESSOES_DIA = 500; // dia com menos que isso não conta como "pico"
 
+// Régua por temperatura (Fase D / Story 19.W3.1). NÃO calcula métrica nova — só
+// escolhe o LIMIAR de alerta de frequência e a ROTULAGEM do CPM. Público morno/
+// quente (retargeting) satura mais rápido: frequência maior é esperada (alerta
+// sobe de 3,0 para 6,0/semana) e CPM alto em quente é natural (público pequeno e
+// disputado), não sinal vermelho. Fonte da temperatura: estruturador.publico_tipo
+// no Painel; ausente ⇒ frio (retrocompatível, byte a byte igual ao v1).
+const FREQ_ALERTA_QUENTE = 6.0;
+const CPM_OBS_QUENTE = 'esperado para retargeting (público pequeno e disputado)';
+
+export function reguaPorTipo(publicoTipo) {
+  const tipo = ['frio', 'morno', 'quente'].includes(publicoTipo) ? publicoTipo : 'frio';
+  return {
+    tipo,
+    freqAlerta: tipo === 'frio' ? FADIGA_FREQUENCIA : FREQ_ALERTA_QUENTE,
+    cpmObservacao: tipo === 'quente' ? CPM_OBS_QUENTE : null,
+  };
+}
+
+// Decisão pura de fadiga por anúncio, separada da coleta de dados (rede) para ser
+// testável. Recebe as métricas já lidas + a régua; o limiar de frequência vem da
+// régua (frio 3,0 · morno/quente 6,0). Nenhuma métrica é derivada aqui.
+export function avaliarGatilhosFadiga({ quedaPct, picoCtr, ctrRecente, freqMax, idadeDias }, regua) {
+  const gatilhos = [];
+  if (quedaPct !== null && quedaPct >= FADIGA_QUEDA_CTR) {
+    gatilhos.push(`CTR caiu ${(quedaPct * 100).toFixed(0)}% do pico (${picoCtr.toFixed(2)}% → ${ctrRecente.toFixed(2)}%)`);
+  }
+  if (freqMax !== null && freqMax > regua.freqAlerta) {
+    gatilhos.push(`frequência ${freqMax.toFixed(1)} > ${regua.freqAlerta}`);
+  }
+  if (idadeDias !== null && idadeDias >= FADIGA_IDADE_DIAS) {
+    gatilhos.push(`criativo com ${idadeDias} dias sem iteração`);
+  }
+  return gatilhos;
+}
+
 function parseArgs(argv) {
-  const out = { json: false, envPath: null, campaignId: null, account: false, fadiga: false, datePreset: 'last_7d', help: false };
+  const out = { json: false, envPath: null, campaignId: null, account: false, fadiga: false, datePreset: 'last_7d', publicoTipo: 'frio', help: false };
   for (const a of argv) {
     if (a === '--json') out.json = true;
     else if (a === '--account') out.account = true;
@@ -44,6 +84,7 @@ function parseArgs(argv) {
     else if (a === '-h' || a === '--help') out.help = true;
     else if (a.startsWith('--campaign-id=')) out.campaignId = a.slice('--campaign-id='.length);
     else if (a.startsWith('--date-preset=')) out.datePreset = a.slice('--date-preset='.length);
+    else if (a.startsWith('--publico-tipo=')) out.publicoTipo = a.slice('--publico-tipo='.length);
     else if (a.startsWith('--env=')) out.envPath = a.slice('--env='.length);
   }
   return out;
@@ -73,7 +114,7 @@ function sinal(metrica, valor, selo, fonte, premissa) {
   return { metrica, valor, selo, fonte, ...(premissa ? { premissa } : {}) };
 }
 
-function buildSinais(row, hoje) {
+function buildSinais(row, hoje, regua) {
   const fonte = `API Graph ${GRAPH_VERSION} em ${hoje} (janela ${row.date_start} → ${row.date_stop})`;
   const { acts, costs, roas } = extractActions(row);
   const sinais = [
@@ -83,7 +124,7 @@ function buildSinais(row, hoje) {
     sinal('Cliques (todos)', num(row.clicks), 'Real', fonte),
     sinal('Cliques no link', num(row.inline_link_clicks), 'Real', fonte),
     sinal('CTR (%)', num(row.ctr), 'Real', fonte),
-    sinal('CPM (R$)', num(row.cpm), 'Real', fonte),
+    sinal('CPM (R$)', num(row.cpm), 'Real', fonte, regua.cpmObservacao),
     sinal('CPC (R$)', num(row.cpc), 'Real', fonte),
     sinal('Frequência', num(row.frequency), 'Real', fonte),
   ].filter((s) => s.valor !== null);
@@ -112,6 +153,7 @@ function buildSinais(row, hoje) {
 function toYaml(report) {
   const lines = ['leitor:', `  modo: "api"`, `  ultima_leitura: "${report.ultima_leitura}"`,
     `  fonte: "Graph API ${GRAPH_VERSION} (${report.escopo})"`,
+    ...(report.publico_tipo ? [`  publico_tipo: "${report.publico_tipo}"`] : []),
     `  janela_atribuicao: "${report.janela_atribuicao}"`, '  sinais:'];
   for (const s of report.sinais) {
     lines.push(`    - metrica: "${s.metrica}"`);
@@ -139,19 +181,20 @@ async function janelaAtribuicao(campaignId, ctx) {
   return specs.length ? specs.join(' / ') : 'não fornecido pela API';
 }
 
-async function leitura(scopePath, escopo, args, ctx, hoje) {
+async function leitura(scopePath, escopo, args, ctx, hoje, regua) {
   const r = await graphGet(`${scopePath}/insights`, { date_preset: args.datePreset, fields: INSIGHT_FIELDS }, ctx);
   if (!r.ok) fail(`Erro ao buscar insights: ${r.message}\n→ ${hint(r.code, 'Confira campaign-id e permissões.')}`, 1);
   const rows = r.data.data || [];
   if (!rows.length) {
     fail(`Sem dados na janela ${args.datePreset} para ${escopo}. A campanha entregou impressões nesse período?`, 1);
   }
-  const { sinais, conversoes, acoes_brutas } = buildSinais(rows[0], hoje);
+  const { sinais, conversoes, acoes_brutas } = buildSinais(rows[0], hoje, regua);
   const amostraOk = conversoes >= MIN_CONVERSOES_CPA;
   return {
     modo: 'api',
     ultima_leitura: hoje,
     escopo,
+    ...(regua.tipo !== 'frio' ? { publico_tipo: regua.tipo } : {}),
     janela: args.datePreset,
     janela_atribuicao: scopePath.startsWith('act_') ? 'configuração por conjunto — leia por campanha' : await janelaAtribuicao(scopePath, ctx),
     sinais,
@@ -164,7 +207,7 @@ async function leitura(scopePath, escopo, args, ctx, hoje) {
   };
 }
 
-async function fadiga(campaignId, args, ctx, hoje) {
+async function fadiga(campaignId, args, ctx, hoje, regua) {
   const adsR = await graphGetAll(`${campaignId}/ads`, { fields: 'id,name,created_time,effective_status', limit: 50 }, ctx);
   if (!adsR.ok) fail(`Erro ao listar anúncios: ${adsR.message}`, 1);
   const resultado = [];
@@ -183,10 +226,7 @@ async function fadiga(campaignId, args, ctx, hoje) {
     const freqMax = dias.length ? Math.max(...dias.map((d) => num(d.frequency) || 0)) : null;
     const idadeDias = ad.created_time ? Math.floor((Date.now() - new Date(ad.created_time)) / 86_400_000) : null;
 
-    const gatilhos = [];
-    if (quedaPct !== null && quedaPct >= FADIGA_QUEDA_CTR) gatilhos.push(`CTR caiu ${(quedaPct * 100).toFixed(0)}% do pico (${picoCtr.toFixed(2)}% → ${ctrRecente.toFixed(2)}%)`);
-    if (freqMax !== null && freqMax > FADIGA_FREQUENCIA) gatilhos.push(`frequência ${freqMax.toFixed(1)} > ${FADIGA_FREQUENCIA}`);
-    if (idadeDias !== null && idadeDias >= FADIGA_IDADE_DIAS) gatilhos.push(`criativo com ${idadeDias} dias sem iteração`);
+    const gatilhos = avaliarGatilhosFadiga({ quedaPct, picoCtr, ctrRecente, freqMax, idadeDias }, regua);
 
     resultado.push({
       ad_id: ad.id,
@@ -201,15 +241,23 @@ async function fadiga(campaignId, args, ctx, hoje) {
       gatilhos,
     });
   }
-  return { modo: 'api', analisado_em: hoje, campaign_id: campaignId, janela: args.datePreset || 'last_14d', anuncios: resultado };
+  return {
+    modo: 'api', analisado_em: hoje, campaign_id: campaignId,
+    ...(regua.tipo !== 'frio' ? { publico_tipo: regua.tipo } : {}),
+    janela: args.datePreset || 'last_14d', anuncios: resultado,
+  };
 }
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
-    process.stdout.write('Uso: node scripts/leitor-metricas.mjs [--campaign-id=X | --account] [--fadiga] [--date-preset=last_7d] [--json]\n');
+    process.stdout.write('Uso: node scripts/leitor-metricas.mjs [--campaign-id=X | --account] [--fadiga] [--publico-tipo=frio|morno|quente] [--date-preset=last_7d] [--json]\n');
     process.exit(0);
   }
+  if (!['frio', 'morno', 'quente'].includes(args.publicoTipo)) {
+    fail(`Erro: --publico-tipo inválido: "${args.publicoTipo}" (use frio|morno|quente). Leia estruturador.publico_tipo do Painel; ausente ⇒ frio.`);
+  }
+  const regua = reguaPorTipo(args.publicoTipo);
   const envPath = findEnvFile(args.envPath, dirname(fileURLToPath(import.meta.url)));
   if (!envPath) fail('Erro: .env não encontrado. Sem credenciais, use o Modo Manual da skill (colar números).');
   const env = loadEnv(envPath);
@@ -232,10 +280,12 @@ async function main() {
   if (args.fadiga) {
     if (!args.campaignId) fail('--fadiga exige --campaign-id=<id>');
     if (!args.datePreset || args.datePreset === 'last_7d') args.datePreset = 'last_14d';
-    const rep = await fadiga(args.campaignId, args, ctx, hoje);
+    const rep = await fadiga(args.campaignId, args, ctx, hoje, regua);
     if (args.json) process.stdout.write(JSON.stringify(rep, null, 2) + '\n');
     else {
-      process.stdout.write(`\nFadiga criativa — campanha ${rep.campaign_id} (janela ${rep.janela})\n\n`);
+      process.stdout.write(`\nFadiga criativa — campanha ${rep.campaign_id} (janela ${rep.janela})\n`);
+      if (rep.publico_tipo) process.stdout.write(`Régua: ${regua.tipo} — alerta de frequência > ${regua.freqAlerta}/semana\n`);
+      process.stdout.write('\n');
       for (const a of rep.anuncios) {
         process.stdout.write(` ${a.fadiga_detectada ? '⚠' : '✔'} ${a.nome} [${a.status}] — ${a.idade_dias}d`);
         process.stdout.write(a.ctr_pico ? `, CTR pico ${a.ctr_pico.toFixed(2)}% → 3d ${a.ctr_recente_3d}%` : ', sem amostra diária suficiente');
@@ -250,11 +300,12 @@ async function main() {
 
   const scopePath = args.account ? ctx.actId : args.campaignId;
   const escopo = args.account ? `conta ${ctx.actId}` : `campanha ${args.campaignId}`;
-  const rep = await leitura(scopePath, escopo, args, ctx, hoje);
+  const rep = await leitura(scopePath, escopo, args, ctx, hoje, regua);
 
   if (args.json) process.stdout.write(JSON.stringify(rep, null, 2) + '\n');
   else {
     process.stdout.write(`\nLeitor de Métricas — ${escopo} · janela ${rep.janela} · ${hoje}\n`);
+    if (rep.publico_tipo) process.stdout.write(`Régua: ${regua.tipo} — alerta de frequência > ${regua.freqAlerta}/semana${regua.cpmObservacao ? ` · CPM alto ${regua.cpmObservacao}` : ''}\n`);
     process.stdout.write(`Janela de atribuição: ${rep.janela_atribuicao}\n\n`);
     for (const s of rep.sinais) {
       process.stdout.write(` ${s.selo === 'Real' ? '✔' : '≈'} ${s.metrica.padEnd(24)} ${s.valor}   [${s.selo}]${s.premissa ? ` — ${s.premissa}` : ''}\n`);
@@ -263,7 +314,17 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  process.stderr.write(`Erro inesperado: ${e.message}\n`);
-  process.exit(2);
-});
+// Só roda o CLI quando executado direto; no import dos testes, main() não dispara
+// — que reutilizam reguaPorTipo/avaliarGatilhosFadiga sem tocar a rede.
+const executadoDireto = (() => {
+  if (!process.argv[1]) return false;
+  try { return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1]); }
+  catch { return false; }
+})();
+
+if (executadoDireto) {
+  main().catch((e) => {
+    process.stderr.write(`Erro inesperado: ${e.message}\n`);
+    process.exit(2);
+  });
+}

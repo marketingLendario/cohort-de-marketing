@@ -1,0 +1,75 @@
+{
+  "_comentario": "Amostra anonimizada de GET /act_X/customaudiences espelhando os casos reais do plans/estruturador-funil-publicos-v2.md (conta com 331 públicos). time_updated em epoch (segundos). Referência de hoje nos testes: 2026-07-15T00:00:00Z (epoch 1784073600). Sem dados reais de conta.",
+  "data": [
+    {
+      "id": "1000000000000001",
+      "name": "Vídeo View 3s - Distribuição de Conteúdo",
+      "subtype": "ENGAGEMENT",
+      "approximate_count_lower_bound": 215600,
+      "approximate_count_upper_bound": 253700,
+      "operation_status": { "code": 200, "description": "Normal" },
+      "delivery_status": { "code": 200, "description": "Audience of adequate size" },
+      "time_updated": 1782345600
+    },
+    {
+      "id": "1000000000000002",
+      "name": "Vídeo View 3s",
+      "subtype": "ENGAGEMENT",
+      "approximate_count_lower_bound": 3800,
+      "approximate_count_upper_bound": 4400,
+      "operation_status": { "code": 441, "description": "This audience is too small to be used and won't work in ads." },
+      "delivery_status": { "code": 200, "description": "Audience of adequate size" },
+      "time_updated": 1782345600
+    },
+    {
+      "id": "1000000000000003",
+      "name": "[SA] InitiateCheckout 30D (-) Purchase 30D",
+      "subtype": "WEBSITE",
+      "approximate_count_lower_bound": 20,
+      "approximate_count_upper_bound": 20,
+      "operation_status": { "code": 200, "description": "Normal" },
+      "delivery_status": { "code": 200, "description": "Audience of adequate size" },
+      "time_updated": 1783209600
+    },
+    {
+      "id": "1000000000000004",
+      "name": "Lista_Clientes_Antiga.csv",
+      "subtype": "CUSTOM",
+      "approximate_count_lower_bound": 1000,
+      "approximate_count_upper_bound": 1000,
+      "operation_status": { "code": 200, "description": "Normal" },
+      "delivery_status": { "code": 200, "description": "Audience of adequate size" },
+      "time_updated": 1766793600
+    },
+    {
+      "id": "1000000000000005",
+      "name": "Lista_Clientes_Recente_Jul26.csv",
+      "subtype": "CUSTOM",
+      "approximate_count_lower_bound": 1000,
+      "approximate_count_upper_bound": 1000,
+      "operation_status": { "code": 200, "description": "Normal" },
+      "delivery_status": { "code": 200, "description": "Audience of adequate size" },
+      "time_updated": 1783209600
+    },
+    {
+      "id": "1000000000000006",
+      "name": "Semelhante (1%) - Lista_Clientes",
+      "subtype": "LOOKALIKE",
+      "approximate_count_lower_bound": 1000,
+      "approximate_count_upper_bound": 1000,
+      "operation_status": { "code": 200, "description": "Normal" },
+      "delivery_status": { "code": 200, "description": "Audience of adequate size" },
+      "time_updated": 1782345600
+    },
+    {
+      "id": "1000000000000007",
+      "name": "Todos os visitantes do site - PageView 180D",
+      "subtype": "WEBSITE",
+      "approximate_count_lower_bound": 48200,
+      "approximate_count_upper_bound": 56900,
+      "operation_status": { "code": 200, "description": "Normal" },
+      "delivery_status": { "code": 200, "description": "Audience of adequate size" },
+      "time_updated": 1782345600
+    }
+  ]
+}

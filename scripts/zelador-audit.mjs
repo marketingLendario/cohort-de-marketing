@@ -13,6 +13,7 @@
  *   node scripts/zelador-audit.mjs --json        # JSON para a skill zelador
  *   node scripts/zelador-audit.mjs --env=/caminho/.env
  *   node scripts/zelador-audit.mjs --gravar-env  # grava no .env os IDs descobertos
+ *   node scripts/zelador-audit.mjs --publicos    # + inventário read-only de públicos (temperatura/elegibilidade)
  *
  * Descoberta automática: se algum ID (conta, BM, pixel, página) estiver
  * ausente no .env, o script tenta descobrir via API (/me/adaccounts,
@@ -34,6 +35,7 @@ import {
   ACCOUNT_STATUS, DISABLE_REASON, hint,
   findEnvFile as libFindEnvFile, loadEnv, buildCtx, graphGet, graphPost, graphDelete,
 } from './lib/meta-graph.mjs';
+import { fetchPublicos, classificarPublico, avaliarElegibilidade, dataAtualizacao } from './lib/publicos.mjs';
 
 const PIXEL_FIRE_MAX_AGE_H = 48;
 const TOKEN_EXPIRY_WARN_DAYS = 30;
@@ -42,11 +44,12 @@ const REQUIRED_SCOPES = ['business_management', 'ads_read'];
 // ---------------------------------------------------------------- env
 
 function parseArgs(argv) {
-  const out = { json: false, envPath: null, help: false, gravarEnv: false, testarEscrita: false };
+  const out = { json: false, envPath: null, help: false, gravarEnv: false, testarEscrita: false, publicos: false };
   for (const a of argv) {
     if (a === '--json') out.json = true;
     else if (a === '--gravar-env') out.gravarEnv = true;
     else if (a === '--testar-escrita') out.testarEscrita = true;
+    else if (a === '--publicos') out.publicos = true;
     else if (a === '-h' || a === '--help') out.help = true;
     else if (a.startsWith('--env=')) out.envPath = a.slice('--env='.length);
   }
@@ -382,6 +385,69 @@ function checkDominio() {
     'Confira manualmente: Business Manager > Configurações > Segurança da Marca > Domínios.');
 }
 
+// -------------------------------------------------- públicos (opt-in)
+
+/**
+ * Inventário read-only dos públicos personalizados (flag --publicos). Classifica
+ * por temperatura e avalia elegibilidade com as regras compartilhadas de
+ * lib/publicos.mjs (as mesmas que o Estruturador v2 reusa na 19.W2.1). Contagens
+ * sempre aproximadas (bounds da Meta). Nenhuma chamada de escrita — só GET.
+ */
+async function auditarPublicos(ctx) {
+  const agora = new Date();
+  const auditados_em = agora.toISOString().slice(0, 10);
+  const r = await fetchPublicos(ctx);
+  if (!r.ok) {
+    return {
+      fonte: 'api', auditados_em, ok: false, total_na_conta: 0,
+      erro: `${r.message || 'falha ao listar públicos'}${r.code ? ` (código ${r.code})` : ''}`,
+    };
+  }
+  const analisados = r.data.map((p) => {
+    const cls = classificarPublico(p);
+    const eleg = avaliarElegibilidade(p, agora);
+    return {
+      id: p.id,
+      nome: p.name,
+      subtype: p.subtype,
+      temperatura: cls.temperatura,
+      tamanho_min: typeof p.approximate_count_lower_bound === 'number' ? p.approximate_count_lower_bound : null,
+      tamanho_max: typeof p.approximate_count_upper_bound === 'number' ? p.approximate_count_upper_bound : null,
+      atualizado_em: dataAtualizacao(p),
+      elegivel: eleg.elegivel,
+      motivo: eleg.motivo,
+      tipo_alerta: eleg.tipo_alerta || null,
+    };
+  });
+  const porTamanho = (a, b) => (b.tamanho_min || 0) - (a.tamanho_min || 0);
+  const morno = analisados.filter((a) => a.temperatura === 'morno').sort(porTamanho);
+  const quente = analisados.filter((a) => a.temperatura === 'quente').sort(porTamanho);
+  const naoAplicavel = analisados.filter((a) => a.temperatura === 'nao_aplicavel');
+  const elegiveis_morno = morno.filter((a) => a.elegivel);
+  const elegiveis_quente = quente.filter((a) => a.elegivel);
+  // Inelegíveis acionáveis: só morno/quente (lookalike/nao_aplicavel não entram no kit v2).
+  const inelegiveis = analisados
+    .filter((a) => !a.elegivel && a.temperatura !== 'nao_aplicavel')
+    .sort(porTamanho);
+  return {
+    fonte: 'api',
+    auditados_em,
+    ok: true,
+    total_na_conta: analisados.length,
+    resumo: {
+      morno: morno.length,
+      quente: quente.length,
+      nao_aplicavel: naoAplicavel.length,
+      elegiveis_morno: elegiveis_morno.length,
+      elegiveis_quente: elegiveis_quente.length,
+      inelegiveis: inelegiveis.length,
+    },
+    elegiveis_morno,
+    elegiveis_quente,
+    inelegiveis,
+  };
+}
+
 // ------------------------------------------------------------ report
 
 function computeStatus(checks) {
@@ -415,6 +481,73 @@ function toPainelYaml(checks, status, hoje) {
     obs.length ? '  observacoes:' : '  observacoes: []',
     ...obs,
   ].join('\n');
+}
+
+/** Bloco YAML `zelador: publicos:` pronto para o Painel (listas capadas no top). */
+function publicosParaYaml(pub) {
+  const J = (s) => JSON.stringify(s ?? null);
+  if (!pub.ok) {
+    return [
+      'zelador:',
+      '  publicos:',
+      `    auditados_em: "${pub.auditados_em}"     # fonte: api`,
+      '    fonte: "api"',
+      `    erro: ${J(pub.erro)}`,
+    ].join('\n');
+  }
+  const elegLinha = (a) =>
+    `      - {id: ${J(a.id)}, nome: ${J(a.nome)}, subtype: ${J(a.subtype)}, tamanho_min: ${a.tamanho_min ?? 'null'}, atualizado_em: ${J(a.atualizado_em)}}`;
+  const inelegLinha = (a) => `      - {id: ${J(a.id)}, nome: ${J(a.nome)}, motivo: ${J(a.motivo)}}`;
+  const lista = (chave, itens, linhaFn, top = 10) => {
+    if (!itens.length) return [`    ${chave}: []`];
+    const out = [`    ${chave}:`, ...itens.slice(0, top).map(linhaFn)];
+    if (itens.length > top) out.push(`      # +${itens.length - top} não listados (rode com --json para a lista completa)`);
+    return out;
+  };
+  return [
+    'zelador:',
+    '  publicos:',
+    `    auditados_em: "${pub.auditados_em}"     # fonte: api — contagens aproximadas (bounds da Meta)`,
+    '    fonte: "api"',
+    `    total_na_conta: ${pub.total_na_conta}`,
+    `    elegiveis_morno_total: ${pub.resumo.elegiveis_morno}`,
+    `    elegiveis_quente_total: ${pub.resumo.elegiveis_quente}`,
+    `    inelegiveis_total: ${pub.resumo.inelegiveis}`,
+    `    nao_aplicavel_total: ${pub.resumo.nao_aplicavel}`,
+    ...lista('elegiveis_morno', pub.elegiveis_morno, elegLinha),
+    ...lista('elegiveis_quente', pub.elegiveis_quente, elegLinha),
+    ...lista('inelegiveis', pub.inelegiveis, inelegLinha),
+  ].join('\n');
+}
+
+/** Seção legível dos públicos (só quando --publicos foi passado). */
+function publicosHuman(pub) {
+  const lines = ['', `Públicos personalizados (customaudiences) — fonte: API ${GRAPH_VERSION}`];
+  if (!pub.ok) {
+    lines.push(` ✖ não foi possível listar: ${pub.erro}`, '');
+    return lines;
+  }
+  const r = pub.resumo;
+  const fmt = (n) => (typeof n === 'number' ? `~${n.toLocaleString('pt-BR')} (aprox.)` : '~oculto');
+  lines.push(
+    `Total na conta: ${pub.total_na_conta} · morno ${r.morno} (elegíveis ${r.elegiveis_morno}) · quente ${r.quente} (elegíveis ${r.elegiveis_quente}) · lookalike/não aplicável ${r.nao_aplicavel}`,
+    'Contagens são aproximadas (bounds da Meta), nunca exatas.',
+    '',
+  );
+  const bloco = (titulo, itens, cap, linhaFn) => {
+    if (!itens.length) { lines.push(`${titulo}: nenhum`, ''); return; }
+    lines.push(`${titulo} (${itens.length}${itens.length > cap ? `, mostrando top ${cap}` : ''}):`);
+    for (const a of itens.slice(0, cap)) lines.push(linhaFn(a));
+    lines.push('');
+  };
+  const elegLinha = (a) =>
+    ` ✔ ${a.id}  ${JSON.stringify(a.nome)}  [${a.subtype}]  ${fmt(a.tamanho_min)}  atualizado ${a.atualizado_em || '?'}`;
+  bloco('Elegíveis — MORNO', pub.elegiveis_morno, 20, elegLinha);
+  bloco('Elegíveis — QUENTE', pub.elegiveis_quente, 20, elegLinha);
+  bloco('Inelegíveis', pub.inelegiveis, 15, (a) =>
+    ` ✖ ${a.id}  ${JSON.stringify(a.nome)}  [${a.subtype} · ${a.temperatura}]  ${a.motivo}`);
+  lines.push('Bloco de públicos para o PAINEL-DA-SEMANA.yaml:', '', publicosParaYaml(pub), '');
+  return lines;
 }
 
 function printHuman(report) {
@@ -459,6 +592,7 @@ function printHuman(report) {
     for (const p of report.pendencias_manuais) lines.push(` △ ${p}`);
   }
   lines.push('', 'Bloco para o PAINEL-DA-SEMANA.yaml:', '', report.painel_yaml, '');
+  if (report.publicos) lines.push(...publicosHuman(report.publicos));
   process.stdout.write(lines.join('\n'));
 }
 
@@ -467,7 +601,7 @@ function printHuman(report) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
-    process.stdout.write('Uso: node scripts/zelador-audit.mjs [--json] [--env=/caminho/.env]\n');
+    process.stdout.write('Uso: node scripts/zelador-audit.mjs [--json] [--publicos] [--testar-escrita] [--gravar-env] [--env=/caminho/.env]\n');
     process.exit(0);
   }
 
@@ -508,6 +642,12 @@ async function main() {
     checks.push(bm, adAccount.conta, adAccount.pagamento, pixel.pixel, pixel.capi, pixel.dedup, checkDominio(), pagina);
     if (args.testarEscrita) checks.push(await checkEscrita(ctx, envEff));
     var eventos = pixel.eventos;
+    if (args.publicos) {
+      if (!ctx.actId && envEff.META_AD_ACCOUNT_ID) {
+        ctx.actId = envEff.META_AD_ACCOUNT_ID.startsWith('act_') ? envEff.META_AD_ACCOUNT_ID : `act_${envEff.META_AD_ACCOUNT_ID}`;
+      }
+      var publicos = await auditarPublicos(ctx);
+    }
   } else {
     checks.push(checkDominio());
   }
@@ -525,6 +665,8 @@ async function main() {
     pendencias_manuais: checks.filter((c) => c.valor === null).map((c) => `${c.campo}: ${c.acao || c.detalhe}`),
     painel_yaml: toPainelYaml(checks, status, hoje),
   };
+  // Opt-in: a chave só existe com --publicos, para não mexer na saída padrão.
+  if (args.publicos && typeof publicos !== 'undefined') report.publicos = publicos;
 
   if (args.json) process.stdout.write(JSON.stringify(report, null, 2) + '\n');
   else printHuman(report);
