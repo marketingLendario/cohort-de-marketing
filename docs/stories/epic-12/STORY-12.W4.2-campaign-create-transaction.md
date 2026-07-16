@@ -1,5 +1,5 @@
 ---
-status: InReview
+status: Done
 story_id: "12.W4.2"
 title: "Criação transacional e idempotente de campanha"
 epic: 12
