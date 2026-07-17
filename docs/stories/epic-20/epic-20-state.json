@@ -1,0 +1,24 @@
+{
+  "epicId": "20",
+  "title": "Renderer modes nativos programáticos (chat + tweet)",
+  "status": "InProgress",
+  "baseline": {
+    "gitRef": "origin/main",
+    "gitCommit": "b08ec03d5fd866f4bf962d28415f1c81d7122cb8",
+    "skillVersion": "2.2.1"
+  },
+  "target": {
+    "skillVersion": "2.3.0",
+    "publicCommand": "/ads-creative-factory"
+  },
+  "waves": [
+    { "id": "W1", "status": "in-review", "name": "Renderer modes chat/tweet + espécies nativas built-in" }
+  ],
+  "stories": [
+    { "id": "20.W1.1", "status": "InReview", "dependsOn": ["14.W1.1", "14.W1.2"] }
+  ],
+  "pending": [
+    "Sign-off humano/@po da story (registro retroativo — Draft->Ready nao passou por agente separado)",
+    "Release management (@devops, exclusivo, compartilhado com EPIC-18): entrada epic20Files em scripts/generate-ads-creative-factory-manifest.mjs, regerar source-manifest.json, cortar 2.3.0"
+  ]
+}

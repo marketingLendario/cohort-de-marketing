@@ -100,10 +100,43 @@ EDIT_PROMPT = (
 )
 
 
-def edit_to_scene(photo: str, out_edit: str) -> str:
+def _scene_environment_fragment(scene: dict) -> str:
+    parts = [scene["setting"], scene["shot"], scene["lighting"]]
+    props = scene.get("props") or []
+    if props:
+        parts.append("with " + ", ".join(props))
+    guards = scene.get("authenticity_guards") or []
+    if guards:
+        parts.append(", ".join(guards))
+    return "; ".join(part for part in parts if part)
+
+
+def build_edit_prompt(scene: dict | None) -> str:
+    """Monta o prompt de EDIT. Sem cena, usa a string fixa (cinematográfica).
+    Com cena resolvida do catálogo (mesmo schema de ugc_scenes), troca só a
+    descrição do ambiente — a preservação pixel-fiel do rosto nunca muda."""
+    if not scene:
+        return EDIT_PROMPT
+    environment = _scene_environment_fragment(scene)
+    negative = ", ".join(scene.get("negative_guards", []))
+    avoid = f" Avoid: {negative}." if negative else ""
+    return (
+        "Use the image_gen tool to EDIT the attached photograph (image-to-image edit; "
+        "do NOT generate a new person from scratch). KEEP the person EXACTLY as in the "
+        "photo — face, eyes, glasses, hair, expression and skin must stay pixel-faithful "
+        "and unchanged; do not regenerate, beautify, slim or age the face. Change ONLY the "
+        f"environment: replace the background with {environment}, keeping it authentic and "
+        "candid, never studio-perfect. Relight the person's edges subtly to match the new "
+        f"scene; keep their clothing.{avoid} Output the edited photo — the SAME person, "
+        "same face, recognizable."
+    )
+
+
+def edit_to_scene(photo: str, out_edit: str, scene: dict | None = None) -> str:
     """EDIT image-to-image: preserva a pessoa, troca o fundo. Retorna o editado
     (ou a foto original se o edit falhar). Faz UMA geração — reusável p/ N formatos."""
-    return out_edit if alib.codex_image(EDIT_PROMPT, out_edit, refs=[photo])["ok"] else photo
+    prompt = build_edit_prompt(scene)
+    return out_edit if alib.codex_image(prompt, out_edit, refs=[photo])["ok"] else photo
 
 
 def compose_person(src: str, copy: dict, out_path: str, H: int, *,

@@ -251,6 +251,8 @@ def render_job(hk: dict, brand: dict, params: dict, work: Path, catalog=None) ->
                           "ugc_scene_id": hk.get("_ugc_scene_id"),
                           "mockup_device_id": hk.get("_mockup_device_id"),
                           "didactic_style_id": hk.get("_didactic_style_id"),
+                          "chat_style_id": hk.get("_chat_style_id"),
+                          "tweet_style_id": hk.get("_tweet_style_id"),
                           "gate_profile_id": profile["id"],
                       },
                       "formats": res.get("formats", {}), "gate": gate_res, "final": final,
@@ -468,6 +470,8 @@ def run_campaign(campaign_path: str) -> dict:
                     "ugc_scene_id": ("ugc_scenes", None, "ugc"),
                     "mockup_device_id": ("variations", "mockup_device", "mockup"),
                     "didactic_style_id": ("variations", "didactic_style", "didactic"),
+                    "chat_style_id": ("variations", "chat_style", "chat"),
+                    "tweet_style_id": ("variations", "tweet_style", "tweet"),
                 }
                 arch_mode = arch.get("renderer_mode") or arch.get("mode")
                 for selector, (group, expected_axis, expected_mode) in explicit_internal.items():

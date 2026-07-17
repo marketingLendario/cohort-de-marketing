@@ -16,7 +16,7 @@ from pack_loader import LoadedPack, PackLoadError, load_extension_pack
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
-FACTORY_VERSION = "2.2.1"
+FACTORY_VERSION = "2.3.0"
 ENTITY_GROUPS = ("archetypes", "mechanisms", "ugc_scenes", "variations", "references", "gate_profiles")
 FORMATS = {"feed", "story", "square"}
 
@@ -73,10 +73,13 @@ def _builtin_archetypes() -> list[dict[str, Any]]:
         "mockup": ["mockup_device", "layout"],
         "ugc": ["ugc_scene"],
         "didactic": ["didactic_style"],
+        "chat": ["chat_style"],
+        "tweet": ["tweet_style"],
     }
     required = {
         "hybrid": ["headline"], "person": ["headline"], "mockup": ["headline"],
         "ugc": ["native_text"], "didactic": ["compare"],
+        "chat": ["headline"], "tweet": ["headline"],
     }
     out: list[dict[str, Any]] = []
     for item in _yaml("archetypes.yaml").get("archetypes", []):

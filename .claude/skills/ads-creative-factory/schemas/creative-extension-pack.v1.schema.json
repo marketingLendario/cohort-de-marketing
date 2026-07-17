@@ -57,7 +57,7 @@
       "properties": {
         "id": {"$ref": "#/$defs/entity_id"},
         "label": {"type": "string", "minLength": 1},
-        "renderer_mode": {"enum": ["hybrid", "person", "mockup", "ugc", "didactic"]},
+        "renderer_mode": {"enum": ["hybrid", "person", "mockup", "ugc", "didactic", "chat", "tweet"]},
         "theme": {"enum": ["dark", "light", "native"]},
         "formats": {"$ref": "#/$defs/string_list"},
         "required_fields": {"$ref": "#/$defs/string_list"},
@@ -114,7 +114,7 @@
       "required": ["id", "axis", "fragment", "compatible_archetypes", "locks"],
       "properties": {
         "id": {"$ref": "#/$defs/entity_id"},
-        "axis": {"enum": ["material", "lighting", "composition", "density", "finish", "backdrop", "layout", "mockup_device", "didactic_style"]},
+        "axis": {"enum": ["material", "lighting", "composition", "density", "finish", "backdrop", "layout", "mockup_device", "didactic_style", "chat_style", "tweet_style"]},
         "fragment": {"type": "string", "minLength": 1},
         "compatible_archetypes": {"$ref": "#/$defs/string_list"},
         "locks": {"$ref": "#/$defs/string_list"}

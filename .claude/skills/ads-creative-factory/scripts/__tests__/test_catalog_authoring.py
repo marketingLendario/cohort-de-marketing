@@ -183,6 +183,52 @@ class CatalogAuthoringTests(unittest.TestCase):
         self.assertEqual(preview["item"]["reference_ids"], ["acme.reference"])
         self.assertEqual(preview["catalog_hash"], installed["catalog_hash"])
 
+    def test_person_archetype_can_reference_scene_and_previews_it(self) -> None:
+        build_args = [
+            "pack", "build", "--project-root", str(self.project), "--id", "acme-person",
+            "--namespace", "acme", "--version", "1.0.0",
+            "--rights-notice", "Uso autorizado para fixture sintética.",
+        ]
+        self.assertEqual(self.cli(build_args)[0], 0)
+        pack = self.project / "creative-factory" / "packs" / "acme-person"
+
+        commands = [
+            ["gate-profile", "add", "--pack", str(pack), "--id", "acme.default",
+             "--label", "Gate Acme", "--threshold", "min_contrast=4.5"],
+            ["mechanism", "add", "--pack", str(pack), "--id", "acme.proof",
+             "--label", "Prova Acme", "--kind", "visual", "--psych", "evidência",
+             "--core", "uma xícara de café numa mesa real", "--format", "feed"],
+            ["ugc-scene", "add", "--pack", str(pack), "--id", "acme.cozinha",
+             "--label", "Cozinha real", "--setting", "cozinha de casa",
+             "--shot", "foto vertical de celular", "--lighting", "luz natural de manhã",
+             "--prop", "caneca de café", "--authenticity-guard", "espontâneo, sem produção",
+             "--negative-guard", "estúdio, luz de estúdio", "--format", "feed", "--format", "story"],
+            ["archetype", "add", "--pack", str(pack), "--id", "acme.candid",
+             "--label", "Persona Candid", "--renderer-mode", "person", "--theme", "native",
+             "--format", "feed", "--format", "story", "--required-field", "headline",
+             "--mechanism", "acme.proof", "--ugc-scene", "acme.cozinha",
+             "--internal-variant", "ugc_scene", "--gate-profile", "acme.default",
+             "--needs-persona"],
+        ]
+        for command in commands:
+            code, payload = self.cli(command)
+            self.assertEqual((code, payload["status"]), (0, "valid"), command)
+
+        code, preview = self.cli(["preview", "archetype", "acme.candid", "--pack", str(pack)])
+        self.assertEqual((code, preview["status"]), (0, "preview-ready"))
+        self.assertEqual(preview["item"]["renderer_mode"], "person")
+        self.assertEqual(preview["item"]["compatible_ugc_scenes"], ["acme.cozinha"])
+
+        code, blocked = self.cli([
+            "archetype", "add", "--pack", str(pack), "--id", "acme.candid2",
+            "--label", "Persona Candid 2", "--renderer-mode", "person", "--theme", "native",
+            "--format", "feed", "--required-field", "headline", "--mechanism", "acme.proof",
+            "--ugc-scene", "acme.nao-existe", "--internal-variant", "ugc_scene",
+            "--gate-profile", "acme.default", "--needs-persona",
+        ])
+        self.assertEqual((code, blocked["status"]), (1, "blocked"))
+        self.assertIn("acme.nao-existe", blocked["message"])
+
     def test_reserved_namespace_and_unknown_renderer_fail_closed(self) -> None:
         with self.assertRaisesRegex(PackLoadError, "reserved"):
             build_extension_pack(

@@ -2,7 +2,7 @@
 archetype_render.py — roteador de geração por ARQUÉTIPO (eixo primário).
 
 Dado um arquétipo + a copy do hook (+ persona quando aplica), produz a peça final
-no modo certo: hybrid(dark/light) / person / mockup / ugc / didactic.
+no modo certo: hybrid(dark/light) / person / mockup / ugc / didactic / chat / tweet.
 Cada modo reusa os módulos já construídos. Retorna {final, format, archetype}.
 """
 from __future__ import annotations
@@ -19,6 +19,8 @@ import variation as var_mod
 import person as person_mod
 import ugc as ugc_mod
 import didactic as didactic_mod
+import chat as chat_mod
+import tweet as tweet_mod
 import formats_hybrid as fhyb
 from PIL import Image
 
@@ -112,6 +114,24 @@ def resolve_internal_selection(arch: dict, catalog, idx: int = 0,
             and (persona or not item.get("needs_persona"))
         ]
         return {"ugc_scene_id": values[idx % len(values)]["id"]} if values else {}
+    if mode == "person":
+        # Sem compatible_ugc_scenes declarado, nao ha selecao — preserva o
+        # comportamento fixo (cena cinematografica hardcoded) sem regressao.
+        allowed = set(arch.get("compatible_ugc_scenes", []))
+        if not allowed:
+            return {}
+        values = [
+            dict(item) for item in catalog["ugc_scenes"].values()
+            if ("*" in allowed or item["id"] in allowed)
+            and (persona or not item.get("needs_persona"))
+        ]
+        return {"ugc_scene_id": values[idx % len(values)]["id"]} if values else {}
+    if mode == "chat":
+        values = var_mod.variation_entities("chat_style", catalog, arch["id"])
+        return {"chat_style_id": values[idx % len(values)]["id"]} if values else {}
+    if mode == "tweet":
+        values = var_mod.variation_entities("tweet_style", catalog, arch["id"])
+        return {"tweet_style_id": values[idx % len(values)]["id"]} if values else {}
     return {}
 
 
@@ -139,12 +159,15 @@ def _person(brand, hook, arch, out_base, formats, persona, catalog=None):
     if not persona:
         return _hybrid(brand, hook, {**arch, "theme": "dark"}, out_base, formats, catalog)
     p = person_mod.get(persona, brand)
-    copy = dict(hook)
-    copy["eyebrow"] = f"{p['name'].upper()} · AO VIVO"
     photo = person_mod.pick_photo(p, brand)
     if not photo:
         return _hybrid(brand, hook, {**arch, "theme": "dark"}, out_base, formats, catalog)
-    edited = person_mod.edit_to_scene(photo, out_base + "__edit.png")   # EDIT uma vez
+    # Cena cotidiana opcional (mesmo grupo de entidade que o modo ugc usa); sem
+    # ela, edit_to_scene cai na string fixa cinematografica de sempre.
+    scene = _catalog_item(catalog, "ugc_scenes", hook.get("_ugc_scene_id"))
+    copy = dict(hook)
+    copy["eyebrow"] = p["name"].upper() if scene else f"{p['name'].upper()} · AO VIVO"
+    edited = person_mod.edit_to_scene(photo, out_base + "__edit.png", scene=scene)   # EDIT uma vez
     out = {}
     for fmt in formats:                                                 # compor por formato
         out[fmt] = person_mod.compose_person(edited, copy, f"{out_base}__{fmt}.png",
@@ -211,6 +234,45 @@ def _didactic(brand, hook, arch, out_base, formats, idx=0, catalog=None):
     return out
 
 
+def _native_style(hook: dict, arch: dict, axis: str, selector: str, styles_mod,
+                  idx: int, catalog=None) -> str:
+    """Resolve o estilo interno de uma especie nativa (chat/tweet) pelo catalogo.
+
+    Ordem: selecao explicita do hook (_<selector>) > entidade do eixo pelo
+    indice > fallback deterministico do renderer. Entidades de pack sem
+    value_id implementado caem no fallback (mesmo contrato do didactic)."""
+    selected = _catalog_item(catalog, "variations", hook.get(f"_{selector}"))
+    if selected is None:
+        values = var_mod.variation_entities(axis, catalog, arch["id"])
+        selected = values[idx % len(values)] if values else None
+    style = (selected or {}).get("value_id") or (selected or {}).get("id")
+    if style not in styles_mod.STYLES:
+        style = styles_mod.style_for_index(idx)
+    return style
+
+
+def _chat(brand, hook, arch, out_base, formats, persona, idx=0, catalog=None):
+    """Print de conversa/notificacao — programatico por formato (como didactic)."""
+    style = _native_style(hook, arch, "chat_style", "chat_style_id", chat_mod, idx, catalog)
+    out = {}
+    for fmt in formats:
+        out[fmt] = chat_mod.render_chat(hook, f"{out_base}__{fmt}.png",
+                                        H=brand["formats"][fmt]["h"], style=style,
+                                        brand=brand, persona=persona)
+    return out
+
+
+def _tweet(brand, hook, arch, out_base, formats, persona, idx=0, catalog=None):
+    """Meme/tweet card — programatico por formato (como didactic)."""
+    style = _native_style(hook, arch, "tweet_style", "tweet_style_id", tweet_mod, idx, catalog)
+    out = {}
+    for fmt in formats:
+        out[fmt] = tweet_mod.render_tweet(hook, f"{out_base}__{fmt}.png",
+                                          H=brand["formats"][fmt]["h"], style=style,
+                                          brand=brand, persona=persona)
+    return out
+
+
 def render_archetype(arch: dict, hook: dict, brand: dict, out_base: str,
                      fmt: str = "feed", formats: list | None = None,
                      persona: dict | None = None, arch_index: int = 0,
@@ -230,6 +292,10 @@ def render_archetype(arch: dict, hook: dict, brand: dict, out_base: str,
             outs = _ugc(brand, hook, arch, out_base, formats, arch_index, catalog, persona)
         elif mode == "didactic":
             outs = _didactic(brand, hook, arch, out_base, formats, arch_index, catalog)
+        elif mode == "chat":
+            outs = _chat(brand, hook, arch, out_base, formats, persona, arch_index, catalog)
+        elif mode == "tweet":
+            outs = _tweet(brand, hook, arch, out_base, formats, persona, arch_index, catalog)
         else:
             outs = None
     except Exception as e:

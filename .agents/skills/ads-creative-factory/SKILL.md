@@ -2,7 +2,7 @@
 name: ads-creative-factory
 description: "Motor extensível de criativos de performance. Cria, valida e usa packs versionados de brand, persona, arquétipos, mecanismos, cenas UGC, variações, referências e gates."
 metadata:
-  version: "2.2.1"
+  version: "2.3.0"
   user-invocable: true
   argument-hint: "[request.json] | entidade ação opções"
 ---
@@ -59,12 +59,13 @@ Subcomandos disponíveis: `brand create`, `persona create`, `archetype add`,
 `python3 "$SKILL_DIR/scripts/catalog_cli.py" <entidade> <ação> --help` para os
 campos do contrato. IDs externos devem ser namespaced, por exemplo
 `acme.editorial`; `builtin` é reservado. Um arquétipo novo pode selecionar
-somente os renderer modes `hybrid`, `person`, `mockup`, `ugc` e `didactic`.
+somente os renderer modes `hybrid`, `person`, `mockup`, `ugc`, `didactic`,
+`chat` e `tweet`.
 Renderer novo exige story de desenvolvimento e nunca é carregado do pack.
 Hooks podem selecionar entidades resolvidas explicitamente por
 `visual_mechanism_id`, `copy_mechanism_id`, `ugc_scene_id`,
-`mockup_device_id` e `didactic_style_id`; IDs desconhecidos ou de eixo
-incompatível falham antes da geração.
+`mockup_device_id`, `didactic_style_id`, `chat_style_id` e `tweet_style_id`;
+IDs desconhecidos ou de eixo incompatível falham antes da geração.
 
 Packs instalados ficam em
 `projetos/{slug}/creative-factory/packs/{pack-id}/` e o vínculo explícito em
@@ -152,7 +153,7 @@ usar um `jobId` durável para retry, cancelamento, aprovação e retomada. No CL
 standalone, `ACF_BRAND_PACK` e `ACF_OUT_DIR` materializam o mesmo boundary;
 falhas de pack, dependência ou path são bloqueantes e acionáveis.
 
-## Os 6 arquétipos built-in (base extensível) — `data/archetypes.yaml`
+## Os 8 arquétipos built-in (base extensível) — `data/archetypes.yaml`
 
 | Arquétipo | Modo | Linguagem |
 |---|---|---|
@@ -162,11 +163,51 @@ falhas de pack, dependência ou path são bloqueantes e acionáveis.
 | mockup_product | mockup | tela/dashboard (devices variados) |
 | ugc_native | ugc | story nativo do Instagram (9:16) |
 | didactic_compare | didactic | comparação ✕/✓ (3 estilos) |
+| chat_notification | chat (PIL) | print nativo de conversa/notificação (3 estilos no eixo `chat_style`) |
+| tweet_card | tweet (PIL) | card estilo post/X sobre backdrop do pack (2 estilos no eixo `tweet_style`) |
 
 O factory sorteia arquétipos **distintos** por job (eixo primário) + variação
 interna por instância (estilo/device/foto) → diversidade entre E dentro das espécies.
-Extension Packs adicionam presets declarativos sobre os mesmos cinco renderer
+Extension Packs adicionam presets declarativos sobre os mesmos sete renderer
 modes sem sobrescrever os built-ins.
+
+### Espécies nativas programáticas (chat / tweet)
+
+`chat_notification` e `tweet_card` são 100% PIL — **zero chamadas de geração
+de imagem** (custo de API = 0). Como o UGC, usam `theme: native` no gate
+(`builtin.default-native`): o sinal é parecer print real, não seguir o brand
+tone. O contato da conversa / autor do post vem da **persona** (nome + foto
+REAL do persona pack; nunca likeness gerada) ou, sem persona, da `identity`
+do brand pack; sem foto legível, o avatar cai num círculo neutro com inicial.
+Sem selo de verificado (não fabricamos status), engajamento com números
+orgânicos (nunca redondos) e copy sem emoji (as fontes neutras do runtime não
+renderizam emoji — caracteres emoji são removidos). Campos opcionais do hook:
+
+```yaml
+hooks:
+  - id: H
+    # ... campos base ...
+    chat:                          # arquétipo chat_notification
+      contact: "Nome do Contato"   # default: persona > identity do pack
+      time: "09:41"
+      messages:
+        - { from: them, text: "primeira mensagem (o hook)" }
+        - { from: me,   text: "resposta do usuário (o CTA)" }
+    tweet:                         # arquétipo tweet_card
+      text: "texto do post"        # default: native_text | headline + sub
+      time: "10:24"
+      stats: { likes: "2,4 mil", shares: "317" }
+```
+
+### Cena cotidiana no arquétipo Pessoa (EDIT de foto real)
+
+Um preset `renderer_mode: person` pode declarar `--ugc-scene <id>` (o mesmo
+campo `compatible_ugc_scenes` já usado por presets `ugc`) para trocar o
+ambiente do EDIT por uma cena cotidiana do catálogo (`setting`/`shot`/
+`lighting`/`props`/`authenticity_guards`), em vez da cena cinematográfica
+fixa do `person_authority`. A pessoa continua sendo sempre a foto REAL via
+EDIT — a cena parametriza só o ambiente, nunca o rosto. Sem `--ugc-scene`
+declarado, o preset se comporta exatamente como hoje.
 
 ## campaign.yaml
 

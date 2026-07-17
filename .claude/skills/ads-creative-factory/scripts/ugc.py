@@ -65,7 +65,7 @@ def render_story(photo_path: str, copy: dict, out_path: str, *,
     ay = 52
     gold = (*palette["gold"], 255)
     d.ellipse([m, ay, m + 64, ay + 64], outline=gold, width=3)
-    icon = ASSETS / "logo_icon-cream.png"
+    icon = ASSETS / "logo_icon-dark.png"   # icone p/ superficie escura (prepare_assets)
     if icon.exists():
         ic = Image.open(icon).convert("RGBA").resize((40, 40), Image.LANCZOS)
         img.paste(ic, (m + 12, ay + 12), ic)

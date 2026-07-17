@@ -1,0 +1,24 @@
+{
+  "epicId": "18",
+  "title": "Cena parametrizável para o arquétipo Pessoa (EDIT de foto real)",
+  "status": "InProgress",
+  "baseline": {
+    "gitRef": "origin/main",
+    "gitCommit": "84f0b31ec0d37e24853f703f8225135a98398fc6",
+    "skillVersion": "2.2.1"
+  },
+  "target": {
+    "skillVersion": "2.3.0",
+    "publicCommand": "/ads-creative-factory"
+  },
+  "waves": [
+    { "id": "W1", "status": "in-review", "name": "Cena parametrizável no renderer Pessoa" }
+  ],
+  "stories": [
+    { "id": "18.W1.1", "status": "InReview", "dependsOn": ["14.W1.1", "14.W1.2", "14.W2.3"] }
+  ],
+  "pending": [
+    "Sign-off humano/@po da story (Draft->Ready nao foi feito por agente separado)",
+    "Release management (@devops, exclusivo): bump SKILL.md metadata.version, nova entrada epic18Files em scripts/generate-ads-creative-factory-manifest.mjs, regerar source-manifest.json, cortar 2.3.0"
+  ]
+}

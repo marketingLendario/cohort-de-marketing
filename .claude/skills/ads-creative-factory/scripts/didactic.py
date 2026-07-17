@@ -58,7 +58,8 @@ def _bg(W, H, brand, light=False):
 
 
 def _logo(img, W, H, brand, light=False):
-    icon = ASSETS / ("logo_icon-light.png" if light else "logo_icon-cream.png")
+    # sufixo = SUPERFICIE de destino (convencao prepare_assets): dark = cor clara
+    icon = ASSETS / ("logo_icon-light.png" if light else "logo_icon-dark.png")
     if icon.exists() and alib.has_logo_assets(brand):
         ic = Image.open(icon).convert("RGBA")
         s = int(W * 0.06); ic = ic.resize((s, int(ic.height * s / ic.width)), Image.LANCZOS)

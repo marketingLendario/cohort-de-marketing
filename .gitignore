@@ -18,6 +18,10 @@
 *.bak
 .cache/
 
+# Python (runtime das skills — nunca versionar, ver SKILL.md da factory)
+__pycache__/
+*.pyc
+
 # Node (caso adicione build no futuro)
 node_modules/
 npm-debug.log*

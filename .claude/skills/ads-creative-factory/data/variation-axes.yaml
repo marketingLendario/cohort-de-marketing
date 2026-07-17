@@ -62,6 +62,15 @@ axes:
     - { id: dark_stacked, fragment: "two vertically stacked dark comparison panels" }
     - { id: light_check, fragment: "a light checklist comparison on a clean high-contrast surface" }
 
+  chat_style:
+    - { id: whatsapp_dark, fragment: "a native dark-mode chat conversation screenshot carrying the hook as messages" }
+    - { id: whatsapp_light, fragment: "a native light-mode chat conversation screenshot carrying the hook as messages" }
+    - { id: notification_stack, fragment: "a dark lock screen with stacked incoming notifications carrying the hook" }
+
+  tweet_style:
+    - { id: dark_card, fragment: "a dark social post card floating over the pack's dark textured backdrop" }
+    - { id: light_card, fragment: "a light social post card floating over the pack's light backdrop" }
+
 # LAYOUTS — variam a ESTRUTURA do criativo (não só o objeto). Evita que tudo
 # vire "objeto dourado + bloco de texto". Consumidos por typeset (posição do
 # texto) e pelo prompt de fundo (zona reservada). Ver typeset.LAYOUTS.

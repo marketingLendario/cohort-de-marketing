@@ -29,3 +29,19 @@ archetypes:
     label: "Didático / Comparativo"
     mode: didactic
     theme: dark
+  - id: chat_notification
+    label: "Print de Conversa / Notificação"
+    mode: chat
+    theme: native          # espécie nativa: gate builtin.default-native (como UGC)
+    # 100% programático (PIL) — nenhuma chamada de geração de imagem.
+    # Contato = persona (foto real) ou identity do brand pack. 3 estilos
+    # internos no eixo chat_style: whatsapp_dark / whatsapp_light /
+    # notification_stack.
+  - id: tweet_card
+    label: "Meme / Tweet Card"
+    mode: tweet
+    theme: native          # o card é nativo; o backdrop do pack fica por baixo
+    # 100% programático (PIL) — card estilo post/X flutuando sobre backdrop do
+    # brand pack com grain. Autor = persona (avatar real) ou identity do pack.
+    # 2 estilos internos no eixo tweet_style: dark_card / light_card.
+    theme: dark

@@ -17,9 +17,12 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 import archetype_render  # noqa: E402
+import chat as chat_render  # noqa: E402
 import doctor  # noqa: E402
 import factory  # noqa: E402
 import gate  # noqa: E402
+import person  # noqa: E402
+import tweet as tweet_render  # noqa: E402
 from catalog_loader import resolve_catalog  # noqa: E402
 
 
@@ -35,6 +38,13 @@ def manifest() -> dict:
                 "required_fields": ["headline"], "compatible_mechanisms": ["acme.proof"],
                 "internal_variants": ["material"], "gate_profile": "acme.default",
                 "needs_persona": False,
+            }, {
+                "id": "acme.candid", "label": "Persona Candid Acme",
+                "renderer_mode": "person", "theme": "native", "formats": ["feed", "story"],
+                "required_fields": ["headline"], "compatible_mechanisms": ["acme.proof"],
+                "compatible_ugc_scenes": ["acme.desk"],
+                "internal_variants": ["ugc_scene"], "gate_profile": "acme.default",
+                "needs_persona": True,
             }],
             "mechanisms": [{
                 "id": "acme.proof", "kind": "visual", "label": "Prova Acme",
@@ -123,7 +133,7 @@ class FactoryCatalogRuntimeTests(unittest.TestCase):
         ):
             result = factory.run_campaign(str(self.campaign))
 
-        self.assertEqual(result["factory_version"], "2.2.1")
+        self.assertEqual(result["factory_version"], "2.3.0")
         self.assertEqual(result["catalog_hash"], captured["hash"])
         self.assertEqual(result["extension_packs"][0]["id"], "acme-extension")
         self.assertIn("mechanism legado", result["compatibility_warnings"][0])
@@ -166,6 +176,7 @@ class FactoryCatalogRuntimeTests(unittest.TestCase):
         implementations = {
             "hybrid": "_hybrid", "person": "_person", "mockup": "_mockup",
             "ugc": "_ugc", "didactic": "_didactic",
+            "chat": "_chat", "tweet": "_tweet",
         }
         for mode, function_name in implementations.items():
             arch = {"id": f"test-{mode}", "mode": mode, "theme": "dark"}
@@ -183,6 +194,73 @@ class FactoryCatalogRuntimeTests(unittest.TestCase):
         self.assertIn("ugc_scene_id", archetype_render.resolve_internal_selection(arches["ugc"], catalog))
         self.assertIn("mockup_device_id", archetype_render.resolve_internal_selection(arches["mockup"], catalog))
         self.assertIn("didactic_style_id", archetype_render.resolve_internal_selection(arches["didactic"], catalog))
+        self.assertIn("chat_style_id", archetype_render.resolve_internal_selection(arches["chat"], catalog))
+        self.assertIn("tweet_style_id", archetype_render.resolve_internal_selection(arches["tweet"], catalog))
+
+    def test_person_without_declared_scene_keeps_no_internal_selection(self) -> None:
+        # Regressao: person_authority (builtin) nao declara compatible_ugc_scenes,
+        # entao a resolucao precisa continuar vazia — sem isso, edit_to_scene
+        # cairia na string fixa de sempre e o resultado nao pode mudar. Busca
+        # por id (nao por "mode") porque agora ha dois arquetipos person no
+        # catalogo deste fixture (person_authority e acme.candid).
+        catalog = resolve_catalog([self.pack])
+        arch = dict(catalog.get_entity("archetypes", "person_authority"))
+        self.assertEqual(archetype_render.resolve_internal_selection(arch, catalog), {})
+
+    def test_person_archetype_with_declared_scene_resolves_it(self) -> None:
+        catalog = resolve_catalog([self.pack])
+        arch = dict(catalog.get_entity("archetypes", "acme.candid"))
+        selection = archetype_render.resolve_internal_selection(
+            arch, catalog, persona={"name": "Ana"}
+        )
+        self.assertEqual(selection, {"ugc_scene_id": "acme.desk"})
+
+    def test_person_renderer_without_scene_uses_default_prompt(self) -> None:
+        catalog = resolve_catalog([self.pack])
+        arch = {"id": "person_authority", "mode": "person", "renderer_mode": "person", "theme": "dark"}
+        persona = {"name": "Ana"}
+        with (
+            mock.patch.object(archetype_render.person_mod, "get", return_value=persona),
+            mock.patch.object(archetype_render.person_mod, "pick_photo", return_value="photo.png"),
+            mock.patch.object(archetype_render.person_mod, "edit_to_scene", return_value="edited.png") as edit,
+            mock.patch.object(archetype_render.person_mod, "compose_person", return_value="out.png"),
+        ):
+            archetype_render._person(self.brand, {"headline": "Prova"}, arch, "base", ["feed"], persona, catalog)
+        self.assertIsNone(edit.call_args.kwargs.get("scene"))
+
+    def test_person_renderer_passes_resolved_scene_to_edit(self) -> None:
+        catalog = resolve_catalog([self.pack])
+        arch = dict(catalog.get_entity("archetypes", "acme.candid"))
+        arch["mode"] = arch["renderer_mode"]
+        hook = {"headline": "Prova", "_ugc_scene_id": "acme.desk"}
+        persona = {"name": "Ana"}
+        with (
+            mock.patch.object(archetype_render.person_mod, "get", return_value=persona),
+            mock.patch.object(archetype_render.person_mod, "pick_photo", return_value="photo.png"),
+            mock.patch.object(archetype_render.person_mod, "edit_to_scene", return_value="edited.png") as edit,
+            mock.patch.object(archetype_render.person_mod, "compose_person", return_value="out.png"),
+        ):
+            result = archetype_render._person(
+                self.brand, hook, arch, "base", ["feed"], persona, catalog
+            )
+        self.assertEqual(result, {"feed": "out.png"})
+        self.assertEqual(edit.call_args.kwargs.get("scene", {}).get("id"), "acme.desk")
+
+    def test_build_edit_prompt_without_scene_matches_fixed_constant(self) -> None:
+        self.assertEqual(person.build_edit_prompt(None), person.EDIT_PROMPT)
+
+    def test_build_edit_prompt_with_scene_preserves_face_and_uses_scene_fields(self) -> None:
+        scene = {
+            "setting": "mesa domestica", "shot": "foto vertical de celular",
+            "lighting": "luz de janela", "props": ["notebook"],
+            "authenticity_guards": ["espontaneo"], "negative_guards": ["estudio"],
+        }
+        prompt = person.build_edit_prompt(scene)
+        self.assertIn("do NOT generate a new person from scratch", prompt)
+        self.assertIn("pixel-faithful", prompt)
+        self.assertIn("mesa domestica", prompt)
+        self.assertIn("luz de janela", prompt)
+        self.assertIn("estudio", prompt)
 
     def test_campaign_honors_explicit_namespaced_ugc_scene(self) -> None:
         config = yaml.safe_load(self.campaign.read_text())
@@ -209,6 +287,70 @@ class FactoryCatalogRuntimeTests(unittest.TestCase):
         jobs = {job["_archetype"]["id"]: job for job in captured["jobs"]}
         self.assertEqual(jobs["ugc_native"]["_ugc_scene_id"], "acme.desk")
         self.assertNotIn("_ugc_scene_id", jobs["light_clean"])
+
+    def test_chat_and_tweet_render_real_outputs_without_image_calls(self) -> None:
+        # Especies nativas programaticas: renderizam de verdade (PIL + fontes
+        # neutras) e NUNCA chamam geracao de imagem — codex_image aqui explode.
+        render_brand = {
+            "name": "Synthetic Brand",
+            "formats": {"feed": {"w": 1080, "h": 1350, "aspect": "4:5"},
+                        "story": {"w": 1080, "h": 1920, "aspect": "9:16"}},
+            "assets": {"files": []},
+            "identity": {"display_name": "Marca Sintética", "handle": "marca.sintetica"},
+            "palette": {"primary": "#1A1712", "secondary": "#6B7280", "background": "#111111",
+                        "foreground": "#F9FAFB", "accent": "#C9B298"},
+        }
+        hook = {"headline": "Prova clara em uma frase.", "sub": "Ao vivo e de graça.",
+                "cta": "Quero participar", "eyebrow": "PERFORMANCE"}
+        out = self.root / "native-render"
+        out.mkdir()
+        with mock.patch.object(factory.alib, "codex_image",
+                               side_effect=AssertionError("especie nativa nao chama imagem")):
+            for style in chat_render.STYLES:
+                path = chat_render.render_chat(
+                    hook, str(out / f"chat-{style}.png"), H=1350, style=style,
+                    brand=render_brand,
+                )
+                with Image.open(path) as rendered:
+                    self.assertEqual(rendered.size, (1080, 1350))
+            for style in tweet_render.STYLES:
+                path = tweet_render.render_tweet(
+                    hook, str(out / f"tweet-{style}.png"), H=1350, style=style,
+                    brand=render_brand,
+                )
+                with Image.open(path) as rendered:
+                    self.assertEqual(rendered.size, (1080, 1350))
+
+    def test_campaign_honors_explicit_chat_and_tweet_styles(self) -> None:
+        config = yaml.safe_load(self.campaign.read_text())
+        config["params"]["archetypes"] = ["chat_notification", "tweet_card"]
+        config["params"]["variants_per_hook"] = 2
+        config["hooks"][0]["chat_style_id"] = "builtin.chat_style.notification_stack"
+        config["hooks"][0]["tweet_style_id"] = "builtin.tweet_style.light_card"
+        self.campaign.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+        captured: dict = {}
+
+        def fake_render(jobs, _brand, _params, _work, _concurrency, _catalog):
+            captured["jobs"] = jobs
+            return [{"id": job["id"], "status": "OK"} for job in jobs]
+
+        with (
+            mock.patch.object(factory.alib, "OUT_DIR", self.out),
+            mock.patch.object(factory.alib, "load_brand", return_value=self.brand),
+            mock.patch.object(factory.alib, "has_logo_assets", return_value=False),
+            mock.patch.object(factory.sat_mod, "load_used", return_value=set()),
+            mock.patch.object(factory.sat_mod, "save_used"),
+            mock.patch.object(factory, "_render_jobs_ordered", side_effect=fake_render),
+        ):
+            factory.run_campaign(str(self.campaign))
+
+        jobs = {job["_archetype"]["id"]: job for job in captured["jobs"]}
+        self.assertEqual(jobs["chat_notification"]["_chat_style_id"],
+                         "builtin.chat_style.notification_stack")
+        self.assertEqual(jobs["tweet_card"]["_tweet_style_id"],
+                         "builtin.tweet_style.light_card")
+        self.assertNotIn("_tweet_style_id", jobs["chat_notification"])
+        self.assertNotIn("_chat_style_id", jobs["tweet_card"])
 
     def test_doctor_resolves_explicit_extension_catalog(self) -> None:
         result = doctor.diagnose(pack_only=True, extension_packs=[str(self.pack)])
