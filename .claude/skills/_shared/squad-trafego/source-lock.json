@@ -12,14 +12,14 @@
     "canonicalRoot": ".claude/skills",
     "mirrorRoot": ".agents/skills",
     "prdAuthority": "PRD-A3-trafego-v1.md",
-    "localChange": "leitor-de-metricas reconciled; briefista artifact contract and local pilot status documented"
+    "localChange": "Reconciliado no merge integration/epic-16-17-gate0: SKILL.md de trafego (Modo API da main + adicoes do gate-0 em diagnosticador/leitor). Hashes regenerados do conteudo mesclado — requer bencao humana/@devops ou re-promocao do sinkra-hub."
   },
   "files": {
-    "zelador/SKILL.md": "054c1e164e4f8472a296d267d38ef61f6ddad1e2b13995a987feb8480ee5b2ee",
-    "briefista/SKILL.md": "98650ebe1d75ffaa75d4b2b4191a19fb2d1aa80d874507a1492ae04359596058",
-    "estruturador/SKILL.md": "4dbd3cc269caaad9747459bba5d583f0b491027158bb51326e8a0bf507042a77",
-    "leitor-de-metricas/SKILL.md": "e2bbc61fb0b288bd50f26174916005dbff316861c788f8635018048009365f7a",
-    "diagnosticador/SKILL.md": "c4a1c42434f2ecd27e55ad04203eb7685bc4a916f97c84634b79bd8c3a90127f",
+    "zelador/SKILL.md": "1439e6b7554cfc6d5de62d89e76d75f4c838b3f948612984b4251142d3edb527",
+    "briefista/SKILL.md": "da505668551916904a30b9ce5c5b30ced05bd001d86130c372ca0d414c788320",
+    "estruturador/SKILL.md": "7cc149033efc0ddd9faa74bebee9e72bab6342ddee575140155d376c42d71233",
+    "leitor-de-metricas/SKILL.md": "7ec41492c02cbe2af7efd2a4d2a03557330b341221b065aabd04b06906299678",
+    "diagnosticador/SKILL.md": "80054310240ff330b1bc74dc780089b1407e204dfc588e3cbc19c92aad1b2adb",
     "_shared/squad-trafego/README.md": "6ef6a173cdef918898755a288da1a6bf1052385bc7092b4386e4b5d33044aee9",
     "_shared/squad-trafego/painel-da-semana-tmpl.yaml": "61bc165b9aa707d53b06abe4bb98d1fa7dffc21cac924da55e725a00c9d78adc",
     "_shared/squad-trafego/CONTRACT-DECISION.md": "cf3ea0a3596f965e86621273d1fa50a47b5a4494f2fb22e01eb1960877691484",

@@ -107,7 +107,7 @@ for (const skill of catalog.skills) {
     const skillRoot = dirname(canonicalPath);
     const releaseManifest = JSON.parse(readFileSync(join(skillRoot, 'source-manifest.json'), 'utf8'));
     assert(releaseManifest.publication?.verdict === 'PASS', 'ads-creative-factory release verdict must be PASS');
-    assert(releaseManifest.releaseVersion === '2.2.1', 'ads-creative-factory release version must be 2.2.1');
+    assert(releaseManifest.releaseVersion === '2.3.0', 'ads-creative-factory release version must be 2.3.0');
     const allowedPaths = [...(releaseManifest.allowList ?? [])].sort();
     const releasedPaths = [...(releaseManifest.files ?? []).map((file) => file.path)].sort();
     assert(new Set(allowedPaths).size === allowedPaths.length, 'ads-creative-factory allow-list contains duplicates');
