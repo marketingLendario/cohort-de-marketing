@@ -1,0 +1,126 @@
+{
+  "story": "12.W5.1",
+  "startedAt": "2026-07-17T02:54:56.470Z",
+  "fixture": {
+    "workspaceId": "90510000-0000-0000-0000-000000000000",
+    "emptyProjectId": "90510000-0000-0000-0000-000000000e01",
+    "warningProjectId": "90510000-0000-0000-0000-000000000a01",
+    "readyProjectId": "story-12-w5-1-pilot-ready",
+    "demoAuth": false,
+    "seededFromFilesystem": true
+  },
+  "scenarios": [
+    {
+      "ac": "AC1",
+      "project": "empty",
+      "blocked": true,
+      "blockingCode": "PROJECT_NAME_INVALID",
+      "campaignsCreated": 0
+    },
+    {
+      "ac": "checklist",
+      "project": "warning",
+      "overallState": "ready_with_warnings"
+    },
+    {
+      "ac": "AC2/AC3",
+      "project": "ready",
+      "campaignId": "fbdbc094-58eb-4633-8f72-5ee89e811eb2",
+      "draftCreated": true,
+      "briefistaTerminalStatus": "succeeded"
+    }
+  ],
+  "recovery": [
+    {
+      "scenario": "legacy-route",
+      "bridged": true
+    },
+    {
+      "scenario": "stale-snapshot-blocks-retry",
+      "blocked": true
+    },
+    {
+      "scenario": "reload-mid-run",
+      "reattached": true
+    },
+    {
+      "scenario": "stream-loss-toggle",
+      "recovered": true
+    },
+    {
+      "scenario": "bff-restart-after-terminal",
+      "serverBackUp": true
+    }
+  ],
+  "visual": {
+    "desktop": "campaign-readiness-desktop.png",
+    "mobile": "campaign-readiness-mobile.png",
+    "overlaps": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ARTIFACT_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ARTIFACT_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ARTIFACT_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ARTIFACT_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ARTIFACT_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ARTIFACT_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING",
+      "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. RECOMMENDED_MISSING"
+    ],
+    "unexpectedConsoleErrors": [],
+    "knownPreExistingNoiseCount": 36,
+    "failedResponses": [
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:54321/rest/v1/ads_unit_economics?select=campaign_id%2Cworkspace_id%2Cproduct_price_cents%2Cgross_margin_pct%2Cad_spend_monthly_cents%2Ccustomers_monthly%2Crepeat_purchase_rate%2Cavg_customer_lifespan_months%2Corder_bump%2Cupsells%2Ccac_cents%2Cltv_cents%2Cltv_cac%2Cpayback_months%2Cmax_cpa_cents%2Cbreakeven_roas%2Chealth%2Ccomputed_at&campaign_id=eq.90510000-0000-0000-0000-00000000ca01"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:54321/rest/v1/ads_unit_economics?select=campaign_id%2Cworkspace_id%2Cproduct_price_cents%2Cgross_margin_pct%2Cad_spend_monthly_cents%2Ccustomers_monthly%2Crepeat_purchase_rate%2Cavg_customer_lifespan_months%2Corder_bump%2Cupsells%2Ccac_cents%2Cltv_cents%2Cltv_cac%2Cpayback_months%2Cmax_cpa_cents%2Cbreakeven_roas%2Chealth%2Ccomputed_at&campaign_id=eq.90510000-0000-0000-0000-00000000ca01"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:54321/rest/v1/ads_unit_economics?select=campaign_id%2Cworkspace_id%2Cproduct_price_cents%2Cgross_margin_pct%2Cad_spend_monthly_cents%2Ccustomers_monthly%2Crepeat_purchase_rate%2Cavg_customer_lifespan_months%2Corder_bump%2Cupsells%2Ccac_cents%2Cltv_cents%2Cltv_cac%2Cpayback_months%2Cmax_cpa_cents%2Cbreakeven_roas%2Chealth%2Ccomputed_at&campaign_id=eq.90510000-0000-0000-0000-00000000ca01"
+      },
+      {
+        "status": 404,
+        "url": "http://127.0.0.1:54321/rest/v1/ads_unit_economics?select=campaign_id%2Cworkspace_id%2Cproduct_price_cents%2Cgross_margin_pct%2Cad_spend_monthly_cents%2Ccustomers_monthly%2Crepeat_purchase_rate%2Cavg_customer_lifespan_months%2Corder_bump%2Cupsells%2Ccac_cents%2Cltv_cents%2Cltv_cac%2Cpayback_months%2Cmax_cpa_cents%2Cbreakeven_roas%2Chealth%2Ccomputed_at&campaign_id=eq.90510000-0000-0000-0000-00000000ca01"
+      }
+    ],
+    "unexpectedFailedResponses": []
+  },
+  "guards": [
+    "Toda a suíte roda contra Supabase LOCAL (127.0.0.1) e um BFF local — nunca contra a Graph API real da Meta.",
+    "Todo request de rede é interceptado; qualquer mutação (POST/PUT/PATCH/DELETE) para um domínio da Meta falha o teste imediatamente.",
+    "Nenhuma publicação, pausa, escala ou kill de campanha foi enviada à Meta."
+  ],
+  "meta-mutation-requests": [],
+  "finishedAt": "2026-07-17T02:55:52.036Z"
+}

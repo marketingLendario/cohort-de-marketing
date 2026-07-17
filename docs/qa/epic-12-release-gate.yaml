@@ -1,0 +1,92 @@
+epic: 12
+title: "Campanhas confiáveis: readiness, preflight e recuperação"
+story: "12.W5.1"
+date: "2026-07-17"
+verdict: PASS
+accountable: "Pedro Valério"
+executor: "@qa"
+quality_gate: "@po"
+
+environment:
+  supabase: local (127.0.0.1, project_id academia-lendaria-ads-studio)
+  bff: local (127.0.0.1:3303, LOCAL_SKILL_RUNNER_ENABLED=true)
+  vite: local (127.0.0.1:5179, VITE_DEMO_AUTH=false)
+  codex_cli: "real, codex exec --sandbox read-only (execução ao vivo do Briefista)"
+  node: "22.x"
+
+commands:
+  - name: "test"
+    command: "npm --prefix apps/academia-lendaria-ads-studio test"
+    result: PASS
+    detail: "434 testes / 53 arquivos (vitest)"
+  - name: "typecheck"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run typecheck"
+    result: PASS
+  - name: "lint"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run lint"
+    result: PASS
+  - name: "build"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run build"
+    result: PASS
+  - name: "build:server"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run build:server"
+    result: PASS
+  - name: "git diff --check"
+    command: "git diff --check"
+    result: PASS
+    detail: "sem erros de whitespace/conflito"
+  - name: "test:db"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run test:db"
+    result: PASS
+    detail: "75 testes pgTAP / 7 arquivos"
+  - name: "lint:db"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run lint:db"
+    result: PASS
+    detail: "No schema errors found"
+  - name: "playwright (campaign-readiness-gate, desktop+mobile)"
+    command: "cd apps/academia-lendaria-ads-studio && npx playwright test e2e/campaign-readiness-gate.spec.ts --config=playwright.config.ts --project=desktop --project=mobile"
+    result: PASS
+    detail: "8/8 (desktop+mobile)"
+  - name: "playwright (campaign-readiness-pilot, integrado — 12.W5.1)"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run test:e2e:campaign-readiness-pilot"
+    result: PASS
+    detail: "8/8 (run limpo determinístico, 56.3s; Codex ao vivo real)"
+  - name: "evidence:privacy"
+    command: "npm --prefix apps/academia-lendaria-ads-studio run evidence:privacy -- ../../docs/qa/evidence/epic-12-campaign-readiness.json"
+    result: PASS
+    detail: "Privacy gate aprovado: 1 arquivo(s)"
+
+acceptance_criteria:
+  - id: AC1
+    description: "Projeto vazio bloqueia Campanhas (nav), checklist/pendência com ação inline, zero campanha criada"
+    result: PASS
+  - id: AC2
+    description: "Projeto pronto cria draft via RPC transacional; execução ao vivo do Briefista prova fase/progresso/erro/retry/cancelamento/terminal"
+    result: PASS
+  - id: AC3
+    description: "Recovery: snapshot obsoleto (STALE_READINESS), reload, restart do BFF, perda de stream, rota legada"
+    result: PASS
+  - id: AC4
+    description: "Desktop/mobile 390px sem overflow, foco por teclado, sem erro de console inesperado"
+    result: PASS
+  - id: AC5
+    description: "Zero requisição mutativa a domínio da Meta durante toda a suíte (interceptação de rede real)"
+    result: PASS
+
+evidence:
+  raw: "docs/qa/evidence/epic-12-campaign-readiness.json"
+  report: "docs/qa/epic-12-campaign-readiness.md"
+  meta_mutation_requests: []
+  unexpected_console_errors: []
+  unexpected_failed_responses: []
+  known_pre_existing_noise_count: 36
+
+blockers: []
+
+notes: >
+  Todos os quality_gate_tools + o piloto E2E integrado (contra Supabase local
+  real + BFF real + execução real do Codex CLI, zero mutação na Meta) estão
+  verdes. Evidência sanitizada em docs/qa/evidence/epic-12-campaign-readiness.json
+  passa o privacy gate. Correções da re-entrada por checkpoint ficaram no
+  file_scope (spec + fixture do piloto), sem tocar em código de app — ver Dev
+  Agent Record da STORY-12.W5.1.

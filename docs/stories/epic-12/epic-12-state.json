@@ -1,0 +1,62 @@
+{
+  "schema_version": "epic-state-v1",
+  "epic_id": "12",
+  "title": "Campanhas confiáveis: readiness, preflight e recuperação",
+  "status": "Done",
+  "created": "2026-07-16",
+  "closed": "2026-07-17",
+  "waves": [
+    {
+      "wave_id": "W1",
+      "status": "done",
+      "build_dependencies": [],
+      "parallel_groups": [["12.W1.1"]],
+      "stories": [
+        { "story_id": "12.W1.1", "status": "Done", "depends_on": [], "ids_verdict": "CREATE" }
+      ]
+    },
+    {
+      "wave_id": "W2",
+      "status": "done",
+      "build_dependencies": ["W1"],
+      "parallel_groups": [["12.W2.1"]],
+      "stories": [
+        { "story_id": "12.W2.1", "status": "Done", "depends_on": ["12.W1.1"], "ids_verdict": "CREATE" }
+      ]
+    },
+    {
+      "wave_id": "W3",
+      "status": "done",
+      "build_dependencies": ["W2"],
+      "parallel_groups": [["12.W3.1"]],
+      "stories": [
+        { "story_id": "12.W3.1", "status": "Done", "depends_on": ["12.W1.1", "12.W2.1"], "ids_verdict": "ADAPT" }
+      ]
+    },
+    {
+      "wave_id": "W4",
+      "status": "done",
+      "build_dependencies": ["W3"],
+      "parallel_groups": [["12.W4.2"], ["12.W4.1"]],
+      "stories": [
+        { "story_id": "12.W4.2", "status": "Done", "depends_on": ["12.W1.1"], "ids_verdict": "CREATE" },
+        { "story_id": "12.W4.1", "status": "Done", "depends_on": ["12.W3.1", "12.W4.2"], "ids_verdict": "ADAPT" }
+      ]
+    },
+    {
+      "wave_id": "W5",
+      "status": "done",
+      "build_dependencies": ["W4"],
+      "parallel_groups": [["12.W5.1"]],
+      "stories": [
+        { "story_id": "12.W5.1", "status": "Done", "depends_on": ["12.W4.1", "12.W4.2"], "ids_verdict": "CREATE" }
+      ]
+    }
+  ],
+  "references": {
+    "epic_file": "docs/stories/epic-12/EPIC-12-CAMPAIGNS-READINESS-GATE.md",
+    "pilot": "docs/qa/epic-12-campaign-readiness.md",
+    "evidence": "docs/qa/evidence/epic-12-campaign-readiness.json",
+    "release_gate": "docs/qa/epic-12-release-gate.yaml"
+  }
+}

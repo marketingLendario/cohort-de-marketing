@@ -31,6 +31,8 @@
     "test:visual": "node scripts/visual-qa.mjs",
     "test:db": "supabase test db",
     "lint:db": "supabase db lint --local --level warning",
+    "test:e2e:campaign-readiness-pilot": "playwright test e2e/campaign-readiness-pilot.spec.ts --reporter=line --workers=1",
+    "evidence:privacy": "tsx server/evidence-privacy.ts",
     "lint": "eslint .",
     "preview": "vite preview",
     "start:server": "node dist/server/start.js"

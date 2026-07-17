@@ -1,0 +1,76 @@
+story: "12.W5.1"
+epic: 12
+title: "E2E integrado e piloto Pedro do gate de campanhas"
+date: "2026-07-17"
+verdict: PASS
+accountable: "Pedro Valério"
+
+# Deliverable Reality Gate — cada entrega existe on-disk e foi verificada
+# (CHK-13 equivalente). Paths relativos à raiz do worktree.
+deliverables:
+  - path: "apps/academia-lendaria-ads-studio/e2e/campaign-readiness-pilot.spec.ts"
+    kind: e2e-spec
+    reality: exists
+    note: "8 testes; piloto integrado AC1-AC5; gatilho de staleness real, asserções determinísticas, whitelist 502, seed + reattach do run 2"
+  - path: "apps/academia-lendaria-ads-studio/e2e/fixtures/campaign-readiness/fixture.mjs"
+    kind: fixture
+    reality: exists
+    note: "seed real via service_role (1 workspace, 3 projetos), seedReadyCampaignPlan, cleanup de campaign_plan_revisions"
+  - path: "apps/academia-lendaria-ads-studio/e2e/fixtures/campaign-readiness/vite.config.mjs"
+    kind: fixture-config
+    reality: exists
+  - path: "apps/academia-lendaria-ads-studio/e2e/fixtures/campaign-readiness/evidence/run.json"
+    kind: raw-evidence
+    reality: exists
+  - path: "apps/academia-lendaria-ads-studio/server/evidence-privacy.ts"
+    kind: privacy-gate
+    reality: exists
+  - path: "apps/academia-lendaria-ads-studio/server/evidence-privacy.test.ts"
+    kind: unit-test
+    reality: exists
+  - path: "apps/academia-lendaria-ads-studio/package.json"
+    kind: scripts
+    reality: modified
+    note: "+2 scripts: test:e2e:campaign-readiness-pilot, evidence:privacy"
+  - path: "docs/qa/evidence/epic-12-campaign-readiness.json"
+    kind: evidence-sanitized
+    reality: exists
+    note: "passa evidence:privacy; meta-mutation-requests: []; unexpectedConsoleErrors/FailedResponses: []"
+  - path: "docs/qa/epic-12-campaign-readiness.md"
+    kind: report
+    reality: exists
+  - path: "docs/qa/epic-12-release-gate.yaml"
+    kind: release-gate
+    reality: exists
+    note: "verdict PASS"
+  - path: "docs/qa/epic-12-deliverable-manifest.yaml"
+    kind: deliverable-manifest
+    reality: exists
+    note: "este arquivo"
+  - path: "docs/stories/epic-12/EPIC-12-CAMPAIGNS-READINESS-GATE.md"
+    kind: epic-file
+    reality: exists
+  - path: "docs/stories/epic-12/epic-12-state.json"
+    kind: epic-state
+    reality: exists
+    note: "W5 done; story 12.W5.1 Done"
+  - path: "docs/stories/epic-12/STORY-12.W5.1-integrated-e2e-and-pedro-pilot.md"
+    kind: story
+    reality: exists
+    note: "status Done; Dev Agent Record + QA Results (@po PASS 93/100) preenchidos"
+
+quality_gates:
+  test: PASS            # 434 testes / 53 arquivos
+  typecheck: PASS
+  lint: PASS
+  build: PASS
+  build_server: PASS
+  git_diff_check: PASS
+  test_db: PASS         # 75 testes pgTAP / 7 arquivos
+  lint_db: PASS
+  playwright_gate: PASS # 8/8 desktop+mobile (campaign-readiness-gate)
+  e2e_pilot: PASS       # 8/8 (Codex ao vivo real, 56.3s)
+  evidence_privacy: PASS
+
+quality_gate_independent: "@po PASS · score 93/100 · 2 findings LOW (WON'T_FIX justificado)"
+deploy: none            # deploy_type: none — Phase 4 pulada
