@@ -34,9 +34,7 @@ yarn-error.log*
 .env
 .env.local
 secrets.json
-<<<<<<< HEAD
 pesquisa-avatar-cursos-tech-migracao-carreira/
-=======
 
 # interno da equipe — não vai pro repo do aluno
 CHANGELOG.md
@@ -45,4 +43,3 @@ scripts/lib/.test-out/
 
 # runtime do squad de tráfego (log de publicações, snapshots)
 outputs/
->>>>>>> 84f0b31ec0d37e24853f703f8225135a98398fc6
