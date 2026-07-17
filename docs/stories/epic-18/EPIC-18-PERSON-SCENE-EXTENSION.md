@@ -2,8 +2,9 @@
 
 ## Status
 
-InProgress — 18.W1.1 implementada e auto-verificada (InReview); pendente
-sign-off humano/@po e release management (@devops).
+Done — 18.W1.1 validada por agente PO separado (PASS, nenhum finding aberto)
+e release 2.3.0 cortado (entrada `epic18Files` no manifest generator +
+`source-manifest.json` regenerado, compartilhado com o EPIC-20).
 
 ## Baseline
 

@@ -34,6 +34,7 @@
     "scripts/catalog_authoring.py",
     "scripts/catalog_cli.py",
     "scripts/catalog_loader.py",
+    "scripts/chat.py",
     "scripts/collect_finals.py",
     "scripts/compose.py",
     "scripts/didactic.py",
@@ -50,6 +51,7 @@
     "scripts/refine.py",
     "scripts/review.py",
     "scripts/saturation.py",
+    "scripts/tweet.py",
     "scripts/typeset.py",
     "scripts/ugc.py",
     "scripts/variation.py"
@@ -80,7 +82,7 @@
       "kind": "source",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "story-15.W1.1"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -88,10 +90,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for the 2.2.1 transparency hotfix."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 11202,
-      "sha256": "3c2f0a4108424712ce65642214ab918c3dd8ea5dbb1cef5da0f2f3064d30a249"
+      "bytes": 13860,
+      "sha256": "b857cc49cc422bafbded3259f168aab8875ceb933e6d1cc8a097581afc5166ac"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -117,8 +119,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -126,10 +128,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 991,
-      "sha256": "73945fb958e32850940e48d85d73ee9d5be497afa95461d2829578257f9e1c53"
+      "bytes": 1800,
+      "sha256": "1628ccf2fc9b8f2d7ebb31c1cee51726c428e36b4b6a0e02ff67214a2a52e4ad"
     },
     {
       "path": "data/gate-profiles.yaml",
@@ -194,7 +196,7 @@
       "kind": "source",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "epic-14"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -202,10 +204,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for Epic 14."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 5909,
-      "sha256": "1c5af06f3543b12dcc0b797de7ead1c739285af8a64df91ab6a5934d94e80efa"
+      "bytes": 6511,
+      "sha256": "d0390e8f595d605259d4e3beabeb671e021add94543cc20a137d57b5e268f4c6"
     },
     {
       "path": "fonts/InstrumentSerif-Italic.ttf",
@@ -346,7 +348,7 @@
       "kind": "schema",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "epic-14"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -354,10 +356,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for Epic 14."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 8414,
-      "sha256": "f44658b240de6fc2754bd888178f50be297497c6f195be54b17a6e7765acc1d3"
+      "bytes": 8460,
+      "sha256": "6729fc84ec038cb6b15e835093c25555160567a5eca732845467146cdc1a15a5"
     },
     {
       "path": "schemas/persona-pack.v1.schema.json",
@@ -422,7 +424,7 @@
       "kind": "source",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "epic-14"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -430,10 +432,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for Epic 14."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 11190,
-      "sha256": "94b1e8a3593529fcc209c3d29b03c38156906a7389575bfcbba72a103030b213"
+      "bytes": 14654,
+      "sha256": "b628c756cb6339445e8f7a6358e37a5d6a9fe0cb01767b501c053f82fb42cbce"
     },
     {
       "path": "scripts/build_brand_pack.py",
@@ -536,7 +538,7 @@
       "kind": "source",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "epic-14"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -544,10 +546,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for Epic 14."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 21783,
-      "sha256": "cf41e6792f3740038132abc05107884e331dcf99c82058610e10825000be2569"
+      "bytes": 21800,
+      "sha256": "bb41553ef53d627d92a2fa76dafcf58028c198dccb7fc1e48452225642f77386"
     },
     {
       "path": "scripts/catalog_loader.py",
@@ -555,7 +557,7 @@
       "kind": "source",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "story-15.W1.1"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -563,10 +565,29 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for the 2.2.1 transparency hotfix."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 12101,
-      "sha256": "a578e5dd065f6520e84852e687488fcc072f2362856d28c79c5bd1d022051f15"
+      "bytes": 12220,
+      "sha256": "cbd13971c07e7b352ef393655dfa5cc665ae022ecc38262032348c33ad1c8a91"
+    },
+    {
+      "path": "scripts/chat.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "story-20.W1.1"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
+      },
+      "bytes": 14965,
+      "sha256": "8961003bd0bc6be1522387c8c20ceb350a7528a9c7a381247188427bfa30bd77"
     },
     {
       "path": "scripts/collect_finals.py",
@@ -612,7 +633,7 @@
       "kind": "source",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "epic-14"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -620,10 +641,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for Epic 14."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 7554,
-      "sha256": "ee7053a68f0a15ba8e0350af45ef7fced392d937f656f0c5f17a3ffd1fa1c68f"
+      "bytes": 7635,
+      "sha256": "a01c110248c8378989ac9a1c3757a04b4df3eb9614c4d2ea5f205ff83a2ddf19"
     },
     {
       "path": "scripts/doctor.py",
@@ -650,7 +671,7 @@
       "kind": "source",
       "origin": {
         "repository": "cohort-de-marketing",
-        "commit": "epic-14"
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -658,10 +679,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Authored in the public repository and reviewed for Epic 14."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 25795,
-      "sha256": "bf80d497a8c1e209469440a4e3b36080551c335426afa817ccf5fad468513adb"
+      "bytes": 26088,
+      "sha256": "05841365fd7e34cec729280d51543d36f641923757a609b9e00c804e897f3d2d"
     },
     {
       "path": "scripts/finish.py",
@@ -782,8 +803,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "story-18.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -791,10 +812,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-18, parameterizable person scene)."
       },
-      "bytes": 6145,
-      "sha256": "5d85ee51028ae52dc0fb079968be9c85b1d3071eba14a7af107d1fd32b4683f7"
+      "bytes": 7783,
+      "sha256": "50a151bc908598b46f4be31625cc1a2f24bd41555e185b17dc3513bbdd893938"
     },
     {
       "path": "scripts/prepare_assets.py",
@@ -873,6 +894,25 @@
       "sha256": "379f79eaad6a00492d46fa3810f6e56c1e138d9c7f60aa2224721c8d94d68174"
     },
     {
+      "path": "scripts/tweet.py",
+      "package": "public",
+      "kind": "source",
+      "origin": {
+        "repository": "cohort-de-marketing",
+        "commit": "story-20.W1.1"
+      },
+      "license": {
+        "spdx": "MIT",
+        "status": "verified"
+      },
+      "redistribution": {
+        "status": "cleared",
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
+      },
+      "bytes": 8089,
+      "sha256": "04c16be42a4111ed89a10b33bce5eb1c7cccbf833adef0856bc447c4701d2d71"
+    },
+    {
       "path": "scripts/typeset.py",
       "package": "public",
       "kind": "source",
@@ -896,8 +936,8 @@
       "package": "public",
       "kind": "source",
       "origin": {
-        "repository": "sinkra-hub",
-        "commit": "2af6ec0102c8b20ac9397c919aa71c33c648bff8"
+        "repository": "cohort-de-marketing",
+        "commit": "story-20.W1.1"
       },
       "license": {
         "spdx": "MIT",
@@ -905,10 +945,10 @@
       },
       "redistribution": {
         "status": "cleared",
-        "reason": "Accountable authorized MIT redistribution in Story 13.W1.2."
+        "reason": "Authored in the public repository and reviewed for the 2.3.0 release (EPIC-20, native chat/tweet renderer modes)."
       },
-      "bytes": 5288,
-      "sha256": "c1fb6e3c0dd29e77bb51e9438bdfacdd255aa8fcd83bd983ffe8900dd7b35593"
+      "bytes": 5335,
+      "sha256": "d840339cd3ba54f6637356bcc5da9f7b7e902762cfa48babfa400a534c852354"
     },
     {
       "path": "scripts/variation.py",
@@ -930,5 +970,5 @@
       "sha256": "04acd93f386aab960bf712257310faf2488c959704425d806225b9cc94504bc0"
     }
   ],
-  "releaseVersion": "2.2.1"
+  "releaseVersion": "2.3.0"
 }
