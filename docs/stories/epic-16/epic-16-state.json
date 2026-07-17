@@ -1,0 +1,96 @@
+{
+  "schema_version": "epic-state-v1",
+  "epic_id": "16",
+  "namespace": "PUB",
+  "title": "Projeto canonico como fonte de verdade",
+  "status": "Done",
+  "verification_verdict": "PASS",
+  "created": "2026-07-14",
+  "depends_on": ["GATE-0"],
+  "implementation_authorized": true,
+  "baseline_ref": "wave/gate-0/public-baseline@06e2b64",
+  "waves": [
+    {
+      "wave_id": "W1",
+      "name": "Contrato e round-trip",
+      "status": "completed",
+      "parallel_groups": [["16.W1.1"], ["16.W1.2"]],
+      "stories": [
+        { "story_id": "16.W1.1", "status": "Done", "depends_on": [], "executor": "@dev", "quality_gate": "@architect" },
+        { "story_id": "16.W1.2", "status": "Done", "depends_on": ["16.W1.1"], "executor": "@dev", "quality_gate": "@qa" }
+      ]
+    },
+    {
+      "wave_id": "W2",
+      "name": "Artefatos e readiness",
+      "status": "completed",
+      "parallel_groups": [["16.W2.1"], ["16.W2.2"], ["16.W2.3"]],
+      "stories": [
+        {
+          "story_id": "16.W2.1",
+          "title": "Descoberta segura de artefatos e proveniência",
+          "status": "Done",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "cohort-de-marketing",
+          "effort": "8h",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "model": "sonnet",
+          "depends_on": ["16.W1.1"],
+          "consumes_artifacts_of": ["16.W1.1"]
+        },
+        {
+          "story_id": "16.W2.2",
+          "title": "Briefing, mapa e status orientados por catálogo",
+          "status": "Done",
+          "task_mode": "REFATORAR",
+          "deploy_type": "none",
+          "repo_target": "cohort-de-marketing",
+          "effort": "8h",
+          "executor": "@dev",
+          "quality_gate": "@qa",
+          "model": "sonnet",
+          "depends_on": ["16.W1.1", "16.W2.1"],
+          "consumes_artifacts_of": ["16.W1.1", "16.W2.1"]
+        },
+        {
+          "story_id": "16.W2.3",
+          "title": "Próxima skill determinística",
+          "status": "Done",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "cohort-de-marketing",
+          "effort": "8h",
+          "executor": "@dev",
+          "quality_gate": "@sinkra-chief",
+          "model": "opus",
+          "depends_on": ["16.W2.1", "16.W2.2"],
+          "consumes_artifacts_of": ["16.W2.1", "16.W2.2"]
+        }
+      ]
+    },
+    {
+      "wave_id": "W3",
+      "name": "Release gate",
+      "status": "completed",
+      "parallel_groups": [["16.W3.1"]],
+      "stories": [
+        {
+          "story_id": "16.W3.1",
+          "title": "Gate público de contrato e distribuição",
+          "status": "Done",
+          "task_mode": "VALIDAR",
+          "deploy_type": "none",
+          "repo_target": "cohort-de-marketing",
+          "effort": "8h",
+          "executor": "@qa",
+          "quality_gate": "@architect",
+          "model": "opus",
+          "depends_on": ["16.W1.2", "16.W2.2", "16.W2.3"],
+          "consumes_artifacts_of": ["16.W1.1", "16.W1.2", "16.W2.1", "16.W2.2", "16.W2.3"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "verdict": "nao_mensuravel",
+  "reasonCodes": ["INSUFFICIENT_DISTINCT_WEEKS"],
+  "proposedLevers": []
+}

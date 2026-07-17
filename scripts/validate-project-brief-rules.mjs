@@ -2,10 +2,12 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { createProjectBriefValidators } from './migrate-project-brief.mjs';
+
 const ROOT = process.cwd();
-const SCHEMA_PATH = join(ROOT, 'data/project-brief.schema.json');
 const RULES_PATH = join(ROOT, 'data/skill-unlock-rules.json');
 const SKILLS_DIR = join(ROOT, '.claude/skills');
+const FIXTURES_DIR = join(ROOT, 'data/contracts/fixtures/project-brief');
 
 function fail(message) {
   console.error(`✖ ${message}`);
@@ -19,25 +21,6 @@ function readJson(path) {
     fail(`JSON inválido em ${path}: ${error.message}`);
     return null;
   }
-}
-
-function getSchemaFieldPaths(schema) {
-  const fields = new Set();
-  const walk = (prefix, def) => {
-    for (const [fieldName, fieldDef] of Object.entries(def.properties ?? {})) {
-      const path = prefix ? `${prefix}.${fieldName}` : fieldName;
-      fields.add(path);
-      if (fieldDef?.type === 'object' && fieldDef.properties) {
-        walk(path, fieldDef);
-      }
-    }
-  };
-
-  for (const [groupName, groupDef] of Object.entries(schema.properties ?? {})) {
-    if (!groupDef || groupDef.type !== 'object' || !groupDef.properties) continue;
-    walk(groupName, groupDef);
-  }
-  return fields;
 }
 
 function collectRuleFields(rule) {
@@ -59,11 +42,18 @@ function collectRuleFields(rule) {
 }
 
 function main() {
-  const schema = readJson(SCHEMA_PATH);
   const rules = readJson(RULES_PATH);
-  if (!schema || !rules) return;
+  if (!rules) return;
 
-  const schemaFields = getSchemaFieldPaths(schema);
+  let validators;
+  try {
+    validators = createProjectBriefValidators();
+  } catch (error) {
+    fail(`Schemas ProjectBrief não compilam em AJV 2020: ${error.message}`);
+    return;
+  }
+
+  const schemaFields = validators.fieldPaths;
   const ruleSkills = new Set(Object.keys(rules.skills ?? {}));
   const canonicalSkills = new Set(
     readdirSync(SKILLS_DIR, { withFileTypes: true })
@@ -97,8 +87,22 @@ function main() {
     }
   }
 
+  const fixtureChecks = [
+    ['legacy-0.1.0.valid.json', validators.validateLegacy, true],
+    ['relative-source-path.valid.json', validators.validateLegacy, true],
+    ['project-brief-1.0.0.valid.json', validators.validateV1, true],
+    ['critical-field.invalid.json', validators.validateLegacy, false],
+    ['unknown-version.invalid.json', validators.validateLegacy, false],
+  ];
+  for (const [name, validate, expected] of fixtureChecks) {
+    const document = readJson(join(FIXTURES_DIR, name));
+    if (document && validate(document) !== expected) {
+      fail(`Fixture ${name} deveria ser ${expected ? 'válida' : 'inválida'} no schema compilado.`);
+    }
+  }
+
   if (!process.exitCode) {
-    console.log(`✓ Project brief rules OK: ${schemaFields.size} campos, ${ruleSkills.size} skills`);
+    console.log(`✓ Project brief rules OK: ${schemaFields.size} campos, ${ruleSkills.size} skills, schemas AJV 2020 compilados`);
   }
 }
 

@@ -22,3 +22,9 @@ A Aula 04 parte do histórico produzido na operação de tráfego. O handoff nã
 ## Regra de transição
 
 Uma métrica sem fonte, janela ou contexto não deve virar série histórica. Marque a lacuna antes de agregar o dado.
+
+## Próximo passo local
+
+Quando houver três semanas públicas e validadas, siga a sequência única no
+[README da Aula 4](../../aula-04/README.md). O walkthrough usa somente arquivos
+locais e mantém reconciliação, diagnóstico e decisão humana sem mutação na Meta.

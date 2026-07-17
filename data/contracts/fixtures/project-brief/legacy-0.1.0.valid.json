@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1.0",
+  "meta": {
+    "createdAt": "2026-06-01T12:00:00.000Z",
+    "updatedAt": "2026-06-02T15:30:00.000Z",
+    "completionStatus": "ready_for_research"
+  },
+  "project": {
+    "slug": "acme-labs",
+    "name": "Acme Labs",
+    "startingPoint": "rodando"
+  },
+  "market": {
+    "niche": "educacao",
+    "dominantPain": "Baixa previsibilidade de demanda"
+  },
+  "fieldMeta": {
+    "project.name": {
+      "source": "user",
+      "updatedAt": "2026-06-01T12:10:00.000Z"
+    },
+    "market.niche": {
+      "source": "artifact",
+      "sourcePath": "avatar-funil.md",
+      "updatedAt": "2026-06-02T14:00:00.000Z"
+    },
+    "market.dominantPain": {
+      "source": "pending_confirmation",
+      "updatedAt": "2026-06-02T15:00:00.000Z"
+    },
+    "offer.guarantee": {
+      "source": "not_applicable",
+      "updatedAt": "2026-06-02T15:10:00.000Z"
+    }
+  }
+}

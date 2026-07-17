@@ -96,6 +96,34 @@ leitor:
   nota_amostra: "amostra insuficiente para CPA — leia sinal de topo"
 ```
 
+## Modo histórico da Aula 4
+
+Quando o aluno já tiver um `WeeklyLedger v1.1` criado pelo fluxo da Aula 4, leia-o
+somente pelo CLI público e local:
+
+```bash
+node scripts/read-aula-04-history.mjs \
+  --ledger projetos/<slug>/aula-04/weekly-ledger.json \
+  --project-id <projectId> \
+  --campaign-id <campaignId>
+```
+
+Para reproduzir uma única semana, acrescente `--week-start AAAA-MM-DD`. O reader:
+
+- preserva literalmente valor ou ausência, selo, janela, fonte, premissa,
+  confirmação humana, revisão, `weeklyPanelId` e hash;
+- verifica o digest versionado da projeção antes de expor qualquer métrica e
+  rejeita ledgers legados sem essa prova, sem fabricar integridade retroativa;
+- rejeita lexemas numéricos fora da faixa segura antes do parse, sem arredondar;
+- separa `Real`, `Estimado` e `nao_fornecido` e aponta janelas incompatíveis;
+- não deriva delta, média, CPA, ROAS, taxa ou tendência;
+- não resolve referências, não abre artefatos brutos e não acessa Studio, API ou
+  credencial;
+- falha fechado se o ledger, o índice ou a seleção forem inválidos.
+
+O estado `comparable` só informa compatibilidade estrutural. Ele não é uma
+conclusão nem uma recomendação; a interpretação e a decisão continuam humanas.
+
 ## Não fazer
 
 - Não calcule CTR, CPM, CPA, ROAS ou qualquer métrica a partir de outros números — mesmo que a conta seja trivial. Se o aluno não colou o número pronto, é "não fornecido".

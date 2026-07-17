@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/source-reconciliation.v1.schema.json",
+  "title": "Source Reconciliation v1",
+  "description": "Deterministic, review-only reconciliation of minimized platform, checkout and cash observations. Decimal amounts are strings so calculations do not cross the IEEE-754 precision boundary.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "reconciliationId",
+    "metric",
+    "sourceContract",
+    "sources",
+    "comparisons",
+    "requiresHumanReview"
+  ],
+  "properties": {
+    "contract": { "type": "string", "const": "SourceReconciliation" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "reconciliationId": { "$ref": "#/$defs/reconciliationIdentifier" },
+    "metric": { "$ref": "#/$defs/metric" },
+    "sourceContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract", "schemaVersion"],
+      "properties": {
+        "contract": { "type": "string", "const": "SourceObservationSet" },
+        "schemaVersion": { "type": "string", "const": "1.0.0" }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "$ref": "#/$defs/platformObservation" },
+        { "$ref": "#/$defs/checkoutObservation" },
+        { "$ref": "#/$defs/cashObservation" }
+      ],
+      "items": false
+    },
+    "comparisons": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        { "$ref": "#/$defs/platformCheckoutComparison" },
+        { "$ref": "#/$defs/platformCashComparison" },
+        { "$ref": "#/$defs/checkoutCashComparison" }
+      ],
+      "items": false
+    },
+    "requiresHumanReview": { "type": "boolean", "const": true }
+  },
+  "$defs": {
+    "reconciliationIdentifier": {
+      "type": "string",
+      "description": "Typed opaque identifier: allowlisted metric, calendar month and an 8-32 character lowercase hexadecimal nonce containing at least one a-f letter.",
+      "pattern": "^reconciliation:(?:revenue|orders|refunds|fees|net_revenue):[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$"
+    },
+    "metric": {
+      "type": "string",
+      "enum": ["revenue", "orders", "refunds", "fees", "net_revenue"]
+    },
+    "decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,29})(\\.[0-9]{1,12})?$"
+    },
+    "gapDecimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,30})(\\.[0-9]{1,12})?$"
+    },
+    "relativeDecimal": {
+      "type": "string",
+      "description": "Symmetric relative gap abs(left-right)/max(abs(left),abs(right)), rounded half-up to six decimal places. See relativeGapExact for the lossless reduced ratio.",
+      "pattern": "^(?:0(?:\\.[0-9]{1,6})?|1)$"
+    },
+    "exactRatio": {
+      "type": "object",
+      "description": "Lossless reduced rational representation of the symmetric relative gap.",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": { "type": "string", "pattern": "^(0|[1-9][0-9]{0,42})$" },
+        "denominator": { "type": "string", "pattern": "^[1-9][0-9]{0,42}$" }
+      }
+    },
+    "currency": {
+      "type": "string",
+      "description": "ISO 4217 codes supported by the Node.js runtime baseline used to freeze this contract.",
+      "enum": [
+        "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN",
+        "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL",
+        "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY",
+        "COP", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD",
+        "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP",
+        "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR",
+        "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS",
+        "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR",
+        "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP",
+        "MRU", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO",
+        "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN",
+        "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG",
+        "SEK", "SGD", "SHP", "SLE", "SLL", "SOS", "SRD", "SSP", "STN", "SVC",
+        "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD",
+        "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VES", "VND", "VUV", "WST",
+        "XAF", "XCD", "XCG", "XDR", "XOF", "XPF", "XSU", "YER", "ZAR", "ZMW",
+        "ZWG", "ZWL"
+      ]
+    },
+    "window": {
+      "type": "string",
+      "enum": [
+        "calendar_day",
+        "calendar_week",
+        "calendar_month",
+        "lifetime",
+        "1d_click",
+        "7d_click",
+        "7d_click_1d_view",
+        "28d_click_1d_view"
+      ]
+    },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" }
+      }
+    },
+    "provenanceRef": {
+      "oneOf": [
+        { "$ref": "#/$defs/platformProvenanceRef" },
+        { "$ref": "#/$defs/checkoutProvenanceRef" },
+        { "$ref": "#/$defs/cashProvenanceRef" },
+        { "$ref": "#/$defs/operatorProvenanceRef" }
+      ]
+    },
+    "platformProvenanceRef": {
+      "$ref": "#/$defs/platformProvenanceRefObject"
+    },
+    "platformProvenanceRefObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "const": "platform-export" },
+        "id": { "type": "string", "pattern": "^platform:[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" }
+      }
+    },
+    "checkoutProvenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "const": "checkout-export" },
+        "id": { "type": "string", "pattern": "^checkout:[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" }
+      }
+    },
+    "cashProvenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "const": "cash-export" },
+        "id": { "type": "string", "pattern": "^cash:[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" }
+      }
+    },
+    "operatorProvenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "const": "operator-declaration" },
+        "id": { "type": "string", "pattern": "^operator:[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "status",
+        "value",
+        "currency",
+        "window",
+        "period",
+        "observedAt",
+        "confirmedByHuman",
+        "cashConfirmed",
+        "provenanceRef"
+      ],
+      "properties": {
+        "source": { "type": "string", "enum": ["platform", "checkout", "cash"] },
+        "status": { "type": "string", "enum": ["provided", "nao_fornecido"] },
+        "value": { "oneOf": [{ "$ref": "#/$defs/decimal" }, { "type": "null" }] },
+        "currency": { "oneOf": [{ "$ref": "#/$defs/currency" }, { "type": "null" }] },
+        "window": { "oneOf": [{ "$ref": "#/$defs/window" }, { "type": "null" }] },
+        "period": { "oneOf": [{ "$ref": "#/$defs/period" }, { "type": "null" }] },
+        "observedAt": { "type": ["string", "null"], "format": "date-time" },
+        "confirmedByHuman": { "type": "boolean" },
+        "cashConfirmed": { "type": "boolean" },
+        "provenanceRef": { "oneOf": [{ "$ref": "#/$defs/provenanceRef" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "provided" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "$ref": "#/$defs/decimal" },
+              "currency": { "$ref": "#/$defs/currency" },
+              "window": { "$ref": "#/$defs/window" },
+              "period": { "$ref": "#/$defs/period" },
+              "observedAt": { "type": "string", "format": "date-time" },
+              "provenanceRef": { "$ref": "#/$defs/provenanceRef" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "nao_fornecido" } }, "required": ["status"] },
+          "then": {
+            "properties": {
+              "value": { "const": null },
+              "currency": { "const": null },
+              "window": { "const": null },
+              "period": { "const": null },
+              "observedAt": { "const": null },
+              "confirmedByHuman": { "const": false },
+              "cashConfirmed": { "const": false },
+              "provenanceRef": { "const": null }
+            }
+          }
+        }
+      ]
+    },
+    "platformObservation": {
+      "allOf": [
+        { "$ref": "#/$defs/observation" },
+        { "type": "object", "properties": { "source": { "const": "platform" } } }
+      ]
+    },
+    "checkoutObservation": {
+      "allOf": [
+        { "$ref": "#/$defs/observation" },
+        { "type": "object", "properties": { "source": { "const": "checkout" } } }
+      ]
+    },
+    "cashObservation": {
+      "allOf": [
+        { "$ref": "#/$defs/observation" },
+        { "type": "object", "properties": { "source": { "const": "cash" } } }
+      ]
+    },
+    "reasonCode": {
+      "type": "string",
+      "enum": [
+        "MISSING_SOURCE",
+        "INCOMPATIBLE_CURRENCY",
+        "INCOMPATIBLE_WINDOW",
+        "INCOMPATIBLE_PERIOD",
+        "UNCONFIRMED_SOURCE",
+        "UNCONFIRMED_CASH"
+      ]
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pair", "comparable", "reasonCodes", "absoluteGap", "relativeGap", "relativeGapExact"],
+      "properties": {
+        "pair": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "string", "enum": ["platform", "checkout", "cash"] }
+        },
+        "comparable": { "type": "boolean" },
+        "reasonCodes": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/reasonCode" } },
+        "absoluteGap": { "oneOf": [{ "$ref": "#/$defs/gapDecimal" }, { "type": "null" }] },
+        "relativeGap": { "oneOf": [{ "$ref": "#/$defs/relativeDecimal" }, { "type": "null" }] },
+        "relativeGapExact": { "oneOf": [{ "$ref": "#/$defs/exactRatio" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "comparable": { "const": true } }, "required": ["comparable"] },
+          "then": {
+            "properties": {
+              "reasonCodes": { "type": "array", "maxItems": 0 },
+              "absoluteGap": { "$ref": "#/$defs/gapDecimal" },
+              "relativeGap": { "$ref": "#/$defs/relativeDecimal" },
+              "relativeGapExact": { "$ref": "#/$defs/exactRatio" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "comparable": { "const": false } }, "required": ["comparable"] },
+          "then": {
+            "properties": {
+              "reasonCodes": { "type": "array", "minItems": 1 },
+              "absoluteGap": { "const": null },
+              "relativeGap": { "const": null },
+              "relativeGapExact": { "const": null }
+            }
+          }
+        }
+      ]
+    },
+    "platformCheckoutComparison": {
+      "allOf": [
+        { "$ref": "#/$defs/comparison" },
+        {
+          "type": "object",
+          "properties": {
+            "pair": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "prefixItems": [{ "const": "platform" }, { "const": "checkout" }],
+              "items": false
+            }
+          }
+        }
+      ]
+    },
+    "platformCashComparison": {
+      "allOf": [
+        { "$ref": "#/$defs/comparison" },
+        {
+          "type": "object",
+          "properties": {
+            "pair": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "prefixItems": [{ "const": "platform" }, { "const": "cash" }],
+              "items": false
+            }
+          }
+        }
+      ]
+    },
+    "checkoutCashComparison": {
+      "allOf": [
+        { "$ref": "#/$defs/comparison" },
+        {
+          "type": "object",
+          "properties": {
+            "pair": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "prefixItems": [{ "const": "checkout" }, { "const": "cash" }],
+              "items": false
+            }
+          }
+        }
+      ]
+    },
+    "sourceObservationSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract", "schemaVersion", "reconciliationId", "metric", "observations"],
+      "properties": {
+        "contract": { "type": "string", "const": "SourceObservationSet" },
+        "schemaVersion": { "type": "string", "const": "1.0.0" },
+        "reconciliationId": { "$ref": "#/$defs/reconciliationIdentifier" },
+        "metric": { "$ref": "#/$defs/metric" },
+        "observations": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/observation" }
+        }
+      }
+    }
+  }
+}

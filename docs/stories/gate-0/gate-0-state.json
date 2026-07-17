@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "gate-state-v1",
+  "gateId": "0",
+  "title": "Consolidacao do baseline publico e privado",
+  "status": "ConditionalPassLocal",
+  "observedAt": "2026-07-14",
+  "items": [
+    { "id": "G0.1", "title": "Consolidar o publico", "status": "DoneLocal" },
+    { "id": "G0.2", "title": "Integrar o boundary Meta read-only", "status": "DoneLocalAwaitingDevOps", "dependsOn": ["G0.1"] },
+    { "id": "G0.3", "title": "Reconciliar o privado", "status": "DoneLocal" },
+    { "id": "G0.4", "title": "Fechar o hardening", "status": "LocalPassRemoteBlocked", "dependsOn": ["G0.3"] },
+    { "id": "G0.5", "title": "Validar baseline integrado", "status": "ConditionalPassLocal", "dependsOn": ["G0.2", "G0.4"] }
+  ],
+  "baselines": {
+    "public": { "branch": "wave/gate-0/public-baseline", "sha": "1cd9232" },
+    "private": { "branch": "wave/gate-0/private-baseline", "sha": "4c4f865" }
+  },
+  "exception": {
+    "scope": "local-wave-execution-only",
+    "remotePublicationBlocked": true,
+    "reason": "Push, PR, merge and executable remote CI remain under DevOps/external authority"
+  },
+  "implementationAuthorized": true
+}

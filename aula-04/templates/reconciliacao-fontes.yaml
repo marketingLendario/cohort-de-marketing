@@ -1,0 +1,39 @@
+# SourceObservationSet v1 - entrada local minimizada
+# Salve como JSON antes de executar a CLI. Este YAML é apenas um guia preenchível.
+contract: SourceObservationSet
+schemaVersion: 1.0.0
+reconciliationId: reconciliation:revenue:2026-07:a1b2c3d4 # nonce hex de 8-32 caracteres com ao menos uma letra a-f
+metric: revenue
+observations:
+  - source: platform
+    status: provided
+    value: "1000.00" # string decimal exata; zero explícito é "0"
+    currency: BRL # código ISO 4217
+    window: calendar_month # literal; não é convertido
+    period:
+      start: "2026-07-01T00:00:00-03:00"
+      end: "2026-08-01T00:00:00-03:00"
+    observedAt: "2026-08-01T09:00:00-03:00"
+    confirmedByHuman: true
+    cashConfirmed: false # valor explícito; a CLI nunca o infere
+    provenanceRef:
+      kind: platform-export
+      id: platform:2026-07:a1b2c3d4 # mesma regra de nonce opaco não exclusivamente numérico
+  - source: checkout
+    status: nao_fornecido
+    value: null
+    currency: null
+    window: null
+    period: null
+    observedAt: null
+    confirmedByHuman: false
+    cashConfirmed: false
+    provenanceRef: null
+
+# Fontes permitidas: platform, checkout, cash. Uma fonte omitida recebe somente
+# o marcador nao_fornecido na saída. Gaps são calculados apenas entre pares com
+# moeda, janela e período compatíveis e confirmações suficientes. A reconciliação
+# nunca escolhe fonte verdadeira e sempre exige revisão humana.
+#
+# Execução:
+# node scripts/reconcile-aula-04-sources.mjs caminho/source-observations.json

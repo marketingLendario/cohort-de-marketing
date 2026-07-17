@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mapa de Skills • Lendár[IA] · Cohort de Marketing</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/iconoir@7.11.0/css/iconoir.css">
-  <link rel="stylesheet" href="assets/al/hub-brand.css">
-  <link rel="stylesheet" href="assets/al/mapa-skills.css">
+  <link rel="stylesheet" href="/assets/al/hub-brand.css">
+  <link rel="stylesheet" href="/assets/al/mapa-skills.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="/skill-surface-contract.js"></script>
   <script src="mapa-skills-artifacts.js"></script>
 </head>
 <body>
@@ -18,7 +19,7 @@
     <div class="hub-header__inner">
       <div class="hub-brand">
         <div class="hub-lockup">
-          <img class="hub-lockup__mark" src="assets/al/logo/silhueta-al.svg" alt="Academia Lendária" width="42" height="42">
+          <img class="hub-lockup__mark" src="/assets/al/logo/silhueta-al.svg" alt="Academia Lendária" width="42" height="42">
           <div>
             <div class="hub-lockup__wordmark">Lendár<em>[IA]</em></div>
             <div class="hub-lockup__subtitle">Mapa de Skills · Cohort de Marketing</div>
@@ -26,7 +27,7 @@
         </div>
         <div class="hub-status-pill">
           <span class="hub-status-pill__dot"></span>
-          <span>31 skills · exemplos em todas · N12 + Aula 3</span>
+          <span id="surface-count">carregando catálogo</span>
         </div>
       </div>
 
@@ -105,6 +106,10 @@
         </div>
         <div id="tour-step">—</div>
       </div>
+      <div id="readiness-banner" class="hub-panel" style="margin:0 16px 12px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start">
+        <strong id="next-skill-command" style="white-space:nowrap">Calculando rota...</strong>
+        <span id="next-skill-reason" class="muted"></span>
+      </div>
       <div id="flow-viewport">
         <div class="flow-hint">
           <i class="iconoir-hand-drag mr-1"></i> Arraste · Scroll zoom · Minimap · Tour N12
@@ -137,28 +142,7 @@
     <!-- MERMAID VIEW -->
     <div id="mermaid-container" class="hidden">
       <div class="mermaid" id="mermaid-flow"></div>
-      <script type="text/plain" id="mermaid-source">flowchart LR
-    A[comecar] --> B[avatar-funil]
-    B --> C[espiao-do-concorrente]
-    C --> D[trend-hunting]
-    D --> E[swipe-file]
-    E --> F[offerbook]
-    F --> G[design-md]
-    G --> H[metodo-funil]
-    H --> I[copy-funil]
-    I --> J5[vsl / advertorial / lancamento]
-    I --> J43[webinario / quiz]
-    I --> J21[pagina-vendas]
-    J5 & J43 & J21 --> K[conteudo + criativos]
-    K --> L[email + whatsapp]
-    L --> M[recuperacao + backend]
-    M --> N[cro-funil]
-    P[status-funil] -.-> N
-    I[copy-funil] --> O[zelador] --> Q[briefista] --> R[estruturador]
-    R --> S[leitor-de-metricas] --> T[diagnosticador]
-    R --> U[ads-creative-factory]
-    T -.-> Q
-    T -.-> R</script>
+      <script type="text/plain" id="mermaid-source"></script>
     </div>
 
     <!-- Detail Panel -->
@@ -226,7 +210,7 @@
     <div class="hub-stat-grid">
       <div class="hub-stat">
         <div class="hub-stat__label">Skills totais</div>
-        <div class="hub-stat__value">31</div>
+        <div class="hub-stat__value" id="catalog-skill-count">—</div>
       </div>
       <div class="hub-stat">
         <div class="hub-stat__label">Ordem canônica</div>
@@ -247,189 +231,15 @@
 // ═══════════════════════════════════════════════════════════
 // SKILLS DATABASE
 // ═══════════════════════════════════════════════════════════
-const SKILLS = [
-  { id:"comecar", name:"comecar", phase:"Setup", phaseColor:"#64748b", order:0, type:"utility",
-    description:"Primeiro comando. Prepara ambiente (git, Apify, Node, skills), detecta SO e aponta o próximo passo único.",
-    prerequisites:[], outputs:[], feeds:["avatar-funil"], guards:"Sempre o primeiro passo. Nunca pule.", level:"Setup", artifacts:"Nenhum (configuração)" },
-  { id:"avatar-funil", name:"avatar-funil", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:1, type:"research",
-    description:"Mineração de dor real (verbatims) + avatar em 7 dimensões + focus group sintético.",
-    prerequisites:["comecar"], outputs:["avatar.md","relatorio-avatar.html","relatorio-avatar.pdf","pesquisa-avatar-*/"],
-    feeds:["espiao-do-concorrente","offerbook"], guards:"Sem avatar, offerbook vira ficção.", level:"Aula 1", artifacts:"3 formatos (md/html/pdf)" },
-  { id:"espiao-do-concorrente", name:"espiao-do-concorrente", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:2, type:"research",
-    description:"Dossiê completo de concorrente (ads + orgânico + site + reputação + brechas).",
-    prerequisites:["avatar-funil (recomendado)"], outputs:["espiao/dossie-{concorrente}.md","espiao/dossie-{concorrente}.html","espiao/dossie-{concorrente}.pdf"],
-    feeds:["swipe-file","offerbook"], guards:"Leia Perfil antes (B2B/local/regulado muda frentes).", level:"Aula 1", artifacts:"3 formatos por concorrente" },
-  { id:"trend-hunting", name:"trend-hunting", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:3, type:"research",
-    description:"Identifica tendências emergentes + variações de hook virais antes da saturação.",
-    prerequisites:["espiao-do-concorrente"], outputs:["trends-{data}.md","trends-{data}.html","variacoes-{data}.md"],
-    feeds:["swipe-file","offerbook"], guards:"", level:"Aula 1", artifacts:"2+ conjuntos" },
-  { id:"swipe-file", name:"swipe-file", phase:"Pesquisa (Aula 1)", phaseColor:"var(--mint)", order:4, type:"research",
-    description:"Organiza winners de espião + trends em biblioteca categorizada. Gera briefing para Copy.",
-    prerequisites:["espiao-do-concorrente","trend-hunting"], outputs:["swipe/briefing-swipe-file.md","swipe/briefing-swipe-file.html","swipe-file-index.html"],
-    feeds:["offerbook","copy-funil"], guards:"Nunca copie literalmente. Extraia padrão + adapte ao ICP.", level:"Aula 1", artifacts:"Index + briefings" },
-  { id:"offerbook", name:"offerbook", phase:"Oferta (Aula 1)", phaseColor:"#f59e0b", order:5, type:"strategy",
-    description:"Livro da Oferta (7 blocos). Consolida avatar + espião + swipe. Contém o Perfil do Projeto.",
-    prerequisites:["avatar-funil","espiao-do-concorrente","swipe-file"], outputs:["offerbook.md","offerbook.html","offerbook.docx","briefing-offerbook.md"],
-    feeds:["design-md","metodo-funil","copy-funil"], guards:"Gate duro. Sem offerbook não se faz funil.", level:"Aula 1", artifacts:"4 arquivos" },
-  { id:"design-md", name:"design-md", phase:"Fundação", phaseColor:"#8b5cf6", order:6, type:"foundation",
-    description:"Gera ou extrai DESIGN.md (Google-spec) com tokens da marca. Usado por todas as peças visuais.",
-    prerequisites:["offerbook (recomendado)"], outputs:["DESIGN.md","tokens.json","preview.html"],
-    feeds:["metodo-funil","pagina-vendas-funil","email-funil","criativos-funil"], guards:"Aula 2 começa aqui.", level:"Aula 2", artifacts:"DESIGN.md + preview" },
-  { id:"metodo-funil", name:"metodo-funil", phase:"Diagnóstico", phaseColor:"#8b5cf6", order:7, type:"foundation",
-    description:"Diagnostica estágio de consciência (1-5) e entrega o mapa de execução N12 adaptado ao Perfil.",
-    prerequisites:["offerbook","design-md (recomendado)"], outputs:["funil.md","funil.html","funil.pdf"],
-    feeds:["copy-funil"], guards:"Lê offerbook obrigatoriamente. Prescreve o formato correto.", level:"Aula 2", artifacts:"Mapa de execução" },
-  { id:"copy-funil", name:"copy-funil", phase:"Copy", phaseColor:"#ec4899", order:8, type:"foundation",
-    description:"Fundação da mensagem. Big Idea, mecanismos, banco de headlines/bullets. Fonte única.",
-    prerequisites:["metodo-funil","offerbook"], outputs:["copy.md"],
-    feeds:["todas as peças"], guards:"Copy aplicada nasce dentro de cada peça.", level:"Aula 2", artifacts:"copy.md" },
-  { id:"vsl-funil", name:"vsl-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
-    description:"Funil VSL Direct Response (nível 5). Roteiro + página + escala + ticket.",
-    prerequisites:["copy-funil","DESIGN.md"], outputs:["vsl.md","pagina/vsl-roteiro.html","pagina/vsl.html"],
-    feeds:["email-funil","recuperacao-funil"], guards:"Nível 5 + ticket baixo.", level:"Nível 5", artifacts:"vsl.md + página" },
-  { id:"advertorial-funil", name:"advertorial-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
-    description:"Página editorial de pré-venda para público frio (nível 5).",
-    prerequisites:["copy-funil","funil.md"], outputs:["advertorial.md","pagina/advertorial.html"],
-    feeds:["vsl-funil"], guards:"Nível 5.", level:"Nível 5", artifacts:"advertorial + página" },
-  { id:"lancamento-funil", name:"lancamento-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
-    description:"Lançamento estilo PLF. Sequência de aquecimento para lista (nível 5).",
-    prerequisites:["copy-funil","funil.md"], outputs:["lancamento.md","lancamento.html"],
-    feeds:["email-funil"], guards:"Exige lista.", level:"Nível 5", artifacts:"lancamento.md" },
-  { id:"webinario-funil", name:"webinario-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
-    description:"Funil de webinário/aula ao vivo ou evergreen (níveis 4-3).",
-    prerequisites:["copy-funil","funil.md"], outputs:["webinario.md","pagina/registro.html","pagina/roteiro-webinario.html"],
-    feeds:["backend-funil"], guards:"Níveis 4-3.", level:"Nível 4-3", artifacts:"webinario completo" },
-  { id:"quiz-funil", name:"quiz-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
-    description:"Quiz/diagnóstico que segmenta e casa a oferta ao resultado (nível 4).",
-    prerequisites:["copy-funil","funil.md"], outputs:["quiz.md","pagina/quiz.html","pagina/resultado-*.html"],
-    feeds:["pagina-vendas-funil","email-funil"], guards:"Nível 4.", level:"Nível 4", artifacts:"quiz + resultados" },
-  { id:"pagina-vendas-funil", name:"pagina-vendas-funil", phase:"Peças do Funil", phaseColor:"#f43f5e", order:9, type:"funnel",
-    description:"Página de vendas de alta conversão (16 elementos) com copy aplicada + DESIGN.md.",
-    prerequisites:["copy-funil","DESIGN.md"], outputs:["pagina/index.html","pagina/pagina-vendas.md"],
-    feeds:["email-funil","recuperacao-funil"], guards:"Níveis 2-1.", level:"Nível 2-1", artifacts:"pasta pagina/" },
-  { id:"conteudo-funil", name:"conteudo-funil", phase:"Aquisição & Conteúdo", phaseColor:"#06b67f", order:10, type:"acquisition",
-    description:"Roteiros de conteúdo orgânico (Reels, carrosséis) modelados na voz da marca.",
-    prerequisites:["copy-funil"], outputs:["conteudo/roteiros.md","conteudo/carrosseis.html"],
-    feeds:["tráfego orgânico"], guards:"Voz = marca ou pessoa conforme Perfil.", level:"Suporte", artifacts:"pasta conteudo/" },
-  { id:"criativos-funil", name:"criativos-funil", phase:"Aquisição & Conteúdo", phaseColor:"#06b67f", order:10, type:"acquisition",
-    description:"Transforma ads vencedores em criativos (roteiros vídeo + banners) na identidade da marca.",
-    prerequisites:["offerbook","DESIGN.md","copy-funil"], outputs:["criativos/roteiros.md","criativos/banners/"],
-    feeds:["tráfego pago"], guards:"Formatos: 4:5, 9:16, 1:1.", level:"Suporte", artifacts:"criativos/ + galeria" },
-  { id:"email-funil", name:"email-funil", phase:"Comunicação", phaseColor:"#3b82f6", order:11, type:"communication",
-    description:"Sequências completas de e-mail com HTML pronto e identidade visual.",
-    prerequisites:["copy-funil","DESIGN.md"], outputs:["emails/nutricao.html","emails/venda.html","emails/recuperacao.html"],
-    feeds:["recuperacao-funil"], guards:"Gera copy aplicada do copy.md.", level:"Suporte", artifacts:"pasta emails/" },
-  { id:"whatsapp-funil", name:"whatsapp-funil", phase:"Comunicação", phaseColor:"#3b82f6", order:11, type:"communication",
-    description:"Sequências de WhatsApp/DM por momento do funil.",
-    prerequisites:["copy-funil","offerbook"], outputs:["whatsapp.md","whatsapp/sequencia.md"],
-    feeds:["recuperacao-funil"], guards:"Prioridade em negócios locais e B2B.", level:"Suporte", artifacts:"sequência WhatsApp" },
-  { id:"mockup-produto-funil", name:"mockup-produto-funil", phase:"Suporte Visual", phaseColor:"#64748b", order:12, type:"support",
-    description:"Gera prompts de mockups (capa, bundle, device) na identidade visual da marca.",
-    prerequisites:["offerbook","DESIGN.md"], outputs:["mockups/prompts.md","mockups/imagens/"],
-    feeds:["valor percebido"], guards:"Tardio. Não fura fila do núcleo.", level:"Suporte", artifacts:"mockups/" },
-  { id:"bonus-funil", name:"bonus-funil", phase:"Suporte Visual", phaseColor:"#64748b", order:12, type:"support",
-    description:"Gera os entregáveis reais dos bônus curados no offerbook.",
-    prerequisites:["offerbook","DESIGN.md"], outputs:["bonus/checklist.md","bonus/ebook.html","bonus/workbook.pdf"],
-    feeds:["oferta"], guards:"Só bônus confirmados.", level:"Suporte", artifacts:"entregáveis de bônus" },
-  { id:"recuperacao-funil", name:"recuperacao-funil", phase:"Back-end & Recuperação", phaseColor:"#f59e0b", order:13, type:"backend",
-    description:"Sequências de recuperação (carrinho abandonado, cartão recusado, boleto).",
-    prerequisites:["pagina / vsl","copy-funil"], outputs:["recuperacao.md","recuperacao.html"],
-    feeds:["cro-funil"], guards:"Recuperar é mais barato que adquirir.", level:"N12", artifacts:"recuperacao.md" },
-  { id:"backend-funil", name:"backend-funil", phase:"Back-end & Recuperação", phaseColor:"#f59e0b", order:14, type:"backend",
-    description:"Maximização de ticket: upsell, OTO, downsell, janela de 4h, LTV.",
-    prerequisites:["copy-funil","offerbook"], outputs:["back-end.md","pagina/upsell.html","pagina/downsell.html"],
-    feeds:["cro-funil"], guards:"Lucro está no back-end.", level:"N12", artifacts:"back-end.md" },
-  { id:"cro-funil", name:"cro-funil", phase:"Otimização", phaseColor:"#ef4444", order:15, type:"optimization",
-    description:"KPIs por etapa + plano de testes A/B + quando escalar.",
-    prerequisites:["tudo anterior + dados"], outputs:["cro.md","cro.html"],
-    feeds:["iteração contínua"], guards:"1 teste por vez. Mín. 1.000 views.", level:"N12", artifacts:"cro.md" },
-  { id:"zelador", name:"zelador", phase:"Tráfego (Aula 3)", phaseColor:"#22c55e", order:26, type:"traffic",
-    description:"Audita saúde da conta e tracking via Graph API (ou checklist manual sem credenciais).",
-    prerequisites:["project-brief","pagina/funil"], outputs:["weekly-panel.trackingAudit"],
-    feeds:["briefista","estruturador"], guards:"Nunca confirma tracking sem evidência — resposta da API ou leitura literal do operador.", level:"Aula 3", artifacts:"Auditoria de tracking · scripts/zelador-audit.mjs" },
-  { id:"briefista", name:"briefista", phase:"Tráfego (Aula 3)", phaseColor:"#22c55e", order:27, type:"traffic",
-    description:"Transforma ângulos validados em bateria de anúncios para curadoria humana.",
-    prerequisites:["zelador","ângulos com nível de consciência"], outputs:["weekly-panel.creativeBattery"],
-    feeds:["estruturador"], guards:"Não cria ângulo nem escolhe finalista sozinho.", level:"Aula 3", artifacts:"Bateria e finalistas · fadiga: leitor-metricas.mjs --fadiga" },
-  { id:"estruturador", name:"estruturador", phase:"Tráfego (Aula 3)", phaseColor:"#22c55e", order:28, type:"traffic",
-    description:"Monta a campanha no default sagrado e publica via API em 3 gates (aprovar → criar pausado → ativar).",
-    prerequisites:["zelador não crítico","finalistas curados"], outputs:["campaign-plan.structure","weekly-panel.estruturador (IDs reais)"],
-    feeds:["leitor-de-metricas","ads-creative-factory"], guards:"Só publica com aprovação humana registrada; tudo nasce pausado; piso R$20/dia codificado.", level:"Aula 3", artifacts:"Plano de campanha · scripts/estruturador-publish.mjs" },
-  { id:"ads-creative-factory", name:"ads-creative-factory", phase:"Tráfego (Aula 3)", phaseColor:"#c9b298", order:31, type:"traffic",
-    description:"Produz lotes reais de imagens e legendas a partir dos finalistas curados, com packs externos explícitos e gate visual.",
-    prerequisites:["briefista","estruturador","curadoria humana"], outputs:["criativos/factory/*/final/manifest.json","criativos/factory/*/final/legendas.md","criativos/factory/*/final/**/*.png"],
-    feeds:["estruturador (via acf-upload)"], guards:"Exige brand pack explícito; só itens aprovados pelo operador entram no pacote final.", level:"Aula 3", artifacts:"Lote de imagens e legendas · scripts/acf-upload.mjs" },
-  { id:"leitor-de-metricas", name:"leitor-de-metricas", phase:"Tráfego (Aula 3)", phaseColor:"#22c55e", order:29, type:"traffic",
-    description:"Lê métricas reais via Graph API (ou coladas) sem calcular ou completar ausências.",
-    prerequisites:["campanha ativa (API ou manual)","campaign_id ou métricas coladas"], outputs:["weekly-panel.metricReading"],
-    feeds:["diagnosticador"], guards:"Campo ausente não é fornecido; ROAS real exige venda confirmada.", level:"Aula 3", artifacts:"Leitura de métricas · scripts/leitor-metricas.mjs" },
-  { id:"diagnosticador", name:"diagnosticador", phase:"Tráfego (Aula 3)", phaseColor:"#22c55e", order:30, type:"traffic",
-    description:"Recomenda uma única alavanca falseável a partir da leitura confirmada.",
-    prerequisites:["leitor-de-metricas"], outputs:["weekly-panel.diagnosis"],
-    feeds:["briefista","estruturador"], guards:"Uma alavanca; nunca executa a mudança.", level:"Aula 3", artifacts:"Diagnóstico e decisão · scripts/circuit-breaker.mjs" },
-  { id:"status-funil", name:"status-funil", phase:"Utilitários", phaseColor:"#64748b", order:99, type:"utility",
-    description:"Mostra estado atual do funil lendo a pasta do projeto. Checklist + próximo passo único.",
-    prerequisites:["qualquer momento"], outputs:["(leitura — sem arquivo novo)"],
-    feeds:["orienta o aluno"], guards:"Lê Perfil do Projeto. Respeita ordem N12.", level:"Sempre", artifacts:"Checklist vivo" }
-];
+let SKILLS = [];
 
 // ═══════════════════════════════════════════════════════════
 // FLOW LAYOUT — posições no canvas (col, row)
 // ═══════════════════════════════════════════════════════════
 const CELL_W = 240, CELL_H = 100, NODE_W = 196, NODE_H = 76;
-const FLOW_POS = {
-  "comecar":              { col: 0,  row: 2 },
-  "avatar-funil":         { col: 1,  row: 2 },
-  "espiao-do-concorrente":{ col: 2,  row: 2 },
-  "trend-hunting":        { col: 3,  row: 2 },
-  "swipe-file":           { col: 4,  row: 2 },
-  "offerbook":            { col: 5,  row: 2 },
-  "design-md":            { col: 6,  row: 2 },
-  "metodo-funil":         { col: 7,  row: 2 },
-  "copy-funil":           { col: 8,  row: 2 },
-  "vsl-funil":            { col: 9,  row: 0 },
-  "advertorial-funil":    { col: 9,  row: 1 },
-  "lancamento-funil":     { col: 9,  row: 2 },
-  "webinario-funil":      { col: 9,  row: 3 },
-  "quiz-funil":           { col: 9,  row: 4 },
-  "pagina-vendas-funil":  { col: 9,  row: 5 },
-  "conteudo-funil":       { col: 10, row: 1 },
-  "criativos-funil":      { col: 10, row: 3 },
-  "email-funil":          { col: 11, row: 1 },
-  "whatsapp-funil":       { col: 11, row: 3 },
-  "mockup-produto-funil": { col: 11, row: 5 },
-  "bonus-funil":          { col: 11, row: 6 },
-  "recuperacao-funil":    { col: 12, row: 1 },
-  "backend-funil":        { col: 12, row: 3 },
-  "cro-funil":            { col: 13, row: 2 },
-  "zelador":              { col: 14, row: 2 },
-  "briefista":            { col: 15, row: 2 },
-  "estruturador":         { col: 16, row: 2 },
-  "leitor-de-metricas":   { col: 17, row: 2 },
-  "diagnosticador":       { col: 18, row: 2 },
-  "ads-creative-factory": { col: 17, row: 4 },
-  "status-funil":         { col: 7,  row: 0 }
-};
+let FLOW_POS = {};
 
-const FLOW_EDGES = [
-  ["comecar","avatar-funil"],["avatar-funil","espiao-do-concorrente"],["espiao-do-concorrente","trend-hunting"],
-  ["trend-hunting","swipe-file"],["swipe-file","offerbook"],["offerbook","design-md"],["design-md","metodo-funil"],
-  ["metodo-funil","copy-funil"],
-  ["copy-funil","vsl-funil"],["copy-funil","advertorial-funil"],["copy-funil","lancamento-funil"],
-  ["copy-funil","webinario-funil"],["copy-funil","quiz-funil"],["copy-funil","pagina-vendas-funil"],
-  ["vsl-funil","conteudo-funil"],["advertorial-funil","conteudo-funil"],["lancamento-funil","conteudo-funil"],
-  ["webinario-funil","criativos-funil"],["quiz-funil","criativos-funil"],["pagina-vendas-funil","criativos-funil"],
-  ["conteudo-funil","email-funil"],["criativos-funil","email-funil"],
-  ["conteudo-funil","whatsapp-funil"],["criativos-funil","whatsapp-funil"],
-  ["email-funil","recuperacao-funil"],["whatsapp-funil","recuperacao-funil"],
-  ["email-funil","backend-funil"],["whatsapp-funil","backend-funil"],
-  ["recuperacao-funil","cro-funil"],["backend-funil","cro-funil"],
-  ["copy-funil","zelador"],["zelador","briefista"],["briefista","estruturador"],
-  ["estruturador","leitor-de-metricas"],["leitor-de-metricas","diagnosticador"],
-  ["estruturador","ads-creative-factory"],
-  ["diagnosticador","briefista","branch"],["diagnosticador","estruturador","branch"],
-  ["status-funil","metodo-funil","utility"],["status-funil","copy-funil","utility"],["status-funil","cro-funil","utility"]
-];
+let FLOW_EDGES = [];
 
 // ═══════════════════════════════════════════════════════════
 // STATE
@@ -444,19 +254,12 @@ let flowPanning = false, flowPanStart = null;
 let canvasMetrics = { w: 0, h: 0 };
 let panAnimFrame = null;
 
-/** Trilha N12 núcleo — apenas skills com amostras reais em mapa-skills-samples/ */
-const N12_TOUR = [
-  "comecar", "avatar-funil", "espiao-do-concorrente", "trend-hunting", "swipe-file",
-  "offerbook", "design-md", "metodo-funil", "copy-funil",
-  "quiz-funil", "email-funil", "recuperacao-funil", "backend-funil"
-];
+let N12_TOUR = [];
 let tourState = { active: false, index: 0, timer: null };
 
-const REF_TO_SKILL = {
-  "design.md": "design-md", "design-md": "design-md",
-  "funil.md": "metodo-funil", "copy.md": "copy-funil",
-  "offerbook": "offerbook", "offerbook.md": "offerbook"
-};
+let REF_TO_SKILL = {};
+let SKILL_READINESS = new Map();
+let SKILL_READINESS_DECISION = null;
 
 // ═══════════════════════════════════════════════════════════
 // FLOW CANVAS
@@ -584,13 +387,19 @@ function renderFlowCanvas() {
     el.dataset.id = skill.id;
     el.style.left = origin.x + 'px';
     el.style.top = origin.y + 'px';
+    const readiness = SKILL_READINESS.get(skill.id)?.state || 'blocked';
+    el.dataset.state = readiness;
+    if (SKILL_READINESS_DECISION?.nextSkill?.id === skill.id) {
+      el.setAttribute('aria-current', 'step');
+      el.style.boxShadow = '0 0 0 2px #d6b98c, 0 0 24px rgba(214,185,140,.28)';
+    }
     el.innerHTML = `
       <div class="fn-head">
         <div class="fn-phase-dot" style="background:${skill.phaseColor}"></div>
         <span class="fn-name flex-1 truncate">${skill.name}</span>
         ${skill.order < 99 ? `<span class="fn-order">${skill.order}</span>` : ''}
       </div>
-      <span class="fn-type" style="background:${skill.phaseColor}18;color:${skill.phaseColor}">${skill.type}</span>
+      <span class="fn-type" style="background:${skill.phaseColor}18;color:${skill.phaseColor}">${skill.type} · ${readiness}</span>
     `;
     el.addEventListener('click', (e) => { e.stopPropagation(); selectSkill(skill.id, el); });
     nodesEl.appendChild(el);
@@ -1059,7 +868,12 @@ function setViewMode(mode) {
 
 function renderMermaid() {
   const div = document.getElementById('mermaid-flow');
-  const src = document.getElementById('mermaid-source')?.textContent.trim();
+  const nodeIds = new Map(SKILLS.map((skill, index) => [skill.id, `skill_${index}`]));
+  const src = [
+    'flowchart LR',
+    ...SKILLS.map((skill) => `    ${nodeIds.get(skill.id)}["${skill.id}"]`),
+    ...FLOW_EDGES.map(([from, to, type]) => `    ${nodeIds.get(from)} ${type === 'utility' || type === 'feedback' ? '-.->' : '-->'} ${nodeIds.get(to)}`),
+  ].join('\n');
   if (!div || !src) return;
   div.removeAttribute('data-processed');
   div.innerHTML = src;
@@ -1640,7 +1454,80 @@ function showLegend() {
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
-function init() {
+function loadSavedProjectState() {
+  const activeProjectId = localStorage.getItem('cohort.projectBrief.activeProject.v1');
+  if (!activeProjectId) return { projectBrief: null, artifactIndex: null };
+  const raw = localStorage.getItem(`cohort.projectBrief.v1:${encodeURIComponent(activeProjectId)}`);
+  if (!raw) return { projectBrief: null, artifactIndex: null };
+  try {
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object' || !saved.document) {
+      const error = new Error('O estado local não contém um ProjectBrief v1 válido.');
+      error.code = 'INVALID_LOCAL_PROJECT_STATE';
+      throw error;
+    }
+    return { projectBrief: saved.document, artifactIndex: saved.artifactIndex || null };
+  } catch {
+    const error = new Error('O estado local do ProjectBrief está malformado.');
+    error.code = 'INVALID_LOCAL_PROJECT_STATE';
+    throw error;
+  }
+}
+
+async function loadSurfaceContracts() {
+  const [catalogResponse, rulesResponse, legacySchemaResponse, projectBriefSchemaResponse] = await Promise.all([
+    fetch('/data/skill-catalog.json'),
+    fetch('/data/skill-unlock-rules.json'),
+    fetch('/data/project-brief.schema.json'),
+    fetch('/data/contracts/project-brief.v1.schema.json'),
+  ]);
+  if (![catalogResponse, rulesResponse, legacySchemaResponse, projectBriefSchemaResponse].every((response) => response.ok)) {
+    throw new Error('Um contrato público não foi encontrado.');
+  }
+  const [catalog, rules, legacySchema, projectBriefSchema] = await Promise.all([
+    catalogResponse.json(),
+    rulesResponse.json(),
+    legacySchemaResponse.json(),
+    projectBriefSchemaResponse.json(),
+  ]);
+  const inputs = { catalog, rules, legacySchema, projectBriefSchema };
+  const contract = window.SkillSurfaceContract.validateContracts(inputs);
+  const contractRefs = window.SkillSurfaceContract.createReadinessContractRefs(inputs);
+  const { projectBrief, artifactIndex } = loadSavedProjectState();
+  const evaluated = window.SkillSurfaceContract.evaluateSkills({ ...inputs, projectBrief, artifactIndex });
+  const readinessEngine = await import('/scripts/lib/skill-readiness.mjs');
+  SKILL_READINESS_DECISION = readinessEngine.decideNextSkill({ rules, contractRefs, evaluatedSkills: evaluated, projectBrief, artifactIndex });
+
+  SKILLS = contract.skills;
+  FLOW_EDGES = contract.edges.map((edge) => [edge.from, edge.to, edge.type]);
+  FLOW_POS = window.SkillSurfaceContract.buildLayout(SKILLS);
+  SKILL_READINESS = new Map(evaluated.map((item) => [item.skillId, item]));
+  N12_TOUR = SKILLS.filter((skill) => skill.order < 99).map((skill) => skill.id);
+  REF_TO_SKILL = Object.fromEntries(SKILLS.flatMap((skill) => [
+    [skill.id, skill.id],
+    ...skill.outputs.map((output) => [output.split('/').at(-1).toLowerCase(), skill.id]),
+  ]));
+  document.getElementById('surface-count').textContent = `${SKILLS.length} skills · ${FLOW_EDGES.length} conexões · catálogo canônico`;
+  document.getElementById('catalog-skill-count').textContent = SKILLS.length;
+  document.getElementById('next-skill-command').textContent = SKILL_READINESS_DECISION.nextSkill?.command || 'Sem próxima skill';
+  document.getElementById('next-skill-reason').textContent = SKILL_READINESS_DECISION.reason;
+  window.__SKILL_READINESS_DECISION = SKILL_READINESS_DECISION;
+  window.__SKILL_SURFACE_DATA = { skills: SKILLS, edges: contract.edges, evaluated, decision: SKILL_READINESS_DECISION };
+}
+
+async function init() {
+  window.__SKILL_SURFACE_STATUS = { status: 'loading' };
+  try {
+    await loadSurfaceContracts();
+  } catch (error) {
+    window.__SKILL_SURFACE_STATUS = { status: 'error', code: error?.code || 'SURFACE_CONTRACT_LOAD_FAILED' };
+    document.getElementById('flow-container').innerHTML = `
+      <div class="hub-panel" style="padding:24px">
+        <strong>Mapa bloqueado: contratos públicos inválidos.</strong>
+        <p class="muted" style="margin-top:8px">${String(error?.message || 'Valide skill-catalog.json e skill-unlock-rules.json.').replace(/[&<>"']/g, '')}</p>
+      </div>`;
+    return;
+  }
   renderFlowCanvas();
   initFlowPanZoom();
   setTimeout(flowFit, 100);
@@ -1664,6 +1551,7 @@ function init() {
   document.getElementById('artifact-modal').addEventListener('click', (e) => {
     if (e.target.id === 'artifact-modal') closeArtifactModal();
   });
+  window.__SKILL_SURFACE_STATUS = { status: 'ready', skillIds: SKILLS.map((skill) => skill.id) };
 }
 
 window.onload = init;

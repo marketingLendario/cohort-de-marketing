@@ -6,7 +6,7 @@
   <title>Briefing Único • Lendár[IA] · Cohort de Marketing</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/iconoir@7.11.0/css/iconoir.css">
-  <link rel="stylesheet" href="assets/al/hub-brand.css">
+  <link rel="stylesheet" href="/assets/al/hub-brand.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
@@ -346,7 +346,7 @@
       <div class="hub-header__inner">
         <div class="hub-brand">
           <div class="hub-lockup">
-            <img class="hub-lockup__mark" src="assets/al/logo/silhueta-al.svg" alt="Academia Lendária" width="42" height="42">
+            <img class="hub-lockup__mark" src="/assets/al/logo/silhueta-al.svg" alt="Academia Lendária" width="42" height="42">
             <div>
               <div class="hub-lockup__wordmark">Lendár<em>[IA]</em></div>
               <div class="hub-lockup__subtitle">Briefing Único · Cohort de Marketing</div>
@@ -354,18 +354,33 @@
           </div>
           <div class="hub-status-pill">
             <span class="hub-status-pill__dot"></span>
-            <span>25 skills · 8 etapas · autosave</span>
+            <span id="briefing-surface-count">carregando catálogo · autosave por projeto</span>
           </div>
         </div>
         <div class="hub-toolbar">
           <span id="save-state" class="hub-status-pill briefing-status"><i class="fa-solid fa-circle text-[7px]"></i> carregando</span>
-          <a href="mapa-skills.html" class="hub-btn">
+          <span id="import-status" class="hub-status-pill briefing-status" aria-live="polite">pronto para importar</span>
+          <a href="/mapa-skills.html" class="hub-btn">
             <i class="iconoir-map"></i>
             <span class="label-sm">Mapa</span>
           </a>
-          <button id="export-btn" class="hub-btn" type="button">
+          <input id="import-file" type="file" accept="application/json,.json" hidden>
+          <button id="import-btn" class="hub-btn" type="button">
+            <i class="iconoir-upload"></i>
+            <span class="label-sm">Importar</span>
+          </button>
+          <input id="import-artifact-index-file" type="file" accept="application/json,.json" hidden>
+          <button id="import-artifact-index" class="hub-btn" type="button">
+            <i class="iconoir-folder"></i>
+            <span class="label-sm">Artefatos</span>
+          </button>
+          <button id="export-json-btn" class="hub-btn" type="button">
             <i class="iconoir-download"></i>
-            <span class="label-sm">Exportar</span>
+            <span class="label-sm">JSON</span>
+          </button>
+          <button id="export-markdown-btn" class="hub-btn" type="button">
+            <i class="iconoir-page"></i>
+            <span class="label-sm">Markdown</span>
           </button>
           <button id="reset-btn" class="hub-btn" type="button">
             <i class="iconoir-undo"></i>
@@ -412,6 +427,7 @@
             </div>
             <span id="next-skill-pill" class="badge"></span>
           </div>
+          <p id="next-skill-reason" class="mt-3 text-[11px] leading-relaxed text-zinc-500"></p>
           <div class="mt-3 grid grid-cols-3 gap-2 text-center">
             <div class="briefing-stat"><div id="count-ready" class="font-display text-lg">0</div><div class="text-[10px] text-zinc-500">prontas</div></div>
             <div class="briefing-stat"><div id="count-almost" class="font-display text-lg">0</div><div class="text-[10px] text-zinc-500">quase</div></div>
@@ -431,9 +447,36 @@
     </div>
   </template>
 
+  <script src="/skill-surface-contract.js"></script>\n  <script src="mapa-skills-artifacts.js"></script>
   <script>
-    const STORAGE_KEY = 'cohort.projectBrief.current';
+    const LEGACY_STORAGE_KEY = 'cohort.projectBrief.current';
+    const STORAGE_PREFIX = 'cohort.projectBrief.v1:';
+    const ACTIVE_PROJECT_KEY = 'cohort.projectBrief.activeProject.v1';
+    const ARTIFACT_GLOB_MATCHER_VERSION = '1.0.0';
     const SAVE_IDLE_MS = 650;
+    const SENSITIVE_CREDENTIAL_KEY = /^(?:api[_-]?key|access[_-]?token|refresh[_-]?token|auth[_-]?token|token|client[_-]?secret|secret|password|senha)$/i;
+    const SENSITIVE_ASSIGNMENT_SOURCE = '\\b(api[_-]?key|access[_-]?token|refresh[_-]?token|auth[_-]?token|token|client[_-]?secret|secret|password|senha)\\s*[:=]\\s*';
+    const CREDENTIAL_PLACEHOLDERS = new Set([
+      'YOUR_TOKEN_HERE', 'SEU_TOKEN_AQUI', 'YOUR_API_KEY', 'EXAMPLE_TOKEN', '<TOKEN>', '[REDACTED]'
+    ]);
+    // A gramática separa assignments de assinaturas fortes de provedores.
+    // Valores são extraídos até aspas, quebra de linha ou delimitador estrutural;
+    // somente placeholders normalizados com igualdade exata são liberados.
+    const CREDENTIAL_PATTERNS = [
+      { label: 'bearer token', pattern: /\bauthorization\s*:\s*bearer\s+[A-Za-z0-9._~+\/-]{12,}/i },
+      { label: 'basic auth', pattern: /\bauthorization\s*:\s*basic\s+[A-Za-z0-9+/]{12,}={0,2}/i },
+      { label: 'private key', pattern: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/i },
+      { label: 'AWS access key', pattern: /\bAKIA[0-9A-Z]{16}\b/ },
+      { label: 'Stripe secret', pattern: /\bsk_(?:live|test)_[A-Za-z0-9]{16,}\b/ },
+      { label: 'OpenAI token', pattern: /\bsk-(?:live-|test-|proj-)?[A-Za-z0-9_-]{20,}\b/ },
+      { label: 'GitHub token', pattern: /\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/i },
+      { label: 'GitLab token', pattern: /\bglpat-[A-Za-z0-9_-]{20,}\b/i },
+      { label: 'npm token', pattern: /\bnpm_[A-Za-z0-9]{30,}\b/i },
+      { label: 'PyPI token', pattern: /\bpypi-[A-Za-z0-9_-]{20,}\b/i },
+      { label: 'Slack token', pattern: /\bxox[baprs]-[A-Za-z0-9-]{20,}\b/i },
+      { label: 'Google API key', pattern: /\bAIza[A-Za-z0-9_-]{30,}\b/ },
+      { label: 'JWT', pattern: /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{6,}\.[A-Za-z0-9_-]{6,}\b/ }
+    ];
     const GROUPS = ['project', 'market', 'offer', 'brand', 'funnel', 'channels', 'data', 'integrations'];
     const STATE_LABELS = {
       done: 'gerada',
@@ -542,12 +585,23 @@
     };
 
     let schema;
+    let v1Schema;
+    let catalog;
     let rules;
+    let readinessEngine;
+    let readinessContractRefs;
     let steps = [];
     let fields = [];
+    let canonicalFieldPaths = new Set();
     let activeStep = 'project';
     let selectedSkill = null;
     let saveTimer = null;
+    let currentDocument = null;
+    let artifactIndex = null;
+    let draftRecoveryNotice = '';
+    let preserveRejectedStorage = false;
+    let loadedDraftStorage = false;
+    let importedIdentity = false;
     let state = {
       schemaVersion: '0.1.0',
       meta: {},
@@ -559,8 +613,7 @@
       channels: {},
       data: {},
       integrations: {},
-      artifacts: {},
-      fieldMeta: {}
+      artifacts: {}
     };
 
     function byId(id) { return document.getElementById(id); }
@@ -590,7 +643,15 @@
         cursor = cursor[key];
       }
       cursor[parts.at(-1)] = value;
-      state.fieldMeta[path] = { source: 'user', updatedAt: new Date().toISOString() };
+      const now = new Date().toISOString();
+      ensureCurrentDocument();
+      currentDocument.data = contractData();
+      currentDocument.updatedAt = now;
+      currentDocument.fieldSources[path] = { source: 'user', confirmation: 'confirmed', updatedAt: now };
+      if (!importedIdentity && state.project?.slug) {
+        currentDocument.projectId = `project-${state.project.slug}`;
+        currentDocument.id = `${currentDocument.projectId}:revision:${currentDocument.revision}`;
+      }
       scheduleSave();
       refreshAll();
     }
@@ -714,20 +775,334 @@
       return output;
     }
 
-    function loadDraft() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      try {
-        const parsed = JSON.parse(raw);
-        state = {
-          ...state,
-          ...parsed,
-          artifacts: parsed.artifacts || {},
-          fieldMeta: parsed.fieldMeta || {}
-        };
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
+    function collectCanonicalFieldPaths() {
+      const output = new Set();
+      function walk(prefix, definition) {
+        for (const [name, child] of Object.entries(definition.properties || {})) {
+          const path = `${prefix}.${name}`;
+          output.add(path);
+          if (child.type === 'object' && child.properties) walk(path, child);
+        }
       }
+      for (const [group, definition] of Object.entries(schema.properties || {})) {
+        if (definition.type === 'object' && definition.properties) walk(group, definition);
+      }
+      return output;
+    }
+
+    function clone(value) { return structuredClone(value); }
+
+    function normalizeCredentialPlaceholder(value) {
+      return String(value).trim().replace(/[\s-]+/g, '_').toUpperCase();
+    }
+
+    function isAllowedCredentialPlaceholder(value) {
+      return CREDENTIAL_PLACEHOLDERS.has(normalizeCredentialPlaceholder(value));
+    }
+
+    function assignmentValueEndsAt(remainder, endIndex) {
+      const suffix = remainder.slice(endIndex).trimStart();
+      return !suffix || /^[,;}\]]/.test(suffix) || /^[.!?]\s*$/.test(suffix);
+    }
+
+    function extractCredentialAssignmentValue(line, startIndex) {
+      const remainder = line.slice(startIndex).trimStart();
+      if (!remainder) return '';
+      const opener = remainder[0];
+      if (opener === '"' || opener === "'") {
+        let escaped = false;
+        for (let index = 1; index < remainder.length; index++) {
+          if (!escaped && remainder[index] === opener) {
+            return assignmentValueEndsAt(remainder, index + 1)
+              ? remainder.slice(1, index).trim()
+              : remainder.trim();
+          }
+          escaped = !escaped && remainder[index] === '\\';
+          if (remainder[index] !== '\\') escaped = false;
+        }
+        return remainder.slice(1).trim();
+      }
+      if (opener === '<') {
+        const closing = remainder.indexOf('>');
+        if (closing >= 0) {
+          return assignmentValueEndsAt(remainder, closing + 1)
+            ? remainder.slice(0, closing + 1).trim()
+            : remainder.trim();
+        }
+      }
+      if (opener === '[') {
+        const closing = remainder.indexOf(']');
+        if (closing >= 0) {
+          return assignmentValueEndsAt(remainder, closing + 1)
+            ? remainder.slice(0, closing + 1).trim()
+            : remainder.trim();
+        }
+      }
+      const delimiters = [',', ';', '}', ']']
+        .map((delimiter) => remainder.indexOf(delimiter))
+        .filter((index) => index >= 0);
+      const end = delimiters.length ? Math.min(...delimiters) : remainder.length;
+      return remainder.slice(0, end).trim();
+    }
+
+    function credentialAssignmentFinding(value, path) {
+      for (const line of value.split(/\r?\n/)) {
+        const matcher = new RegExp(SENSITIVE_ASSIGNMENT_SOURCE, 'gi');
+        let match;
+        while ((match = matcher.exec(line))) {
+          const assignedValue = extractCredentialAssignmentValue(line, matcher.lastIndex);
+          if (assignedValue && !isAllowedCredentialPlaceholder(assignedValue)) {
+            return { label: match[1].toLowerCase(), path };
+          }
+        }
+      }
+      return null;
+    }
+
+    function credentialFinding(value, path = '$') {
+      if (typeof value === 'string') {
+        const assignment = credentialAssignmentFinding(value, path);
+        if (assignment) return assignment;
+        const found = CREDENTIAL_PATTERNS.find(({ pattern }) => pattern.test(value));
+        return found ? { label: found.label, path } : null;
+      }
+      if (Array.isArray(value)) {
+        for (let index = 0; index < value.length; index++) {
+          const found = credentialFinding(value[index], `${path}[${index}]`);
+          if (found) return found;
+        }
+        return null;
+      }
+      if (value && typeof value === 'object') {
+        for (const [key, child] of Object.entries(value)) {
+          if (SENSITIVE_CREDENTIAL_KEY.test(key) && child != null && String(child).trim()
+            && !isAllowedCredentialPlaceholder(child)) return { label: key, path: `${path}.${key}` };
+          const found = credentialFinding(child, `${path}.${key}`);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    function assertNoPlaintextCredentials(value) {
+      const found = credentialFinding(value);
+      if (!found) return;
+      throw new Error(`possível credencial ${found.label} em ${found.path}; nenhuma sanitização automática foi aplicada`);
+    }
+
+    function contractData(source = state) {
+      const data = clone(source);
+      delete data.artifacts;
+      delete data.fieldMeta;
+      return data;
+    }
+
+    function portableReference(value, allowBackslash = false) {
+      if (typeof value !== 'string' || !value || value.length > 256) return false;
+      const candidate = allowBackslash ? value.replaceAll('\\', '/') : value;
+      if (!allowBackslash && value.includes('\\')) return false;
+      if (candidate.startsWith('/') || /^[A-Za-z]:\//.test(candidate) || /^[A-Za-z][A-Za-z0-9+.-]*:/.test(candidate)) return false;
+      const sensitive = new Set(['credential', 'credentials', 'env', 'password', 'passwords', 'private', 'privado', 'secret', 'secrets', 'segredo', 'segredos', 'senha', 'senhas', 'token', 'tokens']);
+      return candidate.split('/').every((segment) => segment && segment !== '.' && segment !== '..'
+        && /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(segment)
+        && !segment.toLowerCase().split(/[._-]+/).some((token) => sensitive.has(token)));
+    }
+
+    function typeMatches(value, type) {
+      if (type === 'object') return value !== null && typeof value === 'object' && !Array.isArray(value);
+      if (type === 'array') return Array.isArray(value);
+      if (type === 'integer') return Number.isInteger(value);
+      if (type === 'number') return typeof value === 'number' && Number.isFinite(value);
+      return typeof value === type;
+    }
+
+    function validateFormat(value, format) {
+      if (format === 'date-time') {
+        if (typeof value !== 'string') return false;
+        const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|([+-])(\d{2}):(\d{2}))$/i.exec(value);
+        if (!match) return false;
+        const [, yearText, monthText, dayText, hourText, minuteText, secondText, , offsetHourText, offsetMinuteText] = match;
+        const year = Number(yearText);
+        const month = Number(monthText);
+        const day = Number(dayText);
+        const hour = Number(hourText);
+        const minute = Number(minuteText);
+        const second = Number(secondText);
+        const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+        const daysInMonth = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        if (month < 1 || month > 12 || day < 1 || day > daysInMonth[month - 1]) return false;
+        if (hour > 23 || minute > 59 || second > 60) return false;
+        if (offsetHourText && (Number(offsetHourText) > 23 || Number(offsetMinuteText) > 59)) return false;
+        return true;
+      }
+      if (format === 'canonical-field-path') return canonicalFieldPaths.has(value);
+      if (format === 'portable-artifact-reference') return portableReference(value, false);
+      if (format === 'portable-legacy-source-path') return portableReference(value, true);
+      return true;
+    }
+
+    function validateSchemaNode(value, definition, path = '$') {
+      if (definition === false) return [`${path}: campo não permitido`];
+      const errors = [];
+      if (definition.$ref === schema.$id) errors.push(...validateSchemaNode(value, schema, path));
+      if (definition.const !== undefined && value !== definition.const) errors.push(`${path}: valor deve ser ${definition.const}`);
+      if (definition.enum && !definition.enum.includes(value)) errors.push(`${path}: valor fora do enum`);
+      if (definition.type && !typeMatches(value, definition.type)) return [...errors, `${path}: tipo ${definition.type} esperado`];
+      if (typeof value === 'string') {
+        if (definition.minLength != null && value.length < definition.minLength) errors.push(`${path}: texto curto demais`);
+        if (definition.maxLength != null && value.length > definition.maxLength) errors.push(`${path}: texto longo demais`);
+        if (definition.pattern && !(new RegExp(definition.pattern)).test(value)) errors.push(`${path}: formato inválido`);
+        if (definition.format && !validateFormat(value, definition.format)) errors.push(`${path}: formato ${definition.format} inválido`);
+      }
+      if (typeof value === 'number') {
+        if (definition.minimum != null && value < definition.minimum) errors.push(`${path}: abaixo do mínimo`);
+        if (definition.maximum != null && value > definition.maximum) errors.push(`${path}: acima do máximo`);
+      }
+      if (Array.isArray(value)) {
+        if (definition.minItems != null && value.length < definition.minItems) errors.push(`${path}: poucos itens`);
+        if (definition.maxItems != null && value.length > definition.maxItems) errors.push(`${path}: itens demais`);
+        value.forEach((item, index) => errors.push(...validateSchemaNode(item, definition.items || {}, `${path}[${index}]`)));
+      }
+      if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+        for (const required of definition.required || []) {
+          if (!Object.prototype.hasOwnProperty.call(value, required)) errors.push(`${path}.${required}: obrigatório`);
+        }
+        for (const key of Object.keys(value)) {
+          if (definition.propertyNames?.format && !validateFormat(key, definition.propertyNames.format)) errors.push(`${path}.${key}: nome de campo inválido`);
+          if (Object.prototype.hasOwnProperty.call(definition.properties || {}, key)) {
+            errors.push(...validateSchemaNode(value[key], definition.properties[key], `${path}.${key}`));
+          } else if (definition.additionalProperties === false) {
+            errors.push(`${path}.${key}: propriedade adicional não permitida`);
+          } else if (definition.additionalProperties && typeof definition.additionalProperties === 'object') {
+            errors.push(...validateSchemaNode(value[key], definition.additionalProperties, `${path}.${key}`));
+          }
+        }
+      }
+      return errors;
+    }
+
+    function validateLegacy(document) { return validateSchemaNode(document, schema); }
+    function validateV1(document) { return validateSchemaNode(document, v1Schema); }
+
+    function migrateLegacyDocument(input) {
+      const errors = validateLegacy(input);
+      if (errors.length) throw new Error(errors.slice(0, 3).join('; '));
+      const data = clone(input);
+      delete data.fieldMeta;
+      const fallbackTime = input.meta?.updatedAt || input.meta?.createdAt || '1970-01-01T00:00:00.000Z';
+      const fieldSources = {};
+      for (const [path, metadata] of Object.entries(input.fieldMeta || {})) {
+        fieldSources[path] = {
+          source: ['user', 'artifact', 'inferred'].includes(metadata.source) ? metadata.source : 'migration',
+          confirmation: metadata.source === 'pending_confirmation' ? 'pending' : metadata.source === 'not_applicable' ? 'not_applicable' : 'confirmed',
+          ...(metadata.sourcePath ? { sourceArtifactId: metadata.sourcePath.replaceAll('\\', '/') } : {}),
+          updatedAt: metadata.updatedAt || fallbackTime
+        };
+      }
+      const projectId = `project-${input.project.slug}`;
+      const migrated = {
+        schemaVersion: '1.0.0',
+        id: `${projectId}:revision:1`,
+        workspaceId: 'standalone',
+        projectId,
+        revision: 1,
+        status: 'active',
+        createdAt: input.meta?.createdAt || fallbackTime,
+        updatedAt: input.meta?.updatedAt || fallbackTime,
+        data,
+        fieldSources
+      };
+      const migratedErrors = validateV1(migrated);
+      if (migratedErrors.length) throw new Error(migratedErrors.slice(0, 3).join('; '));
+      return migrated;
+    }
+
+    function newDocument() {
+      const now = new Date().toISOString();
+      return {
+        schemaVersion: '1.0.0', id: 'project-draft:revision:1', workspaceId: 'standalone',
+        projectId: 'project-draft', revision: 1, status: 'draft', createdAt: now, updatedAt: now,
+        data: contractData(), fieldSources: {}
+      };
+    }
+
+    function ensureCurrentDocument() {
+      if (!currentDocument) currentDocument = newDocument();
+      if (!currentDocument.fieldSources) currentDocument.fieldSources = {};
+    }
+
+    function storageKey(projectId) { return `${STORAGE_PREFIX}${encodeURIComponent(projectId)}`; }
+
+    function emptyArtifactState() {
+      return Object.fromEntries(Object.keys(rules.artifactGlobs || {}).map((type) => [type, false]));
+    }
+
+    function deriveArtifactsFromIndex(index) {
+      const artifacts = emptyArtifactState();
+      for (const entry of index.entries) {
+        if (entry.confirmationStatus === 'confirmed') artifacts[entry.artifactType] = true;
+      }
+      return artifacts;
+    }
+
+    function loadDraft() {
+      const activeProjectId = localStorage.getItem(ACTIVE_PROJECT_KEY);
+      if (activeProjectId) {
+        loadedDraftStorage = localStorage.getItem(storageKey(activeProjectId)) != null;
+        try {
+          const saved = JSON.parse(localStorage.getItem(storageKey(activeProjectId)) || 'null');
+          if (saved?.document?.schemaVersion === '1.0.0') {
+            assertNoPlaintextCredentials(saved.document);
+            const documentErrors = validateV1(saved.document);
+            if (documentErrors.length) throw new Error('ProjectBrief salvo inválido');
+            currentDocument = clone(saved.document);
+            state = { ...clone(currentDocument.data), artifacts: emptyArtifactState() };
+            artifactIndex = null;
+            if (saved.artifactIndex != null) {
+              try {
+                assertNoPlaintextCredentials(saved.artifactIndex);
+                const validatedIndex = validateArtifactIndexDocument(saved.artifactIndex);
+                if (validatedIndex.project.slug !== currentDocument.data.project.slug) throw new Error('projeto divergente');
+                artifactIndex = clone(validatedIndex);
+                state.artifacts = deriveArtifactsFromIndex(artifactIndex);
+              } catch (error) {
+                artifactIndex = null;
+                state.artifacts = emptyArtifactState();
+                if (/possível credencial/i.test(error?.message || '')) {
+                  preserveRejectedStorage = true;
+                  draftRecoveryNotice = 'Índice salvo recusado por possível credencial; desbloqueios foram limpos sem alterar o storage original.';
+                } else {
+                  draftRecoveryNotice = 'Índice salvo recusado; desbloqueios foram limpos e o ProjectBrief seguro foi preservado.';
+                }
+              }
+            }
+            activeStep = steps.some((step) => step.id === saved.ui?.activeStep) ? saved.ui.activeStep : 'project';
+            importedIdentity = true;
+            return;
+          }
+        } catch (error) {
+          if (/possível credencial/i.test(error?.message || '')) {
+            preserveRejectedStorage = true;
+            draftRecoveryNotice = 'ProjectBrief salvo recusado por possível credencial; o storage original foi preservado sem uso.';
+          }
+          /* continua com recuperação legado */
+        }
+      }
+      const rawLegacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (rawLegacy) {
+        try {
+          const legacy = JSON.parse(rawLegacy);
+          delete legacy.artifacts;
+          currentDocument = migrateLegacyDocument(legacy);
+          artifactIndex = null;
+          state = { ...clone(currentDocument.data), artifacts: emptyArtifactState() };
+          importedIdentity = true;
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+          saveNow();
+          return;
+        } catch { /* rascunho legado inválido fica intacto para recuperação manual */ }
+      }
+      ensureCurrentDocument();
     }
 
     function scheduleSave() {
@@ -737,13 +1112,27 @@
     }
 
     function saveNow() {
-      state.meta = {
-        ...(state.meta || {}),
-        updatedAt: new Date().toISOString(),
-        lastSavedAt: new Date().toISOString()
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      ensureCurrentDocument();
+      currentDocument.data = contractData();
+      if (state.project?.slug || importedIdentity) {
+        const payload = {
+          document: currentDocument,
+          artifacts: clone(state.artifacts || {}),
+          artifactIndex: artifactIndex ? clone(artifactIndex) : null,
+          ui: { activeStep }
+        };
+        try {
+          assertNoPlaintextCredentials(payload);
+        } catch (error) {
+          byId('save-state').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-[10px]"></i> autosave recusado: ${escapeHtml(error.message)}`;
+          showImportStatus(`Autosave recusado: ${error.message}`, true);
+          return false;
+        }
+        localStorage.setItem(storageKey(currentDocument.projectId), JSON.stringify(payload));
+        localStorage.setItem(ACTIVE_PROJECT_KEY, currentDocument.projectId);
+      }
       byId('save-state').innerHTML = '<i class="fa-solid fa-circle text-[7px] text-emerald-400"></i> salvo';
+      return true;
     }
 
     function renderStepNav() {
@@ -899,7 +1288,7 @@
           </section>
           <section class="field-card">
             <h2 class="font-display text-lg mb-3">JSON atual</h2>
-            <textarea readonly class="mono text-xs min-h-[260px]">${escapeHtml(JSON.stringify(state, null, 2))}</textarea>
+            <textarea readonly class="mono text-xs min-h-[260px]">${escapeHtml(JSON.stringify({ document: { ...currentDocument, data: contractData() }, artifacts: state.artifacts || {}, ui: { activeStep } }, null, 2))}</textarea>
           </section>
         </div>
       `;
@@ -935,9 +1324,7 @@
       });
       document.querySelectorAll('[data-artifact]').forEach((btn) => {
         btn.addEventListener('click', () => {
-          state.artifacts[btn.dataset.artifact] = !state.artifacts[btn.dataset.artifact];
-          scheduleSave();
-          render();
+          showImportStatus('Estado derivado do ArtifactIndex. Confirme pelo helper CLI e reimporte o índice.', true);
         });
       });
     }
@@ -967,51 +1354,16 @@
       setValue(path, current);
     }
 
-    function conditionMatches(condition) {
-      const value = getValue(condition.field);
-      if ('equals' in condition) return value === condition.equals;
-      if ('in' in condition) return condition.in.includes(value);
-      return false;
-    }
-
-    function matchGroup(group) {
-      if (group.matches) {
-        for (const [field, expected] of Object.entries(group.matches)) {
-          if (getValue(field) !== expected) return false;
-        }
-      }
-      const fieldOk = (group.fields || []).every((field) => isFilled(getValue(field)));
-      const artifactOk = (group.artifacts || []).every((artifact) => Boolean(state.artifacts?.[artifact]));
-      if ((group.fields || []).length && (group.artifacts || []).length) return fieldOk && artifactOk;
-      if ((group.fields || []).length) return fieldOk;
-      if ((group.artifacts || []).length) return artifactOk;
-      return true;
-    }
-
-    function evaluateSkill(skillId, rule) {
-      const primaryDone = (rule.primaryArtifacts || []).length > 0 && rule.primaryArtifacts.every((artifact) => state.artifacts?.[artifact]);
-      const notApplicable = (rule.notApplicableWhen || []).find(conditionMatches);
-      if (notApplicable) return { skillId, rule, state: 'not_applicable', missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [], reason: notApplicable.reason };
-      if (primaryDone) return { skillId, rule, state: 'done', missingFields: [], missingArtifacts: [], missingAnyOf: [], recommendedMissing: [] };
-
-      const missingFields = (rule.requiredFields || []).filter((field) => !isFilled(getValue(field)));
-      const missingArtifacts = (rule.requiredArtifacts || []).filter((artifact) => !state.artifacts?.[artifact]);
-      const anyGroups = rule.anyOf || [];
-      const anyOk = anyGroups.length === 0 || anyGroups.some(matchGroup);
-      const missingAnyOf = anyOk ? [] : anyGroups.map((group) => group.label || 'Caminho alternativo');
-      const recommendedMissing = [
-        ...(rule.recommendedFields || []).filter((field) => !isFilled(getValue(field))),
-        ...(rule.recommendedArtifacts || []).filter((artifact) => !state.artifacts?.[artifact])
-      ];
-      const hardMissing = missingFields.length + missingArtifacts.length + missingAnyOf.length;
-      let stateName = 'available';
-      if (hardMissing > 0) stateName = hardMissing <= 2 ? 'almost' : 'blocked';
-      else if (recommendedMissing.length > 0) stateName = 'recommended';
-      return { skillId, rule, state: stateName, missingFields, missingArtifacts, missingAnyOf, recommendedMissing };
-    }
-
     function evaluateSkills() {
-      return Object.entries(rules.skills).map(([skillId, rule]) => evaluateSkill(skillId, rule));
+      return window.SkillSurfaceContract.evaluateSkills({
+        catalog,
+        rules,
+        legacySchema: schema,
+        projectBriefSchema: v1Schema,
+        projectBrief: currentDocument ? { ...currentDocument, data: contractData() } : null,
+        artifactIndex,
+        allowPartialProjectBrief: true,
+      });
     }
 
     function renderSkillsPanel() {
@@ -1019,10 +1371,16 @@
       const ready = evaluated.filter((item) => ['done', 'available', 'recommended'].includes(item.state));
       const almost = evaluated.filter((item) => item.state === 'almost');
       const blocked = evaluated.filter((item) => item.state === 'blocked');
-      const next = evaluated.find((item) => ['available', 'recommended', 'almost'].includes(item.state));
+      const projectBrief = currentDocument ? { ...currentDocument, data: contractData() } : null;
+      const decision = readinessEngine.decideNextSkill({ rules, contractRefs: readinessContractRefs, evaluatedSkills: evaluated, projectBrief, artifactIndex });
+      const next = decision.nextSkill
+        ? evaluated.find((item) => item.skillId === decision.nextSkill.id)
+        : null;
+      window.__SKILL_READINESS_DECISION = decision;
 
       byId('skill-summary').textContent = `${ready.length} liberadas`;
-      byId('next-skill-pill').textContent = next ? next.skillId : 'sem próxima';
+      byId('next-skill-pill').textContent = decision.nextSkill?.command || 'sem próxima';
+      byId('next-skill-reason').textContent = decision.reason;
       byId('count-ready').textContent = ready.length;
       byId('count-almost').textContent = almost.length;
       byId('count-blocked').textContent = blocked.length;
@@ -1144,68 +1502,211 @@
       renderSkillsPanel();
     }
 
-    function exportJson() {
-      saveNow();
-      const slug = state.project?.slug;
-      if (!slug) {
-        alert('Preencha o slug do projeto antes de exportar.');
-        activeStep = 'project';
+    function showImportStatus(message, error = false) {
+      byId('import-status').textContent = message;
+      byId('import-status').style.color = error ? 'var(--rose)' : 'var(--teal)';
+    }
+
+    function isPortableArtifactPath(value) {
+      return window.SkillSurfaceContract.isPortableArtifactPath(value);
+    }
+
+    function matchesArtifactGlob(relativePath, pattern) {
+      return window.SkillSurfaceContract.matchesArtifactGlob(relativePath, pattern);
+    }
+
+    function validateArtifactRulesContract(candidate) {
+      return window.SkillSurfaceContract.validateArtifactRules(candidate);
+    }
+
+    function validateArtifactIndexDocument(candidate) {
+      return window.SkillSurfaceContract.validateArtifactIndex(candidate, rules, currentDocument);
+    }
+
+    async function importArtifactIndex(event) {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file) return;
+      try {
+        const parsed = JSON.parse(await file.text());
+        assertNoPlaintextCredentials(parsed);
+        const candidate = validateArtifactIndexDocument(parsed);
+        if (state.project?.slug && candidate.project.slug !== state.project.slug) {
+          throw new Error('o índice pertence a outro projeto');
+        }
+        artifactIndex = clone(candidate);
+        state.artifacts = deriveArtifactsFromIndex(artifactIndex);
+        scheduleSave();
         render();
-        return;
+        showImportStatus(`ArtifactIndex v1 importado: ${artifactIndex.summary.confirmed} confirmados, ${artifactIndex.summary.pendingConfirmation} pendentes`);
+      } catch (error) {
+        showImportStatus(`ArtifactIndex recusado: ${error.message}. Gere novamente pelo helper CLI.`, true);
       }
-      const exportState = structuredClone(state);
-      // `artifacts` e estado de interface nao pertencem ao ProjectBrief 0.1.0.
-      // O novo produto migra artefatos para um registry separado.
-      delete exportState.artifacts;
-      const blob = new Blob([JSON.stringify(exportState, null, 2)], { type: 'application/json' });
+    }
+
+    function activeStepFor(document) {
+      return ({ 'aula-1': 'project', 'aula-2': 'offer', trafego: 'channels', dados: 'data', 'nao-sei': 'project' })[document.data?.project?.currentStage] || 'project';
+    }
+
+    async function importProjectBrief(event) {
+      const file = event.target.files?.[0];
+      event.target.value = '';
+      if (!file) return;
+      try {
+        const input = JSON.parse(await file.text());
+        assertNoPlaintextCredentials(input);
+        const candidate = input?.document?.schemaVersion === '1.0.0' ? input.document : input;
+        let imported;
+        let message;
+        if (candidate?.schemaVersion === '1.0.0') {
+          const errors = validateV1(candidate);
+          if (errors.length) throw new Error(errors.slice(0, 3).join('; '));
+          imported = clone(candidate);
+          message = 'ProjectBrief v1 importado';
+        } else if (candidate?.schemaVersion === '0.1.0') {
+          imported = migrateLegacyDocument(candidate);
+          message = 'Documento 0.1.0 migrado para ProjectBrief v1';
+        } else {
+          throw new Error(`schemaVersion ${candidate?.schemaVersion || 'ausente'} não suportada`);
+        }
+        currentDocument = imported;
+        artifactIndex = null;
+        state = { ...clone(imported.data), artifacts: {} };
+        activeStep = activeStepFor(imported);
+        importedIdentity = true;
+        saveNow();
+        render();
+        showImportStatus(message);
+      } catch (error) {
+        showImportStatus(`Importação recusada: ${error.message}. Revise o arquivo e tente novamente.`, true);
+      }
+    }
+
+    function exportDocument() {
+      ensureCurrentDocument();
+      const document = { ...clone(currentDocument), data: contractData() };
+      try {
+        assertNoPlaintextCredentials(document);
+      } catch (error) {
+        showImportStatus(`Exportação recusada: ${error.message}`, true);
+        return null;
+      }
+      const errors = validateV1(document);
+      if (errors.length) {
+        showImportStatus(`Exportação recusada: ${errors.slice(0, 3).join('; ')}`, true);
+        if (!state.project?.slug) { activeStep = 'project'; render(); }
+        return null;
+      }
+      return document;
+    }
+
+    function downloadText(contents, type, filename) {
+      const blob = new Blob([contents], { type });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${slug}-project-brief.json`;
+      a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
     }
 
-    async function copySummary() {
+    function exportJson() {
+      const document = exportDocument();
+      if (!document) return;
+      downloadText(`${JSON.stringify(document, null, 2)}\n`, 'application/json', `${document.data.project.slug}-project-brief.v1.json`);
+      showImportStatus('ProjectBrief v1 validado e exportado');
+    }
+
+    function markdownSummary() {
+      const data = contractData();
       const evaluated = evaluateSkills();
+      const projectBrief = currentDocument ? { ...currentDocument, data } : null;
+      const decision = readinessEngine.decideNextSkill({ rules, contractRefs: readinessContractRefs, evaluatedSkills: evaluated, projectBrief, artifactIndex });
       const ready = evaluated.filter((item) => ['done', 'available', 'recommended'].includes(item.state)).map((item) => item.skillId);
       const almost = evaluated.filter((item) => item.state === 'almost').map((item) => item.skillId);
-      const text = [
-        `# Briefing ${state.project?.slug || ''}`.trim(),
+      return [
+        `# Briefing ${data.project?.name || data.project?.slug || 'sem nome'}`,
         '',
-        `Skills liberadas: ${ready.join(', ') || 'nenhuma'}`,
-        `Quase liberadas: ${almost.join(', ') || 'nenhuma'}`,
+        `- Projeto: ${data.project?.slug || 'não definido'}`,
+        `- Etapa atual: ${data.project?.currentStage || 'não definida'}`,
+        `- Nicho: ${data.market?.niche || 'não definido'}`,
+        `- Oferta: ${data.offer?.name || 'não definida'}`,
         '',
-        `Projeto: ${state.project?.name || state.project?.slug || 'não definido'}`,
-        `Nicho: ${state.market?.niche || 'não definido'}`,
-        `Oferta: ${state.offer?.name || 'não definida'}`
+        '## Readiness',
+        '',
+        `- Skills liberadas: ${ready.join(', ') || 'nenhuma'}`,
+        `- Quase liberadas: ${almost.join(', ') || 'nenhuma'}`,
+        `- Próxima skill: ${decision.nextSkill?.command || 'nenhuma'}`,
+        `- Razão: ${decision.reason}`,
+        ''
       ].join('\n');
-      await navigator.clipboard.writeText(text);
+    }
+
+    function exportMarkdown() {
+      const document = exportDocument();
+      if (!document) return;
+      downloadText(markdownSummary(), 'text/markdown', `${document.data.project.slug}-briefing.md`);
+      showImportStatus('Resumo Markdown derivado e exportado');
+    }
+
+    async function copySummary() {
+      await navigator.clipboard.writeText(markdownSummary());
       byId('save-state').innerHTML = '<i class="fa-solid fa-copy text-[10px]"></i> resumo copiado';
     }
 
+    async function loadReadinessEngine() {
+      return import('/scripts/lib/skill-readiness.mjs');
+    }
+
     async function init() {
+      window.__SKILL_SURFACE_STATUS = { status: 'loading' };
       try {
-        const [schemaRes, rulesRes] = await Promise.all([
-          fetch('data/project-brief.schema.json'),
-          fetch('data/skill-unlock-rules.json')
+        const [schemaRes, v1SchemaRes, catalogRes, rulesRes] = await Promise.all([
+          fetch('/data/project-brief.schema.json'),
+          fetch('/data/contracts/project-brief.v1.schema.json'),
+          fetch('/data/skill-catalog.json'),
+          fetch('/data/skill-unlock-rules.json')
         ]);
+        if (![schemaRes, v1SchemaRes, catalogRes, rulesRes].every((response) => response.ok)) {
+          throw new Error('Um contrato público não foi encontrado.');
+        }
         schema = await schemaRes.json();
+        v1Schema = await v1SchemaRes.json();
+        catalog = await catalogRes.json();
         rules = await rulesRes.json();
+        readinessEngine = await loadReadinessEngine();
+        const contractInputs = {
+          catalog,
+          rules,
+          legacySchema: schema,
+          projectBriefSchema: v1Schema,
+        };
+        window.SkillSurfaceContract.validateContracts(contractInputs);
+        readinessContractRefs = window.SkillSurfaceContract.createReadinessContractRefs(contractInputs);
+        validateArtifactRulesContract(rules);
+        byId('briefing-surface-count').textContent = `${catalog.skills.length} skills · ${steps?.length || schema['x-steps'].length} etapas · autosave por projeto`;
       } catch (error) {
+        window.__SKILL_SURFACE_STATUS = { status: 'error', code: error?.code || 'SURFACE_CONTRACT_LOAD_FAILED' };
         byId('form-body').innerHTML = `
           <div class="field-card">
-            <h1 class="font-display text-xl">Não consegui carregar os JSONs.</h1>
-            <p class="text-zinc-400 text-sm mt-2">Abra via servidor local, por exemplo: http://localhost:8765/briefing.html</p>
+            <h1 class="font-display text-xl">Contratos públicos indisponíveis.</h1>
+            <p class="text-zinc-400 text-sm mt-2">${escapeHtml(error?.message || 'Catálogo ou regra inválida.')} Sirva a raiz do repositório por HTTP e valide data/skill-catalog.json e data/skill-unlock-rules.json.</p>
           </div>
         `;
         return;
       }
       steps = schema['x-steps'];
       fields = flattenSchemaFields();
+      canonicalFieldPaths = collectCanonicalFieldPaths();
       loadDraft();
       render();
-      saveNow();
+      window.__SKILL_SURFACE_STATUS = { status: 'ready', skillIds: catalog.skills.map((skill) => skill.id) };
+      if (loadedDraftStorage || preserveRejectedStorage) {
+        byId('save-state').innerHTML = '<i class="fa-solid fa-shield-halved text-[10px]"></i> salvo local não alterado';
+      } else {
+        saveNow();
+      }
+      if (draftRecoveryNotice) showImportStatus(draftRecoveryNotice, true);
 
       byId('prev-step').addEventListener('click', () => {
         const idx = steps.findIndex((item) => item.id === activeStep);
@@ -1217,11 +1718,18 @@
         activeStep = steps[Math.min(steps.length - 1, idx + 1)].id;
         render();
       });
-      byId('export-btn').addEventListener('click', exportJson);
+      byId('import-btn').addEventListener('click', () => byId('import-file').click());
+      byId('import-file').addEventListener('change', importProjectBrief);
+      byId('import-artifact-index').addEventListener('click', () => byId('import-artifact-index-file').click());
+      byId('import-artifact-index-file').addEventListener('change', importArtifactIndex);
+      byId('export-json-btn').addEventListener('click', exportJson);
+      byId('export-markdown-btn').addEventListener('click', exportMarkdown);
       byId('copy-summary').addEventListener('click', copySummary);
       byId('reset-btn').addEventListener('click', () => {
         if (!confirm('Limpar o briefing salvo neste navegador?')) return;
-        localStorage.removeItem(STORAGE_KEY);
+        if (currentDocument?.projectId) localStorage.removeItem(storageKey(currentDocument.projectId));
+        localStorage.removeItem(ACTIVE_PROJECT_KEY);
+        localStorage.removeItem(LEGACY_STORAGE_KEY);
         location.reload();
       });
     }

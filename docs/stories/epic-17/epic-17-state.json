@@ -1,0 +1,167 @@
+{
+  "schema_version": "epic-state-v1",
+  "epic_id": "17",
+  "namespace": "PUB",
+  "title": "Fundacao da Aula 4: dados",
+  "status": "completed",
+  "verification_verdict": "PASS",
+  "created": "2026-07-14",
+  "autonomy_level": "AL2",
+  "baseline_ref": "f989ce67264b24a29b0b92aeacd30ae61903685e",
+  "depends_on": [
+    "GATE-0",
+    "16.W1.1"
+  ],
+  "implementation_authorized": true,
+  "waves": [
+    {
+      "wave_id": "W1",
+      "name": "Contratos e ledger",
+      "status": "completed",
+      "parallel_groups": [
+        [
+          "17.W1.1"
+        ],
+        [
+          "17.W1.2"
+        ]
+      ],
+      "stories": [
+        {
+          "story_id": "17.W1.1",
+          "title": "Validadores dos contratos de campanha e semana",
+          "status": "Done",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "6h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "depends_on": [
+            "16.W1.1"
+          ],
+          "consumes_artifacts_of": [
+            "16.W1.1"
+          ]
+        },
+        {
+          "story_id": "17.W1.2",
+          "title": "Ledger multi-semana com proveniencia",
+          "status": "Done",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "depends_on": [
+            "17.W1.1"
+          ],
+          "consumes_artifacts_of": [
+            "17.W1.1"
+          ]
+        }
+      ]
+    },
+    {
+      "wave_id": "W2",
+      "name": "Leitura e decisao",
+      "status": "completed",
+      "parallel_groups": [
+        [
+          "17.W2.1",
+          "17.W2.3"
+        ],
+        [
+          "17.W2.2"
+        ]
+      ],
+      "stories": [
+        {
+          "story_id": "17.W2.1",
+          "title": "Leitura historica sem invencao",
+          "status": "Done",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "depends_on": [
+            "17.W1.2"
+          ]
+        },
+        {
+          "story_id": "17.W2.2",
+          "title": "Diagnostico decisao versus resultado",
+          "status": "Done",
+          "task_mode": "MODIFICAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "depends_on": [
+            "17.W1.2",
+            "17.W2.1"
+          ]
+        },
+        {
+          "story_id": "17.W2.3",
+          "title": "Reconciliacao plataforma, checkout e caixa",
+          "status": "Done",
+          "task_mode": "CRIAR",
+          "deploy_type": "none",
+          "repo_target": "marketingLendario/cohort-de-marketing",
+          "effort": "7h",
+          "model": "sonnet",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "depends_on": [
+            "17.W1.1",
+            "17.W1.2"
+          ]
+        }
+      ]
+    },
+    {
+      "wave_id": "W3",
+      "name": "Material e release",
+      "status": "completed",
+      "parallel_groups": [
+        [
+          "17.W3.1"
+        ],
+        [
+          "17.W3.2"
+        ]
+      ],
+      "stories": [
+        {
+          "story_id": "17.W3.1",
+          "title": "Modulo didatico e fluxo local da Aula 4",
+          "status": "Done",
+          "implementation_authorized": true,
+          "depends_on": [
+            "17.W2.1",
+            "17.W2.2",
+            "17.W2.3"
+          ]
+        },
+        {
+          "story_id": "17.W3.2",
+          "title": "Gate publico da Aula 4",
+          "status": "Done",
+          "implementation_authorized": true,
+          "depends_on": [
+            "17.W3.1"
+          ]
+        }
+      ]
+    }
+  ]
+}

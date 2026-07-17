@@ -1,0 +1,77 @@
+{
+  "contract": "WeeklyLedger",
+  "schemaVersion": "1.1.0",
+  "hashAlgorithm": "sha256",
+  "projectionDigestVersion": "1.0.0",
+  "projectionDigestAlgorithm": "sha256",
+  "entries": [
+    {
+      "projectId": "project-history",
+      "campaignId": "campaign-history",
+      "weekStart": "2026-06-01",
+      "revision": 1,
+      "weeklyPanelId": "weekly-panel:history:2026-06-01:r1",
+      "schemaVersion": "1.0.0",
+      "canonicalHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "projectionDigest": "69883a1a0de957c57f913682010231bb3e40fbfda644fab62006aba00a775040",
+      "metrics": [
+        {
+          "name": "cpa",
+          "value": 42,
+          "seal": "Real",
+          "sourceRef": { "kind": "platform-export", "id": "week-1" },
+          "attributionWindow": "7d_click_1d_view",
+          "premiseRef": null,
+          "confirmedByHuman": true,
+          "cashConfirmed": false
+        },
+        {
+          "name": "spend",
+          "value": 210,
+          "seal": "Real",
+          "sourceRef": { "kind": "platform-export", "id": "week-1" },
+          "attributionWindow": "7d_click_1d_view",
+          "premiseRef": null,
+          "confirmedByHuman": true,
+          "cashConfirmed": true
+        }
+      ]
+    },
+    {
+      "projectId": "project-history",
+      "campaignId": "campaign-history",
+      "weekStart": "2026-06-08",
+      "revision": 1,
+      "weeklyPanelId": "weekly-panel:history:2026-06-08:r1",
+      "schemaVersion": "1.0.0",
+      "canonicalHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "projectionDigest": "8b5bb310c243d4c4a93b12e99605d1cc5a8f2f1664cc84891c8bd67877c59c2c",
+      "metrics": [
+        {
+          "name": "cpa",
+          "value": 39,
+          "seal": "Real",
+          "sourceRef": { "kind": "platform-export", "id": "week-2" },
+          "attributionWindow": "7d_click_1d_view",
+          "premiseRef": null,
+          "confirmedByHuman": true,
+          "cashConfirmed": false
+        },
+        {
+          "name": "spend",
+          "value": 225,
+          "seal": "Real",
+          "sourceRef": { "kind": "platform-export", "id": "week-2" },
+          "attributionWindow": "7d_click_1d_view",
+          "premiseRef": null,
+          "confirmedByHuman": true,
+          "cashConfirmed": true
+        }
+      ]
+    }
+  ],
+  "index": [
+    { "projectId": "project-history", "campaignId": "campaign-history", "weekStart": "2026-06-01", "revisions": [{ "revision": 1, "entryIndex": 0 }] },
+    { "projectId": "project-history", "campaignId": "campaign-history", "weekStart": "2026-06-08", "revisions": [{ "revision": 1, "entryIndex": 1 }] }
+  ]
+}

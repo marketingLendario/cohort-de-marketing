@@ -1,0 +1,47 @@
+{
+  "id": "decision:2026-06-01:a1b2c3d4",
+  "hypothesis": {
+    "id": "hypothesis:a1b2c3d4",
+    "text": "A mudança declarada pode elevar a receita confirmada."
+  },
+  "lever": {
+    "id": "lever:a1b2c3d4",
+    "text": "Manter somente a mudança declarada durante a janela."
+  },
+  "successCriterion": {
+    "id": "criterion:success:a1b2c3d4",
+    "metric": "revenue",
+    "operator": "gte",
+    "threshold": "1200"
+  },
+  "measurementWindow": {
+    "id": "window:2026-06-01:2026-06-15:a1b2c3d4",
+    "fromWeekStart": "2026-06-01",
+    "toWeekStart": "2026-06-15",
+    "attributionWindow": "calendar_week",
+    "minDistinctWeeks": 3
+  },
+  "reversalCriterion": {
+    "id": "criterion:reversal:a1b2c3d4",
+    "metric": "revenue",
+    "operator": "lte",
+    "threshold": "800"
+  },
+  "reversal": {
+    "id": "reversal:a1b2c3d4",
+    "text": "Reverter somente para a configuração declarada anterior."
+  },
+  "circuitBreaker": {
+    "id": "circuit-breaker:a1b2c3d4",
+    "text": "Interromper e pedir revisão humana se o limite declarado ocorrer."
+  },
+  "humanDecision": {
+    "status": "approved",
+    "decidedAt": "2026-06-01T12:00:00Z",
+    "ref": "operator:2026-06-01:a1b2c3d4"
+  },
+  "candidateNextLever": {
+    "id": "lever:b2c3d4e5",
+    "action": "execute_declared_reversal"
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/weekly-ledger.v1.schema.json",
+  "title": "Weekly Ledger v1",
+  "description": "Append-only index of validated WeeklyPanel v1 records. canonicalHash preserves the SHA-256 provenance hash of the complete validated WeeklyPanel. projectionDigest is independently recomputable over the persisted entry projection using the declared projection digest version and algorithm.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "schemaVersion",
+    "hashAlgorithm",
+    "projectionDigestVersion",
+    "projectionDigestAlgorithm",
+    "entries",
+    "index"
+  ],
+  "properties": {
+    "contract": { "type": "string", "const": "WeeklyLedger" },
+    "schemaVersion": { "type": "string", "const": "1.1.0" },
+    "hashAlgorithm": { "type": "string", "const": "sha256" },
+    "projectionDigestVersion": { "type": "string", "const": "1.0.0" },
+    "projectionDigestAlgorithm": { "type": "string", "const": "sha256" },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "index": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/indexItem" }
+    }
+  },
+  "$defs": {
+    "provenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["assumption", "checkout-export", "operator-declaration", "platform-export", "tracking-audit"]
+        },
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,127}$" }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "value",
+        "seal",
+        "sourceRef",
+        "attributionWindow",
+        "premiseRef",
+        "confirmedByHuman",
+        "cashConfirmed"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "value": { "type": ["number", "null"] },
+        "seal": { "type": "string", "enum": ["Real", "Estimado", "nao_fornecido"] },
+        "sourceRef": {
+          "allOf": [
+            { "$ref": "#/$defs/provenanceRef" },
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": ["checkout-export", "operator-declaration", "platform-export", "tracking-audit"]
+                }
+              }
+            }
+          ]
+        },
+        "attributionWindow": { "type": ["string", "null"], "minLength": 1 },
+        "premiseRef": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "allOf": [
+                { "$ref": "#/$defs/provenanceRef" },
+                { "type": "object", "properties": { "kind": { "const": "assumption" } } }
+              ]
+            }
+          ]
+        },
+        "confirmedByHuman": { "type": "boolean" },
+        "cashConfirmed": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "seal": { "const": "nao_fornecido" } }, "required": ["seal"] },
+          "then": {
+            "properties": {
+              "value": { "const": null },
+              "attributionWindow": { "const": null },
+              "premiseRef": { "const": null },
+              "confirmedByHuman": { "const": false },
+              "cashConfirmed": { "const": false }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "seal": { "const": "Estimado" } }, "required": ["seal"] },
+          "then": {
+            "properties": {
+              "value": { "type": "number" },
+              "premiseRef": {
+                "allOf": [
+                  { "$ref": "#/$defs/provenanceRef" },
+                  { "type": "object", "properties": { "kind": { "const": "assumption" } } }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "seal": { "const": "Real" } }, "required": ["seal"] },
+          "then": { "properties": { "value": { "type": "number" } } }
+        }
+      ]
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projectId",
+        "campaignId",
+        "weekStart",
+        "revision",
+        "weeklyPanelId",
+        "schemaVersion",
+        "canonicalHash",
+        "projectionDigest",
+        "metrics"
+      ],
+      "properties": {
+        "projectId": { "type": "string", "minLength": 1 },
+        "campaignId": { "type": "string", "minLength": 1 },
+        "weekStart": { "type": "string", "format": "date" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "weeklyPanelId": { "type": "string", "minLength": 1 },
+        "schemaVersion": { "type": "string", "const": "1.0.0" },
+        "canonicalHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "projectionDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "metrics": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metric" }
+        }
+      }
+    },
+    "revisionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "entryIndex"],
+      "properties": {
+        "revision": { "type": "integer", "minimum": 1 },
+        "entryIndex": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "indexItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projectId", "campaignId", "weekStart", "revisions"],
+      "properties": {
+        "projectId": { "type": "string", "minLength": 1 },
+        "campaignId": { "type": "string", "minLength": 1 },
+        "weekStart": { "type": "string", "format": "date" },
+        "revisions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/revisionRef" }
+        }
+      }
+    }
+  }
+}

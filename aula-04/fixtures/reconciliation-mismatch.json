@@ -1,0 +1,62 @@
+{
+  "contract": "SourceObservationSet",
+  "schemaVersion": "1.0.0",
+  "reconciliationId": "reconciliation:revenue:2026-07:b2c3d4e5",
+  "metric": "revenue",
+  "observations": [
+    {
+      "source": "cash",
+      "status": "provided",
+      "value": "990",
+      "currency": "BRL",
+      "window": "calendar_month",
+      "period": {
+        "start": "2026-07-01T03:00:00Z",
+        "end": "2026-08-01T03:00:00Z"
+      },
+      "observedAt": "2026-08-01T12:10:00Z",
+      "confirmedByHuman": true,
+      "cashConfirmed": true,
+      "provenanceRef": {
+        "kind": "cash-export",
+        "id": "cash:2026-07:c3d4e5f6"
+      }
+    },
+    {
+      "source": "platform",
+      "status": "provided",
+      "value": "1200.000",
+      "currency": "BRL",
+      "window": "calendar_month",
+      "period": {
+        "start": "2026-07-01T00:00:00-03:00",
+        "end": "2026-08-01T00:00:00-03:00"
+      },
+      "observedAt": "2026-08-01T09:00:00-03:00",
+      "confirmedByHuman": true,
+      "cashConfirmed": false,
+      "provenanceRef": {
+        "kind": "platform-export",
+        "id": "platform:2026-07:a1b2c3d4"
+      }
+    },
+    {
+      "source": "checkout",
+      "status": "provided",
+      "value": "1000",
+      "currency": "BRL",
+      "window": "calendar_month",
+      "period": {
+        "start": "2026-07-01T00:00:00-03:00",
+        "end": "2026-08-01T00:00:00-03:00"
+      },
+      "observedAt": "2026-08-01T09:05:00-03:00",
+      "confirmedByHuman": true,
+      "cashConfirmed": false,
+      "provenanceRef": {
+        "kind": "checkout-export",
+        "id": "checkout:2026-07:b2c3d4e5"
+      }
+    }
+  ]
+}

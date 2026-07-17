@@ -3,7 +3,6 @@
   "$id": "https://marketinglendario.local/cohort/project-brief.schema.json",
   "title": "Project Brief Unico",
   "description": "Schema canonico para coletar uma unica vez os inputs usados pelas skills do Cohort de Marketing.",
-  "schemaVersion": "0.1.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "project"],
@@ -662,6 +661,10 @@
     "fieldMeta": {
       "type": "object",
       "description": "Metadados por campo. As chaves usam dot path, ex.: project.slug.",
+      "propertyNames": {
+        "type": "string",
+        "format": "canonical-field-path"
+      },
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
@@ -670,7 +673,12 @@
             "type": "string",
             "enum": ["user", "artifact", "inferred", "pending_confirmation", "not_applicable"]
           },
-          "sourcePath": { "type": "string" },
+          "sourcePath": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "format": "portable-legacy-source-path"
+          },
           "updatedAt": { "type": "string", "format": "date-time" }
         }
       }

@@ -1,0 +1,11 @@
+{
+  "verdict": "refutou",
+  "reasonCodes": ["REVERSAL_CRITERION_MET"],
+  "proposedLevers": [
+    {
+      "leverId": "lever:b2c3d4e5",
+      "action": "execute_declared_reversal",
+      "reversalRef": "reversal:a1b2c3d4"
+    }
+  ]
+}

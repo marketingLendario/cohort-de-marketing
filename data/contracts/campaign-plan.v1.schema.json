@@ -5,6 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "contract",
     "schemaVersion",
     "id",
     "projectId",
@@ -17,11 +18,13 @@
     "angles",
     "finalists",
     "tracking",
+    "structure",
     "manualSubmission",
     "overrides"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.0.0" },
+    "contract": { "type": "string", "const": "CampaignPlan" },
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
     "id": { "type": "string", "minLength": 1 },
     "projectId": { "type": "string", "minLength": 1 },
     "campaignId": { "type": "string", "minLength": 1 },
@@ -31,21 +34,21 @@
       "additionalProperties": false,
       "required": ["id", "revision"],
       "properties": {
-        "id": { "type": "string" },
+        "id": { "type": "string", "minLength": 1 },
         "revision": { "type": "integer", "minimum": 1 }
       }
     },
-    "platform": { "const": "meta" },
-    "objective": { "enum": ["sales", "leads"] },
+    "platform": { "type": "string", "const": "meta" },
+    "objective": { "type": "string", "enum": ["sales", "leads"] },
     "landingPageUrl": { "type": "string", "format": "uri" },
     "budget": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["daily", "periodDays"],
+      "required": ["daily", "periodDays", "currency"],
       "properties": {
         "daily": { "type": "number", "minimum": 20 },
         "periodDays": { "type": "integer", "minimum": 1 },
-        "currency": { "const": "BRL" }
+        "currency": { "type": "string", "const": "BRL" }
       }
     },
     "angles": {
@@ -55,10 +58,10 @@
         "additionalProperties": false,
         "required": ["id", "name", "awarenessLevel", "source"],
         "properties": {
-          "id": { "type": "string" },
+          "id": { "type": "string", "minLength": 1 },
           "name": { "type": "string", "minLength": 1 },
           "awarenessLevel": { "type": "integer", "minimum": 1, "maximum": 5 },
-          "source": { "enum": ["brief", "artifact", "human"] }
+          "source": { "type": "string", "enum": ["brief", "artifact", "human"] }
         }
       }
     },
@@ -70,12 +73,12 @@
         "additionalProperties": false,
         "required": ["id", "angleId", "hook", "copy", "format", "selectedByHuman"],
         "properties": {
-          "id": { "type": "string" },
-          "angleId": { "type": "string" },
-          "hook": { "type": "string" },
-          "copy": { "type": "string" },
-          "format": { "enum": ["feed", "reels-9x16"] },
-          "selectedByHuman": { "const": true }
+          "id": { "type": "string", "minLength": 1 },
+          "angleId": { "type": "string", "minLength": 1 },
+          "hook": { "type": "string", "minLength": 1 },
+          "copy": { "type": "string", "minLength": 1 },
+          "format": { "type": "string", "enum": ["feed", "reels-9x16"] },
+          "selectedByHuman": { "type": "boolean", "const": true }
         }
       }
     },
@@ -84,9 +87,9 @@
       "additionalProperties": false,
       "required": ["status", "criticalItemsConfirmed", "checks"],
       "properties": {
-        "status": { "enum": ["PENDING", "OK", "PARCIAL", "CRITICO"] },
+        "status": { "type": "string", "enum": ["PENDING", "OK", "PARCIAL", "CRITICO"] },
         "criticalItemsConfirmed": { "type": "boolean" },
-        "auditArtifactId": { "type": "string" },
+        "auditArtifactId": { "type": "string", "minLength": 1 },
         "checks": {
           "type": "object",
           "additionalProperties": {
@@ -103,18 +106,58 @@
       }
     },
     "structure": {
-      "type": ["object", "null"],
-      "additionalProperties": true
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["schemaVersion", "optimization", "audience", "creativeIds"],
+          "properties": {
+            "schemaVersion": { "type": "string", "const": "1.0.0" },
+            "optimization": { "type": "string", "const": "conversion" },
+            "audience": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mode", "umbrellaInterest"],
+              "properties": {
+                "mode": { "type": "string", "const": "broad_cold_advantage_plus" },
+                "umbrellaInterest": { "type": ["string", "null"], "minLength": 1 }
+              }
+            },
+            "creativeIds": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true,
+              "maxItems": 3
+            }
+          }
+        }
+      ]
     },
     "manualSubmission": {
       "type": "object",
       "additionalProperties": false,
       "required": ["status"],
       "properties": {
-        "status": { "enum": ["not_ready", "ready", "confirmed_by_human"] },
+        "status": { "type": "string", "enum": ["not_ready", "ready", "confirmed_by_human"] },
         "confirmedAt": { "type": "string", "format": "date-time" },
-        "confirmedBy": { "type": "string" }
-      }
+        "confirmedBy": { "type": "string", "minLength": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "status": { "const": "confirmed_by_human" } },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "confirmedAt": { "type": "string", "format": "date-time" },
+              "confirmedBy": { "type": "string", "minLength": 1 }
+            },
+            "required": ["confirmedAt", "confirmedBy"]
+          }
+        }
+      ]
     },
     "overrides": {
       "type": "object",
@@ -123,7 +166,7 @@
         "additionalProperties": false,
         "required": ["value", "reason", "updatedAt"],
         "properties": {
-          "value": true,
+          "value": { "const": true },
           "reason": { "type": "string", "minLength": 1 },
           "updatedAt": { "type": "string", "format": "date-time" }
         }

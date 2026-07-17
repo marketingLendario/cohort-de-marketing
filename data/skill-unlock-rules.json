@@ -8,7 +8,9 @@
     "requiredArtifacts": "Arquivos que precisam existir em projetos/{slug}/ para a skill estar realmente liberada.",
     "recommendedArtifacts": "Arquivos que melhoram qualidade ou reduzem perguntas.",
     "anyOf": "Pelo menos um grupo precisa ser satisfeito.",
-    "notApplicableWhen": "Condicoes que transformam a skill em nao aplicavel."
+    "notApplicableWhen": "Condicoes que transformam a skill em nao aplicavel.",
+    "priority": "Ordem numerica declarada da rota; menor vem antes e empate usa exclusivamente o ID estavel da skill.",
+    "recommendationEligible": "Define explicitamente se a skill pode ser escolhida como proximo passo."
   },
   "artifactGlobs": {
     "projectBrief": ["project-brief.json"],
@@ -42,10 +44,16 @@
     "trafficMetricReading": ["squad-trafego/metric-reading.json", "PAINEL-DA-SEMANA.yaml"],
     "trafficDiagnosis": ["squad-trafego/diagnosis.json", "PAINEL-DA-SEMANA.yaml"]
   },
+  "artifactIndex": {
+    "schemaVersion": "artifact-index-v1",
+    "confirmationRequiredByDefault": true
+  },
   "skills": {
     "comecar": {
       "type": "utility",
       "command": "/comecar",
+      "priority": 0,
+      "recommendationEligible": false,
       "primaryArtifacts": [],
       "requiredFields": [],
       "recommendedFields": ["project.slug", "project.currentStage", "integrations.apifyStatus"],
@@ -57,6 +65,8 @@
     "avatar-funil": {
       "type": "research",
       "command": "/avatar-funil",
+      "priority": 1,
+      "recommendationEligible": true,
       "primaryArtifacts": ["avatar"],
       "requiredFields": ["project.slug"],
       "recommendedFields": [
@@ -89,6 +99,8 @@
     "espiao-do-concorrente": {
       "type": "research",
       "command": "/espiao-do-concorrente",
+      "priority": 2,
+      "recommendationEligible": true,
       "primaryArtifacts": ["competitorDossier"],
       "requiredFields": ["project.slug"],
       "recommendedFields": ["market.competitors", "market.avatarSummary", "project.offerType", "integrations.apifyStatus"],
@@ -109,6 +121,8 @@
     "trend-hunting": {
       "type": "research",
       "command": "/trend-hunting",
+      "priority": 3,
+      "recommendationEligible": true,
       "primaryArtifacts": ["trendReport"],
       "requiredFields": ["project.slug"],
       "recommendedFields": ["market.niche", "market.trendSearchTerms", "market.competitors", "integrations.apifyStatus"],
@@ -129,6 +143,8 @@
     "swipe-file": {
       "type": "research",
       "command": "/swipe-file",
+      "priority": 4,
+      "recommendationEligible": true,
       "primaryArtifacts": ["swipeBrief"],
       "requiredFields": ["project.slug"],
       "recommendedFields": ["channels.swipePatterns", "project.offerType", "market.targetAudience"],
@@ -149,6 +165,8 @@
     "offerbook": {
       "type": "strategy",
       "command": "/offerbook",
+      "priority": 5,
+      "recommendationEligible": true,
       "primaryArtifacts": ["offerbook"],
       "requiredFields": ["project.slug", "project.startingPoint", "offer.name"],
       "recommendedFields": [
@@ -179,6 +197,8 @@
     "design-md": {
       "type": "foundation",
       "command": "/design-md",
+      "priority": 6,
+      "recommendationEligible": true,
       "primaryArtifacts": ["design"],
       "requiredFields": ["project.slug", "brand.designMode"],
       "recommendedFields": ["offer.name", "market.targetAudience", "brand.approvedDirection"],
@@ -216,6 +236,8 @@
     "metodo-funil": {
       "type": "foundation",
       "command": "/metodo-funil",
+      "priority": 7,
+      "recommendationEligible": true,
       "primaryArtifacts": ["funnel"],
       "requiredFields": ["project.slug", "project.offerType", "market.trafficSource", "project.ticketRange"],
       "recommendedFields": ["offer.proofAssets", "market.awarenessLevel", "offer.exactPrice", "offer.deliverables"],
@@ -226,6 +248,8 @@
     "copy-funil": {
       "type": "foundation",
       "command": "/copy-funil",
+      "priority": 8,
+      "recommendationEligible": true,
       "primaryArtifacts": ["copy"],
       "requiredFields": [
         "project.slug",
@@ -243,6 +267,8 @@
     "quiz-funil": {
       "type": "funnel",
       "command": "/quiz-funil",
+      "priority": 9,
+      "recommendationEligible": true,
       "primaryArtifacts": ["quiz"],
       "requiredFields": ["project.slug", "market.awarenessLevel", "funnel.segmentationAxis", "funnel.closingDestination", "funnel.captureMoment"],
       "recommendedFields": ["funnel.quizResultCount", "market.avatarSummary", "market.dominantPain", "offer.exactPrice"],
@@ -260,6 +286,8 @@
     "webinario-funil": {
       "type": "funnel",
       "command": "/webinario-funil",
+      "priority": 9,
+      "recommendationEligible": true,
       "primaryArtifacts": ["webinar"],
       "requiredFields": ["project.slug", "market.awarenessLevel", "funnel.bigDomino", "funnel.webinarSecrets", "funnel.webinarFormat", "funnel.closingDestination"],
       "recommendedFields": ["funnel.originStory", "offer.proofAssets", "funnel.presenterModel", "offer.bonuses"],
@@ -270,6 +298,8 @@
     "vsl-funil": {
       "type": "funnel",
       "command": "/vsl-funil",
+      "priority": 9,
+      "recommendationEligible": true,
       "primaryArtifacts": ["vsl"],
       "requiredFields": ["project.slug", "market.dominantPain", "offer.problemMechanism", "offer.solutionMechanism"],
       "recommendedFields": ["offer.upsell", "offer.exactPrice", "market.awarenessLevel", "offer.affiliate.affiliateLink"],
@@ -291,6 +321,8 @@
     "advertorial-funil": {
       "type": "funnel",
       "command": "/advertorial-funil",
+      "priority": 9,
+      "recommendationEligible": true,
       "primaryArtifacts": ["advertorial"],
       "requiredFields": ["project.slug", "market.awarenessLevel", "market.dominantPain", "funnel.recommendedFormat"],
       "recommendedFields": ["market.trafficTemperature", "offer.promise", "offer.affiliate.affiliateLink"],
@@ -301,6 +333,8 @@
     "lancamento-funil": {
       "type": "funnel",
       "command": "/lancamento-funil",
+      "priority": 9,
+      "recommendationEligible": true,
       "primaryArtifacts": ["launch"],
       "requiredFields": ["project.slug", "market.awarenessLevel", "funnel.audienceListSize", "funnel.cartTargetDate", "funnel.launchType"],
       "recommendedFields": ["offer.deliverables", "offer.exactPrice", "offer.bonuses", "offer.guarantee", "offer.affiliate.cartOpenAt", "offer.affiliate.cartCloseAt"],
@@ -311,6 +345,8 @@
     "pagina-vendas-funil": {
       "type": "asset",
       "command": "/pagina-vendas-funil",
+      "priority": 9,
+      "recommendationEligible": true,
       "primaryArtifacts": ["salesPage"],
       "requiredFields": ["project.slug", "market.targetAudience", "market.awarenessLevel", "market.trafficSource", "offer.deliverables", "offer.exactPrice"],
       "recommendedFields": ["offer.bonuses", "offer.guarantee", "project.ownerName", "offer.proofAssets", "funnel.closingDestination"],
@@ -321,6 +357,8 @@
     "email-funil": {
       "type": "asset",
       "command": "/email-funil",
+      "priority": 11,
+      "recommendationEligible": true,
       "primaryArtifacts": ["emails"],
       "requiredFields": ["project.slug", "channels.emailTypes", "channels.primaryCtaText"],
       "recommendedFields": ["channels.primaryCtaUrl", "channels.eventUrl", "channels.thankYouPageUrl", "funnel.closingDestination"],
@@ -331,6 +369,8 @@
     "whatsapp-funil": {
       "type": "asset",
       "command": "/whatsapp-funil",
+      "priority": 11,
+      "recommendationEligible": true,
       "primaryArtifacts": ["whatsapp"],
       "requiredFields": ["project.slug", "channels.automationMode", "channels.detectableEvents"],
       "recommendedFields": ["channels.whatsappTool", "market.trafficTemperature", "channels.eventUrl", "channels.primaryCtaUrl"],
@@ -341,6 +381,8 @@
     "conteudo-funil": {
       "type": "asset",
       "command": "/conteudo-funil",
+      "priority": 10,
+      "recommendationEligible": true,
       "primaryArtifacts": ["content"],
       "requiredFields": ["project.slug", "channels.contentPlatforms", "channels.contentFormats"],
       "recommendedFields": ["project.voice", "channels.voiceMaterials", "channels.referenceCreators", "market.avatarSummary", "offer.name"],
@@ -351,6 +393,8 @@
     "criativos-funil": {
       "type": "asset",
       "command": "/criativos-funil",
+      "priority": 10,
+      "recommendationEligible": true,
       "primaryArtifacts": ["creatives"],
       "requiredFields": ["project.slug", "channels.adChannels", "channels.adFormats", "channels.creativeScope"],
       "recommendedFields": ["market.competitors", "project.voice", "channels.voiceMaterials", "integrations.apifyStatus"],
@@ -361,6 +405,8 @@
     "mockup-produto-funil": {
       "type": "asset",
       "command": "/mockup-produto-funil",
+      "priority": 12,
+      "recommendationEligible": true,
       "primaryArtifacts": ["mockups"],
       "requiredFields": ["project.slug"],
       "recommendedFields": ["offer.deliverables", "offer.bonuses", "brand.brandAssets"],
@@ -371,6 +417,8 @@
     "bonus-funil": {
       "type": "asset",
       "command": "/bonus-funil",
+      "priority": 12,
+      "recommendationEligible": true,
       "primaryArtifacts": ["bonuses"],
       "requiredFields": ["project.slug", "offer.bonuses"],
       "recommendedFields": ["offer.promise", "market.dominantPain"],
@@ -381,6 +429,8 @@
     "backend-funil": {
       "type": "asset",
       "command": "/backend-funil",
+      "priority": 14,
+      "recommendationEligible": true,
       "primaryArtifacts": ["backend"],
       "requiredFields": ["project.slug", "offer.backendOffer", "offer.downsell"],
       "recommendedFields": ["offer.exactPrice", "market.trafficTemperature", "funnel.closingDestination"],
@@ -398,6 +448,8 @@
     "recuperacao-funil": {
       "type": "asset",
       "command": "/recuperacao-funil",
+      "priority": 13,
+      "recommendationEligible": true,
       "primaryArtifacts": ["recovery"],
       "requiredFields": ["project.slug", "channels.detectableEvents"],
       "recommendedFields": ["offer.downsell", "channels.primaryCtaUrl", "channels.whatsappTool", "market.trafficTemperature"],
@@ -408,6 +460,8 @@
     "cro-funil": {
       "type": "optimization",
       "command": "/cro-funil",
+      "priority": 15,
+      "recommendationEligible": true,
       "primaryArtifacts": ["cro"],
       "requiredFields": ["project.slug", "data.analyticsVariant"],
       "recommendedFields": [
@@ -428,6 +482,8 @@
     "status-funil": {
       "type": "utility",
       "command": "/status-funil",
+      "priority": 99,
+      "recommendationEligible": false,
       "primaryArtifacts": [],
       "requiredFields": ["project.slug"],
       "recommendedFields": [],
@@ -439,6 +495,8 @@
     "zelador": {
       "type": "traffic",
       "command": "/zelador",
+      "priority": 26,
+      "recommendationEligible": true,
       "primaryArtifacts": ["trafficTrackingAudit"],
       "requiredFields": ["project.slug", "channels.primaryCtaUrl"],
       "recommendedFields": ["channels.thankYouPageUrl", "project.regulatedNiche"],
@@ -449,6 +507,8 @@
     "briefista": {
       "type": "traffic",
       "command": "/briefista",
+      "priority": 27,
+      "recommendationEligible": true,
       "primaryArtifacts": ["trafficCreativeBattery"],
       "requiredFields": ["project.slug", "market.awarenessLevel", "market.dominantPain"],
       "recommendedFields": ["market.avatarSummary", "offer.proofAssets", "project.voice", "channels.adFormats"],
@@ -459,6 +519,8 @@
     "estruturador": {
       "type": "traffic",
       "command": "/estruturador",
+      "priority": 28,
+      "recommendationEligible": true,
       "primaryArtifacts": ["trafficCampaignPlan"],
       "requiredFields": ["project.slug", "offer.exactPrice"],
       "recommendedFields": ["channels.primaryCtaUrl", "market.trafficTemperature"],
@@ -469,6 +531,8 @@
     "ads-creative-factory": {
       "type": "traffic",
       "command": "/ads-creative-factory",
+      "priority": 31,
+      "recommendationEligible": true,
       "primaryArtifacts": ["creativeFactoryBatch"],
       "requiredFields": ["project.slug", "channels.primaryCtaUrl", "channels.adFormats"],
       "recommendedFields": ["project.voice", "brand.brandAssets"],
@@ -479,6 +543,8 @@
     "leitor-de-metricas": {
       "type": "traffic",
       "command": "/leitor-de-metricas",
+      "priority": 29,
+      "recommendationEligible": true,
       "primaryArtifacts": ["trafficMetricReading"],
       "requiredFields": ["project.slug"],
       "recommendedFields": ["data.dataSourceNotes"],
@@ -489,6 +555,8 @@
     "diagnosticador": {
       "type": "traffic",
       "command": "/diagnosticador",
+      "priority": 30,
+      "recommendationEligible": true,
       "primaryArtifacts": ["trafficDiagnosis"],
       "requiredFields": ["project.slug", "offer.exactPrice"],
       "recommendedFields": ["data.dataSourceNotes"],

@@ -1,12 +1,12 @@
 /**
- * Exemplos ilustrativos de artefatos — todas as 31 skills.
+ * Exemplos ilustrativos derivados do catálogo público de skills.
  * Usados no mapa-skills.html para preview clicável.
  */
 (function () {
   const SLUG = "academia-fit";
   const P = (rel) => `projetos/${SLUG}/${rel}`;
 
-  const SAMPLES = "mapa-skills-samples/academia-fit";
+  const SAMPLES = "/mapa-skills-samples/academia-fit";
 
   const md = (id, label, rel, content) => ({
     id, label, path: P(rel), format: "md",
@@ -55,7 +55,7 @@
 ## Checklist
 - [x] Git atualizado (branch rafaelscosta)
 - [x] Node.js v20+
-- [x] Skills carregadas (31/31)
+- [x] Catálogo de skills carregado
 - [x] APIFY_API_TOKEN no .env
 - [ ] Primeiro projeto criado em \`projetos/\`
 

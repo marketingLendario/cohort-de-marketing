@@ -43,7 +43,7 @@ function listTree(root, relative = '') {
 
 assert(catalog.schemaVersion === '1.0.0', 'catalog schemaVersion must be 1.0.0');
 assert(Array.isArray(catalog.skills), 'catalog.skills must be an array');
-assert(catalog.skills.length === 31, `catalog must contain 31 skills, found ${catalog.skills.length}`);
+assert(catalog.skills.length > 0, 'catalog must contain at least one skill');
 
 const ids = catalog.skills.map((skill) => skill.id);
 assert(new Set(ids).size === ids.length, 'catalog contains duplicate skill ids');

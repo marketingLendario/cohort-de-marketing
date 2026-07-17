@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/decision-outcome-diagnosis.v1.schema.json",
+  "title": "Decision Outcome Diagnosis v1",
+  "description": "Read-only, provenance-only diagnosis of a previous human decision against an approved historical contract and, only for financially reconcilable metrics, the approved reconciliation contract. No raw metric values or causal narrative are republished.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract", "schemaVersion", "decisionRefs", "evidence", "verdict", "reasonCodes",
+    "proposedLevers", "circuitBreaker", "humanDecision", "guards"
+  ],
+  "properties": {
+    "contract": { "const": "DecisionOutcomeDiagnosis" },
+    "schemaVersion": { "const": "1.0.0" },
+    "decisionRefs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisionId", "hypothesisId", "leverId", "successCriterionId",
+        "measurementWindowId", "reversalCriterionId", "reversalId",
+        "circuitBreakerId", "humanDecisionRef"
+      ],
+      "properties": {
+        "decisionId": { "$ref": "#/$defs/decisionId" },
+        "hypothesisId": { "$ref": "#/$defs/hypothesisId" },
+        "leverId": { "$ref": "#/$defs/leverId" },
+        "successCriterionId": { "$ref": "#/$defs/successCriterionId" },
+        "measurementWindowId": { "$ref": "#/$defs/windowId" },
+        "reversalCriterionId": { "$ref": "#/$defs/reversalCriterionId" },
+        "reversalId": { "$ref": "#/$defs/reversalId" },
+        "circuitBreakerId": { "$ref": "#/$defs/circuitBreakerId" },
+        "humanDecisionRef": { "$ref": "#/$defs/operatorId" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["historicalReading", "sourceReconciliation"],
+      "properties": {
+        "historicalReading": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "contract", "schemaVersion", "projectId", "campaignId", "metric",
+            "attributionWindow", "observationRefs"
+          ],
+          "properties": {
+            "contract": { "const": "HistoricalMetricsReading" },
+            "schemaVersion": { "const": "1.0.0" },
+            "projectId": { "type": "string", "pattern": "^project-[a-z0-9][a-z0-9-]{0,63}$" },
+            "campaignId": { "type": "string", "pattern": "^campaign-[a-z0-9][a-z0-9-]{0,63}$" },
+            "metric": { "$ref": "#/$defs/metric" },
+            "attributionWindow": { "$ref": "#/$defs/window" },
+            "observationRefs": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/observationRef" }
+            }
+          }
+        },
+        "sourceReconciliation": {
+          "oneOf": [
+            { "$ref": "#/$defs/sourceReconciliationEvidence" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "historicalReading": {
+                "type": "object",
+                "properties": { "metric": { "$ref": "#/$defs/financialMetric" } },
+                "required": ["metric"]
+              }
+            },
+            "required": ["historicalReading"]
+          },
+          "then": {
+            "properties": { "sourceReconciliation": { "$ref": "#/$defs/sourceReconciliationEvidence" } }
+          },
+          "else": {
+            "properties": { "sourceReconciliation": { "type": "null" } }
+          }
+        }
+      ]
+    },
+    "verdict": { "enum": ["sustentou", "refutou", "inconclusivo", "nao_mensuravel"] },
+    "reasonCodes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "enum": [
+          "SUCCESS_CRITERION_MET", "REVERSAL_CRITERION_MET", "NO_CRITERION_MET",
+          "INSUFFICIENT_DISTINCT_WEEKS", "ESTIMATED_EVIDENCE", "MISSING_OR_UNCONFIRMED",
+          "INCOMPATIBLE_ATTRIBUTION_WINDOW", "RECONCILIATION_NOT_MEASURABLE",
+          "RECONCILIATION_CONFOUNDING_GAP"
+        ]
+      }
+    },
+    "proposedLevers": {
+      "type": "array",
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["leverId", "action", "reversalRef"],
+        "properties": {
+          "leverId": { "$ref": "#/$defs/leverId" },
+          "action": { "const": "execute_declared_reversal" },
+          "reversalRef": { "$ref": "#/$defs/reversalId" }
+        }
+      }
+    },
+    "circuitBreaker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "status"],
+      "properties": {
+        "ref": { "$ref": "#/$defs/circuitBreakerId" },
+        "status": { "const": "preserved_not_executed" }
+      }
+    },
+    "humanDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "status", "historicalDecisionRef"],
+      "properties": {
+        "required": { "const": true },
+        "status": { "const": "pending" },
+        "historicalDecisionRef": { "$ref": "#/$defs/operatorId" }
+      }
+    },
+    "guards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mutationAllowed", "historicalDecisionImmutable"],
+      "properties": {
+        "mutationAllowed": { "const": false },
+        "historicalDecisionImmutable": { "const": true }
+      }
+    }
+  },
+  "$defs": {
+    "nonce": { "type": "string", "pattern": "(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "decisionId": { "type": "string", "pattern": "^decision:[0-9]{4}-[0-9]{2}-[0-9]{2}:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "hypothesisId": { "type": "string", "pattern": "^hypothesis:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "leverId": { "type": "string", "pattern": "^lever:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "successCriterionId": { "type": "string", "pattern": "^criterion:success:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "windowId": { "type": "string", "pattern": "^window:[0-9]{4}-[0-9]{2}-[0-9]{2}:[0-9]{4}-[0-9]{2}-[0-9]{2}:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "reversalCriterionId": { "type": "string", "pattern": "^criterion:reversal:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "reversalId": { "type": "string", "pattern": "^reversal:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "circuitBreakerId": { "type": "string", "pattern": "^circuit-breaker:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "operatorId": { "type": "string", "pattern": "^operator:[0-9]{4}-[0-9]{2}-[0-9]{2}:(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" },
+    "metric": { "enum": ["revenue", "orders", "refunds", "fees", "net_revenue", "cpa", "roas", "spend", "ctr"] },
+    "financialMetric": { "enum": ["revenue", "orders", "refunds", "fees", "net_revenue"] },
+    "window": { "enum": ["calendar_day", "calendar_week", "calendar_month", "lifetime", "1d_click", "7d_click", "7d_click_1d_view", "28d_click_1d_view"] },
+    "historyRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "enum": ["checkout-export", "operator-declaration", "platform-export", "tracking-audit"] },
+        "id": { "type": "string", "pattern": "^(?!.*(?:token|secret|password|bearer|authorization|api[-_]?key|email|phone|telefone|cpf|cnpj|document|address|endereco))[a-z0-9][a-z0-9.:-]{0,127}$" }
+      }
+    },
+    "reconciliationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": { "enum": ["platform-export", "checkout-export", "cash-export", "operator-declaration"] },
+        "id": { "type": "string", "pattern": "^(?:platform|checkout|cash|operator):[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$" }
+      }
+    },
+    "sourceReconciliationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract", "schemaVersion", "reconciliationId", "metric", "provenanceRefs"],
+      "properties": {
+        "contract": { "const": "SourceReconciliation" },
+        "schemaVersion": { "const": "1.0.0" },
+        "reconciliationId": {
+          "type": "string",
+          "pattern": "^reconciliation:(?:revenue|orders|refunds|fees|net_revenue):[0-9]{4}-(?:0[1-9]|1[0-2]):(?=[a-f0-9]{8,32}$)(?=[a-f0-9]*[a-f])[a-f0-9]+$"
+        },
+        "metric": { "$ref": "#/$defs/financialMetric" },
+        "provenanceRefs": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source", "ref"],
+            "properties": {
+              "source": { "enum": ["platform", "checkout", "cash"] },
+              "ref": { "$ref": "#/$defs/reconciliationRef" }
+            }
+          }
+        }
+      }
+    },
+    "observationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["weekStart", "revision", "weeklyPanelId", "canonicalHash", "projectionDigest", "sourceRef"],
+      "properties": {
+        "weekStart": { "type": "string", "format": "date" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "weeklyPanelId": { "type": "string", "pattern": "^(?!.*(?:token|secret|password|bearer|authorization|api[-_]?key|email|phone|telefone|cpf|cnpj|document|address|endereco))weekly-panel:[a-z0-9][a-z0-9.:-]{0,127}$" },
+        "canonicalHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "projectionDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sourceRef": { "oneOf": [{ "$ref": "#/$defs/historyRef" }, { "type": "null" }] }
+      }
+    }
+  }
+}
