@@ -321,6 +321,22 @@ class FactoryCatalogRuntimeTests(unittest.TestCase):
                 with Image.open(path) as rendered:
                     self.assertEqual(rendered.size, (1080, 1350))
 
+    def test_notification_stack_never_shows_user_sent_messages(self) -> None:
+        # AC (20.W1.1): notificacao e o que CHEGA do contato — o CTA `from: me`
+        # nunca vira notificacao. Sem mensagens recebidas, degrada sem quebrar.
+        copy = {"chat": {"messages": [
+            {"from": "them", "text": "primeira"},
+            {"from": "me", "text": "EU QUERO"},
+            {"from": "them", "text": "segunda"},
+        ]}}
+        self.assertEqual(chat_render.notification_messages(copy),
+                         [("them", "primeira"), ("them", "segunda")])
+        only_me = {"chat": {"messages": [{"from": "me", "text": "EU QUERO"}]}}
+        self.assertEqual(chat_render.notification_messages(only_me), [("me", "EU QUERO")])
+        derived = {"headline": "Hook", "sub": "Detalhe", "cta": "Quero"}
+        self.assertEqual(chat_render.notification_messages(derived),
+                         [("them", "Hook"), ("them", "Detalhe")])
+
     def test_campaign_honors_explicit_chat_and_tweet_styles(self) -> None:
         config = yaml.safe_load(self.campaign.read_text())
         config["params"]["archetypes"] = ["chat_notification", "tweet_card"]

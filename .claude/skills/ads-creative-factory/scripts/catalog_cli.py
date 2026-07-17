@@ -25,7 +25,7 @@ AXES = (
     "material", "lighting", "composition", "density", "finish", "backdrop",
     "layout", "mockup_device", "didactic_style",
 )
-RENDERER_MODES = ("hybrid", "person", "mockup", "ugc", "didactic")
+RENDERER_MODES = ("hybrid", "person", "mockup", "ugc", "didactic", "chat", "tweet")
 THEMES = ("dark", "light", "native")
 THRESHOLDS = {
     "accent_min_coverage_pct", "accent_max_coverage_pct", "dark_first_min_pct",

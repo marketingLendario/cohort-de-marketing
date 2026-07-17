@@ -116,6 +116,18 @@ def _messages(copy: dict) -> list[tuple[str, str]]:
     return out
 
 
+def notification_messages(copy: dict) -> list[tuple[str, str]]:
+    """Mensagens elegiveis para o estilo notification_stack (max 3).
+
+    Notificacao e sempre algo que CHEGA do contato — mensagens `from: me`
+    (ex: o CTA respondido pelo usuario) NUNCA viram notificacao. Sem nenhuma
+    mensagem recebida, degrada para as mensagens disponiveis."""
+    msgs = [(w, t) for w, t in _messages(copy) if t and w != "me"][:3]
+    if not msgs:
+        msgs = [(w, t) for w, t in _messages(copy) if t][:3]
+    return msgs
+
+
 def _resolve_contact(copy: dict, brand: dict, persona: dict | None) -> tuple[str, str | None]:
     """(nome do contato, foto real ou None) — persona > identity do brand pack."""
     chat = copy.get("chat") or {}
@@ -249,9 +261,7 @@ def _render_notifications(copy, out_path, *, H, contact, brand):
     d.text(((W - dw) / 2, ty + 190), date_s, font=f_date, fill=(200, 200, 205, 220))
 
     # notificacoes: SO mensagens recebidas (o CTA "me" nunca vira notificacao)
-    msgs = [(w, t) for w, t in _messages(copy) if t and w != "me"][:3]
-    if not msgs:
-        msgs = [(w, t) for w, t in _messages(copy) if t][:3]
+    msgs = notification_messages(copy)
     f_app = _font("body", 26, brand, 550)
     f_title = _font("body", 34, brand, 650)
     f_body = _font("body", 33, brand, 430)

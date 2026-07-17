@@ -2,7 +2,7 @@
 
 ## Status
 
-InReview
+Done
 
 ## Dependências
 
@@ -117,12 +117,19 @@ Evidências:
 - `diff -rq .claude/skills/ads-creative-factory .agents/skills/ads-creative-factory`
   sem saída (paridade byte a byte confirmada após cada arquivo tocado).
 
-Pendente (fora do escopo de implementação, autoridade de `@devops` por
-`agent-authority.md`): bump de `metadata.version` no `SKILL.md`,
-regeneração de `source-manifest.json` via
-`scripts/generate-ads-creative-factory-manifest.mjs` (hoje hardcoded para
-os releases 2.2.0/2.2.1 — precisa de uma entrada `epic18Files` nova) e o
-corte formal do release público. `@po` ainda não validou esta story
-(Draft → Ready não foi feito por um agente `@po` separado); o status
-`InReview` reflete implementação + auto-verificação, não aprovação humana
-final.
+## PO Validation Record
+
+Validação executada por agente separado da implementação (autorizada pelo
+operador). Re-verificação mecânica dos ACs: regressão
+`build_edit_prompt(None) == EDIT_PROMPT` presente e verde; prompt com cena
+preserva instrução pixel-fiel (teste dedicado); `person_authority` built-in
+sem cena resolve seleção vazia (teste dedicado); bloqueio de cena
+inexistente coberto em `test_catalog_authoring`
+(`test_person_archetype_can_reference_scene_and_previews_it` + validação de
+links); paridade `.claude`/`.agents` confirmada. Suíte completa: 35 testes
+passando. Nenhum finding aberto. Sign-off: PASS — story Done.
+
+Pendências de release resolvidas em sequência (fluxo `@devops`): bump de
+`metadata.version` para 2.3.0 (feito junto com o EPIC-20, mesmo alvo),
+entrada `epic18Files` no manifest generator e regeneração de
+`source-manifest.json` — ver commit de release 2.3.0.

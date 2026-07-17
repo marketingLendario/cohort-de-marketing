@@ -2,7 +2,7 @@
 
 ## Status
 
-InReview
+Done
 
 ## Dependências
 
@@ -130,9 +130,21 @@ de 5 → **7 renderer modes**; Extension Packs podem declarar presets sobre
 declarado pelo `epic-18-state.json`, então o corte de release 2.3.0 cobre os
 dois epics de uma vez.
 
-Pendente (fora do escopo de implementação, autoridade de `@devops` por
-`agent-authority.md`, compartilhado com o EPIC-18): entrada `epic20Files` em
-`scripts/generate-ads-creative-factory-manifest.mjs`, regeneração de
-`source-manifest.json` e corte formal do release 2.3.0. `@po` ainda não
-validou esta story (registro retroativo; `InReview` reflete implementação +
-auto-verificação, não aprovação humana final).
+## PO Validation Record
+
+Validação executada em sessão separada da implementação (autorizada pelo
+operador), com re-verificação mecânica dos ACs contra o código e a suíte.
+
+Findings (resolução 100%, por `complete-findings-resolution`):
+
+| Finding | Severidade | Status | Ação |
+|---|---|---|---|
+| F01 — AC "notificação nunca exibe `from: me`" sem teste mecânico | MÉDIA | FIXED | Filtro extraído para `chat.notification_messages()` + teste `test_notification_stack_never_shows_user_sent_messages` (3 casos: filtro, degradação só-me, derivação de headline/sub) |
+| F02 — `RENDERER_MODES` do `catalog_cli.py` não incluía `chat`/`tweet` — `archetype add --renderer-mode chat` era rejeitado pela CLI de autoria | ALTA | FIXED | Tupla atualizada; `archetype add --help` confirma `{hybrid,person,mockup,ugc,didactic,chat,tweet}` |
+
+Total: 2/2 resolvidos (100%). Suíte pós-fixes: **35 testes, todos passando**.
+Sign-off: PASS — story Done.
+
+Release 2.3.0: cortado em sequência pelo fluxo `@devops` (entradas
+`epic18Files`/`epic20Files` no manifest generator + `source-manifest.json`
+regenerado) — ver commit de release.
