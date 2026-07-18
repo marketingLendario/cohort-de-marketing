@@ -59,7 +59,13 @@ export function hint(code, fallback) {
 // ---------------------------------------------------------------- env
 
 export function findEnvFile(explicit, scriptDir) {
-  if (explicit) return resolve(explicit);
+  if (explicit) {
+    const p = resolve(explicit);
+    if (existsSync(p)) return p;
+    // caminho explícito inexistente NÃO trava (nunca-travar): avisa e segue sem env → modo exemplo
+    process.stderr.write(`aviso: --env aponta para arquivo inexistente (${p}) — seguindo sem credenciais.\n`);
+    return null;
+  }
   const candidates = [join(process.cwd(), '.env')];
   if (scriptDir) candidates.push(join(scriptDir, '..', '.env'), join(scriptDir, '..', '..', '.env'));
   return candidates.find((p) => existsSync(p)) || null;
@@ -67,6 +73,7 @@ export function findEnvFile(explicit, scriptDir) {
 
 export function loadEnv(path) {
   const env = {};
+  if (!path || !existsSync(path)) return env;
   for (const line of readFileSync(path, 'utf8').split('\n')) {
     const m = line.match(/^([A-Z][A-Z0-9_]*)=(.*)$/);
     if (m) env[m[1]] = m[2].trim();

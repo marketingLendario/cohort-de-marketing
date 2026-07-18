@@ -1004,6 +1004,72 @@
         "requiresHumanReview": true,
         "mirrorTree": true
       }
+    },
+    {
+      "id": "analista-de-trafego",
+      "title": "Analista de Trafego",
+      "command": "/analista-de-trafego",
+      "description": "Monta o painel de dados (series por dia/mes/quarter, comparacao de periodos e campanhas) e roda o board de clones de especialistas sobre os numeros.",
+      "phase": "Dados",
+      "phaseColor": "#38bdf8",
+      "order": 32,
+      "kind": "data",
+      "level": "Aula 4",
+      "skillPath": ".claude/skills/analista-de-trafego/SKILL.md",
+      "prerequisites": [
+        "leitor-de-metricas",
+        "operacao de trafego da Aula 3"
+      ],
+      "outputs": [
+        "painel-trafego.html",
+        "weekly-panel.analysisA4"
+      ],
+      "primaryArtifacts": [
+        "trafficAnalyticsPanel"
+      ],
+      "feeds": [
+        "decisao do aluno"
+      ],
+      "guard": "Nao-inferir; ROAS Estimado; trimestre nao recalcula taxas; board recomenda, aluno decide.",
+      "artifactSummary": "Painel de dados e board de especialistas",
+      "execution": {
+        "mode": "local_skill",
+        "requiresHumanReview": true
+      }
+    },
+    {
+      "id": "gestor-de-campanhas",
+      "title": "Gestor de Campanhas",
+      "command": "/gestor-de-campanhas",
+      "description": "Compara o realizado dos ultimos 7 e 30 dias com a campanha planejada (PAINEL-DA-SEMANA) e retroalimenta as Aulas 1 e 2 com os dados reais (avatar, oferta, copy).",
+      "phase": "Dados",
+      "phaseColor": "#38bdf8",
+      "order": 33,
+      "kind": "data",
+      "level": "Aula 4",
+      "skillPath": ".claude/skills/gestor-de-campanhas/SKILL.md",
+      "prerequisites": [
+        "analista-de-trafego"
+      ],
+      "outputs": [
+        "gestao-campanhas.md",
+        "retroalimentacao.md",
+        "weekly-panel.gestaoA4"
+      ],
+      "primaryArtifacts": [
+        "campaignManagementReport"
+      ],
+      "feeds": [
+        "avatar-funil",
+        "copy-funil",
+        "decisao do aluno"
+      ],
+      "guard": "Nao-inferir; derivados sempre Calculado; sem amostra nao ha veredito de CPA; Gestor recomenda, aluno decide; retroalimentacao e insumo, nao reescreve avatar/copy.",
+      "artifactSummary": "Relatorio realizado x planejado (7/30d) + retroalimentacao para Aulas 1 e 2",
+      "execution": {
+        "mode": "local_skill",
+        "requiresHumanReview": true
+      }
     }
   ],
   "edges": [
@@ -1211,6 +1277,31 @@
       "from": "estruturador",
       "to": "ads-creative-factory",
       "type": "dependency"
+    },
+    {
+      "from": "leitor-de-metricas",
+      "to": "analista-de-trafego",
+      "type": "dependency"
+    },
+    {
+      "from": "diagnosticador",
+      "to": "analista-de-trafego",
+      "type": "dependency"
+    },
+    {
+      "from": "analista-de-trafego",
+      "to": "gestor-de-campanhas",
+      "type": "dependency"
+    },
+    {
+      "from": "gestor-de-campanhas",
+      "to": "avatar-funil",
+      "type": "feedback"
+    },
+    {
+      "from": "gestor-de-campanhas",
+      "to": "copy-funil",
+      "type": "feedback"
     }
   ]
 }

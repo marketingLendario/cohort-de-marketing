@@ -1,0 +1,1057 @@
+{
+  "modo": "exemplo",
+  "gerado_em": "2026-07-17",
+  "escopo": "conta act_EXEMPLO (Academia Fit — dados fictícios para demonstração)",
+  "granularidade_pedida": "todas",
+  "series": {
+    "dia": [
+      {
+        "periodo": "2026-06-18",
+        "granularidade": "dia",
+        "spend": 30,
+        "impressions": 5556,
+        "clicks": 106,
+        "inline_link_clicks": 91,
+        "ctr": 1.9,
+        "cpm": 5.4,
+        "cpc": 0.28,
+        "frequency": 1.3,
+        "reach": 4274,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.6,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-19",
+        "granularidade": "dia",
+        "spend": 35.16,
+        "impressions": 6031,
+        "clicks": 114,
+        "inline_link_clicks": 98,
+        "ctr": 1.89,
+        "cpm": 5.83,
+        "cpc": 0.31,
+        "frequency": 1.36,
+        "reach": 4435,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.77,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-20",
+        "granularidade": "dia",
+        "spend": 40.11,
+        "impressions": 6753,
+        "clicks": 120,
+        "inline_link_clicks": 103,
+        "ctr": 1.77,
+        "cpm": 5.94,
+        "cpc": 0.33,
+        "frequency": 1.42,
+        "reach": 4756,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.78,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-21",
+        "granularidade": "dia",
+        "spend": 44.65,
+        "impressions": 7792,
+        "clicks": 130,
+        "inline_link_clicks": 112,
+        "ctr": 1.67,
+        "cpm": 5.73,
+        "cpc": 0.34,
+        "frequency": 1.48,
+        "reach": 5265,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.63,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-22",
+        "granularidade": "dia",
+        "spend": 48.63,
+        "impressions": 8907,
+        "clicks": 150,
+        "inline_link_clicks": 129,
+        "ctr": 1.68,
+        "cpm": 5.46,
+        "cpc": 0.32,
+        "frequency": 1.54,
+        "reach": 5784,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.45,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-23",
+        "granularidade": "dia",
+        "spend": 51.97,
+        "impressions": 9501,
+        "clicks": 156,
+        "inline_link_clicks": 134,
+        "ctr": 1.64,
+        "cpm": 5.47,
+        "cpc": 0.33,
+        "frequency": 1.6,
+        "reach": 5938,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.41,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-24",
+        "granularidade": "dia",
+        "spend": 54.66,
+        "impressions": 9376,
+        "clicks": 142,
+        "inline_link_clicks": 122,
+        "ctr": 1.51,
+        "cpm": 5.83,
+        "cpc": 0.38,
+        "frequency": 1.66,
+        "reach": 5648,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.54,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-25",
+        "granularidade": "dia",
+        "spend": 56.74,
+        "impressions": 9021,
+        "clicks": 131,
+        "inline_link_clicks": 113,
+        "ctr": 1.45,
+        "cpm": 6.29,
+        "cpc": 0.43,
+        "frequency": 1.72,
+        "reach": 5245,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.73,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-26",
+        "granularidade": "dia",
+        "spend": 58.34,
+        "impressions": 8948,
+        "clicks": 131,
+        "inline_link_clicks": 113,
+        "ctr": 1.46,
+        "cpm": 6.52,
+        "cpc": 0.45,
+        "frequency": 1.78,
+        "reach": 5027,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.8,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-27",
+        "granularidade": "dia",
+        "spend": 59.65,
+        "impressions": 9364,
+        "clicks": 129,
+        "inline_link_clicks": 111,
+        "ctr": 1.38,
+        "cpm": 6.37,
+        "cpc": 0.46,
+        "frequency": 1.84,
+        "reach": 5089,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.68,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-28",
+        "granularidade": "dia",
+        "spend": 60.86,
+        "impressions": 10010,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 1.25,
+        "cpm": 6.08,
+        "cpc": 0.49,
+        "frequency": 1.9,
+        "reach": 5268,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.49,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-29",
+        "granularidade": "dia",
+        "spend": 62.19,
+        "impressions": 10382,
+        "clicks": 128,
+        "inline_link_clicks": 110,
+        "ctr": 1.23,
+        "cpm": 5.99,
+        "cpc": 0.49,
+        "frequency": 1.96,
+        "reach": 5297,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.4,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-30",
+        "granularidade": "dia",
+        "spend": 63.86,
+        "impressions": 10185,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 1.23,
+        "cpm": 6.27,
+        "cpc": 0.51,
+        "frequency": 2.02,
+        "reach": 5042,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.49,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-01",
+        "granularidade": "dia",
+        "spend": 66.03,
+        "impressions": 9797,
+        "clicks": 109,
+        "inline_link_clicks": 94,
+        "ctr": 1.11,
+        "cpm": 6.74,
+        "cpc": 0.61,
+        "frequency": 2.08,
+        "reach": 4710,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.68,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-02",
+        "granularidade": "dia",
+        "spend": 68.81,
+        "impressions": 9746,
+        "clicks": 98,
+        "inline_link_clicks": 84,
+        "ctr": 1.01,
+        "cpm": 7.06,
+        "cpc": 0.7,
+        "frequency": 2.14,
+        "reach": 4554,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.8,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-03",
+        "granularidade": "dia",
+        "spend": 72.25,
+        "impressions": 10307,
+        "clicks": 105,
+        "inline_link_clicks": 90,
+        "ctr": 1.02,
+        "cpm": 7.01,
+        "cpc": 0.69,
+        "frequency": 2.2,
+        "reach": 4685,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.73,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-04",
+        "granularidade": "dia",
+        "spend": 76.32,
+        "impressions": 11357,
+        "clicks": 111,
+        "inline_link_clicks": 95,
+        "ctr": 0.98,
+        "cpm": 6.72,
+        "cpc": 0.69,
+        "frequency": 2.26,
+        "reach": 5025,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.54,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-05",
+        "granularidade": "dia",
+        "spend": 80.93,
+        "impressions": 12356,
+        "clicks": 112,
+        "inline_link_clicks": 96,
+        "ctr": 0.91,
+        "cpm": 6.55,
+        "cpc": 0.72,
+        "frequency": 2.32,
+        "reach": 5326,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.41,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-06",
+        "granularidade": "dia",
+        "spend": 85.92,
+        "impressions": 12786,
+        "clicks": 115,
+        "inline_link_clicks": 99,
+        "ctr": 0.9,
+        "cpm": 6.72,
+        "cpc": 0.75,
+        "frequency": 2.38,
+        "reach": 5372,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.45,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-07",
+        "granularidade": "dia",
+        "spend": 91.1,
+        "impressions": 12706,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 0.98,
+        "cpm": 7.17,
+        "cpc": 0.73,
+        "frequency": 2.44,
+        "reach": 5207,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.63,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-08",
+        "granularidade": "dia",
+        "spend": 96.24,
+        "impressions": 12713,
+        "clicks": 123,
+        "inline_link_clicks": 106,
+        "ctr": 0.97,
+        "cpm": 7.57,
+        "cpc": 0.78,
+        "frequency": 2.5,
+        "reach": 5085,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.78,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-09",
+        "granularidade": "dia",
+        "spend": 101.14,
+        "impressions": 13273,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 0.94,
+        "cpm": 7.62,
+        "cpc": 0.81,
+        "frequency": 2.56,
+        "reach": 5185,
+        "purchases": 4,
+        "roas": {
+          "valor": 1.89,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-10",
+        "granularidade": "dia",
+        "spend": 105.6,
+        "impressions": 14309,
+        "clicks": 147,
+        "inline_link_clicks": 126,
+        "ctr": 1.03,
+        "cpm": 7.38,
+        "cpc": 0.72,
+        "frequency": 2.62,
+        "reach": 5461,
+        "purchases": 4,
+        "roas": {
+          "valor": 1.84,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-11",
+        "granularidade": "dia",
+        "spend": 109.5,
+        "impressions": 15358,
+        "clicks": 175,
+        "inline_link_clicks": 151,
+        "ctr": 1.14,
+        "cpm": 7.13,
+        "cpc": 0.63,
+        "frequency": 2.68,
+        "reach": 5731,
+        "purchases": 5,
+        "roas": {
+          "valor": 1.79,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-12",
+        "granularidade": "dia",
+        "spend": 112.74,
+        "impressions": 15658,
+        "clicks": 179,
+        "inline_link_clicks": 154,
+        "ctr": 1.14,
+        "cpm": 7.2,
+        "cpc": 0.63,
+        "frequency": 2.74,
+        "reach": 5715,
+        "purchases": 5,
+        "roas": {
+          "valor": 1.9,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-13",
+        "granularidade": "dia",
+        "spend": 115.32,
+        "impressions": 15174,
+        "clicks": 173,
+        "inline_link_clicks": 149,
+        "ctr": 1.14,
+        "cpm": 7.6,
+        "cpc": 0.67,
+        "frequency": 2.8,
+        "reach": 5419,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.17,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-14",
+        "granularidade": "dia",
+        "spend": 117.33,
+        "impressions": 14575,
+        "clicks": 182,
+        "inline_link_clicks": 157,
+        "ctr": 1.25,
+        "cpm": 8.05,
+        "cpc": 0.64,
+        "frequency": 2.86,
+        "reach": 5096,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.47,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-15",
+        "granularidade": "dia",
+        "spend": 118.87,
+        "impressions": 14479,
+        "clicks": 194,
+        "inline_link_clicks": 167,
+        "ctr": 1.34,
+        "cpm": 8.21,
+        "cpc": 0.61,
+        "frequency": 2.92,
+        "reach": 4959,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.63,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-16",
+        "granularidade": "dia",
+        "spend": 120.15,
+        "impressions": 14963,
+        "clicks": 198,
+        "inline_link_clicks": 170,
+        "ctr": 1.32,
+        "cpm": 8.03,
+        "cpc": 0.61,
+        "frequency": 2.98,
+        "reach": 5021,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.61,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-17",
+        "granularidade": "dia",
+        "spend": 121.36,
+        "impressions": 15680,
+        "clicks": 212,
+        "inline_link_clicks": 182,
+        "ctr": 1.35,
+        "cpm": 7.74,
+        "cpc": 0.57,
+        "frequency": 3.04,
+        "reach": 5158,
+        "purchases": 6,
+        "roas": {
+          "valor": 2.55,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      }
+    ],
+    "mes": [
+      {
+        "periodo": "2025-08-01",
+        "granularidade": "mes",
+        "spend": 900,
+        "impressions": 155172,
+        "clicks": 2483,
+        "inline_link_clicks": 2135,
+        "ctr": 1.6,
+        "cpm": 5.8,
+        "cpc": 0.36,
+        "frequency": 1.8,
+        "reach": 86207,
+        "purchases": 50,
+        "roas": {
+          "valor": 1.9,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-09-01",
+        "granularidade": "mes",
+        "spend": 1177.32,
+        "impressions": 198872,
+        "clicks": 3222,
+        "inline_link_clicks": 2771,
+        "ctr": 1.62,
+        "cpm": 5.92,
+        "cpc": 0.37,
+        "frequency": 1.88,
+        "reach": 105783,
+        "purchases": 64,
+        "roas": {
+          "valor": 1.96,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-10-01",
+        "granularidade": "mes",
+        "spend": 1392.74,
+        "impressions": 230586,
+        "clicks": 3666,
+        "inline_link_clicks": 3153,
+        "ctr": 1.59,
+        "cpm": 6.04,
+        "cpc": 0.38,
+        "frequency": 1.96,
+        "reach": 117646,
+        "purchases": 73,
+        "roas": {
+          "valor": 2.02,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-11-01",
+        "granularidade": "mes",
+        "spend": 1541.29,
+        "impressions": 250209,
+        "clicks": 3803,
+        "inline_link_clicks": 3271,
+        "ctr": 1.52,
+        "cpm": 6.16,
+        "cpc": 0.41,
+        "frequency": 2.04,
+        "reach": 122651,
+        "purchases": 76,
+        "roas": {
+          "valor": 2.08,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-12-01",
+        "granularidade": "mes",
+        "spend": 1679.46,
+        "impressions": 267430,
+        "clicks": 3824,
+        "inline_link_clicks": 3289,
+        "ctr": 1.43,
+        "cpm": 6.28,
+        "cpc": 0.44,
+        "frequency": 2.12,
+        "reach": 126146,
+        "purchases": 76,
+        "roas": {
+          "valor": 2.14,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-01-01",
+        "granularidade": "mes",
+        "spend": 1873.29,
+        "impressions": 292702,
+        "clicks": 4069,
+        "inline_link_clicks": 3499,
+        "ctr": 1.39,
+        "cpm": 6.4,
+        "cpc": 0.46,
+        "frequency": 2.2,
+        "reach": 133046,
+        "purchases": 81,
+        "roas": {
+          "valor": 2.2,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-02-01",
+        "granularidade": "mes",
+        "spend": 2137.65,
+        "impressions": 327860,
+        "clicks": 4590,
+        "inline_link_clicks": 3947,
+        "ctr": 1.4,
+        "cpm": 6.52,
+        "cpc": 0.47,
+        "frequency": 2.28,
+        "reach": 143798,
+        "purchases": 92,
+        "roas": {
+          "valor": 2.26,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-03-01",
+        "granularidade": "mes",
+        "spend": 2422.56,
+        "impressions": 364843,
+        "clicks": 5217,
+        "inline_link_clicks": 4487,
+        "ctr": 1.43,
+        "cpm": 6.64,
+        "cpc": 0.46,
+        "frequency": 2.36,
+        "reach": 154594,
+        "purchases": 104,
+        "roas": {
+          "valor": 2.32,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-04-01",
+        "granularidade": "mes",
+        "spend": 2659.15,
+        "impressions": 393365,
+        "clicks": 5586,
+        "inline_link_clicks": 4804,
+        "ctr": 1.42,
+        "cpm": 6.76,
+        "cpc": 0.48,
+        "frequency": 2.44,
+        "reach": 161215,
+        "purchases": 112,
+        "roas": {
+          "valor": 2.38,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-05-01",
+        "granularidade": "mes",
+        "spend": 2822.97,
+        "impressions": 410315,
+        "clicks": 5539,
+        "inline_link_clicks": 4764,
+        "ctr": 1.35,
+        "cpm": 6.88,
+        "cpc": 0.51,
+        "frequency": 2.52,
+        "reach": 162823,
+        "purchases": 111,
+        "roas": {
+          "valor": 2.44,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-01",
+        "granularidade": "mes",
+        "spend": 2956.48,
+        "impressions": 422354,
+        "clicks": 5364,
+        "inline_link_clicks": 4613,
+        "ctr": 1.27,
+        "cpm": 7,
+        "cpc": 0.55,
+        "frequency": 2.6,
+        "reach": 162444,
+        "purchases": 107,
+        "roas": {
+          "valor": 2.5,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-01",
+        "granularidade": "mes",
+        "spend": 3130,
+        "impressions": 439607,
+        "clicks": 5319,
+        "inline_link_clicks": 4574,
+        "ctr": 1.21,
+        "cpm": 7.12,
+        "cpc": 0.59,
+        "frequency": 2.68,
+        "reach": 164032,
+        "purchases": 106,
+        "roas": {
+          "valor": 2.56,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      }
+    ],
+    "quarter": [
+      {
+        "periodo": "2025-Q3",
+        "granularidade": "quarter",
+        "purchases": 114,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 2077.3199999999997,
+        "impressions": 354044,
+        "clicks": 5705,
+        "inline_link_clicks": 4906
+      },
+      {
+        "periodo": "2025-Q4",
+        "granularidade": "quarter",
+        "purchases": 225,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 4613.49,
+        "impressions": 748225,
+        "clicks": 11293,
+        "inline_link_clicks": 9713
+      },
+      {
+        "periodo": "2026-Q1",
+        "granularidade": "quarter",
+        "purchases": 277,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 6433.5,
+        "impressions": 985405,
+        "clicks": 13876,
+        "inline_link_clicks": 11933
+      },
+      {
+        "periodo": "2026-Q2",
+        "granularidade": "quarter",
+        "purchases": 330,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 8438.6,
+        "impressions": 1226034,
+        "clicks": 16489,
+        "inline_link_clicks": 14181
+      },
+      {
+        "periodo": "2026-Q3",
+        "granularidade": "quarter",
+        "purchases": 106,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 3130,
+        "impressions": 439607,
+        "clicks": 5319,
+        "inline_link_clicks": 4574
+      }
+    ]
+  },
+  "campanhas": [
+    {
+      "id": "23810000000",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "TOF · Frio · Advertorial",
+      "status": "ACTIVE",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 1420,
+      "impressions": 268000,
+      "clicks": 3210,
+      "ctr": 1.2,
+      "cpm": 5.3,
+      "purchases": 58,
+      "roas": {
+        "valor": 2.9,
+        "selo": "Estimado"
+      }
+    },
+    {
+      "id": "23810000001",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "Retargeting · Quiz 7d",
+      "status": "ACTIVE",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 640,
+      "impressions": 88000,
+      "clicks": 1980,
+      "ctr": 2.25,
+      "cpm": 7.27,
+      "purchases": 71,
+      "roas": {
+        "valor": 4.6,
+        "selo": "Estimado"
+      }
+    },
+    {
+      "id": "23810000002",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "MOF · VSL · Lookalike 1%",
+      "status": "ACTIVE",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 980,
+      "impressions": 176000,
+      "clicks": 1560,
+      "ctr": 0.89,
+      "cpm": 5.57,
+      "purchases": 24,
+      "roas": {
+        "valor": 1.4,
+        "selo": "Estimado"
+      }
+    },
+    {
+      "id": "23810000003",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "Interesses · Menopausa",
+      "status": "PAUSED",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 410,
+      "impressions": 92000,
+      "clicks": 690,
+      "ctr": 0.75,
+      "cpm": 4.46,
+      "purchases": 9,
+      "roas": {
+        "valor": 0.9,
+        "selo": "Estimado"
+      }
+    }
+  ],
+  "comparacao": {
+    "periodo_a": {
+      "rotulo": "quinzena anterior",
+      "spend": 801.66,
+      "impressions": 131369,
+      "clicks": 1894,
+      "purchases": 42,
+      "ctr": 1.44,
+      "cpm": 6.1,
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+    },
+    "periodo_b": {
+      "rotulo": "última quinzena",
+      "spend": 1524.77,
+      "impressions": 205694,
+      "clicks": 2276,
+      "purchases": 59,
+      "ctr": 1.11,
+      "cpm": 7.41,
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+    },
+    "deltas": {
+      "spend": 90.2,
+      "impressions": 56.6,
+      "clicks": 20.2,
+      "ctr": -22.9,
+      "cpm": 21.5,
+      "purchases": 40.5
+    },
+    "selo_deltas": "Calculado",
+    "nota": "variação percentual entre dois valores Real"
+  },
+  "perfil": {
+    "disponivel": false,
+    "motivo": "Perfil orgânico (comentários e visualizações de posts) é roadmap da Aula 4. Requer Page Access Token com escopos pages_read_engagement / read_insights — ver aula-04/docs/organico-roadmap.md.",
+    "posts": []
+  }
+}

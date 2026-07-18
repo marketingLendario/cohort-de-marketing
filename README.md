@@ -52,7 +52,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ### Aula 4 · Dados
 
-**Status:** em breve. A operação semanal da Aula 3 já preserva métricas, selos, diagnóstico e decisões como base do futuro painel.
+**Status:** disponível. [Material da Aula 4](./aula-04/README.md). A **Central de Dados**: `/analista-de-trafego` monta um painel local self-contained na identidade da sua marca (séries dia/mês/quarter, campanhas ordenáveis, funil filtrável por campanha e período, vendas reais via Hotmart com atribuição honesta, audiência com pirâmide etária e mapa do Brasil, engajamento orgânico e "Quem é o meu cliente") e convoca um board de **6 clones de especialistas**; `/gestor-de-campanhas` fecha o ciclo comparando o realizado de 7/30 dias com o planejado e gravando a **retroalimentação** que devolve os dados reais para o avatar (Aula 1) e a copy (Aula 2). Sem credenciais roda em Modo Exemplo — a demo nunca trava; `.env` e `projetos/` (dados reais) nunca sobem pro git.
 
 ---
 
@@ -69,6 +69,7 @@ Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao ab
 | **Peças** | `/pagina-vendas-funil` · `/email-funil` · `/whatsapp-funil` · `/conteudo-funil` · `/recuperacao-funil` · `/backend-funil` · `/cro-funil` |
 | **Reforço de oferta** | `/mockup-produto-funil` · `/bonus-funil` · `/criativos-funil` |
 | **Tráfego (Aula 3)** | `/zelador` · `/briefista` · `/estruturador` · `/ads-creative-factory` · `/leitor-de-metricas` · `/diagnosticador` |
+| **Dados (Aula 4)** | `/analista-de-trafego` · `/gestor-de-campanhas` |
 
 As skills leem o **Perfil do Projeto** (no topo do seu offerbook) e se adaptam ao seu negócio: especialista, agência, B2B, negócio local, nicho regulado (saúde/jurídico/psico/financeiro), afiliado ou "ainda não sei o que vender".
 
@@ -96,6 +97,7 @@ cohort-de-marketing/
 ├── aula-01/                      docs e templates da Aula 1
 ├── aula-02/                      material de apoio da Aula 2
 ├── aula-03/                      material didático e runtime empacotado da Aula 3
+├── aula-04/                      material da Aula 4 (Central de Dados: tutoriais Meta/Hotmart, exemplos)
 └── projetos/                     nasce quando você roda as skills (só seu, fora do git)
 ```
 
