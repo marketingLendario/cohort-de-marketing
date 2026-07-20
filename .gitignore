@@ -37,6 +37,8 @@ yarn-error.log*
 # Arquivos sensiveis (caso apareca)
 .env
 .env.local
+.env.bak
+.env.*.bak
 secrets.json
 pesquisa-avatar-cursos-tech-migracao-carreira/
 

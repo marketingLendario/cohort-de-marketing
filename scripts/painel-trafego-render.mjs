@@ -1,0 +1,1478 @@
+#!/usr/bin/env node
+/**
+ * scripts/painel-trafego-render.mjs — renderiza o painel-trafego.html self-contained.
+ *
+ * Lê o "bundle" de dados (saída do painel-trafego-data.mjs) e o "board" (análise dos
+ * 4 clones de especialistas, gerado pela skill /board-de-especialistas) e monta UMA página
+ * HTML sem dependência externa: dados embutidos inline, gráficos em SVG desenhados no
+ * navegador (funciona offline e imprime em PDF), identidade visual vinda do DESIGN.md
+ * do projeto (tokens.json). Look Grafana/Looker dark.
+ *
+ * Uso:
+ *   node scripts/painel-trafego-render.mjs \
+ *     --dados=projetos/{slug}/dados-trafego/bundle.json \
+ *     --board=projetos/{slug}/dados-trafego/board.json \
+ *     --tokens=projetos/{slug}/tokens.json \
+ *     --projeto="Academia Fit" \
+ *     --saida=projetos/{slug}/painel-trafego.html
+ *
+ * Sem --dados usa a fixture de exemplo; sem --board usa um board neutro de exemplo.
+ */
+
+import { dirname, join, resolve, isAbsolute } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+
+function arg(name, def = null) {
+  const hit = process.argv.slice(2).find((a) => a.startsWith(`--${name}=`));
+  return hit ? hit.slice(name.length + 3) : def;
+}
+function abs(p) { return isAbsolute(p) ? p : resolve(process.cwd(), p); }
+function readJson(p) { return JSON.parse(readFileSync(abs(p), 'utf8')); }
+
+// --- tokens: defaults retrocompatíveis + override do tokens.json do projeto ---
+// Token set completo (cores, fontes, radius, hairline, paleta de gráfico). Sem
+// tokens.json, mantém o look anterior (violeta/teal, Inter/Space Grotesk).
+function resolverTokens(tokensPath) {
+  const t = {
+    primary: '#7C3AED', secondary: '#22C7B1', surface: '#0A0A0F', elevated: '#121218',
+    raised: '#16161d', border: '#27272A', text: '#F5F0FF', muted: '#A1A1AA', warm: '#F59E0B',
+    pos: '#22C7B1', neg: '#F26D6D', warn: '#F59E0B', info: '#9db4ff', onPrimary: '#ffffff',
+    fontDisplay: 'Space Grotesk', fontBody: 'Inter', fontMono: 'ui-monospace',
+    rCard: '12px', rBtn: '10px', rPill: '999px',
+    hairline: 'var(--border)', hairlineStrong: 'var(--border)',
+    chart: ['#22C7B1', '#7C3AED', '#F59E0B', '#9db4ff', '#e879f9', '#63E6E2', '#FFD60A'],
+    accentRule: false, // Regra dos 8%: true = ouro só em fios/destaques (DS)
+  };
+  if (tokensPath && existsSync(abs(tokensPath))) {
+    const j = readJson(tokensPath);
+    const c = j.colors || {};
+    if (c.primary) t.primary = c.primary;
+    if (c.secondary) t.secondary = c.secondary;
+    if (c.surface) t.surface = c.surface;
+    if (c['surface-elevated']) t.elevated = c['surface-elevated'];
+    if (c['surface-raised']) t.raised = c['surface-raised'];
+    if (c.border) t.border = c.border;
+    if (c.text) t.text = c.text;
+    if (c['text-muted']) t.muted = c['text-muted'];
+    if (c['accent-warm']) t.warm = c['accent-warm'];
+    if (c.positive) t.pos = c.positive;
+    if (c.negative) t.neg = c.negative;
+    if (c.warning) t.warn = c.warning;
+    if (c.info) t.info = c.info;
+    if (c['on-primary']) t.onPrimary = c['on-primary'];
+    if (j.hairline) { t.hairline = j.hairline; t.accentRule = true; }
+    if (j.hairlineStrong) t.hairlineStrong = j.hairlineStrong;
+    if (j.fonts) {
+      if (j.fonts.display) t.fontDisplay = j.fonts.display;
+      if (j.fonts.body) t.fontBody = j.fonts.body;
+      if (j.fonts.mono) t.fontMono = j.fonts.mono;
+    }
+    if (j.radius) {
+      if (j.radius.card) t.rCard = j.radius.card;
+      if (j.radius.button) t.rBtn = j.radius.button;
+      if (j.radius.pill) t.rPill = j.radius.pill;
+    }
+    if (Array.isArray(j.chart) && j.chart.length) t.chart = j.chart;
+  }
+  return t;
+}
+
+// Link do Google Fonts para as famílias em uso (com fallback de sistema no CSS).
+function googleFontsHref(T) {
+  const fam = new Set();
+  const enc = (n, axes) => `family=${n.replace(/ /g, '+')}${axes}`;
+  const known = {
+    'Inter': ':wght@400;500;600;700',
+    'Space Grotesk': ':wght@500;600;700',
+    'Newsreader': ':ital,wght@0,300;0,400;0,500;1,300;1,400',
+    'Hanken Grotesk': ':wght@400;500;600;700;800',
+    'JetBrains Mono': ':wght@400;500;600',
+  };
+  for (const f of [T.fontDisplay, T.fontBody, T.fontMono]) {
+    if (known[f]) fam.add(enc(f, known[f]));
+  }
+  return `https://fonts.googleapis.com/css2?${[...fam].join('&')}&display=swap`;
+}
+
+const boardNeutro = {
+  gerado_em: '—',
+  clones: [
+    { papel: 'Media Buyer', titulo: 'Board não gerado', veredito: 'Rode /board-de-especialistas para preencher a análise do board a partir destes dados.', alavanca: '—', evidencia: '—', selo: '—' },
+  ],
+  sintese: 'Board de especialistas ainda não gerado. Este painel mostra apenas os dados.',
+};
+
+// ------------------------------------------------------------------ template
+function html({ projeto, tokens, bundle, board }) {
+  const T = tokens;
+  const dataJson = JSON.stringify(bundle).replace(/</g, '\\u003c');
+  const boardJson = JSON.stringify(board).replace(/</g, '\\u003c');
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Tráfego — ${projeto}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="${googleFontsHref(T)}" rel="stylesheet">
+<style>
+:root{
+  --primary:${T.primary};--secondary:${T.secondary};--surface:${T.surface};
+  --elevated:${T.elevated};--raised:${T.raised};--border:${T.border};--text:${T.text};
+  --muted:${T.muted};--warm:${T.warm};--on-primary:${T.onPrimary};
+  --pos:${T.pos};--neg:${T.neg};--warn:${T.warn};--info:${T.info};
+  --hairline:${T.hairline};--hairline-strong:${T.hairlineStrong};
+  --f-display:'${T.fontDisplay}';--f-body:'${T.fontBody}';--f-mono:'${T.fontMono}';
+  --r-card:${T.rCard};--r-btn:${T.rBtn};--r-pill:${T.rPill};
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--f-body),system-ui,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 26px 72px}
+.nav{display:flex;gap:14px;font-size:.82rem;margin-bottom:18px}
+.nav a{color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:5px 12px;border-radius:var(--r-pill)}
+.nav a:hover{color:var(--text);border-color:var(--hairline-strong)}
+.kicker{display:inline-block;font:600 .64rem/1 var(--f-mono),monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--primary);border:1px solid var(--hairline-strong);padding:5px 14px;border-radius:var(--r-pill);margin-bottom:14px}
+h1{font-family:var(--f-display),Georgia,serif;font-weight:400;font-size:2.1rem;line-height:1.12;letter-spacing:-.01em;margin:0 0 6px}
+h1 em,.al-accent{font-style:italic;font-weight:300;color:var(--primary)}
+h2{font-family:var(--f-display),Georgia,serif;font-weight:400;font-size:1.35rem;letter-spacing:-.01em;color:var(--text);margin:38px 0 6px;padding-bottom:8px;border-bottom:1px solid var(--hairline)}
+h2 em,h2 .al-accent{font-style:italic;color:var(--primary)}
+.lead{color:var(--muted);margin:0 0 4px}
+.seal{font-size:.74rem;color:var(--muted)}
+.seal b{color:var(--primary);font-weight:600}
+.hero{padding:22px 0 22px;border-bottom:1px solid var(--hairline-strong);margin-bottom:12px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:10px 0 4px}
+.kpi{background:var(--elevated);border:1px solid var(--border);border-radius:var(--r-card);padding:14px 16px;position:relative}
+.kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--hairline-strong)}
+.kpi .lbl{font:600 .64rem/1 var(--f-mono),monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+.kpi .val{font-family:var(--f-mono),monospace;font-size:1.45rem;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em;margin:6px 0 2px}
+.kpi .dlt{font:600 .74rem var(--f-mono),monospace;letter-spacing:.04em}
+.kpi .dlt.pos{color:var(--pos)}.kpi .dlt.neg{color:var(--neg)}.kpi .dlt.flat{color:var(--muted)}
+.card{background:var(--elevated);border:1px solid var(--border);border-radius:var(--r-card);padding:18px 20px;margin:14px 0}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+.controls .grp{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-btn);padding:3px}
+.controls button{background:transparent;border:none;color:var(--muted);font:600 .74rem var(--f-mono),monospace;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:var(--r-btn);cursor:pointer}
+.controls button.on{background:var(--primary);color:var(--on-primary)}
+.controls .sep{flex:1}
+.controls label{font:600 .68rem var(--f-mono),monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+select{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-btn);padding:6px 10px;font:600 .78rem var(--f-body),sans-serif}
+svg.chart{width:100%;height:auto;display:block}
+.axis{stroke:var(--hairline-strong);stroke-width:1}
+.grid{stroke:var(--hairline);stroke-width:1}
+.tickL{fill:var(--muted);font:400 10px var(--f-mono),monospace;letter-spacing:.04em}
+.dot{fill:var(--surface);stroke-width:2}
+.barlbl{fill:var(--text);font:400 12px var(--f-body),sans-serif}
+.barval{fill:var(--muted);font:400 11px var(--f-mono),monospace}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.86rem}
+th,td{border-bottom:1px solid var(--hairline);padding:9px 11px;text-align:left}
+th{color:var(--primary);font:600 .68rem var(--f-mono),monospace;text-transform:uppercase;letter-spacing:.1em}
+td.n{text-align:right;font-family:var(--f-mono),monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+th.n{text-align:right}
+tr:nth-child(even) td{background:color-mix(in srgb,var(--raised) 60%,transparent)}
+th.sortable{cursor:pointer;user-select:none;white-space:nowrap;transition:color .15s}
+th.sortable:hover{color:var(--text)}
+th.sortable.sorted{color:var(--text)}
+th .sort-ar{display:inline-block;width:.9em;margin-left:2px;opacity:.85;color:var(--primary)}
+tbody tr.row-sel td{background:color-mix(in srgb,var(--primary) 12%,transparent)!important}
+.prodpick{margin-top:6px}
+.chip .chip-x{cursor:pointer;color:var(--muted);margin-left:2px}
+.chip .chip-x:hover{color:var(--warn)}
+.pill{display:inline-block;font:600 .66rem var(--f-mono),monospace;letter-spacing:.06em;padding:2px 8px;border-radius:var(--r-pill)}
+.pill.real{color:var(--pos);background:color-mix(in srgb,var(--pos) 15%,transparent)}
+.pill.est{color:var(--warn);background:color-mix(in srgb,var(--warn) 15%,transparent)}
+.pill.calc{color:var(--info);background:color-mix(in srgb,var(--info) 15%,transparent)}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.clone{background:var(--elevated);border:1px solid var(--border);border-top:2px solid var(--hairline-strong);border-radius:var(--r-card);padding:18px 20px}
+.clone h3{font-family:var(--f-display),Georgia,serif;font-weight:400;font-size:1.1rem;letter-spacing:-.01em;margin:0 0 2px;color:var(--text)}
+.clone .papel{font:600 .66rem var(--f-mono),monospace;color:var(--primary);text-transform:uppercase;letter-spacing:.14em;margin-bottom:10px}
+.clone p{margin:6px 0}
+.clone .alav{border-left:2px solid var(--primary);padding:6px 12px;background:color-mix(in srgb,var(--primary) 8%,transparent);border-radius:0 var(--r-btn) var(--r-btn) 0;margin-top:10px}
+.clone .ev{font-size:.78rem;color:var(--muted);margin-top:8px}
+.sintese{border-color:var(--hairline-strong)}
+.roadmap{border:1px dashed var(--hairline-strong);border-radius:var(--r-card);padding:16px 20px;color:var(--muted);background:color-mix(in srgb,var(--elevated) 60%,transparent)}
+.grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mini-h{font:600 .64rem var(--f-mono),monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:10px}
+.sc-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--hairline)}
+.sc-row:last-child{border-bottom:none}
+.sc-dot{width:9px;height:9px;border-radius:var(--r-pill);flex:none}
+.sc-dot.ok{background:var(--pos)}.sc-dot.warn{background:var(--warn)}.sc-dot.bad{background:var(--neg)}
+.sc-txt{flex:1}.sc-val{font-family:var(--f-mono),monospace;color:var(--muted);font-size:.82rem}
+.chg-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--hairline)}
+.chg-row:last-child{border-bottom:none}
+.chg-v{font-family:var(--f-mono),monospace;font-weight:600}
+.chg-v.pos{color:var(--pos)}.chg-v.neg{color:var(--neg)}.chg-v.flat{color:var(--muted)}
+.hc{stroke:var(--surface);stroke-width:1}
+.kpi .val{white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.chip{border:1px solid var(--border);border-radius:var(--r-pill);padding:4px 11px;font:600 .68rem var(--f-mono),monospace;letter-spacing:.05em;color:var(--muted);cursor:pointer;background:transparent;transition:border-color .15s,color .15s}
+.chip:hover{color:var(--text);border-color:var(--hairline-strong)}
+.chip.on{color:var(--primary);border-color:var(--hairline-strong);background:color-mix(in srgb,var(--primary) 10%,transparent)}
+.chip.warn{color:var(--warn)}
+.legendbar{display:flex;align-items:center;gap:8px;font:400 .7rem var(--f-mono),monospace;color:var(--muted);margin-top:8px}
+.legendbar .grad{flex:0 0 150px;height:8px;border-radius:4px;border:1px solid var(--hairline)}
+.crosshair{stroke:var(--hairline-strong);stroke-width:1;stroke-dasharray:3 4}
+#lineChart circle{pointer-events:none}
+.detail-close{float:right;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:var(--r-pill);width:26px;height:26px;cursor:pointer}
+.detail-close:hover{color:var(--text);border-color:var(--hairline-strong)}
+.dgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 18px;margin:10px 0}
+.dgrid .stack-row{border-bottom:1px solid var(--hairline);padding:7px 0;display:flex;justify-content:space-between;font-size:.84rem}
+.dgrid .stack-row b{font-family:var(--f-mono),monospace;font-weight:500}
+.prodck{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:.84rem;color:var(--muted);cursor:pointer}
+.prodck input{accent-color:var(--primary)}
+.prodck-all{border-bottom:1px solid var(--hairline);padding-bottom:8px;margin-bottom:4px;color:var(--text)}
+.prodlist{max-height:230px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0 18px;padding-right:6px}
+.msel{position:relative;max-width:520px;margin-top:6px}
+.msel-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-btn);padding:9px 12px;font:600 .82rem var(--f-body),sans-serif;cursor:pointer;text-align:left}
+.msel-btn:hover{border-color:var(--hairline-strong)}
+.msel-btn[aria-expanded="true"]{border-color:var(--primary);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.msel-caret{color:var(--muted);transition:transform .15s}
+.msel-btn[aria-expanded="true"] .msel-caret{transform:rotate(180deg);color:var(--primary)}
+.msel-panel{border:1px solid var(--primary);border-top:none;border-radius:0 0 var(--r-btn) var(--r-btn);background:var(--elevated);padding:10px 12px;position:absolute;left:0;right:0;z-index:20;box-shadow:0 12px 28px rgba(0,0,0,.4)}
+.msel-panel[hidden]{display:none}
+.msel-foot{margin-top:8px;padding-top:8px;border-top:1px solid var(--hairline);font-size:.8rem;color:var(--muted)}
+.msel-foot a{color:var(--muted)}
+.msel-filter{min-width:150px;max-width:280px;margin-top:0;align-self:center}
+.msel-filter .msel-btn{padding:5px 10px;font-weight:600;font-size:.78rem;line-height:1.2}
+.msel-filter .msel-panel{min-width:360px;max-width:min(92vw,460px);overflow-x:hidden}
+.msel-filter .prodlist{grid-template-columns:1fr;overflow-x:hidden}
+.msel-filter .prodck{align-items:center;gap:8px}
+.msel-filter .prodck .seal{margin-left:auto;white-space:nowrap;padding-left:10px;text-align:right}
+.controls input[type=date]{color-scheme:dark;font-family:var(--f-mono),monospace;font-size:.76rem;padding:5px 8px}
+.assoc-badge{display:inline-block;font:600 .62rem var(--f-mono),monospace;color:var(--primary);border:1px solid var(--hairline);border-radius:var(--r-pill);padding:1px 7px;margin-left:6px}
+.navbtn{background:transparent;border:1px solid var(--border);color:var(--muted);font:600 .7rem var(--f-mono),monospace;text-transform:uppercase;letter-spacing:.06em;padding:5px 12px;border-radius:var(--r-pill);cursor:pointer}
+.navbtn:hover,.navbtn.on{color:var(--text);border-color:var(--hairline-strong)}
+.card-accent{border-color:var(--hairline-strong)}
+.edit-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--hairline);flex-wrap:wrap}
+.edit-row:last-child{border-bottom:none}
+.edit-row .orig{flex:1;min-width:150px;color:var(--muted);font-size:.84rem}
+.edit-inp,.edit-sel{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-btn);padding:5px 9px;font:400 .84rem var(--f-body),sans-serif;min-width:180px}
+.foot{margin-top:44px;padding-top:18px;border-top:1px solid var(--hairline);color:var(--muted);font-size:.76rem}
+/* --- shell + sidebar + telas (Academia DS) --- */
+.shell{display:flex;align-items:flex-start;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;width:248px;flex:none;display:flex;flex-direction:column;background:var(--elevated);border-right:1px solid var(--hairline);overflow-y:auto;z-index:40}
+.side-brand{display:flex;align-items:baseline;justify-content:space-between;gap:9px;padding:20px 18px 14px;border-bottom:1px solid var(--hairline)}
+.side-mark{font-family:var(--f-display),serif;font-weight:400;font-size:1.05rem;color:var(--text);line-height:1.15}
+.side-role{font:600 .58rem var(--f-mono),monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border:1px solid var(--hairline);border-radius:var(--r-pill);padding:2px 7px}
+.side-nav{flex:1;display:flex;flex-direction:column;gap:2px;padding:6px 12px 16px}
+.side-section{font:600 .56rem var(--f-mono),monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:14px 8px 6px}
+.nav-item{display:flex;align-items:center;width:100%;text-align:left;height:36px;padding:0 12px;background:transparent;border:none;border-radius:var(--r-btn);color:var(--muted);font:500 .84rem var(--f-body),sans-serif;cursor:pointer;position:relative;transition:background-color .15s,color .15s}
+.nav-item:hover{color:var(--text);background:color-mix(in srgb,var(--text) 5%,transparent)}
+.nav-item.on{color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent)}
+.nav-item.on::before{content:'';position:absolute;left:4px;top:8px;bottom:8px;width:2px;border-radius:2px;background:var(--primary)}
+.side-foot{display:flex;flex-wrap:wrap;gap:6px;padding:12px 12px;border-top:1px solid var(--hairline);position:sticky;bottom:0;background:var(--elevated)}
+.content{flex:1;min-width:0}
+main.wrap{max-width:1200px;margin:0 auto;padding:38px 34px 90px}
+.view{display:none}
+.view.on{display:block;animation:fadeUp .35s ease-out}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page-head{margin-bottom:28px}
+.eyebrow{font:600 .62rem var(--f-mono),monospace;letter-spacing:.2em;text-transform:uppercase;color:var(--primary)}
+.page-head h1{font-family:var(--f-display),serif;font-weight:400;font-size:2.2rem;line-height:1.06;letter-spacing:-.02em;margin:8px 0 0}
+.page-head h1 em{font-style:italic;color:var(--primary)}
+.page-head .sub{font-family:var(--f-display),serif;font-style:italic;font-size:1rem;color:var(--muted);margin:10px 0 0;max-width:60ch}
+.sec-head{display:flex;align-items:baseline;gap:12px;padding-bottom:12px;margin:34px 0 16px;border-bottom:1px solid var(--hairline);position:relative}
+.sec-head::after{content:'';position:absolute;left:0;bottom:-1px;width:44px;height:1px;background:var(--primary)}
+.sec-head h2{font-family:var(--f-display),serif;font-weight:400;font-size:1.3rem;margin:0;border:none;padding:0}
+.sec-head h2 em{font-style:italic;color:var(--primary)}
+.sec-head .sec-meta{margin-left:auto;font:600 .62rem var(--f-mono),monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.card{transition:border-color .18s}
+.card:hover{border-color:var(--hairline-strong)}
+.lc-tip{position:fixed;pointer-events:none;z-index:99;max-width:260px;padding:10px 12px;background:var(--raised);border:1px solid var(--hairline-strong);border-radius:var(--r-btn);box-shadow:0 20px 50px rgba(0,0,0,.6);opacity:0;transition:opacity .15s;font-size:.82rem;color:var(--text);line-height:1.5}
+.lc-tip.on{opacity:1}
+.lc-tip b{color:var(--primary)}
+.info{display:inline-block;width:14px;height:14px;line-height:13px;text-align:center;border:1px solid var(--hairline-strong);border-radius:50%;font:600 .58rem var(--f-mono),monospace;color:var(--muted);cursor:help;margin-left:5px;vertical-align:middle}
+.info:hover{color:var(--primary);border-color:var(--primary)}
+.pencil{cursor:pointer;color:var(--muted);margin-left:6px;font-size:.85em;user-select:none}
+.pencil:hover{color:var(--primary)}
+@media print{
+  @page{margin:1cm;size:A4 landscape}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:11px}
+  .side,.controls,.side-foot,#editSec{display:none}
+  .content{flex:1}main.wrap{max-width:100%;padding:0}
+  .view{display:block!important;page-break-before:always}
+  .view:first-of-type{page-break-before:avoid}
+  .card,.clone,table,.kpi{break-inside:avoid}
+}
+@media (max-width:820px){
+  .shell{flex-direction:column}
+  .side{position:static;width:100%;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:none;border-bottom:1px solid var(--hairline)}
+  .side-brand{border:none;padding:12px 14px}.side-nav{flex-direction:row;flex-wrap:wrap;padding:0 10px 10px;gap:4px}.side-section{display:none}
+  .nav-item{width:auto;height:32px}.nav-item.on::before{display:none}.side-foot{border:none;padding:0 10px 10px}
+  main.wrap{padding:24px 18px 60px}
+}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}.board{grid-template-columns:1fr}.grid-2col{grid-template-columns:1fr}}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="side-brand"><span class="side-mark">${projeto}</span><span class="side-role">Painel</span></div>
+    <nav class="side-nav" id="sideNav">
+      <div class="side-section">Análise</div>
+      <button class="nav-item tab on" data-view="geral">Visão geral</button>
+      <button class="nav-item tab" data-view="series">Séries no tempo</button>
+      <button class="nav-item tab" data-view="campanhas">Campanhas</button>
+      <div class="side-section">Receita &amp; público</div>
+      <button class="nav-item tab" data-view="vendas">Vendas &amp; atribuição</button>
+      <button class="nav-item tab" data-view="audiencia">Audiência</button>
+      <button class="nav-item tab" data-view="engajamento">Engajamento</button>
+      <div class="side-section">Leitura</div>
+      <button class="nav-item tab" data-view="board">Board de especialistas</button>
+    </nav>
+    <div class="side-foot">
+      <button class="navbtn" id="editBtn">✎ Editar</button>
+      <button class="navbtn" id="saveCfgBtn" title="Baixa painel-config.json">⭳ Config</button>
+      <button class="navbtn" id="copyCfgBtn" title="Copia um resumo pra colar no chat">⧉ Copiar</button>
+    </div>
+  </aside>
+  <div class="content"><main class="wrap">
+
+    <section id="editSec" style="display:none">
+      <div class="card card-accent">
+        <div class="mini-h">Modo edição — renomear campanhas &amp; associar produto↔campanha</div>
+        <div id="editBox"></div>
+        <p class="seal" style="margin-top:8px">As edições salvam no navegador na hora. Use <b>Config</b> pra baixar o <code>painel-config.json</code> (a skill relê no próximo run) ou <b>Copiar</b>.</p>
+      </div>
+    </section>
+
+    <section class="view on" id="view-geral">
+      <div class="page-head"><div><span class="eyebrow">squad de dados · aula 4</span><h1>Visão <em>geral</em></h1><p class="sub" id="escopo"></p><p class="seal" id="seloModo"></p></div></div>
+      <div class="controls" id="geralControls"><label>Período</label><select id="mesSel"></select><span class="seal" id="mesNota"></span></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid-2col" style="margin-top:18px">
+        <div class="card"><div class="mini-h">Scorecard de saúde</div><div id="scorecard"></div></div>
+        <div class="card"><div class="mini-h">O que mudou</div><div id="oquemudou"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-series">
+      <div class="page-head"><div><span class="eyebrow">tendências</span><h1>Séries no <em>tempo</em></h1><p class="sub">Como impressões, cliques, CTR, gasto e ROAS evoluem — dia, mês e quarter.</p></div></div>
+      <div class="card">
+        <div class="controls">
+          <div class="grp" id="granBtns"><button data-g="dia" class="on">Dia</button><button data-g="mes">Mês</button><button data-g="quarter">Quarter</button></div>
+          <label style="margin-left:6px">Métrica</label>
+          <select id="metricSel"></select>
+          <div class="grp" style="margin-left:6px"><button id="mmBtn">Média 7d</button></div>
+          <span class="sep"></span>
+          <span class="pill real">Real</span><span class="pill est">Estimado</span>
+        </div>
+        <svg class="chart" id="lineChart" viewBox="0 0 820 340" preserveAspectRatio="xMidYMid meet" role="img"></svg>
+        <p class="seal" id="serieNota"></p>
+      </div>
+      <div class="sec-head"><h2>Quando o tráfego <em>rende</em></h2><span class="sec-meta">dia × hora</span></div>
+      <div class="card">
+        <div class="chips" id="heatChips"></div>
+        <div class="chips" id="heatBest"></div>
+        <svg class="chart" id="heatChart" viewBox="0 0 820 260" preserveAspectRatio="xMidYMid meet" role="img"></svg>
+        <div class="legendbar" id="heatLegend"></div>
+        <p class="seal" id="heatNota"></p>
+      </div>
+    </section>
+
+    <section class="view" id="view-campanhas">
+      <div class="page-head"><div><span class="eyebrow">tráfego pago</span><h1>Campanhas &amp; <em>funil</em></h1><p class="sub">Ordene por qualquer coluna e clique numa campanha para abrir o detalhe (métricas + produtos associados).</p></div></div>
+      <div id="campDetail" style="display:none"></div>
+      <div class="card">
+        <div class="controls">
+          <div class="grp" id="campStatusBtns"><button data-s="all" class="on">Todas</button><button data-s="on">Ativas</button><button data-s="off">Pausadas</button></div>
+          <select id="campLimit"><option value="10">Top 10</option><option value="15" selected>Top 15</option><option value="30">Top 30</option><option value="999">Todas</option></select>
+          <span class="sep"></span><span class="seal" id="campCount"></span>
+        </div>
+        <div id="campTable"></div>
+      </div>
+      <div class="sec-head"><h2>Funil de <em>conversão</em></h2><span class="sec-meta">só etapas reportadas</span></div>
+      <div class="card">
+        <div class="controls">
+          <label>Campanhas</label><span id="campFilterHost"></span>
+          <label>Período</label>
+          <div class="grp" id="funilPresetBtns"><button data-p="all" class="on">Tudo</button><button data-p="30">30d</button><button data-p="7">7d</button></div>
+          <input type="date" id="funilFrom" class="edit-inp"><span class="seal">até</span><input type="date" id="funilTo" class="edit-inp">
+          <span class="sep"></span><label>Etapas</label><span id="funilStageHost"></span>
+        </div>
+        <svg class="chart" id="funilChart" viewBox="0 0 820 300" preserveAspectRatio="xMidYMid meet" role="img"></svg><p class="seal" id="funilNota"></p>
+      </div>
+    </section>
+
+    <section class="view" id="view-vendas">
+      <div class="page-head"><div><span class="eyebrow">caixa real × Meta</span><h1>Vendas &amp; <em>atribuição</em></h1><p class="sub">O que entrou no caixa (Hotmart) e como se relaciona ao gasto de mídia.</p></div></div>
+      <div class="controls" id="vendasControls">
+        <label>Produtos</label><span id="prodFilterHost"></span>
+        <span class="sep"></span><label>Período</label>
+        <div class="grp" id="vendaPresetBtns"><button data-p="all" class="on">Tudo</button><button data-p="30">30d</button><button data-p="7">7d</button></div>
+        <input type="date" id="vendaFrom" class="edit-inp"><span class="seal">até</span><input type="date" id="vendaTo" class="edit-inp">
+      </div>
+      <div class="kpis" id="caixaKpis"></div>
+      <div class="card" id="atribNota" style="margin-top:14px"></div>
+      <div class="grid-2col" id="vendasGrid" style="margin-top:14px">
+        <div class="card"><div class="mini-h">Receita por produto <span class="pill real">Real</span></div><svg class="chart" id="prodChart" viewBox="0 0 500 260" role="img"></svg></div>
+        <div class="card"><div class="mini-h">Gasto Meta × Receita caixa <span class="grp" id="ovGranBtns" style="margin-left:8px;display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-btn);padding:2px"><button data-g="dia" class="on">Dia</button><button data-g="mes">Mês</button><button data-g="quarter">Quarter</button></span></div><svg class="chart" id="overlayChart" viewBox="0 0 500 260" role="img"></svg><p class="seal" id="overlayNota"></p></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-audiencia">
+      <div class="page-head"><div><span class="eyebrow">perfil de quem os anúncios atingem</span><h1>Audiência <em>paga</em></h1><p class="sub">Idade, gênero e região do público alcançado pelos anúncios (Real, sem token de página).</p></div></div>
+      <div id="audBox"></div>
+    </section>
+
+    <section class="view" id="view-engajamento">
+      <div class="page-head"><div><span class="eyebrow">orgânico da página</span><h1>Engajamento &amp; <em>perfil</em></h1><p class="sub">Curtidas, comentários, reações e o sentimento de quem acompanha.</p></div></div>
+      <div id="perfilBox"></div>
+      <div class="sec-head"><h2>Quem é o meu <em>cliente</em></h2><span class="sec-meta">síntese de todas as fontes</span></div>
+      <div id="clienteBox"></div>
+    </section>
+
+    <section class="view" id="view-board">
+      <div class="page-head"><div><span class="eyebrow">clones de mercado</span><h1>Board de <em>especialistas</em></h1><p class="sub">Media Buyer, Analista de Dados, Diretor de Criativos e CRO/Growth sobre estes dados.</p></div></div>
+      <div class="board" id="board"></div>
+      <div class="card sintese" id="sintese"></div>
+    </section>
+
+    <p class="foot">Painel gerado pelo <b>Squad de Dados Lendár[IA]</b> (/analista-de-dados) · Aula 4 (Dados). Selos: <span class="pill real">Real</span> pronto da Meta/caixa · <span class="pill est">Estimado</span> atribuição da plataforma · <span class="pill calc">Calculado</span> derivado de valores Real.</p>
+  </main></div>
+</div>
+<div class="lc-tip" id="glossTip" role="tooltip"></div>
+
+<script type="application/json" id="bundle">${dataJson}</script>
+<script type="application/json" id="boardData">${boardJson}</script>
+<script type="application/json" id="tokensData">${JSON.stringify({ chart: T.chart, pos: T.pos, warn: T.warn, neg: T.neg, info: T.info, primary: T.primary, projeto })}</script>
+<script>
+${clientJs()}
+</script>
+</body>
+</html>`;
+}
+
+// ------------------------------------------------------- client-side (browser)
+function clientJs() {
+  return String.raw`
+const B = JSON.parse(document.getElementById('bundle').textContent);
+const BOARD = JSON.parse(document.getElementById('boardData').textContent);
+const TK = JSON.parse(document.getElementById('tokensData').textContent);
+const PAL = TK.chart||['#22C7B1','#7C3AED','#F59E0B','#9db4ff','#e879f9','#63E6E2','#FFD60A'];
+// --- config + edição no painel (persiste no localStorage; exporta pra skill) ---
+const CFG = B.config || { labels:{}, mapa_produto_campanha:{}, periodo_dias:(B.periodo_dias||30), produtos_incluidos:'todos' };
+const LS_KEY = 'cohort.painelTrafego.' + String(TK.projeto||'projeto').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+let OV = (()=>{ try{return JSON.parse(localStorage.getItem(LS_KEY))||{};}catch(e){return {};} })();
+function saveOv(){ OV.updatedAt=new Date().toISOString(); try{localStorage.setItem(LS_KEY,JSON.stringify(OV));}catch(e){} }
+// migração: a versão anterior associava TODOS os produtos ao só abrir a campanha (persist-on-open),
+// poluindo a tabela. Limpa essas associações automáticas uma vez (mantém labels/prodSel/exclusões).
+if(OV.assocSchema!==2){ delete OV.assoc; delete OV.mapa; OV.assocSchema=2; try{saveOv();}catch(e){} }
+function labels(){ return {...(CFG.labels||{}),...(OV.labels||{})}; }
+function mapa(){ return {...(CFG.mapa_produto_campanha||{}),...(OV.mapa||{})}; }
+function campLabel(c){ const L=labels(); return L[c.id]||L[c.nome]||c.label||c.nome; }
+function mergedConfig(){ const ps=(typeof prodSel!=='undefined'&&prodSel&&prodSel.length)?prodSel:( (OV.prodSel&&OV.prodSel.length)?OV.prodSel:null ); return { schemaVersion:'1.0.0', periodo_dias:CFG.periodo_dias||30, produtos_incluidos:ps||CFG.produtos_incluidos||'todos', campanhas_excluidas:(CFG.campanhas_excluidas||[]), assoc_campanha_produtos:assocAll(), labels:labels(), fieldMeta:{} }; }
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+// --- glossário dos indicadores (tooltip de hover) ---
+const GLOSSARIO = {
+  'Gasto':'Quanto foi investido em mídia no período.',
+  'Impressões':'Quantas vezes os anúncios foram exibidos (não são pessoas únicas — isso é o Alcance).',
+  'Cliques':'Cliques totais nos anúncios (inclui cliques que não vão ao link).',
+  'CTR':'Click-Through Rate — % de impressões que viraram clique (cliques ÷ impressões).',
+  'CPM':'Custo por Mil impressões — quanto custa exibir o anúncio 1.000 vezes.',
+  'CPC':'Custo por Clique — gasto ÷ cliques.',
+  'CPA':'Custo por Aquisição — gasto ÷ conversões.',
+  'ROAS':'Return on Ad Spend — receita atribuída ÷ gasto. Aqui é Estimado (atribuição da Meta), não o caixa.',
+  'Frequência':'Média de vezes que cada pessoa viu o anúncio (impressões ÷ alcance). Acima de ~3 satura.',
+  'Alcance':'Pessoas únicas que viram o anúncio.',
+  'Compras':'Conversões de compra atribuídas pela Meta (evento do pixel), não é o caixa confirmado.',
+  'Ticket médio':'Receita ÷ número de vendas aprovadas.',
+  'Teto ROAS':'Receita total (TODOS os canais) ÷ gasto Meta. É um teto, NÃO o ROAS real da Meta.',
+  'Receita assoc.':'Receita (Hotmart) dos produtos que VOCÊ associou a esta campanha. Associação manual — selo Estimado, não é atribuição rastreada.',
+  'ROAS prod.':'Receita associada ÷ gasto da campanha. Estimado — depende da sua associação produto↔campanha, não de UTM/pixel.',
+};
+// motor de card flutuante: data-tip (glossário) e data-th (HTML cru) em qualquer elemento/SVG
+function tipShow(html,x,y){ const t=document.getElementById('glossTip'); if(!t||!html)return; t.innerHTML=html; t.classList.add('on'); tipMove(x,y); }
+function tipMove(x,y){ const t=document.getElementById('glossTip'); if(!t)return; const w=t.offsetWidth||200,h=t.offsetHeight||60; let L=x+14,T=y+16; if(typeof window!=='undefined'){ if(L+w>window.innerWidth-8)L=x-w-14; if(T+h>window.innerHeight-8)T=y-h-12; } t.style.left=Math.max(8,L)+'px'; t.style.top=Math.max(8,T)+'px'; }
+function tipHide(){ const t=document.getElementById('glossTip'); if(t)t.classList.remove('on'); }
+function tipHtmlDe(el){ const k=el.getAttribute&&el.getAttribute('data-tip'); if(k)return GLOSSARIO[k]?'<b>'+k+'</b> — '+GLOSSARIO[k]:null; return el.getAttribute?el.getAttribute('data-th'):null; }
+if(typeof document.addEventListener==='function'){
+  document.addEventListener('pointerover',e=>{ const el=e.target&&e.target.closest&&e.target.closest('[data-th],[data-tip]'); if(el){ const h=tipHtmlDe(el); if(h)tipShow(h,e.clientX,e.clientY); } });
+  document.addEventListener('pointermove',e=>{ const el=e.target&&e.target.closest&&e.target.closest('[data-th],[data-tip]'); if(el){tipMove(e.clientX,e.clientY);return;} const keep=e.target&&e.target.closest&&e.target.closest('[data-keeptip]'); if(!keep)tipHide(); });
+}
+function infoIcon(k){ return GLOSSARIO[k]?'<span class="info" data-tip="'+esc(k)+'">i</span>':''; }
+// formatos compactos p/ KPI (valor cheio vai no card flutuante — nunca quebrar linha)
+const cmp1 = n => { if(n==null)return '—'; const a=Math.abs(n); if(a>=1e6)return (n/1e6).toLocaleString('pt-BR',{maximumFractionDigits:2})+' mi'; if(a>=1e4)return (n/1e3).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil'; return Number(n).toLocaleString('pt-BR',{maximumFractionDigits:2}); };
+const brlC = n => n==null?'—':'R$ '+cmp1(n);
+const brl = n => n==null?'—':'R$ '+Number(n).toLocaleString('pt-BR',{maximumFractionDigits:2});
+const int = n => n==null?'—':Number(n).toLocaleString('pt-BR');
+const pct = n => n==null?'—':Number(n).toLocaleString('pt-BR',{maximumFractionDigits:2})+'%';
+const val = p => p==null?null:(typeof p==='object'&&'valor'in p?p.valor:p);
+const roasFmt = p => { const r=val(p); return r==null?'—':(Math.round(r*100)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'x'; };
+// ---------- menu-filtro reutilizável (caixa de seleção + "Selecionar todos", aplica ao vivo) ----------
+// sel = array de valores selecionados OU null (= todos). Monta uma vez; painel fica aberto durante a seleção.
+function mselMarkup(id, items, sel, allLabel, opts){
+  const isAll=sel===null; const set=new Set(sel||items.map(i=>i.v));
+  const n=isAll?items.length:set.size, m=items.length;
+  const sum=(isAll||n===m)?(allLabel+' ('+m+')'):(n===0?'Nenhum':n+' de '+m+' selec.');
+  let h='<div class="msel msel-filter" data-msel="'+id+'">';
+  h+='<button type="button" class="msel-btn" data-mselbtn aria-expanded="false"><span class="msel-sum">'+esc(sum)+'</span><span class="msel-caret">▾</span></button>';
+  h+='<div class="msel-panel" hidden>';
+  if(opts&&opts.search)h+='<input class="edit-inp msel-search" data-mselsearch placeholder="buscar…" style="width:100%;margin-bottom:8px">';
+  h+='<label class="prodck prodck-all"><input type="checkbox" data-mselall '+(isAll||n===m?'checked':'')+'> <b>Selecionar todos</b> <span class="seal msel-cnt">'+n+'/'+m+'</span></label>';
+  h+='<div class="prodlist">'+items.map(it=>'<label class="prodck" data-msellbl="'+esc(String(it.label).toLowerCase())+'"><input type="checkbox" data-mselitem="'+esc(it.v)+'" '+((isAll||set.has(it.v))?'checked':'')+'> '+esc(it.label)+(it.sub?' <span class="seal">'+esc(it.sub)+'</span>':'')+'</label>').join('')+'</div></div></div>';
+  return h;
+}
+function mountMsel(hostId, items, getSel, apply, allLabel, opts){
+  const host=document.getElementById(hostId); if(!host)return;
+  host.innerHTML=mselMarkup(hostId, items, getSel(), allLabel, opts);
+  const root=host.querySelector('.msel'); if(!root)return;
+  const btn=root.querySelector('[data-mselbtn]'), panel=root.querySelector('.msel-panel');
+  const boxes=()=>[...root.querySelectorAll('[data-mselitem]')];
+  if(btn)btn.addEventListener('click',()=>{const op=panel.hasAttribute('hidden');if(op){panel.removeAttribute('hidden');btn.setAttribute('aria-expanded','true');}else{panel.setAttribute('hidden','');btn.setAttribute('aria-expanded','false');}});
+  const srch=root.querySelector('[data-mselsearch]');
+  if(srch)srch.addEventListener('input',()=>{const q=srch.value.trim().toLowerCase();root.querySelectorAll('[data-msellbl]').forEach(l=>{l.style.display=(!q||l.getAttribute('data-msellbl').includes(q))?'':'none';});});
+  const applyNow=()=>{
+    const all=boxes(); const sel=all.filter(x=>x.checked).map(x=>x.getAttribute('data-mselitem')); const isAll=sel.length===all.length;
+    apply(isAll?null:sel);
+    const n=sel.length,m=all.length;
+    const sm=root.querySelector('.msel-sum'); if(sm)sm.textContent=(isAll||n===m)?(allLabel+' ('+m+')'):(n===0?'Nenhum':n+' de '+m+' selec.');
+    const cnt=root.querySelector('.msel-cnt'); if(cnt)cnt.textContent=n+'/'+m;
+    const ms=root.querySelector('[data-mselall]'); if(ms)ms.checked=isAll;
+  };
+  boxes().forEach(ck=>ck.addEventListener('change',applyNow));
+  const master=root.querySelector('[data-mselall]');
+  if(master)master.addEventListener('change',()=>{ boxes().forEach(x=>{x.checked=master.checked;}); applyNow(); });
+}
+
+document.getElementById('escopo').textContent = 'Escopo: '+(B.escopo||'—')+' · gerado em '+(B.gerado_em||'—');
+document.getElementById('seloModo').innerHTML = B.modo==='exemplo'
+  ? 'Modo <b>exemplo</b> — dados fictícios para demonstração (sem conta conectada).'
+  : 'Modo <b>API</b> — dados reais lidos da Graph API da Meta.';
+
+// ---------- KPIs ----------
+const METRICS = [
+  {k:'spend',label:'Gasto',fmt:brl,melhorAlto:false},
+  {k:'impressions',label:'Impressões',fmt:int,melhorAlto:true},
+  {k:'clicks',label:'Cliques',fmt:int,melhorAlto:true},
+  {k:'ctr',label:'CTR',fmt:pct,melhorAlto:true},
+  {k:'cpm',label:'CPM',fmt:brl,melhorAlto:false},
+  {k:'purchases',label:'Compras',fmt:int,melhorAlto:true},
+];
+function kpiCard(m,cmp){
+  cmp = cmp||B.comparacao;
+  const pb = cmp&&cmp.periodo_b, pa = cmp&&cmp.periodo_a;
+  const v = pb? pb[m.k] : null;
+  const va = pa? pa[m.k] : null;
+  const d = cmp&&cmp.deltas? cmp.deltas[m.k] : null;
+  let cls='flat',arrow='→',dtxt='sem base';
+  if(d!=null){const good = m.melhorAlto? d>0 : d<0; cls = d===0?'flat':(good?'pos':'neg'); arrow = d>0?'▲':(d<0?'▼':'→'); dtxt=(d>0?'+':'')+d+'%';}
+  const curto = (m.k==='spend'||m.k==='cpm') ? brlC(v) : (m.k==='ctr' ? m.fmt(v) : cmp1(v));
+  // card flutuante: valor cheio + referência do período anterior comparado
+  const per=p=>p&&p.rotulo?' <span style="opacity:.65">('+esc(p.rotulo)+(p.desde?', '+p.desde+'→'+p.ate:'')+')</span>':'';
+  const th='<b>'+m.label+'</b><br>Atual: '+m.fmt(v)+per(pb)
+    +'<br>Anterior: '+(va==null?'—':m.fmt(va))+per(pa)
+    +(d!=null?'<br>Variação: <b>'+dtxt+'</b> <span class="pill calc">Calculado</span>':'');
+  return '<div class="kpi"><div class="lbl">'+m.label+infoIcon(m.label)+'</div><div class="val" data-th="'+esc(th)+'">'+curto+'</div><div class="dlt '+cls+'">'+arrow+' '+dtxt+'</div></div>';
+}
+function renderKpis(cmp){ document.getElementById('kpis').innerHTML = METRICS.map(m=>kpiCard(m,cmp)).join(''); }
+renderKpis(B.comparacao);
+
+// ---------- métrica selector ----------
+const CHART_METRICS = [
+  {k:'ctr',label:'CTR (%)',fmt:pct,color:PAL[0]},
+  {k:'spend',label:'Gasto (R$)',fmt:brl,color:PAL[1%PAL.length]},
+  {k:'clicks',label:'Cliques',fmt:int,color:PAL[2%PAL.length]},
+  {k:'impressions',label:'Impressões',fmt:int,color:PAL[3%PAL.length]},
+  {k:'cpm',label:'CPM (R$)',fmt:brl,color:PAL[4%PAL.length]},
+  {k:'roas',label:'ROAS (Estimado)',fmt:v=>v==null?'—':Number(v).toFixed(2)+'x',color:PAL[6%PAL.length]},
+];
+const sel = document.getElementById('metricSel');
+sel.innerHTML = CHART_METRICS.map((m,i)=>'<option value="'+m.k+'">'+m.label+'</option>').join('');
+let gran='dia', metric='ctr', mmOn=false;
+
+// valor da série: deriva CTR/CPM/CPC quando a Meta não entrega (ex.: trimestre) a partir das somas Real
+function serieVal(p,k){ let v=val(p[k]);
+  if(v==null){ if(k==='ctr'&&p.impressions)v=p.clicks/p.impressions*100; else if(k==='cpm'&&p.impressions)v=p.spend/p.impressions*1000; else if(k==='cpc'&&p.clicks)v=p.spend/p.clicks; }
+  return (v==null||!Number.isFinite(v))?null:v;
+}
+const MES_ABBR=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function fmtPeriodo(per,gran){ per=String(per);
+  if(gran==='dia'&&per.length>=10)return per.slice(8,10)+'/'+per.slice(5,7);
+  if(gran==='mes'&&per.length>=7)return MES_ABBR[(+per.slice(5,7))-1]+'/'+per.slice(2,4);
+  if(gran==='quarter'&&per.indexOf('Q')>=0)return per.slice(per.indexOf('Q'))+'/'+per.slice(2,4);
+  return per;
+}
+// ---------- line chart (SVG) ----------
+function drawLine(){
+  const svg=document.getElementById('lineChart');
+  const pts=(B.series&&B.series[gran])||[];
+  const M=CHART_METRICS.find(m=>m.k===metric);
+  const W=820,H=340,padL=64,padR=18,padT=18,padB=52;
+  const xs=pts.map((p,i)=>i);
+  const ys=pts.map(p=>serieVal(p,metric));
+  const valid=ys.filter(v=>v!=null&&Number.isFinite(v));
+  if(!pts.length||!valid.length){svg.innerHTML='<text x="410" y="170" text-anchor="middle" class="tickL">Sem dados nesta granularidade para '+M.label+'.</text>';document.getElementById('serieNota').textContent='';return;}
+  let mn=Math.min(...valid),mx=Math.max(...valid); if(mn===mx){mn=Math.min(0,mn);mx=mx*1.2||1;} if(M.k!=='ctr'&&M.k!=='roas'&&M.k!=='cpm')mn=Math.min(mn,0);
+  const x=i=>padL+(xs.length<=1?0:(i/(xs.length-1))*(W-padL-padR));
+  const y=v=>H-padB-((v-mn)/(mx-mn))*(H-padT-padB);
+  let g='';
+  const rows=4;
+  for(let r=0;r<=rows;r++){const yy=padT+(r/rows)*(H-padT-padB);const vv=mx-(r/rows)*(mx-mn);g+='<line class="grid" x1="'+padL+'" y1="'+yy+'" x2="'+(W-padR)+'" y2="'+yy+'"/>';g+='<text class="tickL" x="'+(padL-8)+'" y="'+(yy+4)+'" text-anchor="end">'+M.fmt(vv)+'</text>';}
+  // path: LIGA através de lacunas (dias sem entrega) — não quebra a linha
+  let d='',started=false;
+  pts.forEach((p,i)=>{const v=serieVal(p,metric);if(v==null||!Number.isFinite(v))return;d+=(started?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)+' ';started=true;});
+  g+='<path d="'+d+'" fill="none" stroke="'+M.color+'" stroke-width="2.4"/>';
+  pts.forEach((p,i)=>{const v=serieVal(p,metric);if(v==null||!Number.isFinite(v))return;g+='<circle class="dot" cx="'+x(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="3" stroke="'+M.color+'"><title>'+p.periodo+': '+M.fmt(v)+'</title></circle>';});
+  // x labels esparsos, igualmente espaçados de primeiro a último (sem sobreposição)
+  const nLab=Math.min(8,pts.length);const idxs=new Set();
+  for(let k=0;k<nLab;k++)idxs.add(Math.round(k*(pts.length-1)/Math.max(1,nLab-1)));
+  pts.forEach((p,i)=>{if(!idxs.has(i))return;const lbl=fmtPeriodo(p.periodo,gran);g+='<text class="tickL" x="'+x(i).toFixed(1)+'" y="'+(H-padB+18)+'" text-anchor="middle">'+lbl+'</text>';});
+  // média móvel 7 pontos (overlay, quando ligada)
+  if(mmOn){
+    let dma='',s2=false;
+    pts.forEach((p,i)=>{
+      const seg=[];for(let j=Math.max(0,i-6);j<=i;j++){const vv=serieVal(pts[j],metric);if(vv!=null&&Number.isFinite(vv))seg.push(vv);}
+      if(seg.length<3){s2=false;return;}
+      const m2=seg.reduce((a,b)=>a+b,0)/seg.length;
+      dma+=(s2?'L':'M')+x(i).toFixed(1)+' '+y(m2).toFixed(1)+' ';s2=true;
+    });
+    g+='<path d="'+dma+'" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="5 4" opacity=".85"/>';
+  }
+  // detecção de anomalia: pontos > 2σ da média
+  let anom=0;
+  if(valid.length>=6){
+    const mean=valid.reduce((a,b)=>a+b,0)/valid.length;
+    const sd=Math.sqrt(valid.reduce((a,b)=>a+(b-mean)**2,0)/valid.length);
+    if(sd>0)pts.forEach((p,i)=>{const v=serieVal(p,metric);if(v==null||!Number.isFinite(v))return;if(Math.abs(v-mean)>2*sd){anom++;g+='<circle cx="'+x(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="7" fill="none" stroke="var(--warn)" stroke-width="1.6"><title>anomalia: '+p.periodo+' — '+M.fmt(v)+' (>2σ)</title></circle>';}});
+  }
+  g+='<line class="axis" x1="'+padL+'" y1="'+(H-padB)+'" x2="'+(W-padR)+'" y2="'+(H-padB)+'"/>';
+  // crosshair + área de captura do hover (card flutuante estilo LendCharts)
+  g+='<line id="lcCross" class="crosshair" y1="'+padT+'" y2="'+(H-padB)+'" x1="-10" x2="-10" opacity="0"/>';
+  g+='<rect id="lcHit" data-keeptip="1" x="'+padL+'" y="'+padT+'" width="'+(W-padL-padR)+'" height="'+(H-padT-padB)+'" fill="transparent" style="cursor:crosshair"/>';
+  svg.innerHTML=g;
+  const hit=svg.querySelector&&svg.querySelector('#lcHit'), cross=svg.querySelector&&svg.querySelector('#lcCross');
+  if(hit&&hit.addEventListener){
+    hit.addEventListener('pointermove',ev=>{
+      const rct=svg.getBoundingClientRect(); const fx=(ev.clientX-rct.left)/rct.width*W;
+      let best=0,bd=1e9; pts.forEach((p,i)=>{const dd=Math.abs(x(i)-fx); if(dd<bd){bd=dd;best=i;}});
+      const p=pts[best]; const v=serieVal(p,metric);
+      cross.setAttribute('x1',x(best).toFixed(1)); cross.setAttribute('x2',x(best).toFixed(1)); cross.setAttribute('opacity','1');
+      let html='<b>'+fmtPeriodo(p.periodo,gran)+'</b><br>'+M.label+': '+(v==null?'—':M.fmt(v))+((gran==='quarter'&&(metric==='ctr'||metric==='cpm'||metric==='cpc')&&v!=null)?' <span style="opacity:.7">(Calculado)</span>':'');
+      if(mmOn){const seg=[];for(let j=Math.max(0,best-6);j<=best;j++){const vv=serieVal(pts[j],metric);if(vv!=null&&Number.isFinite(vv))seg.push(vv);}if(seg.length>=3)html+='<br>média 7d: '+M.fmt(seg.reduce((a,b)=>a+b,0)/seg.length);}
+      tipShow(html,ev.clientX,ev.clientY);
+    });
+    hit.addEventListener('pointerleave',()=>{cross.setAttribute('opacity','0');tipHide();});
+  }
+  const anyEst = metric==='roas';
+  const derivadaQ = gran==='quarter'&&(metric==='ctr'||metric==='cpm'||metric==='cpc');
+  let nota = derivadaQ
+    ? M.label+' no trimestre é <span class="pill calc">Calculado</span> — derivado das somas Real (cliques/impressões/gasto) do período; a Meta não entrega a taxa pronta no quarter.'
+    : (anyEst?'ROAS é <span class="pill est">Estimado</span> — atribuição da plataforma, não confirmado no caixa.':'Valores <span class="pill real">Real</span>, prontos da Meta.');
+  if(mmOn)nota+=' · linha tracejada = <b>média móvel 7d</b> (<span class="pill calc">Calculado</span>).';
+  if(anom)nota+=' · <b>'+anom+'</b> ponto(s) fora de 2σ marcados (anomalia).';
+  document.getElementById('serieNota').innerHTML=nota;
+}
+
+// ---------- campanhas (controles + tabela ordenável + detalhe) ----------
+let campStatus='all', campLimit=15, campSel=null, campFilterSel=null; // campFilterSel: ids selecionados (null=todas)
+let campSort={k:'spend',dir:-1}; // padrão: maior gasto primeiro
+function dateBR(iso){ return iso&&iso.length>=10 ? iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(2,4) : '—'; }
+// Modelo de associação: campanha → [produtos] (multi-seleção). Config + edições (OV), com
+// migração do antigo mapa produto→campanha. assocOf(cid)=null significa "campanha ainda não curada".
+function assocAll(){
+  const out={};
+  const base={...(CFG.assoc_campanha_produtos||{})};
+  for(const cid in base) out[cid]=(base[cid]||[]).slice();
+  const oldMap={...(CFG.mapa_produto_campanha||{}),...(OV.mapa||{})}; // legado produto→cid
+  for(const prod in oldMap){const cid=oldMap[prod];if(!cid)continue;out[cid]=out[cid]||[];if(!out[cid].includes(prod))out[cid].push(prod);}
+  for(const cid in (OV.assoc||{})) out[cid]=(OV.assoc[cid]||[]).slice(); // OV.assoc é a fonte da verdade por campanha
+  return out;
+}
+function assocOf(cid){ const a=assocAll(); return a[cid]!==undefined?a[cid]:null; }
+function prodAssociado(prod){ const a=assocAll(); for(const cid in a) if((a[cid]||[]).includes(prod)) return true; return false; }
+// receita dos produtos associados a cada campanha — Estimado (produto)
+function assocPorCampanha(){
+  const A=assocAll(); const rec={};
+  ((B.vendas&&B.vendas.por_produto)||[]).forEach(p=>rec[p.produto]=p);
+  const out={};
+  for(const cid in A){
+    const prods=A[cid]||[]; let receita=0,vendas=0,list=[];
+    prods.forEach(pn=>{const p=rec[pn]; if(p){receita+=p.receita;vendas+=p.vendas;list.push(pn);}});
+    if(list.length)out[cid]={receita:Number(receita.toFixed(2)),vendas,produtos:list};
+  }
+  return out;
+}
+function excluidasSet(){ return new Set([...(CFG.campanhas_excluidas||[]),...(OV.excluidas||[])].map(String)); }
+function campFiltradas(){
+  const ex=excluidasSet();
+  let list=(B.campanhas||[]).filter(c=>!c.sem_dados && !ex.has(String(c.id)));
+  if(campStatus==='on')list=list.filter(c=>c.status==='ACTIVE');
+  if(campStatus==='off')list=list.filter(c=>c.status!=='ACTIVE');
+  return list;
+}
+function campTip(c,A){
+  const a=A[c.id]; const r=val(c.roas);
+  let h='<b>'+esc(campLabel(c))+'</b>';
+  if(campLabel(c)!==c.nome)h+='<br><span style="opacity:.7">'+esc(c.nome)+'</span>';
+  h+='<br>'+c.status+' · início '+dateBR(c.inicio)+' · Gasto '+brl(c.spend);
+  h+='<br>CTR '+pct(c.ctr)+' · Impr '+cmp1(c.impressions)+' · Cliques '+cmp1(c.clicks);
+  h+='<br>Compras '+int(c.purchases)+' · ROAS '+(r==null?'—':r+'x (Estimado)');
+  if(a)h+='<br>Receita assoc. '+brl(a.receita)+' ('+a.produtos.length+' produto/s, Estimado)';
+  h+='<br><span style="opacity:.6">clique para abrir o detalhe</span>';
+  return h;
+}
+function drawCamp(){
+  const A=assocPorCampanha();
+  const temAssoc=Object.keys(A).length>0;
+  // colunas: get() = valor pra ordenar; cell() = célula renderizada
+  const COLS=[
+    {k:'nome',  label:'Campanha', num:false, get:c=>campLabel(c).toLowerCase()},
+    {k:'inicio',label:'Início',   num:false, cls:'n', get:c=>c.inicio||'', cell:c=>dateBR(c.inicio)},
+    {k:'status',label:'Status',   num:false, cls:'n', get:c=>c.status||'', cell:c=>'<span class="pill '+(c.status==='ACTIVE'?'real':'est')+'">'+esc(c.status)+'</span>'},
+    {k:'spend', label:'Gasto',    num:true,  cls:'n', get:c=>c.spend||0,       cell:c=>brl(c.spend)},
+    {k:'impressions',label:'Impr.',num:true, cls:'n', get:c=>c.impressions||0, cell:c=>int(c.impressions)},
+    {k:'clicks',label:'Cliques',  num:true,  cls:'n', get:c=>c.clicks||0,      cell:c=>int(c.clicks)},
+    {k:'ctr',   label:'CTR',      num:true,  cls:'n', info:'CTR', get:c=>c.ctr||0, cell:c=>pct(c.ctr)},
+    {k:'purchases',label:'Compras',num:true, cls:'n', get:c=>c.purchases||0,   cell:c=>int(c.purchases)},
+    {k:'roas',  label:'ROAS',     num:true,  cls:'n', info:'ROAS', get:c=>val(c.roas)??-1, cell:c=>roasFmt(c.roas)+' <span class="pill est">Est</span>'},
+  ];
+  if(temAssoc){
+    COLS.push({k:'rec', label:'Receita assoc.', num:true, cls:'n', info:'Receita assoc.', get:c=>A[c.id]?A[c.id].receita:0, cell:c=>A[c.id]?brl(A[c.id].receita):'—'});
+    COLS.push({k:'roasp',label:'ROAS prod.',    num:true, cls:'n', info:'ROAS prod.',     get:c=>{const a=A[c.id];return a&&c.spend?a.receita/c.spend:-1;}, cell:c=>{const a=A[c.id];return a&&c.spend?roasFmt(a.receita/c.spend):'—';}});
+  }
+  const col=COLS.find(x=>x.k===campSort.k)||COLS[0];
+  const dir=campSort.dir;
+  const list=campFiltradas().sort((a,b)=>{
+    const va=col.get(a),vb=col.get(b);
+    if(col.num)return ((Number(va)||0)-(Number(vb)||0))*dir;
+    return String(va).localeCompare(String(vb),'pt')*dir;
+  });
+  const cnt=document.getElementById('campCount');
+  if(cnt)cnt.textContent=list.length+' campanha(s) · ordem: '+col.label+(dir<0?' ↓':' ↑');
+  const shown=list.slice(0,campLimit);
+  const th=COLS.map(c=>'<th class="sortable'+(c.cls?' '+c.cls:'')+(c.k===campSort.k?' sorted':'')+'" data-sort="'+c.k+'">'+c.label+(c.info?infoIcon(c.info):'')+'<span class="sort-ar">'+(c.k===campSort.k?(dir<0?'↓':'↑'):'')+'</span></th>').join('');
+  const rows=shown.map(c=>{
+    const tip=esc(campTip(c,A));
+    const tds=COLS.map((cc,i)=>{
+      if(i===0)return '<td><span class="cname" data-cid="'+esc(c.id)+'" data-th="'+tip+'" style="cursor:pointer">'+esc(campLabel(c))+'</span> <span class="pencil" data-id="'+esc(c.id)+'" title="renomear (alias)">✎</span></td>';
+      return '<td class="'+(cc.cls||'')+'">'+cc.cell(c)+'</td>';
+    }).join('');
+    return '<tr'+(c.id===campSel?' class="row-sel"':'')+'>'+tds+'</tr>';
+  }).join('');
+  document.getElementById('campTable').innerHTML='<table class="sortable-tbl"><thead><tr>'+th+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+COLS.length+'" class="tickL" style="text-align:center;padding:18px">nenhuma campanha no filtro</td></tr>')+'</tbody></table>';
+  wirePencils(); drawDetail();
+}
+function wirePencils(){
+  document.querySelectorAll('#campTable .pencil').forEach(p=>p.addEventListener('click',ev=>{
+    ev.stopPropagation();
+    const id=p.dataset.id;const span=document.querySelector('#campTable .cname[data-cid="'+CSS.escape(id)+'"]');if(!span)return;
+    const inp=document.createElement('input');inp.className='edit-inp';inp.style.minWidth='160px';inp.value=(labels()[id]||'');inp.placeholder=span.textContent;
+    span.replaceWith(inp);inp.focus();
+    const commit=()=>{OV.labels=OV.labels||{};const v=inp.value.trim();if(v)OV.labels[id]=v;else delete OV.labels[id];saveOv();drawCamp();drawVendas();};
+    inp.addEventListener('blur',commit);
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}if(e.key==='Escape')drawCamp();});
+  }));
+}
+// painel de detalhe da campanha (clique na barra/nome)
+function drawDetail(){
+  const box=document.getElementById('campDetail'); if(!box)return;
+  const c=(B.campanhas||[]).find(x=>x.id===campSel);
+  if(!c){box.style.display='none';box.innerHTML='';return;}
+  const prods=((B.vendas&&B.vendas.por_produto)||[]).slice();
+  const A=assocPorCampanha(); const a=A[c.id];
+  const cur=assocOf(c.id); // array (curada) ou null (nunca associada — tabela fica limpa)
+  // visual do menu: campanha não curada abre com TODOS marcados (proposta); curada usa a seleção salva.
+  const isOn=pn=> cur? cur.includes(pn) : true;
+  let h='<div class="card card-accent"><button class="detail-close" id="detClose">✕</button>';
+  h+='<div class="mini-h">Detalhe da campanha</div>';
+  h+='<h3 style="font-family:var(--f-display),serif;font-weight:400;margin:2px 0 0">'+esc(campLabel(c))+' <span class="pill '+(c.status==='ACTIVE'?'real':'est')+'">'+c.status+'</span></h3>';
+  if(campLabel(c)!==c.nome)h+='<p class="seal">nome original: '+esc(c.nome)+'</p>';
+  h+='<div class="dgrid">';
+  const met=[['Início',dateBR(c.inicio),'Real'],['Gasto',brl(c.spend),'Real'],['Impressões',int(c.impressions),'Real'],['Cliques',int(c.clicks),'Real'],['CTR',pct(c.ctr),'Real'],['CPM',brl(c.cpm),'Real'],['Compras',int(c.purchases),'Real'],['ROAS',roasFmt(c.roas),'Estimado']];
+  if(a){met.push(['Receita assoc.',brl(a.receita),'Estimado']);met.push(['ROAS produto',(c.spend?roasFmt(a.receita/c.spend):'—'),'Estimado']);}
+  met.forEach(([k,v,s])=>{h+='<div class="stack-row"><span>'+k+'</span><b>'+v+' <span class="pill '+(s==='Real'?'real':'est')+'">'+s.slice(0,3)+'</span></b></div>';});
+  h+='</div>';
+  if(prods.length){
+    const nAll=prods.length;
+    // resumo (estado SALVO): não curada = "nenhum"; curada = seleção salva
+    const savedSel=cur||[]; const savedTot=savedSel.reduce((s,pn)=>{const p=prods.find(x=>x.produto===pn);return s+(p?p.receita:0);},0);
+    const resumoSalvo = cur===null ? 'Associar produtos…' : (savedSel.length===0?'Nenhum produto associado':((savedSel.length===nAll?('Todos os '+nAll+' produtos'):(savedSel.length+' de '+nAll+' produtos'))+' · '+brl(savedTot)));
+    h+='<div class="mini-h" style="margin-top:14px">Produtos associados a esta campanha <span class="pill est">Estimado (produto)</span></div>';
+    h+='<p class="seal">Associação SUA (não é atribuição rastreada) — a receita entra como Estimado. Abra o menu e escolha os produtos <b>deste período</b> (vêm todos marcados por padrão).</p>';
+    h+='<div class="msel">';
+    h+='<button type="button" class="msel-btn" id="mselBtn" aria-expanded="false"><span id="mselSummary">'+esc(resumoSalvo)+'</span><span class="msel-caret">▾</span></button>';
+    h+='<div class="msel-panel" id="mselPanel" hidden>';
+    h+='<label class="prodck prodck-all"><input type="checkbox" id="detProdAll"> <b>Selecionar todos</b> <span class="seal" id="mselCount"></span></label>';
+    h+='<div class="prodlist">'+prods.map(p=>'<label class="prodck"><input type="checkbox" data-prod="'+esc(p.produto)+'" '+(isOn(p.produto)?'checked':'')+'> '+esc(p.produto)+' <span class="seal">R$ '+int(p.receita)+'</span></label>').join('')+'</div>';
+    h+='<div class="msel-foot"><span id="mselFoot"></span>'+(cur!==null?' · <a href="#" id="detProdReset">remover associação</a>':'')+'</div>';
+    h+='</div></div>';
+  }
+  h+='</div>';
+  box.innerHTML=h; box.style.display='block';
+  if(prods.length){
+    const panel=document.getElementById('mselPanel'), btn=document.getElementById('mselBtn');
+    const boxes=()=>[...box.querySelectorAll('.prodlist input[data-prod]')];
+    const checkedSet=()=>boxes().filter(x=>x.checked).map(x=>x.getAttribute('data-prod'));
+    const totOf=set=>prods.filter(p=>set.includes(p.produto)).reduce((s,p)=>s+p.receita,0);
+    let dirty=false;
+    const live=()=>{
+      const set=checkedSet(), n=set.length, tot=totOf(set);
+      const all=document.getElementById('detProdAll'); if(all)all.checked=n===prods.length;
+      const cnt=document.getElementById('mselCount'); if(cnt)cnt.textContent=n+'/'+prods.length;
+      const sm=document.getElementById('mselSummary'); if(sm)sm.textContent=n===0?'Nenhum produto associado':((n===prods.length?('Todos os '+prods.length+' produtos'):(n+' de '+prods.length+' produtos'))+' · '+brl(tot));
+      const f=document.getElementById('mselFoot'); if(f)f.innerHTML='Receita associada: <b>'+brl(tot)+'</b> · ROAS produto: <b>'+(c.spend?roasFmt(tot/c.spend):'—')+'</b> <span class="pill est">Estimado</span>';
+    };
+    const commit=()=>{ if(!dirty)return; OV.assoc=OV.assoc||{}; OV.assoc[c.id]=checkedSet(); saveOv(); dirty=false; drawCamp(); drawVendas(); };
+    if(btn)btn.addEventListener('click',()=>{
+      const opening=panel.hasAttribute('hidden');
+      if(opening){ panel.removeAttribute('hidden'); btn.setAttribute('aria-expanded','true'); live(); }
+      else { panel.setAttribute('hidden',''); btn.setAttribute('aria-expanded','false'); commit(); }
+    });
+    boxes().forEach(ck=>ck.addEventListener('change',()=>{dirty=true;live();}));
+    const all=document.getElementById('detProdAll');
+    if(all)all.addEventListener('change',()=>{ boxes().forEach(x=>{x.checked=all.checked;}); dirty=true; live(); });
+    const reset=document.getElementById('detProdReset');
+    if(reset)reset.addEventListener('click',e=>{e.preventDefault(); OV.assoc=OV.assoc||{}; OV.assoc[c.id]=[]; saveOv(); dirty=false; drawCamp(); drawVendas();});
+    // fechar o detalhe também comita a seleção pendente
+    const cl0=document.getElementById('detClose'); if(cl0)cl0.addEventListener('click',()=>{commit();campSel=null;drawDetail();});
+  } else {
+    const cl0=document.getElementById('detClose'); if(cl0)cl0.addEventListener('click',()=>{campSel=null;drawDetail();});
+  }
+}
+
+// ---------- board de especialistas ----------
+function drawBoard(){
+  const el=document.getElementById('board');
+  el.innerHTML=(BOARD.clones||[]).map(c=>
+    '<div class="clone"><div class="papel">'+(c.papel||'')+'</div><h3>'+(c.titulo||'')+'</h3><p>'+(c.veredito||'')+'</p>'
+    +(c.alavanca&&c.alavanca!=='—'?'<div class="alav"><b>Alavanca:</b> '+c.alavanca+'</div>':'')
+    +(c.evidencia&&c.evidencia!=='—'?'<p class="ev">Evidência: '+c.evidencia+(c.selo&&c.selo!=='—'?' <span class="pill '+(c.selo==='Real'?'real':(c.selo==='Estimado'?'est':'calc'))+'">'+c.selo+'</span>':'')+'</p>':'')
+    +'</div>').join('');
+  document.getElementById('sintese').innerHTML='<b>Síntese do board:</b> '+(BOARD.sintese||'—')+'<p class="ev" style="margin-top:8px">A decisão é sua — o board recomenda, você aprova (gate VOCÊ REVISA).</p>';
+}
+
+// ---------- engajamento & perfil orgânico ----------
+function drawPerfil(){
+  const p=B.perfil||{disponivel:false};
+  const box=document.getElementById('perfilBox');
+  if(!p.disponivel){box.innerHTML='<div class="roadmap"><b>Em breve (roadmap).</b> '+(p.motivo||'Perfil orgânico ainda não disponível.')+'</div>';return;}
+  const r=p.resumo||{};
+  let h='';
+  // KPIs de engajamento
+  const tiles=[
+    {lbl:'Reações',val:int(r.reacoes)},{lbl:'Comentários',val:int(r.comentarios)},
+    {lbl:'Compartilh.',val:int(r.compartilhamentos)},{lbl:'Posts',val:int(r.posts)},
+  ];
+  h+='<div class="kpis" style="grid-template-columns:repeat(4,1fr)">'+tiles.map(t=>'<div class="kpi"><div class="lbl">'+t.lbl+'</div><div class="val">'+t.val+'</div><div class="dlt flat">Real</div></div>').join('')+'</div>';
+  // sentimento (leitura por IA da skill)
+  const s=p.sentimento;
+  if(s&&(s.positivo!=null||s.negativo!=null)){
+    const pos=s.positivo||0,neu=s.neutro||0,neg=s.negativo||0,tot=(pos+neu+neg)||1;
+    const seg=(v,c,lbl)=>v?'<div style="width:'+(v/tot*100).toFixed(1)+'%;background:'+c+'" title="'+lbl+' '+v+'"></div>':'';
+    h+='<div class="card"><div class="mini-h">Sentimento dos comentários <span class="pill calc">leitura por IA</span></div>';
+    h+='<div style="display:flex;height:14px;border-radius:var(--r-pill);overflow:hidden;margin:8px 0">'+seg(pos,'var(--pos)','positivo')+seg(neu,'var(--muted)','neutro')+seg(neg,'var(--neg)','negativo')+'</div>';
+    h+='<p class="seal"><span style="color:var(--pos)">■</span> '+pos+' positivo · <span style="color:var(--muted)">■</span> '+neu+' neutro · <span style="color:var(--neg)">■</span> '+neg+' negativo</p>';
+    if(s.temas&&s.temas.length)h+='<p class="ev"><b>Temas:</b> '+s.temas.join(' · ')+'</p>';
+    if(s.destaques&&s.destaques.length)h+=s.destaques.slice(0,3).map(d=>'<p class="ev" style="border-left:2px solid var(--'+(d.tom==='positivo'?'pos':(d.tom==='negativo'?'neg':'muted'))+');padding-left:10px;font-style:italic">"'+d.texto+'"</p>').join('');
+    h+='</div>';
+  } else if((p.comentarios||[]).length){
+    h+='<div class="card"><p class="ev">'+p.comentarios.length+' comentários coletados. Rode <b>/board-de-especialistas</b> para a leitura de sentimento (classificada em PT-BR).</p></div>';
+  }
+  // posts: tabela ordenável + filtro de período + limite (padrão da tabela de campanhas)
+  if((p.top_posts||[]).length){
+    h+='<div class="card"><div class="mini-h">Posts por engajamento <span class="pill real">Real</span></div>';
+    h+='<div class="controls" style="margin-top:6px"><label>Período</label><div class="grp" id="postPresetBtns"><button data-p="all" class="on">Tudo</button><button data-p="30">30d</button><button data-p="7">7d</button></div>';
+    h+='<select id="postLimit"><option value="10">Top 10</option><option value="25" selected>Top 25</option><option value="50">Top 50</option><option value="999">Todos</option></select>';
+    h+='<span class="sep"></span><span class="seal" id="postCount"></span></div>';
+    h+='<div id="postTable"></div></div>';
+  }
+  box.innerHTML=h;
+  drawPosts();
+  document.querySelectorAll('#postPresetBtns button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#postPresetBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');postDias=b.dataset.p;drawPosts();
+  }));
+  const pl=document.getElementById('postLimit');
+  if(pl&&pl.addEventListener)pl.addEventListener('change',()=>{postLimit=parseInt(pl.value,10)||25;drawPosts();});
+  const pt=document.getElementById('postTable');
+  if(pt&&pt.addEventListener)pt.addEventListener('click',e=>{
+    const thh=e.target&&e.target.closest&&e.target.closest('th[data-sort]');
+    if(thh){const k=thh.getAttribute('data-sort');if(postSort.k===k)postSort.dir*=-1;else postSort={k,dir:(k==='trecho')?1:-1};drawPosts();}
+  });
+}
+let postDias='all', postLimit=25, postSort={k:'eng',dir:-1};
+function drawPosts(){
+  const el=document.getElementById('postTable'); if(!el)return;
+  const p=B.perfil||{}; let posts=(p.top_posts||[]).slice();
+  // filtro de período (relativo ao post mais recente)
+  if(postDias!=='all'){
+    const dd=posts.map(x=>x.data).filter(Boolean).sort(); const max=dd[dd.length-1];
+    if(max){ const d0=new Date(max+'T00:00:00Z'); d0.setUTCDate(d0.getUTCDate()-(parseInt(postDias,10)-1));
+      const lim=d0.toISOString().slice(0,10); posts=posts.filter(x=>x.data&&x.data>=lim); }
+  }
+  const COLS=[
+    {k:'data',label:'Data',num:false,get:x=>x.data||'',cell:x=>dateBR(x.data)},
+    {k:'trecho',label:'Post',num:false,get:x=>(x.trecho||'').toLowerCase(),cell:x=>{const t=esc(x.trecho||'');return x.permalink?'<a href="'+esc(x.permalink)+'" target="_blank" rel="noopener" style="color:var(--text)">'+t+'…</a>':t+'…';}},
+    {k:'reacoes',label:'Reações',num:true,cls:'n',get:x=>x.reacoes||0,cell:x=>int(x.reacoes)},
+    {k:'comentarios',label:'Coment.',num:true,cls:'n',get:x=>x.comentarios||0,cell:x=>int(x.comentarios)},
+    {k:'compartilhamentos',label:'Compart.',num:true,cls:'n',get:x=>x.compartilhamentos||0,cell:x=>int(x.compartilhamentos)},
+    {k:'eng',label:'Engaj.',num:true,cls:'n',info:'Engaj.',get:x=>(x.reacoes||0)+(x.comentarios||0)*2,cell:x=>int((x.reacoes||0)+(x.comentarios||0)*2)},
+  ];
+  const col=COLS.find(c=>c.k===postSort.k)||COLS[5]; const dir=postSort.dir;
+  posts.sort((a,b)=>{const va=col.get(a),vb=col.get(b);return col.num?((Number(va)||0)-(Number(vb)||0))*dir:String(va).localeCompare(String(vb),'pt')*dir;});
+  const cnt=document.getElementById('postCount'); if(cnt)cnt.textContent=posts.length+' post(s) · ordem: '+col.label+(dir<0?' ↓':' ↑');
+  const shown=posts.slice(0,postLimit);
+  const th=COLS.map(c=>'<th class="sortable'+(c.cls?' '+c.cls:'')+(c.k===postSort.k?' sorted':'')+'" data-sort="'+c.k+'">'+c.label+'<span class="sort-ar">'+(c.k===postSort.k?(dir<0?'↓':'↑'):'')+'</span></th>').join('');
+  const rows=shown.map(x=>'<tr>'+COLS.map(c=>'<td class="'+(c.cls||'')+'">'+c.cell(x)+'</td>').join('')+'</tr>').join('');
+  el.innerHTML='<table class="sortable-tbl"><thead><tr>'+th+'</tr></thead><tbody>'+(rows||'<tr><td colspan="'+COLS.length+'" class="tickL" style="text-align:center;padding:16px">nenhum post no período</td></tr>')+'</tbody></table>';
+}
+
+// ---------- "quem é o meu cliente" (síntese de demografia + vendas + engajamento) ----------
+function drawCliente(){
+  const el=document.getElementById('clienteBox'); if(!el)return;
+  const d=B.demografia, V=B.vendas, p=B.perfil||{}, s=p.sentimento;
+  const partes=[];
+  // 1) quem os anúncios alcançam (Real — audiência PAGA, não é o comprador confirmado)
+  if(d&&(d.idade_genero||[]).length){
+    const ages={};let tF=0,tM=0;
+    d.idade_genero.forEach(x=>{const a=x.idade||'?';ages[a]=(ages[a]||0)+(x.impressions||0);if(x.genero==='female')tF+=x.impressions||0;if(x.genero==='male')tM+=x.impressions||0;});
+    const fx=Object.entries(ages).sort((a,b)=>b[1]-a[1]);
+    const tot=tF+tM||1;
+    const ufs={};(d.regiao||[]).forEach(r=>{const u=ufDe(r.regiao);if(u)ufs[u]=(ufs[u]||0)+(r.impressions||0);});
+    const topUF=Object.entries(ufs).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([u])=>u).join(', ');
+    partes.push('<div class="card"><div class="mini-h">Quem os anúncios alcançam <span class="pill real">Real</span></div>'
+      +'<p>Faixa dominante <b>'+esc(fx[0][0])+'</b>'+(fx[1]?' (depois '+esc(fx[1][0])+')':'')+' · <b>'+Math.round(tM/tot*100)+'%</b> masculino / <b>'+Math.round(tF/tot*100)+'%</b> feminino'
+      +(topUF?' · concentrado em <b>'+topUF+'</b>':'')+'.</p>'
+      +'<p class="seal">É a audiência PAGA (quem viu anúncio) — não necessariamente quem compra.</p></div>');
+  }
+  // 2) o que compram (Real — caixa Hotmart)
+  if(V&&V.conectada!==false&&V.resumo){
+    const tp=(V.por_produto||[]).slice(0,3);
+    partes.push('<div class="card"><div class="mini-h">O que o cliente compra <span class="pill real">Real</span></div>'
+      +'<p>Ticket médio <b>'+brl(V.resumo.ticket_medio)+'</b> · '+int(V.resumo.vendas_aprovadas)+' vendas na janela.</p>'
+      +(tp.length?'<p>Top produtos: '+tp.map(x=>'<b>'+esc(x.produto)+'</b> ('+brlC(x.receita)+')').join(' · ')+'.</p>':'')
+      +'<p class="seal">Caixa real (Hotmart) — todos os canais, não só Meta.</p></div>');
+  }
+  // 3) como fala / o que sente (leitura por IA sobre comentários Reais)
+  if(s&&(s.positivo!=null)){
+    partes.push('<div class="card"><div class="mini-h">O que dizem nos comentários <span class="pill calc">leitura por IA</span></div>'
+      +(s.temas&&s.temas.length?'<p>'+s.temas.map(t=>'· '+esc(t)).join('<br>')+'</p>':'')
+      +(s.destaques&&s.destaques.length?'<p class="ev" style="font-style:italic">"'+esc(s.destaques[0].texto)+'"</p>':'')
+      +'</div>');
+  }
+  // 4) quando responde (Calculado do heatmap com amostra)
+  if(B.heatmap&&(B.heatmap.celulas||[]).length){
+    const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const conf=B.heatmap.celulas.filter(c=>(c.impressions||0)>=HEAT_LIMIAR&&c.ctr!=null).sort((a,b)=>b.ctr-a.ctr).slice(0,2);
+    if(conf.length)partes.push('<div class="card"><div class="mini-h">Quando o cliente responde <span class="pill calc">Calculado</span></div>'
+      +'<p>Melhores janelas de CTR (amostra ok): '+conf.map(c=>'<b>'+dias[c.dia]+' '+String(c.hora).padStart(2,'0')+'h</b> ('+pct(c.ctr)+')').join(' · ')+'.</p></div>');
+  }
+  if(!partes.length){el.innerHTML='<div class="roadmap">Sem dados suficientes — rode a coleta (Modo API) para a síntese de cliente.</div>';return;}
+  el.innerHTML='<div class="grid-2col">'+partes.join('')+'</div>'
+    +'<div class="card" style="margin-top:14px"><div class="mini-h">Retroalimentação (Aulas 1 e 2)</div><p class="ev">Estes achados alimentam o avatar (Aula 1) e a oferta/copy (Aula 2): a skill grava <code>projetos/{slug}/dados-trafego/retroalimentacao.md</code> com este cruzamento — rode <b>/retroalimentacao</b> (ou <b>/gestor-de-campanhas</b>) para atualizar.</p></div>';
+}
+// ---------- audiência paga (demografia via breakdowns) ----------
+// malha geográfica das 27 UFs (IBGE, malhas v3, qualidade mínima — dado público; projetada e compactada em build-time)
+const BR_UF_PATHS={AC:"M132.8 289.9 129.1 288.3 125.4 287.7 116.5 283.7 111.8 281.5 103.5 277.8 98.2 273.2 92.5 268.4 88 264.5 81.1 258.6 76.2 254.4 67.3 253.4 56.2 252.1 50.5 251.5 39.5 250.2 35.2 249.7 27.1 248.7 21 246.5 4.8 240.7 3.5 240.2 5.5 243.8 2.1 245.5 0.3 245 1.2 247.1 0 249 3.1 252 5.6 253 5.4 255 4.2 254.7 4.9 256.8 6.8 258.6 8.7 264.1 12.6 266.7 12.4 269.1 16.6 272.4 18 275 19.2 275.3 20.2 278.2 17.1 282.7 15 284.8 24.5 284.8 28.4 286.4 31.9 286.7 33.6 288.9 33.2 291.3 35.5 292.3 35 296.2 50.5 296.2 53.8 295.6 56.4 292.9 57.9 292.7 60.4 289.7 61.8 289.3 66.2 285.2 67.5 285 65.7 288.6 67.1 290.7 65.2 293 65.2 297.8 65.2 304.5 65.2 309.9 65.2 315.6 67 314.4 69 316.4 71.4 317 74.1 316.5 78.5 314.1 82.4 315.1 88.4 314.2 92.2 314.5 98.4 316.1 101.5 316 102.2 318.5 105.5 317.8 108.5 316.4 111.4 314.8 116 308.8 118.7 308.7 121.8 309.8 124.5 306.1 129.4 303.6 129.3 302.4 132 302.8 135.4 300.7 137.4 298.4 142.7 294.3 139.1 292.7 132.8 289.9Z",AL:"M697.7 279.9 696.2 280.2 694.9 281.7 693.4 283.2 693.8 283.7 694 284.9 696.5 285.4 697.9 286.8 700 287.3 701 288.1 704.5 289.8 704.6 290 708.3 291.3 711.6 292.9 713 294.2 714.8 294.6 718.3 296.7 718.4 297.6 718.4 297.7 719 298.7 719.7 299.1 720.3 299.7 720.4 299.9 722.8 301.4 723.2 301.5 723.5 301.5 724.5 301.1 725.4 302.1 725.9 304.3 727.3 304.5 727.3 304.4 729.1 305.9 730.9 302.9 731.7 301.4 736.2 297.2 737.5 295.1 738.6 293.4 739.6 292.1 740.9 290.6 742.1 290.1 745.3 286.3 746 285.4 747 283.8 748.7 282.4 749.6 281.3 750.4 279.9 751.5 278.1 753.2 275.2 751.6 274.6 749.4 274.1 748.2 273.7 745.7 273.4 745.1 273.8 744.9 273.9 743.5 274.6 742.1 275.1 740.1 274.3 739.8 274.4 737.7 274.7 737 275 736.1 275.1 734.3 276 734.6 277.2 734.4 277.4 733 277.7 731.1 280.2 729.9 281.1 729 281.2 727.1 281.9 724.7 283.3 723.2 282.5 721.3 282.3 719.7 282.2 718.6 284.2 717.8 283.8 716.3 282.8 716.3 283 714.1 282 713.5 281 712.9 281.2 712 279.8 709.7 277.4 707.3 276.2 707.2 276.1 705 276.9 703.8 275.6 702.7 273.9 701.4 275.5 698.9 278.7 697.7 279.9Z",AM:"M307.2 244.7 306.5 241.6 303.5 237.8 301.6 236.3 300.7 233.8 301.7 230.6 304.9 227.9 312.7 210.9 322.6 189.6 330.3 173.2 331.1 171.4 333.1 166.9 333.9 165.2 341 149.9 339.8 149.4 341.3 146.5 344.9 144.6 346.9 141.6 344.4 142.1 340.8 144.5 338.6 143.8 337.5 144.5 335.7 145.2 334.1 144.4 334.3 141.3 332.2 141.4 328.9 139.5 327.8 136.8 324.4 135.2 322.6 135.9 318 132.9 316.3 133.2 315.6 131.4 310.8 129.4 310.1 128.1 310.7 125 309.4 123.6 307 126.2 305 124.2 303.9 124.5 301.7 122.2 301.6 119.6 297.2 116.2 295.8 114.1 296 110.8 293.2 109 293.3 103.8 292.7 102.5 292.7 97.1 285.5 97.1 282.2 97.1 270.5 97.1 266.8 104.6 263.6 112.9 265.2 116.2 261.6 117.4 260.8 119.1 258.3 119.5 256.5 118.7 255.4 115.6 253.1 112.9 247.5 112 247.3 113.2 243 115 241.5 116.9 240.6 121.2 241.3 122.9 239.6 127.5 239.8 129.3 241.4 130.1 242.6 132.9 240.1 130.3 236.4 129 235.5 129.4 234.5 129.3 232.1 124.4 230 122.4 227.4 121.2 224.8 118.2 222.5 117 223 115.5 225.5 115.9 226.9 114.5 226.3 112.8 228.8 108.5 227.6 108 227.8 105.6 226.2 104.1 226.1 102.3 224.5 100.8 223.7 98.2 223.8 94.9 222.4 93.7 222 89.2 223.5 87.2 223.9 83.7 223.3 81.2 222.3 81.2 220 74.4 218.2 72.6 216.8 71.4 218.3 69.3 218.8 64.7 216.2 63.1 212.6 63.2 210.4 60.3 207.7 60.5 205.8 59.4 205.3 60.6 202.1 60.9 197 64.1 194.1 63.6 192.4 64.8 192.4 69.7 187.3 74.4 185.9 75.2 185.9 72.6 182.9 74.8 182.2 76.3 178.8 78.4 177.7 77.5 175.2 78.4 173.8 80.6 171.2 80.4 171.1 83.8 167.9 84.2 165.7 88.9 163.8 89.7 162.8 88.3 164.5 85.9 162.9 82.7 159.9 82.9 156.3 85 155.5 86.6 151.9 87.8 150.7 87.1 148.7 88 148.7 87.6 138.2 78.4 133.7 79.6 134.1 74.3 133.6 68.7 132.4 66.4 130.1 65.9 127.9 58.7 125.3 60.2 123.4 63 120.3 62.9 117.2 66.7 114.4 65.4 113.3 63.8 111.3 64.9 110.9 66.8 113 68.7 89.1 68.7 86.3 67.8 84 68.9 80.3 69.1 80.2 81.4 83 80.6 83 81.4 90.4 81.1 91.9 82 93.9 85.1 93 87.8 94.4 89.8 89.9 90.3 87.3 88 84.5 90.1 83.3 89.4 80.7 90.8 76.4 91.4 76.4 100.9 76.2 105.9 78.8 108.7 80.3 109 84.8 112.2 85.7 114.7 84.5 116.8 86.4 120.1 88.5 121.7 88.9 124.5 88.3 129.2 84.8 149.6 80.4 173.8 78.2 185.1 76.4 187.1 74.7 185.3 73.4 186.8 71.3 184.6 71.6 183 67.1 182.5 65.3 183.6 62.5 182.9 60.5 184.8 59.1 187.3 52.7 187.3 52.8 188.1 48.1 188.4 45.9 190.1 42.8 189.3 40.1 190.1 39.5 191.7 33.8 195 31.3 195.5 30.4 197.3 26.9 198.9 21.3 202.4 21.6 205.1 19.8 208.9 19.8 211.9 16.1 216 14.2 221.5 17 226.6 14.9 229.9 12.2 230.2 6.6 233.4 4.4 236.9 5 238.5 3.5 240.2 4.8 240.7 21 246.5 27.1 248.7 35.2 249.7 39.5 250.2 50.5 251.5 56.2 252.1 67.3 253.4 76.2 254.4 81.1 258.6 88 264.5 92.5 268.4 98.2 273.2 103.5 277.8 111.8 281.5 116.5 283.7 125.4 287.7 129.1 288.3 132.8 289.9 139.1 292.7 143 289.7 145.1 289.1 147.2 286.5 146.9 284.7 151.5 285.3 155.4 284.9 158.2 287.1 160.1 287.8 161.1 285.6 162.8 284.9 165.9 285.7 165.7 282.9 166.6 283.4 169 281.9 170.1 282.2 171.5 285.5 173.2 284.6 175.8 281.1 175.4 279.3 178 276.6 181.8 277.2 182.4 276.6 187.4 275.5 187.6 276.8 190.9 275.8 190.9 271.9 193 270.9 195.1 268.3 194.2 266.7 194.7 263.9 196.2 263 197.7 263.9 198.5 261.5 201 258 201 257 215.6 257 219 259.2 219.7 261.9 221.5 262.9 222.4 264.9 223.4 264 225.4 265.2 225.3 267 226.8 269.8 227.2 268.6 228.8 268.9 230 273 231.8 272.9 232.6 274.4 234.3 274.2 235.6 271.7 238 270.8 240.5 272.9 263.1 272.9 288.2 273 301.5 272.9 303.7 271.3 301.6 271.1 302.5 269 301.9 266.9 303.9 263.7 304.5 259.2 302.7 254.1 304.3 253 306.1 250.1 305.9 246.9 307.4 244.9 307.2 244.7Z",AP:"M451.9 60.7 449.8 53.8 449.2 53.5 448 49 446.7 47.2 445.2 39.9 443.7 35.3 444.2 33.2 444.2 26.9 442.9 26.3 441.6 21.8 440.3 19.8 436.4 16.2 433.4 14.8 432.7 18.2 433.7 20.3 433.1 23.6 430.6 25.4 430.3 26.9 426.9 30.4 426.6 31.9 421.9 39.4 419.6 41.6 420.1 42.5 417.1 48.3 415.7 53.4 413.6 56.2 410.1 57.8 408.9 59.8 405.4 59.3 401.6 59.9 402.6 58.4 400.7 56.7 397.8 58.5 392.5 57.4 392.1 56.1 388.7 58.8 384 60 379.2 59.4 376 56.9 374.2 56.5 373.2 54.3 370.7 55.1 372.8 59.5 371.9 62.7 373 64 373.2 67.8 375.9 67.6 378 68.4 380.3 68 385.2 71.1 385.9 73.3 389.6 74 389.8 75 396.7 76.6 396.8 78.8 398.6 78.3 398.1 80.3 399 84.2 405 89.1 404.2 90.6 403.6 94.9 405.2 98.5 407.3 101.6 408.3 105 413.1 108.4 412.9 111.9 414 113.6 416 113.4 416.8 116.1 416.5 118.9 417.6 118.4 418.3 122.7 420 123.9 424.1 124.5 424.3 125.8 427.1 124.1 428.6 124.9 430.7 124.4 432.2 122.9 432.6 117.7 434.3 114.9 437.4 111.4 439.1 108.1 441.8 104.5 443.5 104.2 446.3 101.4 450.8 99.7 452.7 98.2 453.6 97.4 457.3 90.2 460.8 88.8 465.4 85.3 465.4 84 467.4 82.6 467.1 78.2 467.5 73.2 466.8 69.5 462.1 67.1 457 67.3 451.9 60.7ZM455.3 59.9 455.4 61.5 457 61.2 455.3 59.9ZM456.5 61.3 455.1 63.4 456.4 65.6 459.1 64.5 458.2 62.4 456.5 61.3Z",BA:"M671.7 268.1 669.3 268.9 666.1 270.2 665.5 272.7 661.3 273.5 661.6 275.6 659.6 277.9 659.1 278 656.7 279 655.1 278.1 653.9 278.4 652.3 284.1 651.1 283.7 647.1 286.2 645.3 285.5 644.3 285.5 646.2 280.4 643.3 278.4 642.7 275.9 640.6 273.8 637.8 272.6 637.6 271.1 634.4 271.7 632.8 271.2 632.4 271.2 631.8 272.5 629.2 275.7 625.8 277.1 625.6 278.5 623.2 281.5 622.1 282.2 619 281.8 616 282.3 614.3 283 610.8 286.4 608.7 286.9 607 287.4 605.5 288.8 601.9 286.7 601.8 285.1 599.8 284.5 599.5 284.6 596.8 284.6 595.5 285 592.5 282 590.5 282.8 589.2 283.7 585.8 285.6 585.7 285.7 584.5 287.5 585.8 291.6 588.3 293.2 587.3 294.7 587.6 297.4 586.3 297.7 584.8 302.1 583.2 303.9 581.8 304.3 580 307.7 578.4 308.7 574.9 306.9 571.9 308.8 570.4 308.4 568.6 309.6 568.7 311 564.8 313.4 563.3 314.1 560.6 312.5 557.4 312.2 554.2 308.7 553.5 306.1 554.5 304.9 552.7 302.1 551.4 300.4 550.5 298.3 548.2 299.2 548.6 301.2 546.7 302.5 546.3 305.1 540.3 308.3 538.8 311.8 537.7 312 537.6 314.4 536.2 314.4 532.1 320.8 531.9 322.8 534.3 325.7 536 325.4 540.6 327.4 541.2 327.7 540 327.7 535.8 327.9 536.8 328.9 535.5 330.2 536.3 331.4 535.4 332.4 536.7 333.9 535.3 336 535.6 337 535.6 341.8 537.2 342.3 537.6 344.9 539 344.8 537 346.2 537.3 349.8 536.4 353.5 540.6 352.8 537 355.7 536.4 359.3 537.1 360.6 540.8 359.4 541.5 360.2 538 362.9 538.7 363.5 538 365.6 539.6 366.1 538.2 368.2 537.7 372.8 538.7 374 538.4 374.8 539.2 376.9 541.6 378.3 544.6 380.7 542.8 382.5 543 386.5 542.4 386.8 542.3 387 542 390.8 542.1 390.8 543.5 392.6 541.3 398.4 543.4 396.2 547.8 395.6 550.2 393.5 556.3 390 558.2 388.3 560.3 388.4 561.4 387 564.6 385.4 565.4 383.5 567.2 382.9 570.8 380.4 573.6 379.3 575.9 378.7 580.7 379.3 582.2 379.1 585.8 380.4 585.1 381.3 583.9 384.7 583.9 386.5 587.2 387.7 590.7 389.6 591.5 389.2 595 386.8 597.6 386.5 602.2 387.6 603.5 388.7 608.4 392 610.4 392.9 611.1 393.5 615 395.4 615.2 395.6 617 394.9 619.5 396.5 621.3 396.6 624.1 395.2 624.2 395.2 625 395.9 630.9 401.2 632.7 402.8 632.8 402.8 633.2 405.6 633.4 407.6 637 408.2 643.3 405.8 644.3 407.1 645.6 406.2 646.7 407.4 649.1 408.7 650.5 408 650.9 408.8 654.6 408.8 656.7 410.8 659.1 412.7 660.8 412.6 662 414.8 660.8 418.1 658.9 419.4 657 421.3 656.1 423.9 653.8 423.7 653.1 425.8 653.2 426.1 653.7 430.1 651.4 429.9 651.3 430 650.8 429.8 649.6 429.8 648 434.9 648.6 437.5 647.5 438.9 649.1 440.7 649.8 441.5 651.1 443.8 652.5 444 654.5 446.3 654.8 446.3 655.1 449.4 654.9 451 654.9 451.1 660.9 454.9 665.6 458 666.3 455.9 669.1 451.4 673.6 448.1 675.9 445.3 674.9 440.7 674.5 435.1 676.3 429.9 675.8 427.4 676.6 426.2 677.4 421.1 678.4 419.3 678.4 417.4 679.6 414.4 681.4 409.7 680.6 408.1 679.8 406.1 679.1 400.7 678.7 394.9 678.1 389 677.4 388.3 677.9 383.8 678.2 381.9 678.8 378 680 372 679.5 371.3 679.2 370.9 679.1 370.8 678.8 368.3 679.2 367.5 680.7 366.8 679.9 365 680.7 363.4 679.5 362 680.2 358.6 682.5 357.1 685.5 354.7 686.6 354.7 688.9 354.7 692.1 352.7 692.5 352.1 697.4 346.6 700.1 342.9 702.4 339.7 704.1 336.9 707.4 330 710.8 324.2 710.2 324.5 706.2 326.3 705.1 325.7 704.3 326.7 701.9 325.7 701.2 325 698.3 322.4 698.1 322.3 698.3 319.5 697.1 319.2 695.9 316.1 694.5 314.5 693.9 314.3 693.4 311.7 694 310 695.2 310.2 697.2 309.8 698.5 310.9 701.7 309.6 701.7 307.9 701.6 306.3 700.9 304.8 703 302.8 702.5 301.8 702.5 300 702.4 299 701.8 298.4 702 296.9 699.9 294.7 697.9 294.4 696.8 288.2 697.9 286.8 696.5 285.4 694 284.9 693.8 283.7 693.4 283.2 691.9 279.7 691.7 276.6 690.2 277.6 688 276.1 688.9 274.2 686.9 273.5 686.1 276 684.5 275.3 684.3 274.2 681.4 272.7 679.5 273 677.3 271.6 674.2 271.2 673.3 268.8 671.7 268.1Z",CE:"M652 156.8 650.4 156.6 647.7 157.5 644.4 157.5 637.8 158.5 634.5 158.3 633.5 158.9 634.5 159.9 634.7 161.5 633.5 163.9 631.8 167.2 633.5 167.9 633.9 170 632.7 171.3 633.3 173.7 635.1 174.3 635 177.8 635.3 179.2 636.2 180.2 637.1 182.2 637.9 183.3 637.9 183.4 637.5 186.1 636.9 187 636.3 188.9 635.1 191 636.4 192.8 635.3 195.6 634.9 196.7 637.4 199.7 638.2 201 641.2 202.6 641 207.8 641.2 208.8 641.6 211.7 641.5 214.1 642.2 218.1 641.6 219.5 642.5 220.7 642.7 223 644.1 225.3 643.9 228.4 644.9 230.3 645.4 231.8 649.9 232.9 652 234.2 650.9 236.8 650.3 239.6 649.4 242.1 649 244.2 650.8 245.2 652.5 244.4 654.5 244.2 656.1 245.2 661 244.6 661.3 244.6 664.2 244.4 667 246.4 668 247.4 669.6 247.2 669.9 249.1 671 249.8 671.4 250.1 673.4 250.9 675.7 252 676.6 253 676.8 254.7 678.2 253.8 679.2 254.4 679.3 254.4 680.6 252.6 684.1 250.2 684.1 250.1 684.7 249.3 687.3 244.5 687.2 242.9 686 242.3 685.5 241.6 685 239 684.9 238.9 683.1 237.9 683.1 236.3 685 235.1 686.1 233.8 685.3 233.3 684.9 232.3 685.4 230.8 686.2 228.9 686.1 229 687.5 226.8 687.1 225.5 686.9 224.3 687.9 223 688.9 221 690.1 219.8 691.4 220.2 692.6 219.9 693.1 218.8 694.8 217.5 694.9 217.2 696.8 213.9 696.4 212.3 697.4 211.3 699.9 209 701.6 205.4 702.1 205 702.2 203.9 702.1 203.5 704.2 200.3 705 197.8 708.3 197 708.7 196.9 710.5 196.5 712.5 196 711.1 193.4 706.9 192.4 705.7 191.8 702.5 188.1 701 187.3 695.1 181.8 693.6 180 690.2 176.4 689 174.2 686.6 174 685.3 173.7 682.3 171.1 679.9 169.5 677.3 168.3 675.4 166.8 673.6 164.7 671.2 164 667.9 162 664.6 160.4 660.3 157.9 655.6 156.8 652 156.8Z",DF:"M503.7 413.6 505.2 413.6 510.1 413.6 517.4 413.6 517.4 413.3 516.3 412.7 516.1 410.4 517.3 407.7 517.2 404.6 513.8 403 503.3 403 503 403 502.6 403 500.1 403 499.5 406 500 407.1 498.5 409.3 498.6 413.6 502.4 413.6 503.7 413.6Z",ES:"M634.5 489.1 634 489 631.8 494.2 631.7 494.2 626.9 494.2 625.1 494.2 624.8 495.3 623.8 496.2 623.1 497.4 623.6 498.1 624.2 498.4 624.3 499.5 623.8 499.6 623.3 503.6 622.8 505.1 623.4 505.3 624.8 505.7 625.4 507.1 625.6 508.5 625.9 511.6 627.3 512.4 629 513 630.7 513.5 634.4 514.3 637.1 514 640.5 515.4 641.2 513.3 643.5 509.5 644.5 507 645.6 506.4 648.1 505 651.9 500.6 653.9 496.4 655 494.9 655.5 491.3 656.2 490.4 658.1 486.6 660.9 484.1 662.9 483.4 665.2 476.7 664.6 472.7 664.1 465.1 664.5 461.5 665.6 458 660.9 454.9 654.9 451.1 654.9 451 652 449.9 649 449.3 646.3 451.7 643.7 450.6 641.7 451.1 644.2 453.5 638.8 454.6 636.7 457.4 637 459.3 636.3 459.9 639.3 460.3 639.3 461.6 638.8 463.7 640.9 464.8 641.4 467.2 639.3 467.7 636.9 466.9 635.3 466.9 635.1 468 637.1 468.7 638.5 469.7 638.6 471.9 640.5 473.2 641 475.1 641.1 475.7 640.4 479 640.3 480.6 636.5 483.8 636.4 485.7 636.2 488.1 634.5 489.1Z",GO:"M499.5 406 500.1 403 502.6 403 503 403 503.3 403 513.8 403 517.2 404.6 517.3 407.7 516.1 410.4 516.3 412.7 517.4 413.3 520.8 411.2 524.3 411 527.2 410.1 525.7 405.1 524.5 404.1 524.8 401.8 526.3 400.5 525.9 398.8 524.6 397.2 524.9 394.3 526.2 393.4 530.7 395 532.6 394.3 533.1 394.2 531.9 389.6 533 387.5 536.6 389.6 536.6 391.3 539.4 392.2 542 390.8 542.3 387 542.4 386.8 543 386.5 542.8 382.5 544.6 380.7 541.6 378.3 539.2 376.9 538.4 374.8 538.7 374 537.7 372.8 538.2 368.2 539.6 366.1 538 365.6 538.7 363.5 538 362.9 541.5 360.2 540.8 359.4 537.1 360.6 536.4 359.3 537 355.7 540.6 352.8 535.7 354.2 534.7 351 534.2 353.2 534 353.9 530.5 353.8 528.2 353.8 526.2 355.7 515.8 359.5 512.4 356.7 510.5 358.7 511.3 361.6 510.2 363.5 507.9 360.8 504.7 360.5 502.6 359.1 500.7 360.2 501.2 357.4 495.1 359.9 494 357.1 492.8 360.5 492.8 356.8 491.5 354.6 487.1 350.6 486.9 350.9 485.1 353.6 482.3 350.4 480 352.2 477.7 357.5 477.5 359.7 467 353.9 461.6 352.4 459.2 350.4 460.5 346.6 461.5 346 461 344.4 462.5 342.7 459.3 344.6 456.8 347.6 455.3 351.7 454.1 355.1 453.4 360.6 452.3 362.9 450.5 364.5 449.5 368 448.3 368.7 448.9 375.8 447.6 376.7 445.9 381.8 446.5 384.1 444 391 444 391.2 444.1 391.7 443.9 391.8 443.8 391.8 440.5 394.1 439.9 392.9 439.2 392.7 439.2 392.8 439.1 393 439 393.1 435.5 394.5 433.3 396.6 432.3 402.6 430.7 403.8 430.9 405.9 428.7 409.2 427 409.5 426.2 410.4 421.5 410.6 419.4 414.2 417.3 415.1 415.8 416.9 413.2 418.5 414.2 422.7 412.2 424 412.5 425 410.3 427.6 408.7 428.4 408.4 428.9 406.7 429.4 405.9 433.5 404.9 434.1 402.8 437.8 402.3 441.8 402.4 443.7 402.5 445.8 403.8 446.9 405.6 452.1 404.2 453 405.1 457.5 410.5 457.4 411.7 458.5 410.2 459.6 407.7 462.1 408.6 463.3 409.5 463.9 411.9 464.8 416.7 464.5 418.4 465.8 419.9 467.5 422.9 467.9 424.9 469.9 427.6 470.2 429.3 471.8 432.4 473.1 435.4 473.6 437.1 473.9 444 476.8 447.1 479.9 449.2 480 448.2 479 449.2 476.8 450.9 474.9 451 474.4 452.7 473.4 454.8 472.7 456 469.3 458.4 466.2 460 464.7 463.7 464.4 464.7 463.1 469.2 463.9 469.9 463.2 470.6 463.2 474 461.9 475.2 461.7 477.4 463.7 478.9 462.3 479.8 461.6 480.6 459.4 483.6 459.2 485.4 457.7 486.2 457.3 488.7 458.3 491.3 458.1 497.4 458.6 498.7 457.8 499.6 458.1 503.5 459.9 504.9 461.1 506.6 460.1 506.7 460 508.5 459.5 510.2 458.3 511.6 457.5 511.6 456.2 515.1 454.6 515.5 454.2 517.9 452.2 516.2 448.1 518.3 443.9 517.3 442.6 514.3 442.4 513 440.9 513.2 440 513.5 438.3 513.9 438.8 516.6 435.2 519.9 433.3 520.9 431.6 519.4 429.6 519 426.6 517.7 424.8 515.4 423.8 514.6 421.6 517.1 416.7 517.4 413.6 510.1 413.6 505.2 413.6 503.7 413.6 502.4 413.6 498.6 413.6 498.5 409.3 500 407.1 499.5 406Z",MA:"M503.5 194.9 502.9 195.4 500.2 197.5 499.9 197.8 495.2 201.4 489.4 206 492.3 205.8 493.1 203.7 494.6 203 496.9 202.5 499.6 203.8 500.4 204.2 502.7 204.5 503.7 203.9 505.2 203.9 506.6 205.2 507.4 206.7 510.2 207.3 512.5 208.2 514.1 211.3 514.2 211.6 514.8 215.4 514.9 215.9 514.9 218.9 515.1 220 516 223.5 515.1 226.8 515.2 228.3 514.4 229.9 513.8 232.2 513.3 234.9 512.8 238.4 510.6 241 509 241.2 510.1 242.8 510.8 243.9 512.9 243.2 514.1 244.6 511.9 246.6 513.7 246.6 515.1 248.7 518.6 253.7 519.7 254.4 523.1 258.6 527.2 256.5 531 255.4 533.1 256.9 533.8 258.8 532.2 263.6 528.7 264.9 527.6 264.6 526.4 267.8 525.3 268.9 525 274.1 522.7 276.8 522.1 278.1 524.6 278.1 524.8 279.5 526.9 280.9 526.4 282.5 528.2 284.9 530.5 284.8 532.3 287.7 531.3 288.2 530.3 291.2 532.9 292.3 533.6 294.4 534.2 297.7 536.5 299.8 539 299.8 542.4 299.8 542.6 301.1 543.8 301.2 545.9 295.1 545.4 293.7 546.1 290 545.9 287.8 546.9 286.2 544.9 283.5 544 277.6 542.9 275.4 544 272.7 545.9 271.3 548.5 265 549.3 262.3 550.9 260.5 552.1 255.3 551.8 254.8 553.4 251 555.6 249.3 560.5 247.8 562.4 247.4 562.5 247.4 565.7 245.1 568.2 245.7 570.6 242.5 574.1 240.4 575.5 240.3 576.2 239.2 576.8 238.1 579.3 234.3 582.9 233.6 586.4 232.3 588.6 232.6 591.5 234.6 592.2 235.1 593.4 234.8 596.2 233.5 601.1 233.2 602.6 231.2 603.2 228.4 604 224 601.4 221.3 600 220.6 599.1 216.9 599.5 216 599.2 211.2 600.9 209.8 601.6 208 604.6 205.4 604.9 202.9 603.1 197.2 603.1 197.1 601.9 193.2 603.9 189.5 602 187.3 601.7 186.8 601.3 184.1 602.1 183.1 603.8 181.4 605.1 179.4 606.4 177.6 607.4 175.8 607.1 173.9 608.1 172.7 608.4 172.3 609.5 171.3 610.8 169.1 611.3 169.8 612.6 169.7 615.1 169.1 616.5 168.8 618 167.2 618 165.6 620.7 164.8 620.8 164.6 622.9 161.6 624.3 159.7 623.6 158.8 623.8 155.7 624.1 155.2 619.6 155.2 619 154.4 616.1 154.5 615.3 155.8 610.9 154.7 607.9 153.2 600.7 149.9 596.4 148 594.9 147.6 593.7 147.7 591.6 148.5 592 150.5 590.6 149.2 589.8 150.9 587.5 151 586.6 149.5 588.5 148.8 589.5 146.5 587 146.7 586.2 149.2 584.7 149.1 584.5 150.9 582.9 151.9 580.1 155.5 578.7 156 576.4 155.8 578.2 154.7 579.8 152.2 580.9 151.9 580.6 150.1 581 148.9 578.2 149.9 578 150 577.3 150.2 575.7 150.5 573.6 156.6 573.4 159.4 572 161 571 161.3 570.1 161.2 568.7 160.7 568.9 158.4 569 156.7 570.8 152.6 574.7 147.7 572.6 143.9 569.1 146.8 568.5 146.5 572 141.5 570.4 141.6 572.2 140.8 570.9 138.9 571.2 137.6 569.7 136.5 566.9 136.8 568 135.7 566.1 135.3 569.3 133.6 567.6 132.5 565 133.6 564.3 133.4 564.9 129.6 563.1 132.5 562 131.1 558.4 131.1 557 133.3 555.9 133.2 556.2 128.1 553 131 552.2 127.6 550.4 127 548.8 127 547 125.4 546.9 125.3 546.7 125.2 545.8 125.8 545.6 122.7 543.7 125.6 542.9 122.7 540.8 125.6 539.7 127.1 540.8 128.2 539.4 130.9 539.7 133.7 538.7 135.8 536.7 136 536.8 137.3 538.7 137.8 538.5 139.4 537.7 142 537.3 144 534.7 146.4 534.3 149.1 534.3 150.2 533 153 531 153.5 529.8 155.3 531.4 157.5 529.6 158.4 529.7 162.3 527.9 163.9 527 166.3 524.5 167.8 524.4 169.7 522.7 171.4 522.8 172.2 521.7 177.2 516.7 182 516.2 184.6 514.8 185.4 511.5 190.7 510.2 191.7 507.6 191.8 503.5 194.9ZM572.3 155.1 570.2 156.9 569.2 160.1 570.7 160.9 572.3 159.6 572.3 155.1ZM562.9 126.9 561.6 127.8 562.4 129.4 564.8 128 562.9 126.9Z",MG:"M510.2 458.3 508.5 459.5 506.7 460 506.6 460.1 504.9 461.1 503.5 459.9 499.6 458.1 498.7 457.8 497.4 458.6 491.3 458.1 488.7 458.3 486.2 457.3 485.4 457.7 483.6 459.2 480.6 459.4 479.8 461.6 478.9 462.3 477.4 463.7 475.2 461.7 474 461.9 470.6 463.2 469.9 463.2 469.2 463.9 464.7 463.1 463.7 464.4 460 464.7 458.4 466.2 456 469.3 454.8 472.7 452.7 473.4 451 474.4 450.9 474.9 449.2 476.8 448.2 479 449.2 480 447.1 479.9 447.2 482.3 445.1 484.2 445.2 486.1 445.8 491.9 448 490 448.8 489.6 451.9 488.6 453.3 487.5 454.3 486.6 456.4 486.1 458.7 487.7 461.9 487.8 463.2 487.8 464.4 488.6 467 489 470.1 488.7 472.7 488.7 475.8 489.8 479.8 489.6 478.7 492.5 479.5 494.7 479.6 495.2 481 496.3 482.3 495.5 483.3 493.2 484.9 493.5 485.3 498 486.8 498.7 487.2 497.9 486.8 495.5 488.1 493.3 489.9 493.1 491.5 493.4 493.6 492.8 495.2 492.6 499.8 492.7 500.1 491.1 502.5 493.1 504.4 490.9 506 492.6 506.5 491.7 506.9 490 508.6 489.9 511 491.1 512.8 490.1 513.9 489.6 517 492.4 518.9 494.5 518.9 494.6 518 495.9 517.7 498.3 519.1 499.7 520.6 500.7 520.7 501.1 520.6 501.2 521.4 503.4 519.8 504.4 519 506.8 519.9 508.7 520.5 510.3 521.1 512.6 521.1 513.2 522.5 514.8 523.5 516.5 523.2 517.8 525.6 517.5 527.6 516.8 528 516.6 530.2 517 530.9 518 532.9 519.1 532.9 520.6 532 522.3 530.9 522.7 530.6 524.5 529.4 525.9 530.8 528.9 530.2 529.2 528.8 530.6 531.2 531.6 530.3 532.5 529.8 532.5 529.6 533.2 528.8 534.9 530 536.1 530.8 537.5 532.1 538.1 533.9 539.1 534.6 540.6 535.2 541.9 533.6 542.7 536.4 543.9 535.5 544.9 536.1 546.6 539.1 545.8 541.8 546.4 543.6 545.5 545.3 545.9 547.3 545.2 548.4 543.9 546.6 543.3 548.7 541.6 548 541 549 540.1 549.3 541.6 551 540.7 550.9 541.7 552.9 540.5 554 541.1 554.4 541.7 557 540.9 559 539.3 559.8 538.6 560.2 538.5 562.9 538.2 565.2 537.3 565.9 536.9 565.9 536.8 566 536.6 568.7 536.2 568.8 536.4 571.1 535.4 572.7 534 574.6 533.9 576.6 534.2 577.9 533.7 578.1 533.4 582 531.8 586.2 530.2 587.2 530.5 588 530.7 589.5 530.1 592.5 530.2 594.3 529.1 594.7 529.2 596.6 529.6 598.4 529.6 598.5 529.7 598.2 531 601 529.6 602.7 528.8 607.5 526.5 608.6 526 611.4 524.9 611.5 524.8 613.1 524.1 615.2 523.5 613.5 521.1 613.7 520.9 615.5 519 615 517.9 615.8 516.3 616 516.2 616.5 513.9 616.6 512.7 617 512.2 618.1 511.1 618.8 510.2 618.7 510 617.5 509.1 620.9 508.4 621.8 506.6 621.8 505.6 622.8 505.1 623.3 503.6 623.8 499.6 624.3 499.5 624.2 498.4 623.6 498.1 623.1 497.4 623.8 496.2 624.8 495.3 625.1 494.2 626.9 494.2 631.7 494.2 631.8 494.2 634 489 634.5 489.1 636.2 488.1 636.4 485.7 636.5 483.8 640.3 480.6 640.4 479 641.1 475.7 641 475.1 640.5 473.2 638.6 471.9 638.5 469.7 637.1 468.7 635.1 468 635.3 466.9 636.9 466.9 639.3 467.7 641.4 467.2 640.9 464.8 638.8 463.7 639.3 461.6 639.3 460.3 636.3 459.9 637 459.3 636.7 457.4 638.8 454.6 644.2 453.5 641.7 451.1 643.7 450.6 646.3 451.7 649 449.3 652 449.9 654.9 451 655.1 449.4 654.8 446.3 654.5 446.3 652.5 444 651.1 443.8 649.8 441.5 649.1 440.7 647.5 438.9 648.6 437.5 648 434.9 649.6 429.8 650.8 429.8 651.3 430 651.4 429.9 653.7 430.1 653.2 426.1 653.1 425.8 653.8 423.7 656.1 423.9 657 421.3 658.9 419.4 660.8 418.1 662 414.8 660.8 412.6 659.1 412.7 656.7 410.8 654.6 408.8 650.9 408.8 650.5 408 649.1 408.7 646.7 407.4 645.6 406.2 644.3 407.1 643.3 405.8 637 408.2 633.4 407.6 633.2 405.6 632.8 402.8 632.7 402.8 630.9 401.2 625 395.9 624.2 395.2 624.1 395.2 621.3 396.6 619.5 396.5 617 394.9 615.2 395.6 615 395.4 611.1 393.5 610.4 392.9 608.4 392 603.5 388.7 602.2 387.6 597.6 386.5 595 386.8 591.5 389.2 590.7 389.6 587.2 387.7 583.9 386.5 583.9 384.7 585.1 381.3 585.8 380.4 582.2 379.1 580.7 379.3 575.9 378.7 573.6 379.3 570.8 380.4 567.2 382.9 565.4 383.5 564.6 385.4 561.4 387 560.3 388.4 558.2 388.3 556.3 390 550.2 393.5 547.8 395.6 543.4 396.2 541.3 398.4 543.5 392.6 542.1 390.8 542 390.8 539.4 392.2 536.6 391.3 536.6 389.6 533 387.5 531.9 389.6 533.1 394.2 532.6 394.3 530.7 395 526.2 393.4 524.9 394.3 524.6 397.2 525.9 398.8 526.3 400.5 524.8 401.8 524.5 404.1 525.7 405.1 527.2 410.1 524.3 411 520.8 411.2 517.4 413.3 517.4 413.6 517.1 416.7 514.6 421.6 515.4 423.8 517.7 424.8 519 426.6 519.4 429.6 520.9 431.6 519.9 433.3 516.6 435.2 513.9 438.8 513.5 438.3 513.2 440 513 440.9 514.3 442.4 517.3 442.6 518.3 443.9 516.2 448.1 517.9 452.2 515.5 454.2 515.1 454.6 511.6 456.2 511.6 457.5 510.2 458.3Z",MS:"M399.2 451.3 397.6 452.2 395.1 451 392 451.4 388.6 449.8 390.4 445.6 392.3 445.1 393.4 444.8 393.8 436.9 391.1 437.7 388.1 441.2 387.2 441.3 386.1 444 383.9 443.8 381.8 444.8 377.9 441.3 373.1 442.1 370.9 444.1 365.6 444.6 365.5 444.6 362.4 442.5 358.4 441.4 356.5 439.1 349.1 437 348 435.3 344 436.3 340.3 438.4 334.8 438 331.8 442.4 329.8 443.3 329.7 444.8 327.1 447.2 322.1 448.1 320.8 449 317.7 447.6 316.2 445.9 316 444.2 314.8 443 314.2 444.4 315.6 446.1 315.4 448.1 318.3 454 320.6 455.9 318.6 456.1 314.6 468.9 315.7 471.5 314.2 471.5 307.5 485.5 312.8 489.7 306.8 493.4 308.2 495.1 308.6 497.7 310.1 498.8 309.8 502 310.8 503.9 312.7 504.7 310.8 505.7 312.8 506.2 311.4 507.6 313.3 508.4 312.6 510.4 312.9 515.8 310.8 520.5 312.3 522.9 310.6 526 311.7 526.6 310.1 530.7 314.9 531.7 317.6 530.9 319.4 532.4 323.2 533.8 328.5 533.5 332.5 534.8 337.8 533 339.1 530.9 341.2 530.5 342.1 532.5 344.8 534.4 351.9 534.6 353.4 536.5 354.2 539.7 356.3 542.4 355.3 545.5 356.6 551.4 357.8 553.1 358.4 555.7 357.4 557.8 357.9 560.6 359.8 562.3 359.6 566.2 360.4 567.3 363.1 567.6 367 567.7 374.4 564.5 379.3 566.5 382.1 569.1 384.3 567.8 386 565.2 386 564 386.6 561.7 387 560.6 388.4 557 392.2 555.4 393.2 553.9 394.7 550.8 394.7 548.5 396.4 546.3 399.1 544.8 400.7 543.8 402.4 543.2 404.5 541.7 405 541.1 405.6 539.6 408 538.2 413.7 534.9 417.6 532.6 418.8 531.2 420.2 528.5 423.3 524.6 425.3 522.7 424.4 520.7 427.2 519.2 429.1 516.1 428.8 513.4 430.8 510.6 433.7 508.5 433.5 504.8 434.7 502.3 434.8 502.2 437.7 499.2 439.2 497.1 443.7 495.6 445.8 492.1 445.8 491.9 445.2 486.1 445.1 484.2 447.2 482.3 447.1 479.9 444 476.8 437.1 473.9 435.4 473.6 432.4 473.1 429.3 471.8 427.6 470.2 424.9 469.9 422.9 467.9 419.9 467.5 418.4 465.8 416.7 464.5 411.9 464.8 409.5 463.9 408.6 463.3 407.7 462.1 410.2 459.6 411.7 458.5 410.5 457.4 405.1 457.5 404.2 453 405.6 452.1 402.4 451.6 399.2 451.3Z",MT:"M343.5 284.6 335.8 284 334.2 284.7 332.9 281.6 329.5 281.4 328.3 280.4 328.7 278.7 325.5 275.3 321.4 274.1 321.3 272.8 317.9 272.1 317.1 267.7 316.1 265.3 317 261.7 313.3 256.7 312 251.2 308.8 245.7 307.4 244.9 305.9 246.9 306.1 250.1 304.3 253 302.7 254.1 304.5 259.2 303.9 263.7 301.9 266.9 302.5 269 301.6 271.1 303.7 271.3 301.5 272.9 288.2 273 263.1 272.9 240.5 272.9 242.7 275.3 241.1 278.6 241.6 281.7 239.7 281.8 239.9 283.2 240.6 285.7 242.6 289.1 240.7 290.8 242 293.5 241.4 296.2 240.5 297.4 241.1 302.2 242.9 304.4 242.6 311.1 241.2 315.4 243.5 315.4 251.8 315.5 262.3 315.4 263.6 317.4 271.7 318 271.6 320.3 272.8 322.2 272.5 323.8 269.1 326.9 269.3 332 271.5 333.4 271.6 335.6 273.2 337.3 273.4 339.8 275.5 341.7 272.3 346.7 270.7 347 269 353.6 267.7 353.8 266 355.9 264.8 359.4 264 360.6 263.7 363.2 259 365.5 257.5 367.9 262.1 369.8 262.5 372.6 263.8 373.7 261.9 375.7 262.4 379.9 265.9 385.9 266.5 395.1 260.1 395.1 266.6 402.4 267.9 417.8 281.5 418 294.8 418.6 301.7 418.9 303.8 417.8 303.4 422.7 301.6 424.1 300.8 430.8 302.4 432.8 302.3 435.6 305.2 438.9 310.1 442 312.3 440.7 314.8 443 316 444.2 316.2 445.9 317.7 447.6 320.8 449 322.1 448.1 327.1 447.2 329.7 444.8 329.8 443.3 331.8 442.4 334.8 438 340.3 438.4 344 436.3 348 435.3 349.1 437 356.5 439.1 358.4 441.4 362.4 442.5 365.5 444.6 365.6 444.6 370.9 444.1 373.1 442.1 377.9 441.3 381.8 444.8 383.9 443.8 386.1 444 387.2 441.3 388.1 441.2 391.1 437.7 393.8 436.9 393.4 444.8 392.3 445.1 390.4 445.6 388.6 449.8 392 451.4 395.1 451 397.6 452.2 399.2 451.3 402.4 451.6 405.6 452.1 403.8 446.9 402.5 445.8 402.4 443.7 402.3 441.8 402.8 437.8 404.9 434.1 405.9 433.5 406.7 429.4 408.4 428.9 408.7 428.4 410.3 427.6 412.5 425 412.2 424 414.2 422.7 413.2 418.5 415.8 416.9 417.3 415.1 419.4 414.2 421.5 410.6 426.2 410.4 427 409.5 428.7 409.2 430.9 405.9 430.7 403.8 432.3 402.6 433.3 396.6 435.5 394.5 439 393.1 437.7 393 439 393 439.2 392.8 439.2 392.7 439.4 392.6 439.9 392.9 440.5 394.1 443.8 391.8 443.9 391.8 444.1 391.7 444 391.2 444 391 446.5 384.1 445.9 381.8 447.6 376.7 448.9 375.8 448.3 368.7 449.5 368 450.5 364.5 452.3 362.9 453.4 360.6 454.1 355.1 455.3 351.7 453.1 350.9 451.9 347.6 453.1 343.9 452.7 339.4 452 339.2 452 334.9 452.8 332.8 451.3 329.7 452.2 326.9 450.9 326.2 451.6 321.7 453.4 316.9 452.9 314.3 454.1 310.8 453.5 309.1 453.5 309 454.7 308.1 456 304.1 457.1 303.1 457.5 299.2 459.3 296.9 460.9 293.2 448.8 292.4 439.9 291.8 421.4 290.6 414.4 290.1 404.4 289.4 395.6 288.7 385.6 287.9 375.7 287.2 368.3 286.6 351.4 285.3 345.8 284.8 343.5 284.6Z",PA:"M500.2 197.5 502.9 195.4 503.5 194.9 507.6 191.8 510.2 191.7 511.5 190.7 514.8 185.4 516.2 184.6 516.7 182 521.7 177.2 522.8 172.2 522.7 171.4 524.4 169.7 524.5 167.8 527 166.3 527.9 163.9 529.7 162.3 529.6 158.4 531.4 157.5 529.8 155.3 531 153.5 533 153 534.3 150.2 534.3 149.1 534.7 146.4 537.3 144 537.7 142 538.5 139.4 538.7 137.8 536.8 137.3 536.7 136 538.7 135.8 539.7 133.7 539.4 130.9 540.8 128.2 539.7 127.1 540.8 125.6 541.6 123.7 541 122.1 539 123.2 538.8 119.4 536.3 122.1 533.7 122.1 533.2 119.2 532.5 120.7 530.5 121.1 530.6 117.8 527.4 119.1 526.6 116.7 524.5 118.9 523.6 116.1 522.2 117.7 521.6 115.3 520.3 117 520 115.3 518.3 114.8 515.9 114 515.1 115 514.2 113.7 514.1 116.6 512 113.4 511.6 115.8 511.2 116 511.1 113.9 508.7 114 505.6 113.2 504.5 115.6 503 115.1 501.3 116.9 500.7 118.1 498.3 120.1 496.1 119.8 494.8 119.2 494.2 116.8 495.5 110.3 496.7 108.1 495.7 106.7 489.6 107.1 486.2 106.7 481.4 104.8 477.2 106 476.1 104.7 477.6 102.8 476.9 101.1 472.3 100.8 471 99.3 472.3 97.6 475.1 95.8 473.5 94.2 467.4 96 462 95.7 461.9 94.5 464.5 91.9 463.8 89.9 460.8 88.8 457.3 90.2 453.6 97.4 452.7 98.2 450.8 99.7 446.3 101.4 443.5 104.2 441.8 104.5 439.1 108.1 437.4 111.4 434.3 114.9 432.6 117.7 432.2 122.9 430.7 124.4 428.6 124.9 427.1 124.1 424.3 125.8 424.1 124.5 420 123.9 418.3 122.7 417.6 118.4 416.5 118.9 416.8 116.1 416 113.4 414 113.6 412.9 111.9 413.1 108.4 408.3 105 407.3 101.6 405.2 98.5 403.6 94.9 404.2 90.6 405 89.1 399 84.2 398.1 80.3 398.6 78.3 396.8 78.8 396.7 76.6 389.8 75 389.6 74 385.9 73.3 385.2 71.1 380.3 68 378 68.4 375.9 67.6 373.2 67.8 373 64 371.9 62.7 372.8 59.5 370.7 55.1 369.1 52.1 366.2 53.3 364.9 52.6 362 53.5 360.8 55.3 358.5 54.9 354.5 55.6 354.3 55.7 350.1 53.1 347.8 57 346.1 58.3 348 59 349.5 61.7 350.7 65.6 348.8 66.7 345.9 65.6 344.1 65.8 340.3 64.4 337.6 65.3 334.8 64.9 333.5 66.3 331 64.8 329.4 65.3 327.7 63 324.5 64.5 323.5 63.5 321 65.3 320.7 67.2 318.2 69.5 314.1 68.8 314 69.5 310.2 70.1 310 73.1 307.5 73.2 306.9 72 303.9 71.8 302.8 73.5 300.2 73.9 301.1 75.7 300.4 77.7 296.3 77.2 296 78.6 294 79.5 292.7 78.4 292.7 97.1 292.7 102.5 293.3 103.8 293.2 109 296 110.8 295.8 114.1 297.2 116.2 301.6 119.6 301.7 122.2 303.9 124.5 305 124.2 307 126.2 309.4 123.6 310.7 125 310.1 128.1 310.8 129.4 315.6 131.4 316.3 133.2 318 132.9 322.6 135.9 324.4 135.2 327.8 136.8 328.9 139.5 332.2 141.4 334.3 141.3 334.1 144.4 335.7 145.2 337.5 144.5 338.6 143.8 340.8 144.5 344.4 142.1 346.9 141.6 344.9 144.6 341.3 146.5 339.8 149.4 341 149.9 333.9 165.2 333.1 166.9 331.1 171.4 330.3 173.2 322.6 189.6 312.7 210.9 304.9 227.9 301.7 230.6 300.7 233.8 301.6 236.3 303.5 237.8 306.5 241.6 307.2 244.7 307.4 244.9 308.8 245.7 312 251.2 313.3 256.7 317 261.7 316.1 265.3 317.1 267.7 317.9 272.1 321.3 272.8 321.4 274.1 325.5 275.3 328.7 278.7 328.3 280.4 329.5 281.4 332.9 281.6 334.2 284.7 335.8 284 343.5 284.6 345.8 284.8 351.4 285.3 368.3 286.6 375.7 287.2 385.6 287.9 395.6 288.7 404.4 289.4 414.4 290.1 421.4 290.6 439.9 291.8 448.8 292.4 460.9 293.2 463.4 287.2 464.5 282.4 465.9 281.3 467.9 278.4 468.1 278.1 471.3 274.1 473.1 273.7 475.3 270.5 476.9 268 477.8 265.6 479.1 264.8 480.3 261.4 481.2 257.6 481.4 254.7 481.5 253.4 478 250.8 477.6 250 477.3 247.7 479.5 245.1 481 241.9 480.9 240.6 480.9 238.8 480.5 236.6 483 235 483.9 234.3 487.5 233.2 491.1 231.5 491.7 228.2 491.9 227.9 494.3 225.4 496.7 225.3 495.5 222.5 496.4 221.5 498.4 220.5 497.5 218.7 499.5 217.6 498.3 215.5 498.7 213.3 500.7 213 501.3 210.9 497.6 208.9 496.8 207.1 495.4 207.2 492.4 207.4 489.4 206 495.2 201.4 499.9 197.8 500.2 197.5Z",PB:"M706.3 247.5 707.3 246.6 709 245 709.9 245 711.3 243.7 712.3 243.4 713.9 244 716.3 245.4 717.1 245.9 717.7 247.3 716.9 247.7 715.8 248.1 713.5 250.4 714.3 251.6 714.5 251.9 714.4 253.2 714.1 253.6 710.6 256.4 714.5 257.9 714.6 259.9 714.3 260.7 717 263.1 718.3 263.2 719.2 262.3 721.5 261.1 723.4 260.5 724.6 259.6 725.7 256.2 726.4 255.5 728.1 255.8 729 253.8 731.7 254.2 732.6 252.9 734.3 253.3 736.4 253.8 736.7 253.8 737.9 253.4 739.1 252.9 740.2 252.6 740.9 252.4 743 251.7 744.2 250.9 746 250.6 746.4 248 746.6 247.4 747.7 247.2 749.1 246.6 749.5 246.2 749.7 246.1 750.7 245.6 753.2 245.7 756.5 247 756.5 247.7 759 248.5 759.4 248.7 760 245.6 759.9 242.8 759.2 239.1 758.9 238.6 758.7 237.6 758.1 235.4 757.6 233.5 757.5 232.6 756.9 230.3 756.8 228.1 754 228.4 753.3 229.4 752.4 229.3 751.8 228.8 749.6 229.1 749.1 228.6 748.3 228.1 747.6 228.1 744.9 228 743.8 227.5 743.3 227.3 741.2 228 741 228 739.3 228.1 737.5 228 734.9 226.8 733.4 227 732.4 227.1 731 225.8 731.4 224.8 731.1 224.3 730.1 224.5 727 226.1 726.5 227.9 727.4 228.7 728.3 230.8 726.7 230.5 726.4 232.9 726.2 235 725.9 235 725.8 235.6 724.1 236.6 722 236.4 722.6 234.9 720.6 232.8 719.1 233.3 718.2 233.8 717.3 232.4 716.7 232.9 715.9 233.3 714.4 234.1 712.8 234.6 712.3 232.8 711.3 232 708 232.4 708.4 229 710 227.1 709.8 226.2 710.9 224.6 712.8 222.8 714.3 221.6 714 219.6 712.4 219.2 710 220.3 707.3 221.6 705.4 222.1 703.6 222.1 702.3 223.4 701 225.1 699.5 226.6 697.5 227.9 696.6 227.6 695.6 228.8 693.5 228 692.4 228.5 691.3 227.5 689.3 226.5 689.1 225 687.1 225.5 687.5 226.8 686.1 229 686.2 228.9 685.4 230.8 684.9 232.3 685.3 233.3 686.1 233.8 685 235.1 683.1 236.3 683.1 237.9 684.9 238.9 685 239 685.5 241.6 686 242.3 687.2 242.9 687.3 244.5 684.7 249.3 684.1 250.1 686.5 252.7 689.1 252 689.6 252 691.1 251.2 692 252.4 693.7 254 695.4 253.5 695.7 253.9 696.6 253 698 253.2 698.8 252.9 699.9 251.6 702.5 250.8 702.8 250.2 702.9 249.9 703.1 249.6 705.4 248.2 706.3 247.5Z",PE:"M632.8 271.2 634.4 271.7 637.6 271.1 637.8 272.6 640.6 273.8 642.7 275.9 643.3 278.4 646.2 280.4 644.3 285.5 645.3 285.5 647.1 286.2 651.1 283.7 652.3 284.1 653.9 278.4 655.1 278.1 656.7 279 659.1 278 659.6 277.9 661.6 275.6 661.3 273.5 665.5 272.7 666.1 270.2 669.3 268.9 671.7 268.1 673.3 268.8 674.2 271.2 677.3 271.6 679.5 273 681.4 272.7 684.3 274.2 684.5 275.3 686.1 276 686.9 273.5 688.9 274.2 688 276.1 690.2 277.6 691.7 276.6 691.9 279.7 693.4 283.2 694.9 281.7 696.2 280.2 697.7 279.9 698.9 278.7 701.4 275.5 702.7 273.9 703.8 275.6 705 276.9 707.2 276.1 707.3 276.2 709.7 277.4 712 279.8 712.9 281.2 713.5 281 714.1 282 716.3 283 716.3 282.8 717.8 283.8 718.6 284.2 719.7 282.2 721.3 282.3 723.2 282.5 724.7 283.3 727.1 281.9 729 281.2 729.9 281.1 731.1 280.2 733 277.7 734.4 277.4 734.6 277.2 734.3 276 736.1 275.1 737 275 737.7 274.7 739.8 274.4 740.1 274.3 742.1 275.1 743.5 274.6 744.9 273.9 745.1 273.8 745.7 273.4 748.2 273.7 749.4 274.1 751.6 274.6 753.2 275.2 753.6 274.2 754.2 272.7 754.5 270.8 755.2 269.3 756.9 264.6 757.6 261.8 757.9 260.4 758.9 258.3 759.5 256.6 759.3 254.4 759.2 253.9 759.1 251.4 759.4 248.7 759 248.5 756.5 247.7 756.5 247 753.2 245.7 750.7 245.6 749.7 246.1 749.5 246.2 749.1 246.6 747.7 247.2 746.6 247.4 746.4 248 746 250.6 744.2 250.9 743 251.7 740.9 252.4 740.2 252.6 739.1 252.9 737.9 253.4 736.7 253.8 736.4 253.8 734.3 253.3 732.6 252.9 731.7 254.2 729 253.8 728.1 255.8 726.4 255.5 725.7 256.2 724.6 259.6 723.4 260.5 721.5 261.1 719.2 262.3 718.3 263.2 717 263.1 714.3 260.7 714.6 259.9 714.5 257.9 710.6 256.4 714.1 253.6 714.4 253.2 714.5 251.9 714.3 251.6 713.5 250.4 715.8 248.1 716.9 247.7 717.7 247.3 717.1 245.9 716.3 245.4 713.9 244 712.3 243.4 711.3 243.7 709.9 245 709 245 707.3 246.6 706.3 247.5 705.4 248.2 703.1 249.6 702.9 249.9 702.8 250.2 702.5 250.8 699.9 251.6 698.8 252.9 698 253.2 696.6 253 695.7 253.9 695.4 253.5 693.7 254 692 252.4 691.1 251.2 689.6 252 689.1 252 686.5 252.7 684.1 250.1 684.1 250.2 680.6 252.6 679.3 254.4 679.2 254.4 678.2 253.8 676.8 254.7 676.6 253 675.7 252 673.4 250.9 671.4 250.1 671 249.8 669.9 249.1 669.6 247.2 668 247.4 667 246.4 664.2 244.4 661.3 244.6 661 244.6 656.1 245.2 654.5 244.2 652.5 244.4 650.8 245.2 649 244.2 648.5 245.7 646.5 246.4 645.3 247.4 647.1 250.8 646.1 252.8 648.4 253.9 648.6 256.7 648.3 257.4 648 258 647.5 259.4 644.4 262.2 644.1 263.2 642.5 264.6 641.2 266.1 640.2 265.2 636.9 267.8 635.8 269.7 632.8 271.2Z",PI:"M644.4 262.2 647.5 259.4 648 258 648.3 257.4 648.6 256.7 648.4 253.9 646.1 252.8 647.1 250.8 645.3 247.4 646.5 246.4 648.5 245.7 649 244.2 649.4 242.1 650.3 239.6 650.9 236.8 652 234.2 649.9 232.9 645.4 231.8 644.9 230.3 643.9 228.4 644.1 225.3 642.7 223 642.5 220.7 641.6 219.5 642.2 218.1 641.5 214.1 641.6 211.7 641.2 208.8 641 207.8 641.2 202.6 638.2 201 637.4 199.7 634.9 196.7 635.3 195.6 636.4 192.8 635.1 191 636.3 188.9 636.9 187 637.5 186.1 637.9 183.4 637.9 183.3 637.1 182.2 636.2 180.2 635.3 179.2 635 177.8 635.1 174.3 633.3 173.7 632.7 171.3 633.9 170 633.5 167.9 631.8 167.2 633.5 163.9 634.7 161.5 634.5 159.9 633.5 158.9 631.3 158.6 627.2 157.8 624.6 155.8 623.8 155.7 623.6 158.8 624.3 159.7 622.9 161.6 620.8 164.6 620.7 164.8 618 165.6 618 167.2 616.5 168.8 615.1 169.1 612.6 169.7 611.3 169.8 610.8 169.1 609.5 171.3 608.4 172.3 608.1 172.7 607.1 173.9 607.4 175.8 606.4 177.6 605.1 179.4 603.8 181.4 602.1 183.1 601.3 184.1 601.7 186.8 602 187.3 603.9 189.5 601.9 193.2 603.1 197.1 603.1 197.2 604.9 202.9 604.6 205.4 601.6 208 600.9 209.8 599.2 211.2 599.5 216 599.1 216.9 600 220.6 601.4 221.3 604 224 603.2 228.4 602.6 231.2 601.1 233.2 596.2 233.5 593.4 234.8 592.2 235.1 591.5 234.6 588.6 232.6 586.4 232.3 582.9 233.6 579.3 234.3 576.8 238.1 576.2 239.2 575.5 240.3 574.1 240.4 570.6 242.5 568.2 245.7 565.7 245.1 562.5 247.4 562.4 247.4 560.5 247.8 555.6 249.3 553.4 251 551.8 254.8 552.1 255.3 550.9 260.5 549.3 262.3 548.5 265 545.9 271.3 544 272.7 542.9 275.4 544 277.6 544.9 283.5 546.9 286.2 545.9 287.8 546.1 290 545.4 293.7 545.9 295.1 543.8 301.2 542.6 301.1 544.5 303.4 544.8 301.4 547.8 300.9 548.2 299.2 550.5 298.3 551.4 300.4 552.7 302.1 554.5 304.9 553.5 306.1 554.2 308.7 557.4 312.2 560.6 312.5 563.3 314.1 564.8 313.4 568.7 311 568.6 309.6 570.4 308.4 571.9 308.8 574.9 306.9 578.4 308.7 580 307.7 581.8 304.3 583.2 303.9 584.8 302.1 586.3 297.7 587.6 297.4 587.3 294.7 588.3 293.2 585.8 291.6 584.5 287.5 585.7 285.7 585.8 285.6 589.2 283.7 590.5 282.8 592.5 282 595.5 285 596.8 284.6 599.5 284.6 599.8 284.5 601.8 285.1 601.9 286.7 605.5 288.8 607 287.4 608.7 286.9 610.8 286.4 614.3 283 616 282.3 619 281.8 622.1 282.2 623.2 281.5 625.6 278.5 625.8 277.1 629.2 275.7 631.8 272.5 632.4 271.2 632.8 271.2 635.8 269.7 636.9 267.8 640.2 265.2 641.2 266.1 642.5 264.6 644.1 263.2 644.4 262.2Z",PR:"M482.1 581 481.5 580.8 480.6 581.4 478.6 580.7 478.5 578.6 479.8 576.4 479.7 576.2 479.7 575.7 479.7 574 477.8 572.1 478.1 570.5 475.2 568.3 474.5 566.2 474.2 566.4 472.8 564.7 473.8 563.8 473.5 561.5 472.9 561 472.5 558.5 473 557.3 472.2 555.2 472.4 553.9 470.7 551.3 468.9 550.1 468.7 549.9 468.4 549.7 465.7 547.6 465.7 547.5 464.2 546.6 462.6 547.2 461.3 547.5 458.6 547.4 458.2 546.8 455 547.1 454 546.5 452.9 546.6 449.8 547.5 449.2 545.8 447.2 544.5 446.2 544.2 445.7 544.4 442.4 543.3 441.7 543 440 542.1 439.4 541.9 437.2 541.7 435.8 542.4 433.6 541.8 431.9 542 429.2 541.3 428.5 540.9 428.3 540.7 425.9 539.5 425.8 539.5 423.8 539.2 423.5 540 422.9 541.7 420.8 541.2 418.2 540.8 417.8 540.8 416 540.9 415 540 411.6 540.8 411.2 540.7 408.5 540 406.8 540.6 406.3 541 405 541.1 404.5 541.7 402.4 543.2 400.7 543.8 399.1 544.8 396.4 546.3 394.7 548.5 394.7 550.8 393.2 553.9 392.2 555.4 388.4 557 387 560.6 386.6 561.7 386 564 386 565.2 384.3 567.8 382.1 569.1 380.9 570.8 382.5 575.1 381.9 576.1 381.4 579.3 381.3 580.6 381.2 581.3 380.1 582.9 378.8 588 379.4 590.2 378.4 591.3 375.6 595.9 376.1 598.7 379 600.1 381.9 598 384.2 598.5 384.8 597.3 387.8 598.6 390.5 600.6 390.7 602.1 391.1 604.9 390.8 606 392.8 607.4 394 610 394.4 610.6 394.6 611.5 398.7 612.1 400.4 611.4 403.7 613.3 403.9 613.4 406.5 613.8 408.2 613.6 408.8 613.6 411.6 613.4 412.8 613.5 413.9 614 415.6 614.5 416.3 614.3 417.8 615.1 423.3 615.6 425.9 617.2 429.8 617.9 435.9 617.9 437.8 620.5 438.2 619.5 441.2 618.8 441.5 618.1 440 614.7 440.6 614.1 440.9 613.4 441.9 612.4 444.3 611 446 611.1 447.8 612.2 451.6 610.2 451.7 610.1 453 607.8 454.2 606.6 458.1 608.8 460 607.4 461.5 607.9 465.3 606.8 466.5 607 467.8 607.3 471.2 610.3 472.9 611 475.2 610.4 475.2 610.2 476.3 609.9 477.6 609.3 480.1 607.2 485.2 606.3 485.6 606.4 490.8 606.3 492.5 606.1 493.3 603.7 494.8 601 497.1 598.6 498 596.8 499.9 596.4 502.1 593.2 499.4 587 497.7 587.9 496 586.8 493.2 588.8 492.4 587.3 493 585.6 493.6 581.9 492.3 580.8 488.3 580.9 486.3 580.9 482.1 581ZM394.3 594 394.9 593.9 394.3 594ZM399.7 553.1 399.7 553 399.7 553.1Z",RJ:"M569.2 546.7 566.2 548 565.6 551.6 564.5 552.3 567.5 555.5 570.3 555.3 571.2 554.1 568.9 552.1 567.6 552.3 568.6 549.4 571.5 548.9 574.9 546.9 574.9 549 578.4 549.1 581.5 547.3 583.9 546.8 585.6 546.8 590.1 549.4 595.5 548.7 597.9 546.6 595.7 544.7 596.8 543.1 600.2 542.4 600.5 543.1 600.5 543.4 599 545.6 598.9 547.5 600.7 547.9 608 547.2 613 547.2 614.9 547.2 619.7 547.1 621 545 620.9 543.2 620.6 540.6 620.8 539.9 623.9 537.1 626.4 534.8 629.3 533.6 637.2 530.9 639.7 529.4 640.1 527.3 638.9 521.6 638.5 519.3 640.5 515.4 637.1 514 634.4 514.3 630.7 513.5 629 513 627.3 512.4 625.9 511.6 625.6 508.5 625.4 507.1 624.8 505.7 623.4 505.3 622.8 505.1 621.8 505.6 621.8 506.6 620.9 508.4 617.5 509.1 618.7 510 618.8 510.2 618.1 511.1 617 512.2 616.6 512.7 616.5 513.9 616 516.2 615.8 516.3 615 517.9 615.5 519 613.7 520.9 613.5 521.1 615.2 523.5 613.1 524.1 611.5 524.8 611.4 524.9 608.6 526 607.5 526.5 602.7 528.8 601 529.6 598.2 531 598.5 529.7 598.4 529.6 596.6 529.6 594.7 529.2 594.3 529.1 592.5 530.2 589.5 530.1 588 530.7 587.2 530.5 586.2 530.2 582 531.8 578.1 533.4 577.9 533.7 576.6 534.2 574.6 533.9 572.7 534 571.1 535.4 568.8 536.4 568.7 536.2 566 536.6 565.9 536.8 565.9 536.9 568.2 539.1 569.1 540.7 572.6 540.9 574.6 540.9 575 540.4 577.2 540.7 578.4 542.1 575.4 545.4 572 545.4 569.4 546.6 569.2 546.7ZM574.8 552.6 578.9 551.6 577.1 550.2 574.4 551.7 574.8 552.6ZM585.6 549.6 582.1 549.3 582.5 550.1 585.6 549.6 588 549.4 588.1 549.2 585.6 549.6Z",RN:"M727 226.1 730.1 224.5 731.1 224.3 731.4 224.8 731 225.8 732.4 227.1 733.4 227 734.9 226.8 737.5 228 739.3 228.1 741 228 741.2 228 743.3 227.3 743.8 227.5 744.9 228 747.6 228.1 748.3 228.1 749.1 228.6 749.6 229.1 751.8 228.8 752.4 229.3 753.3 229.4 754 228.4 756.8 228.1 755.6 224.7 755.5 224.2 754.4 222.2 754.3 221.4 753.8 218.3 753.2 216.7 752.2 213.7 751.8 211.1 751.2 209.3 749.8 206.6 748.8 204.5 746.7 202.3 744.2 201.5 740.8 200.7 738.6 200.4 736 200.2 734.8 200.7 730.8 201.2 728.9 200.8 722.9 200.8 720.2 198.7 718.2 197.7 714.7 198.2 713.1 196.9 712.5 196 710.5 196.5 708.7 196.9 708.3 197 705 197.8 704.2 200.3 702.1 203.5 702.2 203.9 702.1 205 701.6 205.4 699.9 209 697.4 211.3 696.4 212.3 696.8 213.9 694.9 217.2 694.8 217.5 693.1 218.8 692.6 219.9 691.4 220.2 690.1 219.8 688.9 221 687.9 223 686.9 224.3 687.1 225.5 689.1 225 689.3 226.5 691.3 227.5 692.4 228.5 693.5 228 695.6 228.8 696.6 227.6 697.5 227.9 699.5 226.6 701 225.1 702.3 223.4 703.6 222.1 705.4 222.1 707.3 221.6 710 220.3 712.4 219.2 714 219.6 714.3 221.6 712.8 222.8 710.9 224.6 709.8 226.2 710 227.1 708.4 229 708 232.4 711.3 232 712.3 232.8 712.8 234.6 714.4 234.1 715.9 233.3 716.7 232.9 717.3 232.4 718.2 233.8 719.1 233.3 720.6 232.8 722.6 234.9 722 236.4 724.1 236.6 725.8 235.6 725.9 235 726.2 235 726.4 232.9 726.7 230.5 728.3 230.8 727.4 228.7 726.5 227.9 727 226.1Z",RO:"M224.3 356.7 227 357.4 228.3 356.6 230.2 357.6 230.2 359.4 234.6 363 236 364.7 240.6 364.3 242.7 365.2 247 364.1 248.1 364.8 251.7 364.2 253.4 365.1 254.2 366.4 257.5 367.9 259 365.5 263.7 363.2 264 360.6 264.8 359.4 266 355.9 267.7 353.8 269 353.6 270.7 347 272.3 346.7 275.5 341.7 273.4 339.8 273.2 337.3 271.6 335.6 271.5 333.4 269.3 332 269.1 326.9 272.5 323.8 272.8 322.2 271.6 320.3 271.7 318 263.6 317.4 262.3 315.4 251.8 315.5 243.5 315.4 241.2 315.4 242.6 311.1 242.9 304.4 241.1 302.2 240.5 297.4 241.4 296.2 242 293.5 240.7 290.8 242.6 289.1 240.6 285.7 239.9 283.2 239.7 281.8 241.6 281.7 241.1 278.6 242.7 275.3 240.5 272.9 238 270.8 235.6 271.7 234.3 274.2 232.6 274.4 231.8 272.9 230 273 228.8 268.9 227.2 268.6 226.8 269.8 225.3 267 225.4 265.2 223.4 264 222.4 264.9 221.5 262.9 219.7 261.9 219 259.2 215.6 257 201 257 201 258 198.5 261.5 197.7 263.9 196.2 263 194.7 263.9 194.2 266.7 195.1 268.3 193 270.9 190.9 271.9 190.9 275.8 187.6 276.8 187.4 275.5 182.4 276.6 181.8 277.2 178 276.6 175.4 279.3 175.8 281.1 173.2 284.6 171.5 285.5 170.1 282.2 169 281.9 166.6 283.4 165.7 282.9 165.9 285.7 162.8 284.9 161.1 285.6 160.1 287.8 158.2 287.1 155.4 284.9 151.5 285.3 146.9 284.7 147.2 286.5 145.1 289.1 143 289.7 139.1 292.7 142.7 294.3 150.7 293 151.9 292.1 155.2 292.5 157.1 291.4 160.6 291.7 163.5 293 165.7 289.8 167.3 290.8 168.7 293.6 167.8 295.2 168.7 300.5 166.7 303.5 166.9 304.6 165.9 305.6 166.4 308.7 167.6 309.8 167.2 311.8 168.9 313.1 169.4 315.3 167.2 318.5 168.3 325.4 170.1 325.9 170.3 330.2 172.5 329.4 173.7 335 177.4 335.2 180.1 337 179.8 338.4 182.1 339.2 183.7 339.4 183.7 341.7 185.8 343.7 189.1 343.9 194.4 345.3 195.8 343.7 199.8 343.8 204.6 346 207.2 348.3 211.3 347.4 212.9 351.3 215.1 351.7 217 354.3 219.6 353.8 220.6 355.2 224.3 356.7Z",RR:"M190.1 34.6 191.4 37.5 189.4 42.3 190.8 43.6 193.4 47.7 193.9 50.9 192.5 53.7 194.4 54.3 196.6 53.8 198.3 54.9 201.3 54.6 204 55.7 205 54.7 206.2 56 205.8 59.4 207.7 60.5 210.4 60.3 212.6 63.2 216.2 63.1 218.8 64.7 218.3 69.3 216.8 71.4 218.2 72.6 220 74.4 222.3 81.2 223.3 81.2 223.9 83.7 223.5 87.2 222 89.2 222.4 93.7 223.8 94.9 223.7 98.2 224.5 100.8 226.1 102.3 226.2 104.1 227.8 105.6 227.6 108 228.8 108.5 226.3 112.8 226.9 114.5 225.5 115.9 223 115.5 222.5 117 224.8 118.2 227.4 121.2 230 122.4 232.1 124.4 234.5 129.3 235.5 129.4 236.4 129 240.1 130.3 242.6 132.9 241.4 130.1 239.8 129.3 239.6 127.5 241.3 122.9 240.6 121.2 241.5 116.9 243 115 247.3 113.2 247.5 112 253.1 112.9 255.4 115.6 256.5 118.7 258.3 119.5 260.8 119.1 261.6 117.4 265.2 116.2 263.6 112.9 266.8 104.6 270.5 97.1 282.2 97.1 285.5 97.1 292.7 97.1 292.7 78.4 292.1 76.7 289.7 76.6 285.7 75.3 284.2 72.9 282.6 72.2 280.3 69 277.2 68.2 277.8 66.1 276.2 66.3 276.4 63.5 276.3 57.8 274.3 57.2 271.5 50.3 271.5 45.4 273 40 275 37.2 275 34.2 273.7 33.1 277.8 30.2 280.4 26.1 276.9 21.5 276.4 19.1 277.5 17.9 276.4 16.5 271.8 14.8 268.1 14.6 270.7 11 271.8 3.8 269.4 2.5 268.6 0.5 267.1 0 264.9 1.3 260 1.4 257.7 0.8 259.9 6.1 258.6 7.5 256.7 10 252.9 12 251.9 14.7 248.9 15.3 246.6 14.2 245 16.5 243.1 16.2 242 18.4 240.9 19.8 237.5 19.7 236 21.4 232.6 21.3 229.7 23.2 224.9 21.2 221.7 22.6 222.1 23.8 218.2 23.9 217.1 26.7 218.3 28.5 217.9 31 216.7 29.9 213.3 32.2 211.5 30.6 211.9 29.5 209.1 28.3 209.1 25.6 204.3 25.5 205.1 26.4 203.1 27.6 199.9 24.3 199.2 26.5 198.4 25.8 195.1 26.1 194.3 27.2 191.5 23 190.3 22.2 185.3 22.1 182.8 22.7 178.5 19.1 177.9 21.3 184.4 28.9 188 30.5 189.8 32.8 190.1 34.6Z",RS:"M388.6 722.1 392.9 724.9 393.9 727.6 394.5 730.4 398.5 733.6 403.6 735.7 407.1 734.4 407.6 732.5 410.9 731.6 412.4 730.2 410.5 729.5 412.5 726 414.3 725.8 413.1 729.2 414.7 731.9 414.4 735.3 412.4 739.1 410.3 740.7 407 738.4 404.6 738.4 403.6 742.4 402 744.5 400.7 743.6 397.9 747.3 398.8 750.9 397.2 752.7 396.9 755.7 398.8 756.8 399.8 756.8 411.4 747.9 414.3 744.4 416.8 739.8 418.2 735.2 420.7 729.5 424.5 726.1 424.2 721.8 421.4 720.1 422.1 718.9 423.5 717.1 425.7 717.1 426.2 715.2 426.2 713.3 428 709.6 430.1 709.1 433.8 708.8 433.6 706.5 435.4 705.8 437.2 705.3 436.1 703.1 437.1 701.1 438.6 701.1 438.4 696.7 439.6 696.7 440.7 693.5 443.2 692.7 441.7 690 439.4 688.6 440 685.2 440.5 684.9 441.3 687.7 444.6 689.2 444.7 691.8 447.2 692.6 447.5 690.5 452.5 689.7 453.2 688 454.7 689.1 453.9 693.7 451.1 691.3 451.9 693.9 451.8 697.9 450.6 700.1 446.5 701.6 446.7 703.6 442.3 706.2 442.8 709.1 441.2 712.4 438.8 713.9 437.5 713.1 433 718.5 429.6 719.1 428.3 720.5 424.5 719.8 426.1 721.5 424.9 725.8 429.7 721.4 437.5 717.1 442.2 713.4 448.9 707.3 450.3 705.7 458.7 693.9 460.3 690.1 460.9 688.8 461.9 686.1 462.9 683.7 463.8 681.9 464 681.5 464.9 679.8 466.5 676.9 466.7 676.6 469 673.4 470.8 671.1 469.3 670.3 467.1 669 466 668.7 463 669.8 464.6 671.6 464.4 671.7 462.4 670 462.5 668.5 464.9 668.3 466 666.1 466.1 663.8 466.2 662.7 466.5 659.5 468.3 659.2 469.4 657.2 471 657.6 470.5 655.5 468.8 654.5 465.8 653.9 463.9 654.7 457 653.8 453.3 653 451.7 650.6 450.7 650.2 448.2 646.2 446.2 644.4 445.8 644.7 444.7 643.2 444.8 642.8 440.5 640.3 439.8 639.9 436.9 637.8 435.2 636.8 434.6 637.2 433.5 635.5 432.2 635.3 430.5 636 429.6 636.1 429.2 635.2 426.7 633.3 425.5 632.7 424.3 632.6 422.1 632.4 421.3 631 420.6 632.2 418.7 631.7 418.3 631.5 418 630.2 416 631 415.9 630.7 413 631.5 411.2 630 410.9 629.9 409.9 629.3 407.6 630.2 407.2 628.7 406.7 627.8 405.5 628.1 403.4 629.7 400.8 630.1 401.3 628.6 400.1 628.1 397.6 629.7 396.4 629.4 395.4 629.7 393.1 629.5 391.1 629.4 390.8 629.3 388.7 628.9 386.6 631.1 385.5 631.9 384 631.1 383.4 633.5 382.1 634.7 379.6 633.8 378.4 635.3 376.2 634.9 375.4 636.6 373.6 636.9 371.8 636.4 370.1 639.5 368.2 641.3 367.2 642.5 364.3 642.6 362.8 644.1 361.6 644.7 360.9 646 359.7 647.1 353.3 650.1 355.2 652 354.8 653.5 351.7 652.3 351.1 654.7 348.4 655.5 348.8 656.6 345.1 660.4 343 661.1 342.6 663.3 340.5 666.3 337.4 667.1 335.9 670.5 333.7 672.9 330 677.3 326.9 679.7 324.9 679.9 323 682 323.1 683.6 320.4 686.3 317.9 687.7 318.4 689.1 321.9 690 325.5 689.7 327.2 686.4 332.3 685.9 336.1 688.1 338.2 691.2 339.9 691.6 341.5 693.9 343.2 694.5 345.2 695.9 345.9 697.9 348.4 699.4 348.6 705.2 351.3 705 355.3 702.7 357 700.3 359.7 703.7 361.4 704.3 363.4 708.5 366.8 710 367.5 709.1 371.4 712.1 374 712 376.2 712.4 378.5 714.6 378.8 716.2 385.9 721.6 388.6 722.1Z",SC:"M417.8 615.1 416.3 614.3 415.6 614.5 413.9 614 412.8 613.5 411.6 613.4 408.8 613.6 408.2 613.6 406.5 613.8 403.9 613.4 403.7 613.3 400.4 611.4 398.7 612.1 394.6 611.5 393.7 614.9 393.7 615.2 393 617 392.8 618.2 393.2 621.2 393.9 623 393.9 623.9 394 624.9 392.8 626.1 390.8 629.3 391.1 629.4 393.1 629.5 395.4 629.7 396.4 629.4 397.6 629.7 400.1 628.1 401.3 628.6 400.8 630.1 403.4 629.7 405.5 628.1 406.7 627.8 407.2 628.7 407.6 630.2 409.9 629.3 410.9 629.9 411.2 630 413 631.5 415.9 630.7 416 631 418 630.2 418.3 631.5 418.7 631.7 420.6 632.2 421.3 631 422.1 632.4 424.3 632.6 425.5 632.7 426.7 633.3 429.2 635.2 429.6 636.1 430.5 636 432.2 635.3 433.5 635.5 434.6 637.2 435.2 636.8 436.9 637.8 439.8 639.9 440.5 640.3 444.8 642.8 444.7 643.2 445.8 644.7 446.2 644.4 448.2 646.2 450.7 650.2 451.7 650.6 453.3 653 457 653.8 463.9 654.7 465.8 653.9 468.8 654.5 470.5 655.5 471 657.6 469.4 657.2 468.3 659.2 466.5 659.5 466.2 662.7 466.1 663.8 466 666.1 464.9 668.3 462.5 668.5 462.4 670 464.4 671.7 464.6 671.6 463 669.8 466 668.7 467.1 669 469.3 670.3 470.8 671.1 472.1 669.4 474.6 666.6 477.3 663.9 479 662.5 481 660.9 487.4 657.3 489.5 655.2 490.3 652 491.7 647.6 492 644.3 492.6 643.5 492.8 642.4 494 641.1 496.8 634.7 495.9 633.4 493.8 633.9 492.5 632.1 492.3 630.2 492.8 630.1 494.4 629.8 494.2 628.1 492.6 628.8 492.6 627.2 491.8 625.2 491.6 624.3 492 622.6 491.2 621.5 490.8 620.5 491.1 617.9 491.4 617.2 492.5 615.4 494.4 610.8 493 609.8 492.5 606.1 490.8 606.3 485.6 606.4 485.2 606.3 480.1 607.2 477.6 609.3 476.3 609.9 475.2 610.2 475.2 610.4 472.9 611 471.2 610.3 467.8 607.3 466.5 607 465.3 606.8 461.5 607.9 460 607.4 458.1 608.8 454.2 606.6 453 607.8 451.7 610.1 451.6 610.2 447.8 612.2 446 611.1 444.3 611 441.9 612.4 440.9 613.4 440.6 614.1 440 614.7 441.5 618.1 441.2 618.8 438.2 619.5 437.8 620.5 435.9 617.9 429.8 617.9 425.9 617.2 423.3 615.6 417.8 615.1Z",SE:"M719 298.7 718.4 297.7 718.4 297.6 718.3 296.7 714.8 294.6 713 294.2 711.6 292.9 708.3 291.3 704.6 290 704.5 289.8 701 288.1 700 287.3 697.9 286.8 696.8 288.2 697.9 294.4 699.9 294.7 702 296.9 701.8 298.4 702.4 299 702.5 300 702.5 301.8 703 302.8 700.9 304.8 701.6 306.3 701.7 307.9 701.7 309.6 698.5 310.9 697.2 309.8 695.2 310.2 694 310 693.4 311.7 693.9 314.3 694.5 314.5 695.9 316.1 697.1 319.2 698.3 319.5 698.1 322.3 698.3 322.4 701.2 325 701.9 325.7 704.3 326.7 705.1 325.7 706.2 326.3 710.2 324.5 710.8 324.2 712.3 321.2 714.4 318.8 716.7 314.8 720.2 310.7 723.7 308.5 727.3 306.6 729.1 305.9 727.3 304.4 727.3 304.5 725.9 304.3 725.4 302.1 724.5 301.1 723.5 301.5 723.2 301.5 722.8 301.4 720.4 299.9 720.3 299.7 719.7 299.1 719 298.7Z",SP:"M529.4 525.9 530.6 524.5 530.9 522.7 532 522.3 532.9 520.6 532.9 519.1 530.9 518 530.2 517 528 516.6 527.6 516.8 525.6 517.5 523.2 517.8 523.5 516.5 522.5 514.8 521.1 513.2 521.1 512.6 520.5 510.3 519.9 508.7 519 506.8 519.8 504.4 521.4 503.4 520.6 501.2 520.7 501.1 520.6 500.7 519.1 499.7 517.7 498.3 518 495.9 518.9 494.6 518.9 494.5 517 492.4 513.9 489.6 512.8 490.1 511 491.1 508.6 489.9 506.9 490 506.5 491.7 506 492.6 504.4 490.9 502.5 493.1 500.1 491.1 499.8 492.7 495.2 492.6 493.6 492.8 491.5 493.4 489.9 493.1 488.1 493.3 486.8 495.5 487.2 497.9 486.8 498.7 485.3 498 484.9 493.5 483.3 493.2 482.3 495.5 481 496.3 479.6 495.2 479.5 494.7 478.7 492.5 479.8 489.6 475.8 489.8 472.7 488.7 470.1 488.7 467 489 464.4 488.6 463.2 487.8 461.9 487.8 458.7 487.7 456.4 486.1 454.3 486.6 453.3 487.5 451.9 488.6 448.8 489.6 448 490 445.8 491.9 445.8 492.1 443.7 495.6 439.2 497.1 437.7 499.2 434.8 502.2 434.7 502.3 433.5 504.8 433.7 508.5 430.8 510.6 428.8 513.4 429.1 516.1 427.2 519.2 424.4 520.7 425.3 522.7 423.3 524.6 420.2 528.5 418.8 531.2 417.6 532.6 413.7 534.9 408 538.2 405.6 539.6 405 541.1 406.3 541 406.8 540.6 408.5 540 411.2 540.7 411.6 540.8 415 540 416 540.9 417.8 540.8 418.2 540.8 420.8 541.2 422.9 541.7 423.5 540 423.8 539.2 425.8 539.5 425.9 539.5 428.3 540.7 428.5 540.9 429.2 541.3 431.9 542 433.6 541.8 435.8 542.4 437.2 541.7 439.4 541.9 440 542.1 441.7 543 442.4 543.3 445.7 544.4 446.2 544.2 447.2 544.5 449.2 545.8 449.8 547.5 452.9 546.6 454 546.5 455 547.1 458.2 546.8 458.6 547.4 461.3 547.5 462.6 547.2 464.2 546.6 465.7 547.5 465.7 547.6 468.4 549.7 468.7 549.9 468.9 550.1 470.7 551.3 472.4 553.9 472.2 555.2 473 557.3 472.5 558.5 472.9 561 473.5 561.5 473.8 563.8 472.8 564.7 474.2 566.4 474.5 566.2 475.2 568.3 478.1 570.5 477.8 572.1 479.7 574 479.7 575.7 479.7 576.2 479.8 576.4 478.5 578.6 478.6 580.7 480.6 581.4 481.5 580.8 482.1 581 486.3 580.9 488.3 580.9 492.3 580.8 493.6 581.9 493 585.6 492.4 587.3 493.2 588.8 496 586.8 497.7 587.9 499.4 587 502.1 593.2 505.7 590.3 505.8 588.2 509.2 584.9 515.3 580.9 521.9 576.5 525.4 572.7 529 570.6 531.1 569.5 535.2 567.8 535.9 567.2 536.9 567.7 539.2 567.6 540.2 565 545.9 563.1 551.4 563.8 552.2 564.7 554.5 564.1 553.9 562.1 554.3 560.5 556.8 559.6 560.9 558 564 554.9 565.2 555.9 567.5 555.5 564.5 552.3 565.6 551.6 566.2 548 569.2 546.7 569.4 546.6 572 545.4 575.4 545.4 578.4 542.1 577.2 540.7 575 540.4 574.6 540.9 572.6 540.9 569.1 540.7 568.2 539.1 565.9 536.9 565.2 537.3 562.9 538.2 560.2 538.5 559.8 538.6 559 539.3 557 540.9 554.4 541.7 554 541.1 552.9 540.5 550.9 541.7 551 540.7 549.3 541.6 549 540.1 548 541 548.7 541.6 546.6 543.3 548.4 543.9 547.3 545.2 545.3 545.9 543.6 545.5 541.8 546.4 539.1 545.8 536.1 546.6 535.5 544.9 536.4 543.9 533.6 542.7 535.2 541.9 534.6 540.6 533.9 539.1 532.1 538.1 530.8 537.5 530 536.1 528.8 534.9 529.6 533.2 529.8 532.5 530.3 532.5 531.2 531.6 528.8 530.6 530.2 529.2 530.8 528.9 529.4 525.9ZM556.6 565.3 557.7 563.5 555.6 562.5 553.6 566.5 557.4 565.9 556.6 565.3Z",TO:"M515.1 226.8 516 223.5 515.1 220 514.9 218.9 514.9 215.9 514.8 215.4 514.2 211.6 514.1 211.3 512.5 208.2 510.2 207.3 507.4 206.7 506.6 205.2 505.2 203.9 503.7 203.9 502.7 204.5 500.4 204.2 499.6 203.8 496.9 202.5 494.6 203 493.1 203.7 492.3 205.8 489.4 206 492.4 207.4 495.4 207.2 496.8 207.1 497.6 208.9 501.3 210.9 500.7 213 498.7 213.3 498.3 215.5 499.5 217.6 497.5 218.7 498.4 220.5 496.4 221.5 495.5 222.5 496.7 225.3 494.3 225.4 491.9 227.9 491.7 228.2 491.1 231.5 487.5 233.2 483.9 234.3 483 235 480.5 236.6 480.9 238.8 480.9 240.6 481 241.9 479.5 245.1 477.3 247.7 477.6 250 478 250.8 481.5 253.4 481.4 254.7 481.2 257.6 480.3 261.4 479.1 264.8 477.8 265.6 476.9 268 475.3 270.5 473.1 273.7 471.3 274.1 468.1 278.1 467.9 278.4 465.9 281.3 464.5 282.4 463.4 287.2 460.9 293.2 459.3 296.9 457.5 299.2 457.1 303.1 456 304.1 454.7 308.1 453.5 309 453.5 309.1 454.1 310.8 452.9 314.3 453.4 316.9 451.6 321.7 450.9 326.2 452.2 326.9 451.3 329.7 452.8 332.8 452 334.9 452 339.2 452.7 339.4 453.1 343.9 451.9 347.6 453.1 350.9 455.3 351.7 456.8 347.6 459.3 344.6 462.5 342.7 461 344.4 461.5 346 460.5 346.6 459.2 350.4 461.6 352.4 467 353.9 477.5 359.7 477.7 357.5 480 352.2 482.3 350.4 485.1 353.6 486.9 350.9 487.1 350.6 491.5 354.6 492.8 356.8 492.8 360.5 494 357.1 495.1 359.9 501.2 357.4 500.7 360.2 502.6 359.1 504.7 360.5 507.9 360.8 510.2 363.5 511.3 361.6 510.5 358.7 512.4 356.7 515.8 359.5 526.2 355.7 528.2 353.8 530.5 353.8 534 353.9 534.2 353.2 534.7 351 535.7 354.2 540.6 352.8 536.4 353.5 537.3 349.8 537 346.2 539 344.8 537.6 344.9 537.2 342.3 535.6 341.8 535.6 337 535.3 336 536.7 333.9 535.4 332.4 536.3 331.4 535.5 330.2 536.8 328.9 535.8 327.9 540 327.7 541.2 327.7 540.6 327.4 536 325.4 534.3 325.7 531.9 322.8 532.1 320.8 536.2 314.4 537.6 314.4 537.7 312 538.8 311.8 540.3 308.3 546.3 305.1 546.7 302.5 548.6 301.2 548.2 299.2 547.8 300.9 544.8 301.4 544.5 303.4 542.6 301.1 542.4 299.8 539 299.8 536.5 299.8 534.2 297.7 533.6 294.4 532.9 292.3 530.3 291.2 531.3 288.2 532.3 287.7 530.5 284.8 528.2 284.9 526.4 282.5 526.9 280.9 524.8 279.5 524.6 278.1 522.1 278.1 522.7 276.8 525 274.1 525.3 268.9 526.4 267.8 527.6 264.6 528.7 264.9 532.2 263.6 533.8 258.8 533.1 256.9 531 255.4 527.2 256.5 523.1 258.6 519.7 254.4 518.6 253.7 515.1 248.7 513.7 246.6 511.9 246.6 514.1 244.6 512.9 243.2 510.8 243.9 510.1 242.8 509 241.2 510.6 241 512.8 238.4 513.3 234.9 513.8 232.2 514.4 229.9 515.2 228.3 515.1 226.8Z"};
+const BR_MAP_W=760,BR_MAP_H=756.8;
+const BR_UF_CENT={AC:[64.4,283.9],AL:[723.7,285.6],AM:[184.9,165.6],AP:[423.4,71.4],BA:[624.4,346.7],CE:[668,208.3],DF:[506.9,409],ES:[640.1,483.3],GO:[481.3,410.8],MA:[557.3,193.2],MG:[559.1,470.3],MS:[372.8,495.1],MT:[354.5,362.2],PA:[421.8,149.7],PB:[719.6,239.7],PE:[700.7,262.6],PI:[604.4,238.9],PR:[436.1,578.6],RJ:[597.5,534.2],RN:[721.1,220.5],RO:[209.6,309.2],RR:[235.6,60],RS:[410,681.6],SC:[446.4,631],SE:[708.8,305.8],SP:[496.3,534.8],TO:[503.4,287.2]};
+const UF_NOMES={acre:'AC',alagoas:'AL',amapa:'AP',amazonas:'AM',bahia:'BA',ceara:'CE','distrito federal':'DF','federal district':'DF','espirito santo':'ES',goias:'GO',maranhao:'MA','mato grosso':'MT','mato grosso do sul':'MS','minas gerais':'MG',para:'PA',paraiba:'PB',parana:'PR',pernambuco:'PE',piaui:'PI','rio de janeiro':'RJ','rio grande do norte':'RN','rio grande do sul':'RS',rondonia:'RO',roraima:'RR','santa catarina':'SC','sao paulo':'SP',sergipe:'SE',tocantins:'TO'};
+function ufDe(nome){ if(!nome)return null; let n=String(nome).toLowerCase().replace(/\s*\((state|estado)\)\s*/g,'').trim(); try{n=n.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){} return UF_NOMES[n]||null; }
+function mapaBRSVG(regs){
+  const byUF={}; let semUF=0;
+  regs.forEach(r=>{const uf=ufDe(r.regiao); if(uf)byUF[uf]=(byUF[uf]||0)+(r.impressions||0); else semUF+=(r.impressions||0);});
+  const tot=Object.values(byUF).reduce((a,b)=>a+b,0)||1;
+  const mx=Math.max(...Object.values(byUF),1);
+  let g='';
+  // estados (choropleth ouro por impressões; contorno hairline)
+  Object.keys(BR_UF_PATHS).forEach(uf=>{
+    const v=byUF[uf]||0; const t=v/mx;
+    const fill=v?('color-mix(in srgb, var(--primary) '+Math.round(8+t*88)+'%, var(--surface))'):'color-mix(in srgb, var(--muted) 6%, var(--surface))';
+    const th='<b>'+uf+'</b><br>'+cmp1(v)+' impressões ('+(v/tot*100).toFixed(1)+'%)';
+    g+='<path data-th="'+esc(th)+'" d="'+BR_UF_PATHS[uf]+'" fill="'+fill+'" stroke="var(--hairline-strong)" stroke-width="1" style="cursor:default"/>';
+  });
+  // siglas nos centroides (só estados com área razoável p/ não poluir o litoral)
+  const SKIP_LBL={DF:1,SE:1,AL:1,RN:1,PB:1,ES:1,RJ:1};
+  Object.keys(BR_UF_CENT).forEach(uf=>{
+    if(SKIP_LBL[uf])return;
+    const [cx,cy]=BR_UF_CENT[uf]; const v=byUF[uf]||0; const t=v/mx;
+    const th='<b>'+uf+'</b><br>'+cmp1(v)+' impressões ('+(v/tot*100).toFixed(1)+'%)';
+    g+='<text data-th="'+esc(th)+'" x="'+cx+'" y="'+cy+'" text-anchor="middle" font-family="var(--f-mono),monospace" font-size="13" fill="'+(t>0.55?'var(--on-primary)':'var(--muted)')+'" style="pointer-events:none">'+uf+'</text>';
+  });
+  return {svg:g, W:BR_MAP_W, H:BR_MAP_H, semUF, tot, geo:true};
+}
+function drawDemografia(){
+  const d=B.demografia;const box=document.getElementById('audBox');if(!box)return;
+  if(!d||!(d.idade_genero||[]).length){box.innerHTML='<div class="roadmap"><b>Sem dados de demografia.</b> Rode a coleta ao vivo (Modo API) — a demografia (idade, gênero, região) vem dos breakdowns dos anúncios, sem precisar de token de página.</div>';return;}
+  const ages={};let totF=0,totM=0;
+  d.idade_genero.forEach(x=>{const a=x.idade||'?';if(!ages[a])ages[a]={idade:a,female:0,male:0};const v=x.impressions||0;if(x.genero==='female'){ages[a].female+=v;totF+=v;}else if(x.genero==='male'){ages[a].male+=v;totM+=v;}});
+  const rows=Object.values(ages).sort((a,b)=>a.idade.localeCompare(b.idade));
+  const mx=Math.max(...rows.map(r=>r.female+r.male))||1;const tot=totF+totM||1;
+  const domin=rows.slice().sort((a,b)=>(b.female+b.male)-(a.female+a.male))[0];
+  const dominShare=domin?((domin.female+domin.male)/tot*100).toFixed(0):null;
+  let h='<div class="kpis" style="grid-template-columns:repeat(3,1fr)">';
+  h+='<div class="kpi"><div class="lbl">Faixa dominante</div><div class="val">'+(domin?domin.idade:'—')+'</div><div class="dlt flat">'+(dominShare?dominShare+'% das impressões':'por impressões')+'</div></div>';
+  h+='<div class="kpi"><div class="lbl">Feminino</div><div class="val">'+Math.round(totF/tot*100)+'%</div><div class="dlt flat">'+cmp1(totF)+' impr</div></div>';
+  h+='<div class="kpi"><div class="lbl">Masculino</div><div class="val">'+Math.round(totM/tot*100)+'%</div><div class="dlt flat">'+cmp1(totM)+' impr</div></div></div>';
+  // ---- pirâmide etária (feminino ← centro → masculino) ----
+  const pir=rows.slice().sort((a,b)=>b.idade.localeCompare(a.idade)); // mais velho no topo
+  const maxSide=Math.max(1,...pir.map(r=>Math.max(r.female,r.male)));
+  const PW=760, rowH=34, padTop=8, axisH=24, gap=74;
+  const cx=PW/2, leftEdge=cx-gap/2, rightEdge=cx+gap/2, sideW=leftEdge-46;
+  const PH=padTop+pir.length*rowH+axisH;
+  const colF=PAL[0], colM=PAL[3%PAL.length];
+  let pg='';
+  // ticks de escala (0 / meio / máx) dos dois lados
+  [0,0.5,1].forEach(t=>{const xw=t*sideW;
+    ['L','R'].forEach(side=>{const xx=side==='L'?leftEdge-xw:rightEdge+xw;
+      pg+='<line x1="'+xx.toFixed(1)+'" y1="'+padTop+'" x2="'+xx.toFixed(1)+'" y2="'+(padTop+pir.length*rowH)+'" stroke="var(--hairline)" opacity=".5"/>';
+      pg+='<text x="'+xx.toFixed(1)+'" y="'+(PH-6)+'" text-anchor="middle" class="tickL">'+(t?cmp1(maxSide*t):'0')+'</text>';});
+  });
+  pir.forEach((r,i)=>{const yy=padTop+i*rowH, yc=yy+rowH/2;
+    const wf=r.female/maxSide*sideW, wm=r.male/maxSide*sideW;
+    const rt=r.female+r.male, share=(rt/tot*100).toFixed(1);
+    const th=esc('<b>'+r.idade+'</b> — '+share+'% do total ('+cmp1(rt)+' impr)<br><span style="color:'+colF+'">■</span> feminino '+cmp1(r.female)+' ('+(rt?(r.female/rt*100).toFixed(0):0)+'%)<br><span style="color:'+colM+'">■</span> masculino '+cmp1(r.male)+' ('+(rt?(r.male/rt*100).toFixed(0):0)+'%)');
+    pg+='<rect data-th="'+th+'" x="'+(leftEdge-wf).toFixed(1)+'" y="'+(yy+5)+'" width="'+wf.toFixed(1)+'" height="'+(rowH-11)+'" rx="2" fill="'+colF+'" opacity=".9"/>';
+    pg+='<rect data-th="'+th+'" x="'+rightEdge+'" y="'+(yy+5)+'" width="'+wm.toFixed(1)+'" height="'+(rowH-11)+'" rx="2" fill="'+colM+'" opacity=".9"/>';
+    pg+='<text x="'+cx+'" y="'+(yc+4)+'" text-anchor="middle" font-family="var(--f-mono),monospace" font-size="11" fill="var(--text)">'+esc(r.idade)+'</text>';
+    if(wf>26)pg+='<text x="'+(leftEdge-wf+6).toFixed(1)+'" y="'+(yc+4)+'" text-anchor="start" font-family="var(--f-mono),monospace" font-size="10" fill="var(--on-primary)">'+cmp1(r.female)+'</text>';
+    if(wm>26)pg+='<text x="'+(rightEdge+wm-6).toFixed(1)+'" y="'+(yc+4)+'" text-anchor="end" font-family="var(--f-mono),monospace" font-size="10" fill="var(--on-primary)">'+cmp1(r.male)+'</text>';
+  });
+  h+='<div class="card" style="margin-top:14px"><div class="mini-h">Pirâmide etária — impressões por idade × gênero <span class="pill real">Real</span></div>';
+  h+='<p class="seal" style="margin-bottom:2px"><span style="color:'+colF+'">■</span> feminino (esquerda) · <span style="color:'+colM+'">■</span> masculino (direita)</p>';
+  h+='<svg class="chart" viewBox="0 0 '+PW+' '+PH+'" preserveAspectRatio="xMidYMid meet" role="img">'+pg+'</svg>';
+  h+='<p class="seal">Passe o mouse para o detalhe por faixa. <b>"65+"</b> é um bucket aberto da Meta (soma todos ≥65), por isso acumula mais; <b>Unknown</b> = idade/gênero não informado.</p></div>';
+  // ---- mapa do Brasil (largura cheia; barras de regiões removidas) ----
+  const regs=d.regiao||[];
+  if(regs.length){
+    h+='<div class="card" style="margin-top:14px"><div class="mini-h">Mapa do Brasil — impressões por estado <span class="pill real">Real</span></div><svg class="chart" id="brMap" role="img"></svg><p class="seal" id="brMapNota"></p></div>';
+  }
+  box.innerHTML=h;
+  if(regs.length){
+    const bm=mapaBRSVG(regs);
+    const mapEl=document.getElementById('brMap');
+    mapEl.setAttribute('viewBox','0 0 '+bm.W+' '+bm.H);
+    mapEl.innerHTML=bm.svg;
+    document.getElementById('brMapNota').innerHTML=(bm.geo?'Mapa por UF — ':'Cartograma esquemático (tiles por UF) — ')+'mais dourado = mais impressões. Passe o mouse para valores e %.'+(bm.semUF?' <span style="opacity:.7">('+cmp1(bm.semUF)+' impr sem UF identificada)</span>':'');
+  }
+}
+
+// ---------- scorecard de saúde (regras sobre dados existentes) ----------
+function scorecard(){
+  const el=document.getElementById('scorecard');if(!el)return;
+  const d=(B.series&&B.series.dia||[]).filter(p=>p.spend!=null);
+  const cmp=B.comparacao||{};const dl=cmp.deltas||{};
+  const freqMax=d.length?Math.max(...d.map(p=>p.frequency||0)):null;
+  const rows=[];
+  const push=(cls,txt,val)=>rows.push('<div class="sc-row"><span class="sc-dot '+cls+'"></span><span class="sc-txt">'+txt+'</span><span class="sc-val">'+val+'</span></div>');
+  // frequência (fadiga)
+  if(freqMax!=null)push(freqMax>3?'bad':(freqMax>2?'warn':'ok'),'Frequência (fadiga de público)',freqMax.toFixed(1));
+  // CTR tendência (deltas)
+  if(dl.ctr!=null)push(dl.ctr>=0?'ok':(dl.ctr>-15?'warn':'bad'),'Tendência de CTR (vs. período anterior)',(dl.ctr>0?'+':'')+dl.ctr+'%');
+  // CPM (leilão)
+  if(dl.cpm!=null)push(dl.cpm<=0?'ok':(dl.cpm<20?'warn':'bad'),'CPM (pressão de leilão)',(dl.cpm>0?'+':'')+dl.cpm+'%');
+  // amostra de conversão
+  const compras=cmp.periodo_b?cmp.periodo_b.purchases:null;
+  if(compras!=null)push(compras>=10?'ok':'warn','Amostra de conversão (30d)',int(compras)+(compras<10?' — baixa p/ CPA':''));
+  el.innerHTML=rows.length?rows.join(''):'<p class="ev">Sem dados suficientes para o scorecard.</p>';
+}
+
+// ---------- "o que mudou" (drivers da variação, selo Calculado) ----------
+function oQueMudou(cmp){
+  cmp=cmp||B.comparacao;
+  const el=document.getElementById('oquemudou');if(!el)return;
+  const dl=(cmp||{}).deltas||{};
+  const nomes={spend:'Gasto',impressions:'Impressões',clicks:'Cliques',ctr:'CTR',cpm:'CPM',purchases:'Compras'};
+  const items=Object.keys(nomes).filter(k=>dl[k]!=null).map(k=>({k,nome:nomes[k],v:dl[k]}))
+    .sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
+  if(!items.length){el.innerHTML='<p class="ev">Sem comparação de períodos disponível.</p>';return;}
+  const rot=(cmp&&cmp.rotuloComparacao)||'os últimos 30 dias e os 30 anteriores';
+  el.innerHTML=items.map(it=>{const cls=it.v>0?'pos':(it.v<0?'neg':'flat');return '<div class="chg-row"><span>'+it.nome+'</span><span class="chg-v '+cls+'">'+(it.v>0?'▲ +':(it.v<0?'▼ ':'→ '))+it.v+'%</span></div>';}).join('')
+    +'<p class="ev" style="margin-top:8px">Variação entre '+rot+' <span class="pill calc">Calculado</span>.</p>';
+}
+
+// ---------- heatmap dia×hora ----------
+let heatMetric='ctr';
+const HEAT_METRICS=[
+  {k:'ctr',label:'CTR',fmt:pct,selo:'calc'},{k:'spend',label:'Gasto',fmt:brlC,selo:'real'},
+  {k:'clicks',label:'Cliques',fmt:cmp1,selo:'real'},{k:'impressions',label:'Impressões',fmt:cmp1,selo:'real'},
+];
+const HEAT_LIMIAR=500; // impressões mínimas p/ a célula de CTR ser confiável
+function drawHeatmap(){
+  const h=B.heatmap;const sec=document.getElementById('heatSec');const svg=document.getElementById('heatChart');
+  if(!h||!(h.celulas||[]).length){if(sec)sec.style.display='none';return;}
+  const HM=HEAT_METRICS.find(m=>m.k===heatMetric)||HEAT_METRICS[0];
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const W=820,padL=44,padT=18,cw=(W-padL-8)/24,ch=26,H=padT+7*ch+30;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  const grid={};h.celulas.forEach(c=>grid[c.dia+'-'+c.hora]=c);
+  const okAmostra=c=>heatMetric!=='ctr'||((c.impressions||0)>=HEAT_LIMIAR);
+  const cellV=c=>c?(c[heatMetric]!=null?c[heatMetric]:null):null;
+  const valid=h.celulas.filter(c=>okAmostra(c)&&cellV(c)!=null).map(cellV);
+  const mx=valid.length?Math.max(...valid):1, mn=valid.length?Math.min(...valid):0;
+  let g='';
+  for(let dia=0;dia<7;dia++){
+    g+='<text class="tickL" x="'+(padL-6)+'" y="'+(padT+dia*ch+ch/2+3)+'" text-anchor="end">'+dias[dia]+'</text>';
+    for(let hora=0;hora<24;hora++){
+      const c=grid[dia+'-'+hora]; const v=cellV(c); const rot=dias[dia]+' · '+String(hora).padStart(2,'0')+'h';
+      let fill,th;
+      if(!c||v==null){ fill='color-mix(in srgb, var(--muted) 5%, var(--surface))'; th='<b>'+rot+'</b><br>sem dado'; }
+      else if(!okAmostra(c)){ fill='color-mix(in srgb, var(--muted) 7%, var(--surface))'; th='<b>'+rot+'</b><br><span style="color:var(--warn)">amostra insuficiente</span> ('+cmp1(c.impressions)+' impr &lt; '+HEAT_LIMIAR+')'; }
+      else { const t=(mx>mn)?(v-mn)/(mx-mn):0.5; fill='color-mix(in srgb, var(--primary) '+Math.round(8+t*88)+'%, var(--surface))';
+        th='<b>'+rot+'</b><br>'+HM.label+': '+HM.fmt(v)+(heatMetric==='ctr'?' (Calculado)':' (Real)')+'<br>'+cmp1(c.impressions)+' impr · '+cmp1(c.clicks)+' cliques · '+brlC(c.spend); }
+      g+='<rect class="hc" data-th="'+esc(th)+'" x="'+(padL+hora*cw)+'" y="'+(padT+dia*ch)+'" width="'+cw.toFixed(1)+'" height="'+ch+'" fill="'+fill+'"/>';
+    }
+  }
+  for(let hora=0;hora<24;hora+=3)g+='<text class="tickL" x="'+(padL+hora*cw+cw/2)+'" y="'+(padT+7*ch+16)+'" text-anchor="middle">'+String(hora).padStart(2,'0')+'h</text>';
+  svg.innerHTML=g;
+  // chips de métrica
+  const chipsEl=document.getElementById('heatChips');
+  if(chipsEl)chipsEl.innerHTML=HEAT_METRICS.map(m=>'<button class="chip'+(m.k===heatMetric?' on':'')+'" data-hm="'+m.k+'">'+m.label+'</button>').join('');
+  if(chipsEl&&!chipsEl._wired&&chipsEl.addEventListener){chipsEl._wired=true;chipsEl.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-hm]');if(b){heatMetric=b.getAttribute('data-hm');drawHeatmap();}});}
+  // melhores janelas (amostra ok) + queima (gasto alto, CTR baixo) — Calculado
+  const bestEl=document.getElementById('heatBest');
+  if(bestEl){
+    const conf=h.celulas.filter(c=>(c.impressions||0)>=HEAT_LIMIAR&&c.ctr!=null);
+    const top=conf.slice().sort((a,b)=>b.ctr-a.ctr).slice(0,3);
+    let bh=top.map(c=>'<span class="chip on" data-th="'+esc('<b>'+dias[c.dia]+' '+String(c.hora).padStart(2,'0')+'h</b><br>CTR '+pct(c.ctr)+' · '+cmp1(c.impressions)+' impr')+'">★ '+dias[c.dia]+' '+String(c.hora).padStart(2,'0')+'h · '+pct(c.ctr)+'</span>').join('');
+    const gastos=conf.map(c=>c.spend||0).sort((a,b)=>a-b);
+    const p75=gastos.length?gastos[Math.floor(gastos.length*0.75)]:0;
+    const queima=conf.filter(c=>(c.spend||0)>=p75&&p75>0).sort((a,b)=>a.ctr-b.ctr)[0];
+    if(queima)bh+='<span class="chip warn" data-th="'+esc('<b>'+dias[queima.dia]+' '+String(queima.hora).padStart(2,'0')+'h</b><br>gasto alto ('+brlC(queima.spend)+') com o pior CTR ('+pct(queima.ctr)+') — janela que queima verba')+'">⚠ queima: '+dias[queima.dia]+' '+String(queima.hora).padStart(2,'0')+'h</span>';
+    bestEl.innerHTML=bh?('<span class="seal" style="margin-right:4px">Melhores janelas'+infoIcon('CTR')+':</span>'+bh):'';
+  }
+  // legenda de escala
+  const leg=document.getElementById('heatLegend');
+  if(leg)leg.innerHTML='<span>'+HM.fmt(mn)+'</span><span class="grad" style="background:linear-gradient(90deg,color-mix(in srgb,var(--primary) 8%,var(--surface)),color-mix(in srgb,var(--primary) 96%,var(--surface)))"></span><span>'+HM.fmt(mx)+'</span><span style="margin-left:10px">célula apagada = amostra &lt; '+HEAT_LIMIAR+' impr</span>';
+  document.getElementById('heatNota').innerHTML='Mais dourado = '+HM.label+' maior naquele dia×hora. '+(heatMetric==='ctr'?'CTR agregado <span class="pill calc">Calculado</span>; células sem amostra mínima não pintam (evita ruído).':'Somatório do período <span class="pill real">Real</span>.')+' Passe o mouse para o detalhe.';
+}
+
+// ---------- funil de conversão ----------
+const FUNIL_EVENTO={
+  'Impressões':'impressions — vezes que os anúncios foram exibidos.',
+  'Cliques no link':'inline_link_clicks — cliques no link do anúncio.',
+  'Landing page view':'landing_page_view — carregamentos da página de destino.',
+  'Add. ao carrinho':'omni_add_to_cart — evento de carrinho do pixel. Muitos checkouts (Hotmart) NÃO disparam este evento.',
+  'Checkout iniciado':'omni_initiated_checkout — início de checkout do pixel.',
+  'Compra':'omni_purchase — compra atribuída pelo pixel (≠ caixa da Hotmart).',
+};
+const FUNIL_STAGES=[
+  {k:'impressions',nome:'Impressões'},{k:'cliques',nome:'Cliques no link'},{k:'lpv',nome:'Landing page view'},
+  {k:'carrinho',nome:'Add. ao carrinho'},{k:'checkout',nome:'Checkout iniciado'},{k:'compra',nome:'Compra'},
+];
+let funilFrom=null, funilTo=null, funilStages=null; // funilStages: array de keys visíveis (null=todas)
+function funilDias(){ return (B.funil_por_dia||[]).filter(d=>(!funilFrom||d.data>=funilFrom)&&(!funilTo||d.data<=funilTo)); }
+function funilRangeInfo(){ const dd=(B.funil_por_dia||[]).map(d=>d.data).sort(); return {min:dd[0]||null,max:dd[dd.length-1]||null}; }
+function drawFunil(){
+  const sec=document.getElementById('funilSec');const svg=document.getElementById('funilChart');
+  const FCD=B.funil_por_campanha_dia||[]; // [cid,data,impr,cliques,lpv,carrinho,checkout,compra]
+  const temDia=(B.funil_por_dia||[]).length>0;
+  const f=B.funil;
+  if(!temDia && !FCD.length && (!f||!(f.etapas||[]).length)){if(sec)sec.style.display='none';return;}
+  const selCamp=(campFilterSel&&campFilterSel.length&&FCD.length)?new Set(campFilterSel.map(String)):null;
+  // soma por etapa: por campanha×dia quando há seleção; senão diário agregado; fallback B.funil
+  let stageVals={};
+  const IDX={impressions:2,cliques:3,lpv:4,carrinho:5,checkout:6,compra:7};
+  if(selCamp){
+    const rows=FCD.filter(r=>selCamp.has(String(r[0]))&&(!funilFrom||r[1]>=funilFrom)&&(!funilTo||r[1]<=funilTo));
+    FUNIL_STAGES.forEach(s=>stageVals[s.k]=rows.reduce((a,r)=>a+(r[IDX[s.k]]||0),0));
+  }
+  else if(temDia){ const dias=funilDias(); FUNIL_STAGES.forEach(s=>stageVals[s.k]=dias.reduce((a,d)=>a+(d[s.k]||0),0)); }
+  else { FUNIL_STAGES.forEach(s=>{const e=(f.etapas||[]).find(x=>x.nome===s.nome);stageVals[s.k]=e?e.valor:0;}); }
+  const stagesOn=funilStages||FUNIL_STAGES.map(s=>s.k);
+  const et=FUNIL_STAGES.filter(s=>stagesOn.includes(s.k)&&stageVals[s.k]>0).map(s=>({k:s.k,nome:s.nome,valor:stageVals[s.k]}));
+  const W=820,padL=170,padR=190,padT=12,rowH=Math.min(46,(300-padT*2)/Math.max(1,et.length)),H=padT*2+Math.max(1,et.length)*rowH;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  const top=et.length?Math.max(...et.map(e=>e.valor)):1;
+  const cliques=stageVals.cliques||null;
+  let g=''; let temQuebra=false;
+  et.forEach((e,i)=>{
+    const yy=padT+i*rowH+6;const bw=Math.max(3,(e.valor/top)*(W-padL-padR));
+    const col=PAL[FUNIL_STAGES.findIndex(s=>s.k===e.k)%PAL.length];
+    const pctTopo=top?(e.valor/top*100):null;
+    const quebra=i>0 && e.valor>et[i-1].valor; if(quebra)temQuebra=true;
+    const th=esc('<b>'+e.nome+'</b><br>'+int(e.valor)+(pctTopo!=null?' · '+pctTopo.toFixed(2)+'% do topo':'')
+      +(cliques&&/carrinho|checkout|compra/i.test(e.nome)?'<br>'+(e.valor/cliques*100).toFixed(2)+'% dos cliques':'')
+      +'<br><span style="opacity:.75">'+(FUNIL_EVENTO[e.nome]||'')+'</span>'+(quebra?'<br><span style="color:var(--warn)">↑ maior que a etapa acima — evento independente, não aninhado</span>':''));
+    g+='<text class="barlbl" data-th="'+th+'" x="0" y="'+(yy+rowH/2)+'">'+esc(e.nome)+'</text>';
+    g+='<rect data-th="'+th+'" x="'+padL+'" y="'+yy+'" width="'+bw.toFixed(1)+'" height="'+(rowH-10)+'" rx="3" fill="'+col+'" opacity=".85"/>';
+    const pctTxt=pctTopo==null?'':(pctTopo>0&&pctTopo<0.01?'<0,01% topo':pctTopo.toFixed(pctTopo<1?2:1).replace('.',',')+'% topo');
+    g+='<text class="barval" data-th="'+th+'" x="'+(padL+bw+8)+'" y="'+(yy+rowH/2)+'">'+int(e.valor)+(pctTxt?' · '+pctTxt:'')+(quebra?' <tspan fill="var(--warn)">⚠</tspan>':'')+'</text>';
+  });
+  if(!et.length)g='<text class="tickL" x="'+(W/2)+'" y="40" text-anchor="middle">nenhuma etapa selecionada / sem dados na janela</text>';
+  svg.innerHTML=g;
+  const nota=document.getElementById('funilNota');
+  const ri=funilRangeInfo();
+  const campTxt=selCamp?('<b>'+selCamp.size+' campanha(s) selecionada(s)</b> · '):((campFilterSel&&campFilterSel.length&&!FCD.length)?'<span style="color:var(--warn)">seleção de campanhas indisponível neste bundle (recolete com a skill)</span> · ':'');
+  const janTxt=(temDia||FCD.length)?('Janela: '+(funilFrom||ri.min||'—')+' → '+(funilTo||ri.max||'—')+'. '):'';
+  if(nota)nota.innerHTML=campTxt+janTxt+'Cada etapa é um <b>evento independente do pixel da Meta</b> (array <code>actions</code>) — <b>não é um funil aninhado</b>. Por isso "Add. ao carrinho" pode ser <b>menor</b> que "Checkout iniciado": o checkout (ex.: Hotmart) costuma não disparar o evento de carrinho. As % são sobre o <b>topo</b> (maior etapa exibida). <span class="pill real">Real</span>'+(temQuebra?' · <span style="color:var(--warn)">⚠ = evento maior que o de cima</span>':'');
+}
+
+// ---------- vendas & atribuição (caixa real × Meta) ----------
+function barsSVG(items,fmt,W,H){
+  if(!items.length)return '<text x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle" class="tickL">sem dados</text>';
+  const padL=130,padR=95,padT=8;const rowH=Math.min(34,(H-padT*2)/items.length);
+  const mx=Math.max(...items.map(i=>i.valor||0))||1;let g='';
+  items.forEach((it,i)=>{const yy=padT+i*rowH+4;const bw=Math.max(2,(it.valor/mx)*(W-padL-padR));
+    const th=it.th?' data-th="'+esc(it.th)+'"':'';
+    g+='<text class="barlbl"'+th+' x="0" y="'+(yy+rowH/2+3)+'" font-size="11">'+esc(it.nome.length>18?it.nome.slice(0,17)+'…':it.nome)+'</text>';
+    g+='<rect'+th+' x="'+padL+'" y="'+yy+'" width="'+bw.toFixed(1)+'" height="'+(rowH-9)+'" rx="2" fill="'+PAL[i%PAL.length]+'" opacity=".85"></rect>';
+    g+='<text class="barval" x="'+Math.min(padL+bw+6,W-4).toFixed(1)+'" y="'+(yy+rowH/2+3)+'">'+fmt(it.valor)+'</text>';});
+  return g;
+}
+// agrega o overlay diário em mês/quarter (soma gasto e receita; receita toda-nula fica null)
+function aggOverlay(pts,gran){
+  if(gran==='dia')return pts;
+  const key=d=>{ if(gran==='mes')return d.slice(0,7); const q=Math.floor((+d.slice(5,7)-1)/3)+1; return d.slice(0,4)+'-Q'+q; };
+  const m=new Map();
+  pts.forEach(p=>{const k=key(p.data);
+    if(!m.has(k))m.set(k,{data:k,gasto:0,receita:null});
+    const e=m.get(k); e.gasto+=(p.gasto||0);
+    if(p.receita!=null)e.receita=(e.receita||0)+p.receita;
+  });
+  return [...m.values()].sort((a,b)=>a.data.localeCompare(b.data));
+}
+function overlaySVG(pts,W,H,gran){
+  gran=gran||'dia';
+  if(!pts.length)return '<text x="'+(W/2)+'" y="'+(H/2)+'" text-anchor="middle" class="tickL">sem dados</text>';
+  const padL=56,padR=62,padT=14,padB=30;
+  const gmax=Math.max(...pts.map(p=>p.gasto||0))||1,rmax=Math.max(...pts.map(p=>p.receita||0))||1;
+  const x=i=>padL+(pts.length<=1?0:(i/(pts.length-1))*(W-padL-padR));
+  const yg=v=>H-padB-(v/gmax)*(H-padT-padB);
+  const yr=v=>H-padB-(v/rmax)*(H-padT-padB);
+  let g='';
+  // grade + eixos duplos: gasto (cinza, esq.) e receita (dourado, dir.)
+  [0,0.5,1].forEach(t=>{const yy=H-padB-t*(H-padT-padB);
+    g+='<line class="grid" x1="'+padL+'" y1="'+yy.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+yy.toFixed(1)+'"/>';
+    g+='<text class="tickL" x="'+(padL-6)+'" y="'+(yy+4).toFixed(1)+'" text-anchor="end" fill="var(--muted)">'+brlC(gmax*t)+'</text>';
+    g+='<text class="tickL" x="'+(W-padR+6)+'" y="'+(yy+4).toFixed(1)+'" text-anchor="start" fill="'+PAL[0]+'">'+brlC(rmax*t)+'</text>';});
+  const fg=d=>gran==='dia'?fmtPeriodo(d,'dia'):(gran==='mes'?fmtPeriodo(d+'-01','mes'):fmtPeriodo(d,'quarter'));
+  const bw=Math.max(2,(W-padL-padR)/pts.length*0.6);
+  pts.forEach((p,i)=>{if(!p.gasto)return;const hh=(p.gasto/gmax)*(H-padT-padB);
+    const th=esc('<b>'+fg(p.data)+'</b><br>Gasto Meta '+brl(p.gasto)+(p.receita!=null?'<br>Receita caixa '+brl(p.receita):''));
+    g+='<rect data-th="'+th+'" x="'+(x(i)-bw/2).toFixed(1)+'" y="'+(H-padB-hh).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hh.toFixed(1)+'" fill="var(--muted)" opacity=".45"/>';});
+  let d='',s=false;pts.forEach((p,i)=>{if(p.receita==null)return;d+=(s?'L':'M')+x(i).toFixed(1)+' '+yr(p.receita).toFixed(1)+' ';s=true;});
+  g+='<path d="'+d+'" fill="none" stroke="'+PAL[0]+'" stroke-width="2"/>';
+  pts.forEach((p,i)=>{if(p.receita==null)return;
+    const th=esc('<b>'+fg(p.data)+'</b><br>Receita caixa '+brl(p.receita)+(p.gasto?'<br>Gasto Meta '+brl(p.gasto):''));
+    g+='<circle class="dot" data-th="'+th+'" cx="'+x(i).toFixed(1)+'" cy="'+yr(p.receita).toFixed(1)+'" r="'+(gran==='dia'?2.5:3.5)+'" stroke="'+PAL[0]+'"/>';});
+  // eixo X esparso e legível
+  const nLab=Math.min(gran==='dia'?7:12,pts.length);const idxs=new Set();
+  for(let k=0;k<nLab;k++)idxs.add(Math.round(k*(pts.length-1)/Math.max(1,nLab-1)));
+  pts.forEach((p,i)=>{if(!idxs.has(i))return;g+='<text class="tickL" x="'+x(i).toFixed(1)+'" y="'+(H-padB+16)+'" text-anchor="middle">'+fg(p.data)+'</text>';});
+  return g;
+}
+let prodSel=(OV.prodSel&&OV.prodSel.length)?OV.prodSel.slice():null; // null = todos
+let vendaFrom=null, vendaTo=null; // filtro de data das vendas (null = sem limite)
+let ovGran='dia'; // granularidade do overlay Gasto×Receita
+function drawVendas(){
+  const V=B.vendas,A=B.atribuicao;
+  if(!V||V.conectada===false){
+    document.getElementById('caixaKpis').innerHTML='';
+    document.getElementById('atribNota').innerHTML='<div class="roadmap"><b>Vendas não conectadas.</b> '+((V&&V.motivo)||'Conecte a Hotmart para ver o caixa real e a atribuição.')+' Guia: aula-04/docs/tutorial-hotmart.md</div>';
+    document.getElementById('vendasGrid').style.display='none';
+    const pc0=document.getElementById('prodChips'); if(pc0)pc0.innerHTML='';
+    return;
+  }
+  const PDP=V.por_dia_produto||[];
+  const allProds=(V.por_produto||[]).map(p=>p.produto);
+  const sel=(prodSel&&prodSel.length)?prodSel.filter(p=>allProds.includes(p)):null;
+  const dateActive=Boolean(vendaFrom||vendaTo);
+  const filtrado=Boolean((( sel&&sel.length)||dateActive)&&PDP.length);
+  // agregados recalculados de dia×produto (produto e/ou data) — tudo Real
+  let receita=V.resumo?V.resumo.receita_aprovada:0, nv=V.resumo?V.resumo.vendas_aprovadas:0;
+  let prodList=V.por_produto||[], recDia=null;
+  let gastoMeta=A?A.gasto_meta:null;
+  if(filtrado){
+    let rows=PDP;
+    if(sel&&sel.length)rows=rows.filter(x=>sel.includes(x.produto));
+    if(vendaFrom)rows=rows.filter(x=>x.data>=vendaFrom);
+    if(vendaTo)rows=rows.filter(x=>x.data<=vendaTo);
+    receita=Number(rows.reduce((s,x)=>s+x.receita,0).toFixed(2));
+    nv=rows.reduce((s,x)=>s+x.vendas,0);
+    const pm=new Map(), dm=new Map();
+    rows.forEach(x=>{
+      if(!pm.has(x.produto))pm.set(x.produto,{produto:x.produto,receita:0,vendas:0});
+      const e=pm.get(x.produto); e.receita+=x.receita; e.vendas+=x.vendas;
+      if(!dm.has(x.data))dm.set(x.data,{data:x.data,receita:0});
+      dm.get(x.data).receita+=x.receita;
+    });
+    prodList=[...pm.values()].sort((a,b)=>b.receita-a.receita);
+    recDia=dm;
+    // gasto Meta consistente com a janela de data (para o teto ROAS)
+    if(dateActive)gastoMeta=(B.series&&B.series.dia||[]).filter(d=>(!vendaFrom||d.data>=vendaFrom)&&(!vendaTo||d.data<=vendaTo)).reduce((s,d)=>s+(d.spend||0),0);
+  }
+  const ticket=nv?Number((receita/nv).toFixed(2)):0;
+  const teto=gastoMeta?Number((receita/gastoMeta).toFixed(2)):null;
+  const subSel=filtrado?'Real · filtro':'Real';
+  const tiles=[
+    {lbl:'Receita (caixa)',val:brlC(receita),full:brl(receita),sub:subSel},
+    {lbl:'Vendas aprovadas',val:cmp1(nv),full:int(nv),sub:subSel},
+    {lbl:'Ticket médio',val:brlC(ticket),full:brl(ticket),sub:'Real'},
+    {lbl:'Teto ROAS',val:(teto!=null?teto+'x':'—'),full:(teto!=null?teto+'x':'—'),sub:filtrado?'do filtro':'todos os canais'},
+  ];
+  document.getElementById('caixaKpis').innerHTML=tiles.map(t=>'<div class="kpi"><div class="lbl">'+t.lbl+infoIcon(t.lbl)+'</div><div class="val" data-th="'+esc('<b>'+t.lbl+'</b> — '+t.full)+'">'+t.val+'</div><div class="dlt flat">'+t.sub+'</div></div>').join('');
+  if(A){
+    const filtros=[]; if(sel&&sel.length)filtros.push(sel.length+' produto(s)'); if(dateActive)filtros.push('período '+(vendaFrom||'início')+'→'+(vendaTo||'fim'));
+    let an='<b>Atribuição temporal <span class="pill est">Estimado</span>:</b> '+A.nota+'<p class="seal" style="margin-top:8px">Gasto Meta '+brl(gastoMeta)+' · Receita caixa '+brl(receita)+' · <b>'+A.pct_campanha_rastreada+'%</b> das vendas com rastreio de campanha.'
+      +(filtrado?' · <b>Filtro: '+filtros.join(' + ')+'</b> — KPIs, overlay e teto recalculados.':'')+'</p>';
+    document.getElementById('atribNota').innerHTML=an;
+  }
+  // barras por produto (com % de share e card flutuante)
+  const totSel=prodList.reduce((s,p)=>s+p.receita,0)||1;
+  const bars=prodList.slice(0,7).map(p=>({nome:p.produto,valor:p.receita,
+    th:'<b>'+esc(p.produto)+'</b><br>'+brl(p.receita)+' ('+(p.receita/totSel*100).toFixed(1)+'%) · '+int(p.vendas)+' venda(s)'+(prodAssociado(p.produto)?'<br>→ associado a campanha (Estimado)':'')}));
+  document.getElementById('prodChart').innerHTML=barsSVG(bars,brlC,500,260);
+  // overlay: recalculado quando filtrado (produto e/ou data) + granularidade dia/mês/quarter
+  let ov=(A&&A.overlay)||[];
+  if(dateActive)ov=ov.filter(o=>(!vendaFrom||o.data>=vendaFrom)&&(!vendaTo||o.data<=vendaTo));
+  if(filtrado&&recDia)ov=ov.map(o=>({data:o.data,gasto:o.gasto,receita:recDia.has(o.data)?Number(recDia.get(o.data).receita.toFixed(2)):null}));
+  document.getElementById('overlayChart').innerHTML=overlaySVG(aggOverlay(ov,ovGran),500,260,ovGran);
+  document.getElementById('overlayNota').innerHTML='Barras cinza = gasto Meta (escala à esquerda); linha dourada = receita do caixa (escala à direita)'+(filtrado?' (do filtro)':'')+' — eixos independentes. Proximidade sugere correlação, <b>não</b> causação.';
+}
+
+// ---------- modo edição (renomear campanha, associar produto↔campanha) ----------
+function drawEdit(){
+  const box=document.getElementById('editBox');if(!box)return;
+  const camps=(B.campanhas||[]).filter(c=>!c.sem_dados);
+  const prods=(B.vendas&&B.vendas.por_produto)||[];
+  const L=labels(),M=mapa();
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  let h='<div class="mini-h" style="margin-top:4px">Renomear campanhas (rótulo no relatório)</div>';
+  h+=camps.length?camps.map(c=>'<div class="edit-row"><span class="orig">'+esc(c.nome)+'</span><input class="edit-inp" data-camp="'+esc(c.id)+'" value="'+esc(L[c.id]||L[c.nome]||'')+'" placeholder="novo rótulo…"></div>').join(''):'<p class="ev">Sem campanhas.</p>';
+  if(prods.length){
+    h+='<div class="mini-h" style="margin-top:14px">Associar produto → campanha</div>';
+    h+=prods.map(p=>{
+      const cur=M[p.produto]||'';
+      const opts='<option value="">(nenhuma)</option>'+camps.map(c=>'<option value="'+esc(c.id)+'"'+(c.id===cur?' selected':'')+'>'+esc(campLabel(c))+'</option>').join('');
+      return '<div class="edit-row"><span class="orig">'+esc(p.produto)+' <span class="seal">R$ '+int(p.receita)+'</span></span><select class="edit-sel" data-prod="'+esc(p.produto)+'">'+opts+'</select></div>';
+    }).join('');
+  }
+  box.innerHTML=h;
+  box.querySelectorAll('input[data-camp]').forEach(inp=>inp.addEventListener('input',()=>{OV.labels=OV.labels||{};const v=inp.value.trim();if(v)OV.labels[inp.dataset.camp]=v;else delete OV.labels[inp.dataset.camp];saveOv();drawCamp();}));
+  box.querySelectorAll('select[data-prod]').forEach(s=>s.addEventListener('change',()=>{OV.mapa=OV.mapa||{};if(s.value)OV.mapa[s.dataset.prod]=s.value;else delete OV.mapa[s.dataset.prod];saveOv();}));
+}
+function flashBtn(id,msg){const b=document.getElementById(id);if(!b)return;const o=b.textContent;b.textContent=msg;setTimeout(()=>{b.textContent=o;},1500);}
+
+// ---------- eventos ----------
+document.querySelectorAll('#granBtns button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#granBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');gran=b.dataset.g;drawLine();
+}));
+document.getElementById('mmBtn').addEventListener('click',function(){mmOn=!mmOn;this.classList.toggle('on',mmOn);drawLine();});
+// controles de campanhas
+(function(){
+  document.querySelectorAll('#campStatusBtns button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#campStatusBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');campStatus=b.dataset.s;drawCamp();
+  }));
+  const cl=document.getElementById('campLimit');
+  if(cl&&cl.addEventListener)cl.addEventListener('change',()=>{campLimit=parseInt(cl.value,10)||15;drawCamp();});
+  const ct=document.getElementById('campTable');
+  if(ct&&ct.addEventListener)ct.addEventListener('click',e=>{
+    // ordenar por coluna
+    const thh=e.target&&e.target.closest&&e.target.closest('th[data-sort]');
+    if(thh){const k=thh.getAttribute('data-sort');if(campSort.k===k)campSort.dir*=-1;else campSort={k,dir:(k==='nome'||k==='status')?1:-1};drawCamp();return;}
+    // abrir detalhe pelo nome da campanha
+    const el=e.target&&e.target.closest&&e.target.closest('.cname[data-cid]');
+    if(el){campSel=el.getAttribute('data-cid');drawDetail();const d=document.getElementById('campDetail');if(d&&d.scrollIntoView)d.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  });
+})();
+document.getElementById('editBtn').addEventListener('click',function(){const s=document.getElementById('editSec');const on=s.style.display==='none';s.style.display=on?'block':'none';this.classList.toggle('on',on);document.body.classList.toggle('editing',on);if(on)drawEdit();});
+document.getElementById('saveCfgBtn').addEventListener('click',()=>{const b=new Blob([JSON.stringify(mergedConfig(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='painel-config.json';a.click();flashBtn('saveCfgBtn','baixado ✓');});
+document.getElementById('copyCfgBtn').addEventListener('click',async()=>{const txt='Atualize o painel-config.json com esta config (skill /coletor-de-dados):\n'+JSON.stringify(mergedConfig(),null,2);try{await navigator.clipboard.writeText(txt);flashBtn('copyCfgBtn','copiado ✓');}catch(e){flashBtn('copyCfgBtn','veja o console');console.log(txt);}});
+sel.addEventListener('change',()=>{metric=sel.value;drawLine();});
+
+// roteador de abas (sidebar → telas)
+document.querySelectorAll('.nav-item.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.nav-item.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');
+  const v=t.dataset.view;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='view-'+v));
+  if(typeof history!=='undefined'&&history.replaceState)history.replaceState(null,'','#'+v);
+  if(typeof window!=='undefined')window.scrollTo({top:0});
+}));
+
+scorecard();oQueMudou();drawLine();drawHeatmap();drawFunil();drawVendas();drawDemografia();drawCamp();drawBoard();drawPerfil();drawCliente();
+
+// ---------- filtro de mês na Visão geral (mês escolhido vs mês anterior) ----------
+(function(){
+  const meses=(B.series&&B.series.mes)||[]; const selEl=document.getElementById('mesSel'); if(!selEl||!selEl.addEventListener)return;
+  if(meses.length<2){const gc=document.getElementById('geralControls'); if(gc)gc.style.display='none'; return;}
+  selEl.innerHTML='<option value="">Período padrão (30d vs 30d)</option>'+meses.map((p,i)=>'<option value="'+i+'">'+fmtPeriodo(p.periodo,'mes')+'</option>').join('');
+  function cmpDoMes(idx){
+    const pB=meses[idx], pA=meses[idx-1]||null;
+    const norm=p=>{ if(!p)return null; const o={rotulo:fmtPeriodo(p.periodo,'mes')}; METRICS.forEach(m=>o[m.k]=serieVal(p,m.k)); return o; };
+    const b=norm(pB), a=norm(pA); const deltas={};
+    METRICS.forEach(m=>{const bv=b?b[m.k]:null, av=a?a[m.k]:null; deltas[m.k]=(av==null||av===0||bv==null)?null:Number((((bv-av)/Math.abs(av))*100).toFixed(1));});
+    return {periodo_b:b, periodo_a:a, deltas, rotuloComparacao:fmtPeriodo(pB.periodo,'mes')+' e '+(pA?fmtPeriodo(pA.periodo,'mes'):'sem mês anterior')};
+  }
+  const nota=document.getElementById('mesNota');
+  selEl.addEventListener('change',()=>{
+    if(selEl.value===''){ renderKpis(B.comparacao); oQueMudou(B.comparacao); if(nota)nota.textContent=''; return; }
+    const idx=parseInt(selEl.value,10); const cmp=cmpDoMes(idx);
+    renderKpis(cmp); oQueMudou(cmp);
+    if(nota)nota.innerHTML='Comparando <b>'+fmtPeriodo(meses[idx].periodo,'mes')+'</b> vs '+(idx>0?'<b>'+fmtPeriodo(meses[idx-1].periodo,'mes')+'</b>':'—')+' · taxas do mês são <span class="pill calc">Calculado</span>';
+  });
+})();
+// ---------- filtros: campanhas, funil (data+etapas), vendas (produtos+data) ----------
+(function(){
+  function clearPreset(id){document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('on'));}
+  function isoMinus(maxIso,days){ if(!maxIso)return null; const d=new Date(maxIso+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()-(days-1)); return d.toISOString().slice(0,10); }
+  // filtro de campanhas
+  const campItems=(B.campanhas||[]).filter(c=>!c.sem_dados&&!excluidasSet().has(String(c.id))).map(c=>({v:String(c.id),label:campLabel(c),sub:brlC(c.spend)}));
+  if(campItems.length)mountMsel('campFilterHost',campItems,()=>campFilterSel,s=>{campFilterSel=s;drawFunil();},'Todas',{search:true});
+  // funil: etapas
+  mountMsel('funilStageHost',FUNIL_STAGES.map(s=>({v:s.k,label:s.nome})),()=>funilStages,s=>{funilStages=s;drawFunil();},'Todas');
+  // funil: período
+  (function(){
+    const ri=funilRangeInfo(), fF=document.getElementById('funilFrom'), fT=document.getElementById('funilTo');
+    if(fF){fF.min=ri.min||'';fF.max=ri.max||'';} if(fT){fT.min=ri.min||'';fT.max=ri.max||'';}
+    document.querySelectorAll('#funilPresetBtns button').forEach(b=>b.addEventListener('click',()=>{
+      clearPreset('funilPresetBtns');b.classList.add('on');
+      if(b.dataset.p==='all'){funilFrom=null;funilTo=null;}else{funilTo=ri.max;funilFrom=isoMinus(ri.max,parseInt(b.dataset.p,10));}
+      if(fF)fF.value=funilFrom||''; if(fT)fT.value=funilTo||''; drawFunil();
+    }));
+    if(fF)fF.addEventListener('change',()=>{funilFrom=fF.value||null;clearPreset('funilPresetBtns');drawFunil();});
+    if(fT)fT.addEventListener('change',()=>{funilTo=fT.value||null;clearPreset('funilPresetBtns');drawFunil();});
+  })();
+  // vendas: produtos + período
+  if(B.vendas&&B.vendas.conectada!==false){
+    const prodItems=(B.vendas.por_produto||[]).map(p=>({v:p.produto,label:p.produto,sub:brlC(p.receita)}));
+    if(prodItems.length)mountMsel('prodFilterHost',prodItems,()=>prodSel,s=>{prodSel=s;OV.prodSel=s||[];saveOv();drawVendas();},'Todos');
+    const vdd=((B.vendas.por_dia_produto)||[]).map(x=>x.data).sort(), vmin=vdd[0], vmax=vdd[vdd.length-1];
+    const vF=document.getElementById('vendaFrom'), vT=document.getElementById('vendaTo');
+    if(vF){vF.min=vmin||'';vF.max=vmax||'';} if(vT){vT.min=vmin||'';vT.max=vmax||'';}
+    document.querySelectorAll('#vendaPresetBtns button').forEach(b=>b.addEventListener('click',()=>{
+      clearPreset('vendaPresetBtns');b.classList.add('on');
+      if(b.dataset.p==='all'){vendaFrom=null;vendaTo=null;}else{vendaTo=vmax;vendaFrom=isoMinus(vmax,parseInt(b.dataset.p,10));}
+      if(vF)vF.value=vendaFrom||''; if(vT)vT.value=vendaTo||''; drawVendas();
+    }));
+    if(vF)vF.addEventListener('change',()=>{vendaFrom=vF.value||null;clearPreset('vendaPresetBtns');drawVendas();});
+    if(vT)vT.addEventListener('change',()=>{vendaTo=vT.value||null;clearPreset('vendaPresetBtns');drawVendas();});
+    document.querySelectorAll('#ovGranBtns button').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('#ovGranBtns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');ovGran=b.dataset.g;drawVendas();
+    }));
+  }
+})();
+if(typeof location!=='undefined'){
+  const h=(location.hash||'').replace('#','');
+  if(h==='edit'){document.getElementById('editBtn').click();}
+  else if(h){const t=document.querySelector('.nav-item.tab[data-view="'+h+'"]');if(t)t.click();}
+}
+`;
+}
+
+// --------------------------------------------------------------------- main
+function main() {
+  const dadosPath = arg('dados');
+  const boardPath = arg('board');
+  const tokensPath = arg('tokens');
+  const projeto = arg('projeto', 'Projeto');
+  const saida = arg('saida');
+
+  const bundle = dadosPath ? readJson(dadosPath)
+    : JSON.parse(readFileSync(join(SCRIPT_DIR, 'fixtures', 'painel-trafego-exemplo.json'), 'utf8'));
+  const board = boardPath ? readJson(boardPath) : boardNeutro;
+  const tokens = resolverTokens(tokensPath);
+
+  const out = html({ projeto, tokens, bundle, board });
+  if (saida) {
+    const dest = abs(saida);
+    mkdirSync(dirname(dest), { recursive: true });
+    writeFileSync(dest, out);
+    process.stderr.write(`Painel salvo em ${dest}\n`);
+  } else {
+    process.stdout.write(out);
+  }
+}
+
+main();

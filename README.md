@@ -52,7 +52,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ### Aula 4 · Dados
 
-**Status:** módulo local disponível. Siga o [README da Aula 4](./aula-04/README.md) para executar o exemplo público de três semanas, gerar ledger, leitura histórica, reconciliação e diagnóstico inconclusivo sem Studio ou serviço privado.
+**Status:** disponível. [Material da Aula 4](./aula-04/README.md). O **Squad de Dados** — como na Aula 3, uma skill por função, com porta de entrada única: `/analista-de-dados` (hub) orquestra `/coletor-de-dados` (Meta + Hotmart, sem PII) → `/board-de-especialistas` (**6 clones de mercado** lendo tráfego, vendas, audiência e engajamento) → `/painel-de-dados` (painel local self-contained na identidade da marca: campanhas ordenáveis, funil filtrável por campanha/período, pirâmide etária, mapa do Brasil, "Quem é o meu cliente") → `/retroalimentacao` (devolve os dados reais para o avatar da Aula 1 e a copy da Aula 2); `/gestor-de-campanhas` fecha o ciclo comparando o realizado de 7/30 dias com o planejado. Sem credenciais roda em Modo Exemplo — a demo nunca trava; `.env` e `projetos/` (dados reais) nunca sobem pro git.
 
 ---
 
@@ -69,6 +69,7 @@ Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao ab
 | **Peças** | `/pagina-vendas-funil` · `/email-funil` · `/whatsapp-funil` · `/conteudo-funil` · `/recuperacao-funil` · `/backend-funil` · `/cro-funil` |
 | **Reforço de oferta** | `/mockup-produto-funil` · `/bonus-funil` · `/criativos-funil` |
 | **Tráfego (Aula 3)** | `/zelador` · `/briefista` · `/estruturador` · `/ads-creative-factory` · `/leitor-de-metricas` · `/diagnosticador` |
+| **Dados (Aula 4)** | `/analista-de-dados` · `/coletor-de-dados` · `/board-de-especialistas` · `/painel-de-dados` · `/retroalimentacao` · `/gestor-de-campanhas` |
 
 As skills leem o **Perfil do Projeto** (no topo do seu offerbook) e se adaptam ao seu negócio: especialista, agência, B2B, negócio local, nicho regulado (saúde/jurídico/psico/financeiro), afiliado ou "ainda não sei o que vender".
 
@@ -96,6 +97,7 @@ cohort-de-marketing/
 ├── aula-01/                      docs e templates da Aula 1
 ├── aula-02/                      material de apoio da Aula 2
 ├── aula-03/                      material didático e runtime empacotado da Aula 3
+├── aula-04/                      material da Aula 4 (Central de Dados: tutoriais Meta/Hotmart, exemplos)
 └── projetos/                     nasce quando você roda as skills (só seu, fora do git)
 ```
 

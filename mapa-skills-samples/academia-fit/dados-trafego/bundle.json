@@ -1,0 +1,2636 @@
+{
+  "modo": "exemplo",
+  "gerado_em": "2026-07-17",
+  "escopo": "conta act_EXEMPLO (Academia Fit — dados fictícios para demonstração)",
+  "granularidade_pedida": "todas",
+  "series": {
+    "dia": [
+      {
+        "periodo": "2026-06-18",
+        "granularidade": "dia",
+        "spend": 30,
+        "impressions": 5556,
+        "clicks": 106,
+        "inline_link_clicks": 91,
+        "ctr": 1.9,
+        "cpm": 5.4,
+        "cpc": 0.28,
+        "frequency": 1.3,
+        "reach": 4274,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.6,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-19",
+        "granularidade": "dia",
+        "spend": 35.16,
+        "impressions": 6031,
+        "clicks": 114,
+        "inline_link_clicks": 98,
+        "ctr": 1.89,
+        "cpm": 5.83,
+        "cpc": 0.31,
+        "frequency": 1.36,
+        "reach": 4435,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.77,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-20",
+        "granularidade": "dia",
+        "spend": 40.11,
+        "impressions": 6753,
+        "clicks": 120,
+        "inline_link_clicks": 103,
+        "ctr": 1.77,
+        "cpm": 5.94,
+        "cpc": 0.33,
+        "frequency": 1.42,
+        "reach": 4756,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.78,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-21",
+        "granularidade": "dia",
+        "spend": 44.65,
+        "impressions": 7792,
+        "clicks": 130,
+        "inline_link_clicks": 112,
+        "ctr": 1.67,
+        "cpm": 5.73,
+        "cpc": 0.34,
+        "frequency": 1.48,
+        "reach": 5265,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.63,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-22",
+        "granularidade": "dia",
+        "spend": 48.63,
+        "impressions": 8907,
+        "clicks": 150,
+        "inline_link_clicks": 129,
+        "ctr": 1.68,
+        "cpm": 5.46,
+        "cpc": 0.32,
+        "frequency": 1.54,
+        "reach": 5784,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.45,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-23",
+        "granularidade": "dia",
+        "spend": 51.97,
+        "impressions": 9501,
+        "clicks": 156,
+        "inline_link_clicks": 134,
+        "ctr": 1.64,
+        "cpm": 5.47,
+        "cpc": 0.33,
+        "frequency": 1.6,
+        "reach": 5938,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.41,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-24",
+        "granularidade": "dia",
+        "spend": 54.66,
+        "impressions": 9376,
+        "clicks": 142,
+        "inline_link_clicks": 122,
+        "ctr": 1.51,
+        "cpm": 5.83,
+        "cpc": 0.38,
+        "frequency": 1.66,
+        "reach": 5648,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.54,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-25",
+        "granularidade": "dia",
+        "spend": 56.74,
+        "impressions": 9021,
+        "clicks": 131,
+        "inline_link_clicks": 113,
+        "ctr": 1.45,
+        "cpm": 6.29,
+        "cpc": 0.43,
+        "frequency": 1.72,
+        "reach": 5245,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.73,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-26",
+        "granularidade": "dia",
+        "spend": 58.34,
+        "impressions": 8948,
+        "clicks": 131,
+        "inline_link_clicks": 113,
+        "ctr": 1.46,
+        "cpm": 6.52,
+        "cpc": 0.45,
+        "frequency": 1.78,
+        "reach": 5027,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.8,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-27",
+        "granularidade": "dia",
+        "spend": 59.65,
+        "impressions": 9364,
+        "clicks": 129,
+        "inline_link_clicks": 111,
+        "ctr": 1.38,
+        "cpm": 6.37,
+        "cpc": 0.46,
+        "frequency": 1.84,
+        "reach": 5089,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.68,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-28",
+        "granularidade": "dia",
+        "spend": 60.86,
+        "impressions": 10010,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 1.25,
+        "cpm": 6.08,
+        "cpc": 0.49,
+        "frequency": 1.9,
+        "reach": 5268,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.49,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-29",
+        "granularidade": "dia",
+        "spend": 62.19,
+        "impressions": 10382,
+        "clicks": 128,
+        "inline_link_clicks": 110,
+        "ctr": 1.23,
+        "cpm": 5.99,
+        "cpc": 0.49,
+        "frequency": 1.96,
+        "reach": 5297,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.4,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-30",
+        "granularidade": "dia",
+        "spend": 63.86,
+        "impressions": 10185,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 1.23,
+        "cpm": 6.27,
+        "cpc": 0.51,
+        "frequency": 2.02,
+        "reach": 5042,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.49,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-01",
+        "granularidade": "dia",
+        "spend": 66.03,
+        "impressions": 9797,
+        "clicks": 109,
+        "inline_link_clicks": 94,
+        "ctr": 1.11,
+        "cpm": 6.74,
+        "cpc": 0.61,
+        "frequency": 2.08,
+        "reach": 4710,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.68,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-02",
+        "granularidade": "dia",
+        "spend": 68.81,
+        "impressions": 9746,
+        "clicks": 98,
+        "inline_link_clicks": 84,
+        "ctr": 1.01,
+        "cpm": 7.06,
+        "cpc": 0.7,
+        "frequency": 2.14,
+        "reach": 4554,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.8,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-03",
+        "granularidade": "dia",
+        "spend": 72.25,
+        "impressions": 10307,
+        "clicks": 105,
+        "inline_link_clicks": 90,
+        "ctr": 1.02,
+        "cpm": 7.01,
+        "cpc": 0.69,
+        "frequency": 2.2,
+        "reach": 4685,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.73,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-04",
+        "granularidade": "dia",
+        "spend": 76.32,
+        "impressions": 11357,
+        "clicks": 111,
+        "inline_link_clicks": 95,
+        "ctr": 0.98,
+        "cpm": 6.72,
+        "cpc": 0.69,
+        "frequency": 2.26,
+        "reach": 5025,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.54,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-05",
+        "granularidade": "dia",
+        "spend": 80.93,
+        "impressions": 12356,
+        "clicks": 112,
+        "inline_link_clicks": 96,
+        "ctr": 0.91,
+        "cpm": 6.55,
+        "cpc": 0.72,
+        "frequency": 2.32,
+        "reach": 5326,
+        "purchases": 2,
+        "roas": {
+          "valor": 1.41,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-06",
+        "granularidade": "dia",
+        "spend": 85.92,
+        "impressions": 12786,
+        "clicks": 115,
+        "inline_link_clicks": 99,
+        "ctr": 0.9,
+        "cpm": 6.72,
+        "cpc": 0.75,
+        "frequency": 2.38,
+        "reach": 5372,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.45,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-07",
+        "granularidade": "dia",
+        "spend": 91.1,
+        "impressions": 12706,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 0.98,
+        "cpm": 7.17,
+        "cpc": 0.73,
+        "frequency": 2.44,
+        "reach": 5207,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.63,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-08",
+        "granularidade": "dia",
+        "spend": 96.24,
+        "impressions": 12713,
+        "clicks": 123,
+        "inline_link_clicks": 106,
+        "ctr": 0.97,
+        "cpm": 7.57,
+        "cpc": 0.78,
+        "frequency": 2.5,
+        "reach": 5085,
+        "purchases": 3,
+        "roas": {
+          "valor": 1.78,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-09",
+        "granularidade": "dia",
+        "spend": 101.14,
+        "impressions": 13273,
+        "clicks": 125,
+        "inline_link_clicks": 108,
+        "ctr": 0.94,
+        "cpm": 7.62,
+        "cpc": 0.81,
+        "frequency": 2.56,
+        "reach": 5185,
+        "purchases": 4,
+        "roas": {
+          "valor": 1.89,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-10",
+        "granularidade": "dia",
+        "spend": 105.6,
+        "impressions": 14309,
+        "clicks": 147,
+        "inline_link_clicks": 126,
+        "ctr": 1.03,
+        "cpm": 7.38,
+        "cpc": 0.72,
+        "frequency": 2.62,
+        "reach": 5461,
+        "purchases": 4,
+        "roas": {
+          "valor": 1.84,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-11",
+        "granularidade": "dia",
+        "spend": 109.5,
+        "impressions": 15358,
+        "clicks": 175,
+        "inline_link_clicks": 151,
+        "ctr": 1.14,
+        "cpm": 7.13,
+        "cpc": 0.63,
+        "frequency": 2.68,
+        "reach": 5731,
+        "purchases": 5,
+        "roas": {
+          "valor": 1.79,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-12",
+        "granularidade": "dia",
+        "spend": 112.74,
+        "impressions": 15658,
+        "clicks": 179,
+        "inline_link_clicks": 154,
+        "ctr": 1.14,
+        "cpm": 7.2,
+        "cpc": 0.63,
+        "frequency": 2.74,
+        "reach": 5715,
+        "purchases": 5,
+        "roas": {
+          "valor": 1.9,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-13",
+        "granularidade": "dia",
+        "spend": 115.32,
+        "impressions": 15174,
+        "clicks": 173,
+        "inline_link_clicks": 149,
+        "ctr": 1.14,
+        "cpm": 7.6,
+        "cpc": 0.67,
+        "frequency": 2.8,
+        "reach": 5419,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.17,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-14",
+        "granularidade": "dia",
+        "spend": 117.33,
+        "impressions": 14575,
+        "clicks": 182,
+        "inline_link_clicks": 157,
+        "ctr": 1.25,
+        "cpm": 8.05,
+        "cpc": 0.64,
+        "frequency": 2.86,
+        "reach": 5096,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.47,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-15",
+        "granularidade": "dia",
+        "spend": 118.87,
+        "impressions": 14479,
+        "clicks": 194,
+        "inline_link_clicks": 167,
+        "ctr": 1.34,
+        "cpm": 8.21,
+        "cpc": 0.61,
+        "frequency": 2.92,
+        "reach": 4959,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.63,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-16",
+        "granularidade": "dia",
+        "spend": 120.15,
+        "impressions": 14963,
+        "clicks": 198,
+        "inline_link_clicks": 170,
+        "ctr": 1.32,
+        "cpm": 8.03,
+        "cpc": 0.61,
+        "frequency": 2.98,
+        "reach": 5021,
+        "purchases": 5,
+        "roas": {
+          "valor": 2.61,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-17",
+        "granularidade": "dia",
+        "spend": 121.36,
+        "impressions": 15680,
+        "clicks": 212,
+        "inline_link_clicks": 182,
+        "ctr": 1.35,
+        "cpm": 7.74,
+        "cpc": 0.57,
+        "frequency": 3.04,
+        "reach": 5158,
+        "purchases": 6,
+        "roas": {
+          "valor": 2.55,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      }
+    ],
+    "mes": [
+      {
+        "periodo": "2025-08-01",
+        "granularidade": "mes",
+        "spend": 900,
+        "impressions": 155172,
+        "clicks": 2483,
+        "inline_link_clicks": 2135,
+        "ctr": 1.6,
+        "cpm": 5.8,
+        "cpc": 0.36,
+        "frequency": 1.8,
+        "reach": 86207,
+        "purchases": 50,
+        "roas": {
+          "valor": 1.9,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-09-01",
+        "granularidade": "mes",
+        "spend": 1177.32,
+        "impressions": 198872,
+        "clicks": 3222,
+        "inline_link_clicks": 2771,
+        "ctr": 1.62,
+        "cpm": 5.92,
+        "cpc": 0.37,
+        "frequency": 1.88,
+        "reach": 105783,
+        "purchases": 64,
+        "roas": {
+          "valor": 1.96,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-10-01",
+        "granularidade": "mes",
+        "spend": 1392.74,
+        "impressions": 230586,
+        "clicks": 3666,
+        "inline_link_clicks": 3153,
+        "ctr": 1.59,
+        "cpm": 6.04,
+        "cpc": 0.38,
+        "frequency": 1.96,
+        "reach": 117646,
+        "purchases": 73,
+        "roas": {
+          "valor": 2.02,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-11-01",
+        "granularidade": "mes",
+        "spend": 1541.29,
+        "impressions": 250209,
+        "clicks": 3803,
+        "inline_link_clicks": 3271,
+        "ctr": 1.52,
+        "cpm": 6.16,
+        "cpc": 0.41,
+        "frequency": 2.04,
+        "reach": 122651,
+        "purchases": 76,
+        "roas": {
+          "valor": 2.08,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2025-12-01",
+        "granularidade": "mes",
+        "spend": 1679.46,
+        "impressions": 267430,
+        "clicks": 3824,
+        "inline_link_clicks": 3289,
+        "ctr": 1.43,
+        "cpm": 6.28,
+        "cpc": 0.44,
+        "frequency": 2.12,
+        "reach": 126146,
+        "purchases": 76,
+        "roas": {
+          "valor": 2.14,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-01-01",
+        "granularidade": "mes",
+        "spend": 1873.29,
+        "impressions": 292702,
+        "clicks": 4069,
+        "inline_link_clicks": 3499,
+        "ctr": 1.39,
+        "cpm": 6.4,
+        "cpc": 0.46,
+        "frequency": 2.2,
+        "reach": 133046,
+        "purchases": 81,
+        "roas": {
+          "valor": 2.2,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-02-01",
+        "granularidade": "mes",
+        "spend": 2137.65,
+        "impressions": 327860,
+        "clicks": 4590,
+        "inline_link_clicks": 3947,
+        "ctr": 1.4,
+        "cpm": 6.52,
+        "cpc": 0.47,
+        "frequency": 2.28,
+        "reach": 143798,
+        "purchases": 92,
+        "roas": {
+          "valor": 2.26,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-03-01",
+        "granularidade": "mes",
+        "spend": 2422.56,
+        "impressions": 364843,
+        "clicks": 5217,
+        "inline_link_clicks": 4487,
+        "ctr": 1.43,
+        "cpm": 6.64,
+        "cpc": 0.46,
+        "frequency": 2.36,
+        "reach": 154594,
+        "purchases": 104,
+        "roas": {
+          "valor": 2.32,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-04-01",
+        "granularidade": "mes",
+        "spend": 2659.15,
+        "impressions": 393365,
+        "clicks": 5586,
+        "inline_link_clicks": 4804,
+        "ctr": 1.42,
+        "cpm": 6.76,
+        "cpc": 0.48,
+        "frequency": 2.44,
+        "reach": 161215,
+        "purchases": 112,
+        "roas": {
+          "valor": 2.38,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-05-01",
+        "granularidade": "mes",
+        "spend": 2822.97,
+        "impressions": 410315,
+        "clicks": 5539,
+        "inline_link_clicks": 4764,
+        "ctr": 1.35,
+        "cpm": 6.88,
+        "cpc": 0.51,
+        "frequency": 2.52,
+        "reach": 162823,
+        "purchases": 111,
+        "roas": {
+          "valor": 2.44,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-06-01",
+        "granularidade": "mes",
+        "spend": 2956.48,
+        "impressions": 422354,
+        "clicks": 5364,
+        "inline_link_clicks": 4613,
+        "ctr": 1.27,
+        "cpm": 7,
+        "cpc": 0.55,
+        "frequency": 2.6,
+        "reach": 162444,
+        "purchases": 107,
+        "roas": {
+          "valor": 2.5,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      },
+      {
+        "periodo": "2026-07-01",
+        "granularidade": "mes",
+        "spend": 3130,
+        "impressions": 439607,
+        "clicks": 5319,
+        "inline_link_clicks": 4574,
+        "ctr": 1.21,
+        "cpm": 7.12,
+        "cpc": 0.59,
+        "frequency": 2.68,
+        "reach": 164032,
+        "purchases": 106,
+        "roas": {
+          "valor": 2.56,
+          "selo": "Estimado"
+        },
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+      }
+    ],
+    "quarter": [
+      {
+        "periodo": "2025-Q3",
+        "granularidade": "quarter",
+        "purchases": 114,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 2077.3199999999997,
+        "impressions": 354044,
+        "clicks": 5705,
+        "inline_link_clicks": 4906
+      },
+      {
+        "periodo": "2025-Q4",
+        "granularidade": "quarter",
+        "purchases": 225,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 4613.49,
+        "impressions": 748225,
+        "clicks": 11293,
+        "inline_link_clicks": 9713
+      },
+      {
+        "periodo": "2026-Q1",
+        "granularidade": "quarter",
+        "purchases": 277,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 6433.5,
+        "impressions": 985405,
+        "clicks": 13876,
+        "inline_link_clicks": 11933
+      },
+      {
+        "periodo": "2026-Q2",
+        "granularidade": "quarter",
+        "purchases": 330,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 8438.6,
+        "impressions": 1226034,
+        "clicks": 16489,
+        "inline_link_clicks": 14181
+      },
+      {
+        "periodo": "2026-Q3",
+        "granularidade": "quarter",
+        "purchases": 106,
+        "ctr": null,
+        "cpm": null,
+        "cpc": null,
+        "frequency": null,
+        "reach": null,
+        "roas": null,
+        "selo": "Real",
+        "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+        "nota": "trimestre = soma dos meses; taxas e alcance não são recalculados",
+        "spend": 3130,
+        "impressions": 439607,
+        "clicks": 5319,
+        "inline_link_clicks": 4574
+      }
+    ]
+  },
+  "campanhas": [
+    {
+      "id": "23810000000",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "TOF · Frio · Advertorial",
+      "status": "ACTIVE",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 1420,
+      "impressions": 268000,
+      "clicks": 3210,
+      "ctr": 1.2,
+      "cpm": 5.3,
+      "purchases": 58,
+      "roas": {
+        "valor": 2.9,
+        "selo": "Estimado"
+      }
+    },
+    {
+      "id": "23810000001",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "Retargeting · Quiz 7d",
+      "status": "ACTIVE",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 640,
+      "impressions": 88000,
+      "clicks": 1980,
+      "ctr": 2.25,
+      "cpm": 7.27,
+      "purchases": 71,
+      "roas": {
+        "valor": 4.6,
+        "selo": "Estimado"
+      }
+    },
+    {
+      "id": "23810000002",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "MOF · VSL · Lookalike 1%",
+      "status": "ACTIVE",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 980,
+      "impressions": 176000,
+      "clicks": 1560,
+      "ctr": 0.89,
+      "cpm": 5.57,
+      "purchases": 24,
+      "roas": {
+        "valor": 1.4,
+        "selo": "Estimado"
+      }
+    },
+    {
+      "id": "23810000003",
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício",
+      "nome": "Interesses · Menopausa",
+      "status": "PAUSED",
+      "objetivo": "OUTCOME_SALES",
+      "spend": 410,
+      "impressions": 92000,
+      "clicks": 690,
+      "ctr": 0.75,
+      "cpm": 4.46,
+      "purchases": 9,
+      "roas": {
+        "valor": 0.9,
+        "selo": "Estimado"
+      }
+    }
+  ],
+  "comparacao": {
+    "periodo_a": {
+      "rotulo": "quinzena anterior",
+      "spend": 801.66,
+      "impressions": 131369,
+      "clicks": 1894,
+      "purchases": 42,
+      "ctr": 1.44,
+      "cpm": 6.1,
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+    },
+    "periodo_b": {
+      "rotulo": "última quinzena",
+      "spend": 1524.77,
+      "impressions": 205694,
+      "clicks": 2276,
+      "purchases": 59,
+      "ctr": 1.11,
+      "cpm": 7.41,
+      "selo": "Real",
+      "fonte": "dados de exemplo (fixture) — Academia Fit, fictício"
+    },
+    "deltas": {
+      "spend": 90.2,
+      "impressions": 56.6,
+      "clicks": 20.2,
+      "ctr": -22.9,
+      "cpm": 21.5,
+      "purchases": 40.5
+    },
+    "selo_deltas": "Calculado",
+    "nota": "variação percentual entre dois valores Real"
+  },
+  "perfil": {
+    "disponivel": true,
+    "resumo": {
+      "posts": 18,
+      "reacoes": 4820,
+      "comentarios": 612,
+      "compartilhamentos": 214,
+      "comentarios_coletados": 47
+    },
+    "top_posts": [
+      {
+        "data": "2026-07-12",
+        "trecho": "Como sair da sanfona depois dos 40 — o passo que ninguém te conta",
+        "reacoes": 980,
+        "comentarios": 143,
+        "compartilhamentos": 62
+      },
+      {
+        "data": "2026-07-08",
+        "trecho": "3 erros que travam o emagrecimento na menopausa",
+        "reacoes": 712,
+        "comentarios": 98,
+        "compartilhamentos": 41
+      },
+      {
+        "data": "2026-07-05",
+        "trecho": "Antes e depois: 8kg em 90 dias sem dieta maluca",
+        "reacoes": 664,
+        "comentarios": 87,
+        "compartilhamentos": 33
+      },
+      {
+        "data": "2026-07-01",
+        "trecho": "Vídeo: treino de 12 min pra fazer em casa",
+        "reacoes": 540,
+        "comentarios": 74,
+        "compartilhamentos": 28
+      }
+    ],
+    "comentarios": [
+      {
+        "texto": "Isso mudou minha rotina, obrigada!",
+        "curtidas": 12,
+        "post": "Como sair da sanfona"
+      }
+    ],
+    "sentimento": {
+      "positivo": 31,
+      "neutro": 11,
+      "negativo": 5,
+      "temas": [
+        "resultado real",
+        "preço",
+        "falta de tempo",
+        "dúvida sobre menopausa"
+      ],
+      "destaques": [
+        {
+          "texto": "Melhor conteúdo que já vi sobre isso, finalmente algo que funciona",
+          "tom": "positivo"
+        },
+        {
+          "texto": "Queria muito, mas está caro pra mim agora",
+          "tom": "negativo"
+        },
+        {
+          "texto": "Funciona pra quem tem tireoide?",
+          "tom": "neutro"
+        }
+      ],
+      "selo": "leitura por IA"
+    },
+    "selo": "Real",
+    "fonte": "dados de exemplo (fixture) — engajamento + sentimento"
+  },
+  "heatmap": {
+    "celulas": [
+      {
+        "dia": 0,
+        "hora": 0,
+        "impressions": 1232,
+        "clicks": 8,
+        "spend": 7.39,
+        "ctr": 0.688
+      },
+      {
+        "dia": 0,
+        "hora": 1,
+        "impressions": 1146,
+        "clicks": 8,
+        "spend": 6.88,
+        "ctr": 0.737
+      },
+      {
+        "dia": 0,
+        "hora": 2,
+        "impressions": 961,
+        "clicks": 7,
+        "spend": 5.77,
+        "ctr": 0.78
+      },
+      {
+        "dia": 0,
+        "hora": 3,
+        "impressions": 958,
+        "clicks": 8,
+        "spend": 5.75,
+        "ctr": 0.814
+      },
+      {
+        "dia": 0,
+        "hora": 4,
+        "impressions": 1149,
+        "clicks": 10,
+        "spend": 6.89,
+        "ctr": 0.833
+      },
+      {
+        "dia": 0,
+        "hora": 5,
+        "impressions": 1022,
+        "clicks": 9,
+        "spend": 6.13,
+        "ctr": 0.837
+      },
+      {
+        "dia": 0,
+        "hora": 6,
+        "impressions": 1990,
+        "clicks": 30,
+        "spend": 11.94,
+        "ctr": 1.511
+      },
+      {
+        "dia": 0,
+        "hora": 7,
+        "impressions": 1897,
+        "clicks": 28,
+        "spend": 11.38,
+        "ctr": 1.483
+      },
+      {
+        "dia": 0,
+        "hora": 8,
+        "impressions": 2137,
+        "clicks": 31,
+        "spend": 12.82,
+        "ctr": 1.444
+      },
+      {
+        "dia": 0,
+        "hora": 9,
+        "impressions": 2101,
+        "clicks": 29,
+        "spend": 12.61,
+        "ctr": 1.396
+      },
+      {
+        "dia": 0,
+        "hora": 10,
+        "impressions": 2110,
+        "clicks": 28,
+        "spend": 12.66,
+        "ctr": 1.346
+      },
+      {
+        "dia": 0,
+        "hora": 11,
+        "impressions": 2169,
+        "clicks": 28,
+        "spend": 13.01,
+        "ctr": 1.3
+      },
+      {
+        "dia": 0,
+        "hora": 12,
+        "impressions": 2102,
+        "clicks": 27,
+        "spend": 12.61,
+        "ctr": 1.261
+      },
+      {
+        "dia": 0,
+        "hora": 13,
+        "impressions": 2102,
+        "clicks": 26,
+        "spend": 12.61,
+        "ctr": 1.236
+      },
+      {
+        "dia": 0,
+        "hora": 14,
+        "impressions": 2089,
+        "clicks": 26,
+        "spend": 12.53,
+        "ctr": 1.225
+      },
+      {
+        "dia": 0,
+        "hora": 15,
+        "impressions": 1969,
+        "clicks": 24,
+        "spend": 11.81,
+        "ctr": 1.231
+      },
+      {
+        "dia": 0,
+        "hora": 16,
+        "impressions": 2099,
+        "clicks": 26,
+        "spend": 12.59,
+        "ctr": 1.253
+      },
+      {
+        "dia": 0,
+        "hora": 17,
+        "impressions": 2137,
+        "clicks": 28,
+        "spend": 12.82,
+        "ctr": 1.288
+      },
+      {
+        "dia": 0,
+        "hora": 18,
+        "impressions": 2665,
+        "clicks": 50,
+        "spend": 15.99,
+        "ctr": 1.883
+      },
+      {
+        "dia": 0,
+        "hora": 19,
+        "impressions": 2668,
+        "clicks": 52,
+        "spend": 16.01,
+        "ctr": 1.933
+      },
+      {
+        "dia": 0,
+        "hora": 20,
+        "impressions": 2890,
+        "clicks": 57,
+        "spend": 17.34,
+        "ctr": 1.981
+      },
+      {
+        "dia": 0,
+        "hora": 21,
+        "impressions": 2822,
+        "clicks": 57,
+        "spend": 16.93,
+        "ctr": 2.024
+      },
+      {
+        "dia": 0,
+        "hora": 22,
+        "impressions": 2819,
+        "clicks": 58,
+        "spend": 16.91,
+        "ctr": 2.055
+      },
+      {
+        "dia": 0,
+        "hora": 23,
+        "impressions": 2752,
+        "clicks": 57,
+        "spend": 16.51,
+        "ctr": 2.072
+      },
+      {
+        "dia": 1,
+        "hora": 0,
+        "impressions": 820,
+        "clicks": 5,
+        "spend": 4.92,
+        "ctr": 0.599
+      },
+      {
+        "dia": 1,
+        "hora": 1,
+        "impressions": 803,
+        "clicks": 5,
+        "spend": 4.82,
+        "ctr": 0.643
+      },
+      {
+        "dia": 1,
+        "hora": 2,
+        "impressions": 856,
+        "clicks": 6,
+        "spend": 5.14,
+        "ctr": 0.676
+      },
+      {
+        "dia": 1,
+        "hora": 3,
+        "impressions": 939,
+        "clicks": 7,
+        "spend": 5.63,
+        "ctr": 0.696
+      },
+      {
+        "dia": 1,
+        "hora": 4,
+        "impressions": 985,
+        "clicks": 7,
+        "spend": 5.91,
+        "ctr": 0.699
+      },
+      {
+        "dia": 1,
+        "hora": 5,
+        "impressions": 808,
+        "clicks": 6,
+        "spend": 4.85,
+        "ctr": 0.686
+      },
+      {
+        "dia": 1,
+        "hora": 6,
+        "impressions": 1501,
+        "clicks": 18,
+        "spend": 9.01,
+        "ctr": 1.208
+      },
+      {
+        "dia": 1,
+        "hora": 7,
+        "impressions": 1673,
+        "clicks": 20,
+        "spend": 10.04,
+        "ctr": 1.169
+      },
+      {
+        "dia": 1,
+        "hora": 8,
+        "impressions": 1635,
+        "clicks": 18,
+        "spend": 9.81,
+        "ctr": 1.121
+      },
+      {
+        "dia": 1,
+        "hora": 9,
+        "impressions": 1644,
+        "clicks": 18,
+        "spend": 9.86,
+        "ctr": 1.071
+      },
+      {
+        "dia": 1,
+        "hora": 10,
+        "impressions": 1633,
+        "clicks": 17,
+        "spend": 9.8,
+        "ctr": 1.025
+      },
+      {
+        "dia": 1,
+        "hora": 11,
+        "impressions": 1674,
+        "clicks": 17,
+        "spend": 10.04,
+        "ctr": 0.986
+      },
+      {
+        "dia": 1,
+        "hora": 12,
+        "impressions": 1515,
+        "clicks": 15,
+        "spend": 9.09,
+        "ctr": 0.961
+      },
+      {
+        "dia": 1,
+        "hora": 13,
+        "impressions": 1755,
+        "clicks": 17,
+        "spend": 10.53,
+        "ctr": 0.95
+      },
+      {
+        "dia": 1,
+        "hora": 14,
+        "impressions": 1749,
+        "clicks": 17,
+        "spend": 10.49,
+        "ctr": 0.956
+      },
+      {
+        "dia": 1,
+        "hora": 15,
+        "impressions": 1696,
+        "clicks": 17,
+        "spend": 10.18,
+        "ctr": 0.978
+      },
+      {
+        "dia": 1,
+        "hora": 16,
+        "impressions": 1728,
+        "clicks": 18,
+        "spend": 10.37,
+        "ctr": 1.013
+      },
+      {
+        "dia": 1,
+        "hora": 17,
+        "impressions": 1562,
+        "clicks": 17,
+        "spend": 9.37,
+        "ctr": 1.058
+      },
+      {
+        "dia": 1,
+        "hora": 18,
+        "impressions": 2341,
+        "clicks": 36,
+        "spend": 14.05,
+        "ctr": 1.548
+      },
+      {
+        "dia": 1,
+        "hora": 19,
+        "impressions": 2377,
+        "clicks": 38,
+        "spend": 14.26,
+        "ctr": 1.596
+      },
+      {
+        "dia": 1,
+        "hora": 20,
+        "impressions": 2163,
+        "clicks": 35,
+        "spend": 12.98,
+        "ctr": 1.639
+      },
+      {
+        "dia": 1,
+        "hora": 21,
+        "impressions": 2163,
+        "clicks": 36,
+        "spend": 12.98,
+        "ctr": 1.67
+      },
+      {
+        "dia": 1,
+        "hora": 22,
+        "impressions": 2238,
+        "clicks": 38,
+        "spend": 13.43,
+        "ctr": 1.687
+      },
+      {
+        "dia": 1,
+        "hora": 23,
+        "impressions": 2223,
+        "clicks": 38,
+        "spend": 13.34,
+        "ctr": 1.688
+      },
+      {
+        "dia": 2,
+        "hora": 0,
+        "impressions": 904,
+        "clicks": 6,
+        "spend": 5.42,
+        "ctr": 0.643
+      },
+      {
+        "dia": 2,
+        "hora": 1,
+        "impressions": 853,
+        "clicks": 6,
+        "spend": 5.12,
+        "ctr": 0.676
+      },
+      {
+        "dia": 2,
+        "hora": 2,
+        "impressions": 814,
+        "clicks": 6,
+        "spend": 4.88,
+        "ctr": 0.696
+      },
+      {
+        "dia": 2,
+        "hora": 3,
+        "impressions": 935,
+        "clicks": 7,
+        "spend": 5.61,
+        "ctr": 0.699
+      },
+      {
+        "dia": 2,
+        "hora": 4,
+        "impressions": 925,
+        "clicks": 6,
+        "spend": 5.55,
+        "ctr": 0.686
+      },
+      {
+        "dia": 2,
+        "hora": 5,
+        "impressions": 760,
+        "clicks": 5,
+        "spend": 4.56,
+        "ctr": 0.658
+      },
+      {
+        "dia": 2,
+        "hora": 6,
+        "impressions": 1520,
+        "clicks": 18,
+        "spend": 9.12,
+        "ctr": 1.169
+      },
+      {
+        "dia": 2,
+        "hora": 7,
+        "impressions": 1755,
+        "clicks": 20,
+        "spend": 10.53,
+        "ctr": 1.121
+      },
+      {
+        "dia": 2,
+        "hora": 8,
+        "impressions": 1537,
+        "clicks": 16,
+        "spend": 9.22,
+        "ctr": 1.071
+      },
+      {
+        "dia": 2,
+        "hora": 9,
+        "impressions": 1776,
+        "clicks": 18,
+        "spend": 10.66,
+        "ctr": 1.025
+      },
+      {
+        "dia": 2,
+        "hora": 10,
+        "impressions": 1713,
+        "clicks": 17,
+        "spend": 10.28,
+        "ctr": 0.986
+      },
+      {
+        "dia": 2,
+        "hora": 11,
+        "impressions": 1644,
+        "clicks": 16,
+        "spend": 9.86,
+        "ctr": 0.961
+      },
+      {
+        "dia": 2,
+        "hora": 12,
+        "impressions": 1722,
+        "clicks": 16,
+        "spend": 10.33,
+        "ctr": 0.95
+      },
+      {
+        "dia": 2,
+        "hora": 13,
+        "impressions": 1500,
+        "clicks": 14,
+        "spend": 9,
+        "ctr": 0.956
+      },
+      {
+        "dia": 2,
+        "hora": 14,
+        "impressions": 1786,
+        "clicks": 17,
+        "spend": 10.72,
+        "ctr": 0.978
+      },
+      {
+        "dia": 2,
+        "hora": 15,
+        "impressions": 1686,
+        "clicks": 17,
+        "spend": 10.12,
+        "ctr": 1.013
+      },
+      {
+        "dia": 2,
+        "hora": 16,
+        "impressions": 1612,
+        "clicks": 17,
+        "spend": 9.67,
+        "ctr": 1.058
+      },
+      {
+        "dia": 2,
+        "hora": 17,
+        "impressions": 1546,
+        "clicks": 17,
+        "spend": 9.28,
+        "ctr": 1.108
+      },
+      {
+        "dia": 2,
+        "hora": 18,
+        "impressions": 2226,
+        "clicks": 36,
+        "spend": 13.36,
+        "ctr": 1.596
+      },
+      {
+        "dia": 2,
+        "hora": 19,
+        "impressions": 2274,
+        "clicks": 37,
+        "spend": 13.64,
+        "ctr": 1.639
+      },
+      {
+        "dia": 2,
+        "hora": 20,
+        "impressions": 2315,
+        "clicks": 39,
+        "spend": 13.89,
+        "ctr": 1.67
+      },
+      {
+        "dia": 2,
+        "hora": 21,
+        "impressions": 2389,
+        "clicks": 40,
+        "spend": 14.33,
+        "ctr": 1.687
+      },
+      {
+        "dia": 2,
+        "hora": 22,
+        "impressions": 2182,
+        "clicks": 37,
+        "spend": 13.09,
+        "ctr": 1.688
+      },
+      {
+        "dia": 2,
+        "hora": 23,
+        "impressions": 2375,
+        "clicks": 40,
+        "spend": 14.25,
+        "ctr": 1.673
+      },
+      {
+        "dia": 3,
+        "hora": 0,
+        "impressions": 923,
+        "clicks": 6,
+        "spend": 5.54,
+        "ctr": 0.676
+      },
+      {
+        "dia": 3,
+        "hora": 1,
+        "impressions": 939,
+        "clicks": 7,
+        "spend": 5.63,
+        "ctr": 0.696
+      },
+      {
+        "dia": 3,
+        "hora": 2,
+        "impressions": 845,
+        "clicks": 6,
+        "spend": 5.07,
+        "ctr": 0.699
+      },
+      {
+        "dia": 3,
+        "hora": 3,
+        "impressions": 1008,
+        "clicks": 7,
+        "spend": 6.05,
+        "ctr": 0.686
+      },
+      {
+        "dia": 3,
+        "hora": 4,
+        "impressions": 809,
+        "clicks": 5,
+        "spend": 4.85,
+        "ctr": 0.658
+      },
+      {
+        "dia": 3,
+        "hora": 5,
+        "impressions": 941,
+        "clicks": 6,
+        "spend": 5.65,
+        "ctr": 0.619
+      },
+      {
+        "dia": 3,
+        "hora": 6,
+        "impressions": 1657,
+        "clicks": 19,
+        "spend": 9.94,
+        "ctr": 1.121
+      },
+      {
+        "dia": 3,
+        "hora": 7,
+        "impressions": 1517,
+        "clicks": 16,
+        "spend": 9.1,
+        "ctr": 1.071
+      },
+      {
+        "dia": 3,
+        "hora": 8,
+        "impressions": 1663,
+        "clicks": 17,
+        "spend": 9.98,
+        "ctr": 1.025
+      },
+      {
+        "dia": 3,
+        "hora": 9,
+        "impressions": 1625,
+        "clicks": 16,
+        "spend": 9.75,
+        "ctr": 0.986
+      },
+      {
+        "dia": 3,
+        "hora": 10,
+        "impressions": 1688,
+        "clicks": 16,
+        "spend": 10.13,
+        "ctr": 0.961
+      },
+      {
+        "dia": 3,
+        "hora": 11,
+        "impressions": 1567,
+        "clicks": 15,
+        "spend": 9.4,
+        "ctr": 0.95
+      },
+      {
+        "dia": 3,
+        "hora": 12,
+        "impressions": 1759,
+        "clicks": 17,
+        "spend": 10.55,
+        "ctr": 0.956
+      },
+      {
+        "dia": 3,
+        "hora": 13,
+        "impressions": 1620,
+        "clicks": 16,
+        "spend": 9.72,
+        "ctr": 0.978
+      },
+      {
+        "dia": 3,
+        "hora": 14,
+        "impressions": 1712,
+        "clicks": 17,
+        "spend": 10.27,
+        "ctr": 1.013
+      },
+      {
+        "dia": 3,
+        "hora": 15,
+        "impressions": 1651,
+        "clicks": 17,
+        "spend": 9.91,
+        "ctr": 1.058
+      },
+      {
+        "dia": 3,
+        "hora": 16,
+        "impressions": 1713,
+        "clicks": 19,
+        "spend": 10.28,
+        "ctr": 1.108
+      },
+      {
+        "dia": 3,
+        "hora": 17,
+        "impressions": 1760,
+        "clicks": 20,
+        "spend": 10.56,
+        "ctr": 1.156
+      },
+      {
+        "dia": 3,
+        "hora": 18,
+        "impressions": 2178,
+        "clicks": 36,
+        "spend": 13.07,
+        "ctr": 1.639
+      },
+      {
+        "dia": 3,
+        "hora": 19,
+        "impressions": 2335,
+        "clicks": 39,
+        "spend": 14.01,
+        "ctr": 1.67
+      },
+      {
+        "dia": 3,
+        "hora": 20,
+        "impressions": 2255,
+        "clicks": 38,
+        "spend": 13.53,
+        "ctr": 1.687
+      },
+      {
+        "dia": 3,
+        "hora": 21,
+        "impressions": 2248,
+        "clicks": 38,
+        "spend": 13.49,
+        "ctr": 1.688
+      },
+      {
+        "dia": 3,
+        "hora": 22,
+        "impressions": 2242,
+        "clicks": 38,
+        "spend": 13.45,
+        "ctr": 1.673
+      },
+      {
+        "dia": 3,
+        "hora": 23,
+        "impressions": 2186,
+        "clicks": 36,
+        "spend": 13.12,
+        "ctr": 1.643
+      },
+      {
+        "dia": 4,
+        "hora": 0,
+        "impressions": 873,
+        "clicks": 6,
+        "spend": 5.24,
+        "ctr": 0.696
+      },
+      {
+        "dia": 4,
+        "hora": 1,
+        "impressions": 1041,
+        "clicks": 7,
+        "spend": 6.25,
+        "ctr": 0.699
+      },
+      {
+        "dia": 4,
+        "hora": 2,
+        "impressions": 931,
+        "clicks": 6,
+        "spend": 5.59,
+        "ctr": 0.686
+      },
+      {
+        "dia": 4,
+        "hora": 3,
+        "impressions": 843,
+        "clicks": 6,
+        "spend": 5.06,
+        "ctr": 0.658
+      },
+      {
+        "dia": 4,
+        "hora": 4,
+        "impressions": 972,
+        "clicks": 6,
+        "spend": 5.83,
+        "ctr": 0.619
+      },
+      {
+        "dia": 4,
+        "hora": 5,
+        "impressions": 937,
+        "clicks": 5,
+        "spend": 5.62,
+        "ctr": 0.571
+      },
+      {
+        "dia": 4,
+        "hora": 6,
+        "impressions": 1512,
+        "clicks": 16,
+        "spend": 9.07,
+        "ctr": 1.071
+      },
+      {
+        "dia": 4,
+        "hora": 7,
+        "impressions": 1731,
+        "clicks": 18,
+        "spend": 10.39,
+        "ctr": 1.025
+      },
+      {
+        "dia": 4,
+        "hora": 8,
+        "impressions": 1679,
+        "clicks": 17,
+        "spend": 10.07,
+        "ctr": 0.986
+      },
+      {
+        "dia": 4,
+        "hora": 9,
+        "impressions": 1576,
+        "clicks": 15,
+        "spend": 9.46,
+        "ctr": 0.961
+      },
+      {
+        "dia": 4,
+        "hora": 10,
+        "impressions": 1725,
+        "clicks": 16,
+        "spend": 10.35,
+        "ctr": 0.95
+      },
+      {
+        "dia": 4,
+        "hora": 11,
+        "impressions": 1599,
+        "clicks": 15,
+        "spend": 9.59,
+        "ctr": 0.956
+      },
+      {
+        "dia": 4,
+        "hora": 12,
+        "impressions": 1704,
+        "clicks": 17,
+        "spend": 10.22,
+        "ctr": 0.978
+      },
+      {
+        "dia": 4,
+        "hora": 13,
+        "impressions": 1737,
+        "clicks": 18,
+        "spend": 10.42,
+        "ctr": 1.013
+      },
+      {
+        "dia": 4,
+        "hora": 14,
+        "impressions": 1549,
+        "clicks": 16,
+        "spend": 9.29,
+        "ctr": 1.058
+      },
+      {
+        "dia": 4,
+        "hora": 15,
+        "impressions": 1722,
+        "clicks": 19,
+        "spend": 10.33,
+        "ctr": 1.108
+      },
+      {
+        "dia": 4,
+        "hora": 16,
+        "impressions": 1633,
+        "clicks": 19,
+        "spend": 9.8,
+        "ctr": 1.156
+      },
+      {
+        "dia": 4,
+        "hora": 17,
+        "impressions": 1530,
+        "clicks": 18,
+        "spend": 9.18,
+        "ctr": 1.199
+      },
+      {
+        "dia": 4,
+        "hora": 18,
+        "impressions": 2196,
+        "clicks": 37,
+        "spend": 13.18,
+        "ctr": 1.67
+      },
+      {
+        "dia": 4,
+        "hora": 19,
+        "impressions": 2226,
+        "clicks": 38,
+        "spend": 13.36,
+        "ctr": 1.687
+      },
+      {
+        "dia": 4,
+        "hora": 20,
+        "impressions": 2304,
+        "clicks": 39,
+        "spend": 13.82,
+        "ctr": 1.688
+      },
+      {
+        "dia": 4,
+        "hora": 21,
+        "impressions": 2315,
+        "clicks": 39,
+        "spend": 13.89,
+        "ctr": 1.673
+      },
+      {
+        "dia": 4,
+        "hora": 22,
+        "impressions": 2136,
+        "clicks": 35,
+        "spend": 12.82,
+        "ctr": 1.643
+      },
+      {
+        "dia": 4,
+        "hora": 23,
+        "impressions": 2192,
+        "clicks": 35,
+        "spend": 13.15,
+        "ctr": 1.602
+      },
+      {
+        "dia": 5,
+        "hora": 0,
+        "impressions": 921,
+        "clicks": 6,
+        "spend": 5.53,
+        "ctr": 0.699
+      },
+      {
+        "dia": 5,
+        "hora": 1,
+        "impressions": 778,
+        "clicks": 5,
+        "spend": 4.67,
+        "ctr": 0.686
+      },
+      {
+        "dia": 5,
+        "hora": 2,
+        "impressions": 752,
+        "clicks": 5,
+        "spend": 4.51,
+        "ctr": 0.658
+      },
+      {
+        "dia": 5,
+        "hora": 3,
+        "impressions": 879,
+        "clicks": 5,
+        "spend": 5.27,
+        "ctr": 0.619
+      },
+      {
+        "dia": 5,
+        "hora": 4,
+        "impressions": 836,
+        "clicks": 5,
+        "spend": 5.02,
+        "ctr": 0.571
+      },
+      {
+        "dia": 5,
+        "hora": 5,
+        "impressions": 916,
+        "clicks": 5,
+        "spend": 5.5,
+        "ctr": 0.521
+      },
+      {
+        "dia": 5,
+        "hora": 6,
+        "impressions": 1721,
+        "clicks": 18,
+        "spend": 10.33,
+        "ctr": 1.025
+      },
+      {
+        "dia": 5,
+        "hora": 7,
+        "impressions": 1571,
+        "clicks": 15,
+        "spend": 9.43,
+        "ctr": 0.986
+      },
+      {
+        "dia": 5,
+        "hora": 8,
+        "impressions": 1687,
+        "clicks": 16,
+        "spend": 10.12,
+        "ctr": 0.961
+      },
+      {
+        "dia": 5,
+        "hora": 9,
+        "impressions": 1778,
+        "clicks": 17,
+        "spend": 10.67,
+        "ctr": 0.95
+      },
+      {
+        "dia": 5,
+        "hora": 10,
+        "impressions": 1637,
+        "clicks": 16,
+        "spend": 9.82,
+        "ctr": 0.956
+      },
+      {
+        "dia": 5,
+        "hora": 11,
+        "impressions": 1668,
+        "clicks": 16,
+        "spend": 10.01,
+        "ctr": 0.978
+      },
+      {
+        "dia": 5,
+        "hora": 12,
+        "impressions": 1747,
+        "clicks": 18,
+        "spend": 10.48,
+        "ctr": 1.013
+      },
+      {
+        "dia": 5,
+        "hora": 13,
+        "impressions": 1761,
+        "clicks": 19,
+        "spend": 10.57,
+        "ctr": 1.058
+      },
+      {
+        "dia": 5,
+        "hora": 14,
+        "impressions": 1723,
+        "clicks": 19,
+        "spend": 10.34,
+        "ctr": 1.108
+      },
+      {
+        "dia": 5,
+        "hora": 15,
+        "impressions": 1689,
+        "clicks": 20,
+        "spend": 10.13,
+        "ctr": 1.156
+      },
+      {
+        "dia": 5,
+        "hora": 16,
+        "impressions": 1681,
+        "clicks": 20,
+        "spend": 10.09,
+        "ctr": 1.199
+      },
+      {
+        "dia": 5,
+        "hora": 17,
+        "impressions": 1722,
+        "clicks": 21,
+        "spend": 10.33,
+        "ctr": 1.23
+      },
+      {
+        "dia": 5,
+        "hora": 18,
+        "impressions": 2164,
+        "clicks": 37,
+        "spend": 12.98,
+        "ctr": 1.687
+      },
+      {
+        "dia": 5,
+        "hora": 19,
+        "impressions": 2326,
+        "clicks": 39,
+        "spend": 13.96,
+        "ctr": 1.688
+      },
+      {
+        "dia": 5,
+        "hora": 20,
+        "impressions": 2366,
+        "clicks": 40,
+        "spend": 14.2,
+        "ctr": 1.673
+      },
+      {
+        "dia": 5,
+        "hora": 21,
+        "impressions": 2370,
+        "clicks": 39,
+        "spend": 14.22,
+        "ctr": 1.643
+      },
+      {
+        "dia": 5,
+        "hora": 22,
+        "impressions": 2141,
+        "clicks": 34,
+        "spend": 12.85,
+        "ctr": 1.602
+      },
+      {
+        "dia": 5,
+        "hora": 23,
+        "impressions": 2221,
+        "clicks": 35,
+        "spend": 13.33,
+        "ctr": 1.554
+      },
+      {
+        "dia": 6,
+        "hora": 0,
+        "impressions": 1064,
+        "clicks": 9,
+        "spend": 6.38,
+        "ctr": 0.824
+      },
+      {
+        "dia": 6,
+        "hora": 1,
+        "impressions": 1095,
+        "clicks": 9,
+        "spend": 6.57,
+        "ctr": 0.796
+      },
+      {
+        "dia": 6,
+        "hora": 2,
+        "impressions": 1075,
+        "clicks": 8,
+        "spend": 6.45,
+        "ctr": 0.756
+      },
+      {
+        "dia": 6,
+        "hora": 3,
+        "impressions": 1010,
+        "clicks": 7,
+        "spend": 6.06,
+        "ctr": 0.709
+      },
+      {
+        "dia": 6,
+        "hora": 4,
+        "impressions": 964,
+        "clicks": 6,
+        "spend": 5.78,
+        "ctr": 0.659
+      },
+      {
+        "dia": 6,
+        "hora": 5,
+        "impressions": 1109,
+        "clicks": 7,
+        "spend": 6.65,
+        "ctr": 0.612
+      },
+      {
+        "dia": 6,
+        "hora": 6,
+        "impressions": 1960,
+        "clicks": 25,
+        "spend": 11.76,
+        "ctr": 1.261
+      },
+      {
+        "dia": 6,
+        "hora": 7,
+        "impressions": 2038,
+        "clicks": 25,
+        "spend": 12.23,
+        "ctr": 1.236
+      },
+      {
+        "dia": 6,
+        "hora": 8,
+        "impressions": 1877,
+        "clicks": 23,
+        "spend": 11.26,
+        "ctr": 1.225
+      },
+      {
+        "dia": 6,
+        "hora": 9,
+        "impressions": 1909,
+        "clicks": 23,
+        "spend": 11.45,
+        "ctr": 1.231
+      },
+      {
+        "dia": 6,
+        "hora": 10,
+        "impressions": 2101,
+        "clicks": 26,
+        "spend": 12.61,
+        "ctr": 1.253
+      },
+      {
+        "dia": 6,
+        "hora": 11,
+        "impressions": 2077,
+        "clicks": 27,
+        "spend": 12.46,
+        "ctr": 1.288
+      },
+      {
+        "dia": 6,
+        "hora": 12,
+        "impressions": 1877,
+        "clicks": 25,
+        "spend": 11.26,
+        "ctr": 1.333
+      },
+      {
+        "dia": 6,
+        "hora": 13,
+        "impressions": 1955,
+        "clicks": 27,
+        "spend": 11.73,
+        "ctr": 1.383
+      },
+      {
+        "dia": 6,
+        "hora": 14,
+        "impressions": 1984,
+        "clicks": 28,
+        "spend": 11.9,
+        "ctr": 1.431
+      },
+      {
+        "dia": 6,
+        "hora": 15,
+        "impressions": 1974,
+        "clicks": 29,
+        "spend": 11.84,
+        "ctr": 1.474
+      },
+      {
+        "dia": 6,
+        "hora": 16,
+        "impressions": 1959,
+        "clicks": 29,
+        "spend": 11.75,
+        "ctr": 1.505
+      },
+      {
+        "dia": 6,
+        "hora": 17,
+        "impressions": 1875,
+        "clicks": 29,
+        "spend": 11.25,
+        "ctr": 1.522
+      },
+      {
+        "dia": 6,
+        "hora": 18,
+        "impressions": 2910,
+        "clicks": 60,
+        "spend": 17.46,
+        "ctr": 2.073
+      },
+      {
+        "dia": 6,
+        "hora": 19,
+        "impressions": 2862,
+        "clicks": 59,
+        "spend": 17.17,
+        "ctr": 2.058
+      },
+      {
+        "dia": 6,
+        "hora": 20,
+        "impressions": 2862,
+        "clicks": 58,
+        "spend": 17.17,
+        "ctr": 2.028
+      },
+      {
+        "dia": 6,
+        "hora": 21,
+        "impressions": 2845,
+        "clicks": 57,
+        "spend": 17.07,
+        "ctr": 1.987
+      },
+      {
+        "dia": 6,
+        "hora": 22,
+        "impressions": 2849,
+        "clicks": 55,
+        "spend": 17.09,
+        "ctr": 1.939
+      },
+      {
+        "dia": 6,
+        "hora": 23,
+        "impressions": 2821,
+        "clicks": 53,
+        "spend": 16.93,
+        "ctr": 1.889
+      }
+    ],
+    "metrica": "ctr",
+    "selo": "Calculado",
+    "fonte": "dados de exemplo (fixture) — CTR agregado dia×hora"
+  },
+  "funil": {
+    "etapas": [
+      {
+        "nome": "Impressões",
+        "valor": 205694,
+        "selo": "Real"
+      },
+      {
+        "nome": "Cliques no link",
+        "valor": 2276,
+        "selo": "Real"
+      },
+      {
+        "nome": "Landing page view",
+        "valor": 1740,
+        "selo": "Real"
+      },
+      {
+        "nome": "Checkout iniciado",
+        "valor": 210,
+        "selo": "Real"
+      },
+      {
+        "nome": "Compra",
+        "valor": 59,
+        "selo": "Real"
+      }
+    ],
+    "fonte": "dados de exemplo (fixture) — actions",
+    "selo": "Real"
+  },
+  "demografia": {
+    "idade_genero": [
+      {
+        "idade": "18-24",
+        "genero": "female",
+        "impressions": 312000,
+        "clicks": 4800,
+        "spend": 1200
+      },
+      {
+        "idade": "18-24",
+        "genero": "male",
+        "impressions": 192000,
+        "clicks": 3600,
+        "spend": 923.0769230769231
+      },
+      {
+        "idade": "25-34",
+        "genero": "female",
+        "impressions": 260000,
+        "clicks": 4000,
+        "spend": 1000
+      },
+      {
+        "idade": "25-34",
+        "genero": "male",
+        "impressions": 160000,
+        "clicks": 3000,
+        "spend": 769.2307692307693
+      },
+      {
+        "idade": "35-44",
+        "genero": "female",
+        "impressions": 208000,
+        "clicks": 3200,
+        "spend": 800
+      },
+      {
+        "idade": "35-44",
+        "genero": "male",
+        "impressions": 128000,
+        "clicks": 2400,
+        "spend": 615.3846153846154
+      },
+      {
+        "idade": "45-54",
+        "genero": "female",
+        "impressions": 156000,
+        "clicks": 2400,
+        "spend": 600
+      },
+      {
+        "idade": "45-54",
+        "genero": "male",
+        "impressions": 96000,
+        "clicks": 1800,
+        "spend": 461.53846153846155
+      },
+      {
+        "idade": "55-64",
+        "genero": "female",
+        "impressions": 104000,
+        "clicks": 1600,
+        "spend": 400
+      },
+      {
+        "idade": "55-64",
+        "genero": "male",
+        "impressions": 64000,
+        "clicks": 1200,
+        "spend": 307.6923076923077
+      },
+      {
+        "idade": "65+",
+        "genero": "female",
+        "impressions": 52000,
+        "clicks": 800,
+        "spend": 200
+      },
+      {
+        "idade": "65+",
+        "genero": "male",
+        "impressions": 32000,
+        "clicks": 600,
+        "spend": 153.84615384615384
+      }
+    ],
+    "regiao": [
+      {
+        "regiao": "São Paulo (state)",
+        "impressions": 180000,
+        "spend": 857.1428571428571
+      },
+      {
+        "regiao": "Minas Gerais",
+        "impressions": 92000,
+        "spend": 438.0952380952381
+      },
+      {
+        "regiao": "Rio de Janeiro (state)",
+        "impressions": 78000,
+        "spend": 371.42857142857144
+      },
+      {
+        "regiao": "Paraná",
+        "impressions": 54000,
+        "spend": 257.14285714285717
+      },
+      {
+        "regiao": "Bahia",
+        "impressions": 48000,
+        "spend": 228.57142857142858
+      },
+      {
+        "regiao": "Rio Grande do Sul",
+        "impressions": 44000,
+        "spend": 209.52380952380952
+      },
+      {
+        "regiao": "Santa Catarina",
+        "impressions": 33000,
+        "spend": 157.14285714285714
+      }
+    ],
+    "selo": "Real",
+    "fonte": "dados de exemplo (fixture)"
+  }
+}

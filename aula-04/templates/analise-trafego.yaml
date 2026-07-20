@@ -1,0 +1,34 @@
+# Template — bloco analise_a4 para o PAINEL-DA-SEMANA.yaml
+# Gerado por /analista-de-dados. Faça APPEND (nunca sobrescreva o histórico da semana).
+
+analise_a4:
+  gerado_em: "AAAA-MM-DD"
+  modo: "api"                # api | exemplo
+  fonte_dados: "projetos/{slug}/dados-trafego/bundle.json"
+  painel: "projetos/{slug}/painel-trafego.html"
+
+  # Cada clone: 1 veredito + 1 alavanca + 1 evidência (com selo).
+  board_especialistas:
+    - papel: "Media Buyer"
+      titulo: "<recomendação em uma linha>"
+      alavanca: "<a única ação — uma campanha por vez>"
+      evidencia: "<número do bundle que sustenta>"
+      selo: "Estimado"       # Real | Estimado | Calculado
+    - papel: "Analista de Dados"
+      titulo: "<...>"
+      alavanca: "<...>"
+      evidencia: "<...>"
+      selo: "Real"
+    - papel: "Diretor de Criativos"
+      titulo: "<...>"
+      alavanca: "<...>"
+      evidencia: "<...>"
+      selo: "Real"
+    - papel: "CRO / Growth"
+      titulo: "<...>"
+      alavanca: "<...>"
+      evidencia: "<...>"
+      selo: "Estimado"
+
+  sintese: "<o que os quatro concordam + a ordem das alavancas, uma por vez>"
+  aprovado_pelo_aluno: false   # o board recomenda; VOCÊ decide (gate VOCÊ REVISA)

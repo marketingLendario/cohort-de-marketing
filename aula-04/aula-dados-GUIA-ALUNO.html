@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula 04 — Central de Dados · Guia do Aluno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#7C3AED;--secondary:#22C7B1;--surface:#0A0A0F;--elevated:#121218;--border:#27272A;--text:#F5F0FF;--muted:#A1A1AA;--warm:#F59E0B;--data:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:48px 32px 72px}
+.kicker{display:inline-block;font:600 .68rem/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--data);border:1px solid color-mix(in srgb,var(--data) 35%,transparent);padding:5px 14px;border-radius:999px;margin-bottom:16px}
+h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:2.1rem;line-height:1.15;margin:0 0 10px}
+h2{font-family:'Space Grotesk',Inter,sans-serif;font-size:1.3rem;color:var(--secondary);margin:38px 0 14px}
+h3{font-size:1.05rem;color:var(--primary);margin:22px 0 8px}
+p{margin:0 0 14px}
+.lead{font-size:1.12rem;color:var(--muted);margin-bottom:24px}
+.hero{padding:36px 0 26px;border-bottom:1px solid var(--border);margin-bottom:26px}
+.card{background:var(--elevated);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin:14px 0}
+.card-accent{border-color:color-mix(in srgb,var(--data) 45%,var(--border))}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+ol,ul{margin:0 0 16px;padding-left:1.4rem}li{margin:7px 0}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.86em;background:#1a1a22;padding:2px 6px;border-radius:4px}
+a{color:var(--secondary)}
+.btn{display:inline-block;background:var(--primary);color:#fff;padding:13px 26px;border-radius:12px;font:600 1rem/1 Inter,sans-serif;text-decoration:none;margin:6px 8px 6px 0}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:999px}
+.pill.real{color:var(--secondary);background:color-mix(in srgb,var(--secondary) 15%,transparent)}
+.pill.est{color:var(--warm);background:color-mix(in srgb,var(--warm) 15%,transparent)}
+.pill.calc{color:#9db4ff;background:color-mix(in srgb,#9db4ff 15%,transparent)}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92rem}
+th,td{border:1px solid var(--border);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#1a1a22;color:var(--secondary);font-weight:600}
+.foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem}
+@media (max-width:640px){.wrap{padding:32px 20px 56px}.grid-2{grid-template-columns:1fr}h1{font-size:1.7rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="kicker">Cohort de Marketing · Aula 04</span>
+    <h1>Central de Dados</h1>
+    <p class="lead">Transforme o histórico de tráfego num painel que decide. Séries no tempo, comparação de campanhas e um board de especialistas de mercado lendo os seus números — sem tocar em nenhuma campanha na Meta.</p>
+    <a class="btn" href="./exemplos/painel-trafego-exemplo.html">Ver o painel de exemplo →</a>
+    <a class="btn btn-ghost" href="./docs/configurar-chaves-meta.md">Configurar chaves</a>
+    <a class="btn btn-ghost" href="./docs/tutorial-token-meta.md">Como obter o token da Meta</a>
+  </header>
+
+  <h2>O que você vai montar</h2>
+  <p>O <b>Squad de Dados</b> conduz tudo — uma skill por função, com porta de entrada única: <code>/analista-de-dados</code> (hub que roda coleta → board → painel → retroalimentação; cada etapa também existe como skill própria: <code>/coletor-de-dados</code>, <code>/board-de-especialistas</code>, <code>/painel-de-dados</code>, <code>/retroalimentacao</code>, <code>/gestor-de-campanhas</code>). Ela configura as chaves (ou roda em <b>Modo Exemplo</b>), puxa os dados reais da Meta, monta o painel local no estilo Grafana/Looker com a <b>sua identidade visual</b> e convoca o board de especialistas.</p>
+
+  <div class="card card-accent">
+    <b>A demo nunca trava.</b> Sem credenciais no <code>.env</code>, o painel roda sobre dados de exemplo (rotulados <span class="pill est">modo exemplo</span>). Com o token da Meta, ele lê a sua conta.
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">No Passo 0, a skill pergunta antes de decidir</h3>
+    <ul style="margin-bottom:0">
+      <li><b>Já tem <code>.env</code>?</b> Ela pergunta se você quer <b>seguir com a conta atual</b> ou <b>usar outra</b> — e lista as contas que o seu token acessa para você escolher.</li>
+      <li><b>Não tem <code>.env</code>?</b> Ela pergunta se você quer <b>criar o <code>.env</code> e configurar a API agora</b> (com ajuda, seguindo o <a href="./docs/tutorial-token-meta.md">tutorial de token</a>) ou <b>seguir no Modo Exemplo</b> só para visualizar.</li>
+    </ul>
+  </div>
+
+  <h2>Os 4 passos</h2>
+  <ol>
+    <li><b>Chaves / Modo</b> — valida o <code>.env</code> (delegado ao <code>/zelador</code>) ou cai no Modo Exemplo.</li>
+    <li><b>Dados</b> — séries por <b>dia, mês e quarter</b>, comparação de <b>períodos</b> e de <b>campanhas</b>.</li>
+    <li><b>Board</b> — 4 clones de especialistas leem os dados e recomendam <b>uma alavanca cada</b>.</li>
+    <li><b>Painel</b> — HTML self-contained (abre offline, vira PDF) na identidade da sua marca.</li>
+  </ol>
+
+  <h2>O board de especialistas</h2>
+  <div class="grid-2">
+    <div class="card"><h3 style="margin-top:0">Media Buyer</h3><p>Lê gasto, ROAS e frequência entre campanhas. Diz onde escalar, pausar e para onde realocar verba — uma campanha por vez.</p></div>
+    <div class="card"><h3 style="margin-top:0">Analista de Dados</h3><p>Lê as séries e a comparação de períodos. Separa tendência de ruído e avisa o que é <span class="pill real">Real</span> vs. <span class="pill est">Estimado</span>.</p></div>
+    <div class="card"><h3 style="margin-top:0">Diretor de Criativos</h3><p>Lê queda de CTR, frequência e idade do criativo. Diz quando rotacionar e pede nova leva de ganchos ao Briefista.</p></div>
+    <div class="card"><h3 style="margin-top:0">CRO / Growth</h3><p>Lê a relação clique → compra e a consistência plataforma↔checkout↔caixa. Aponta onde a venda vaza.</p></div>
+  </div>
+  <p>Cada clone ancora a leitura num número real e cita o selo. A <b>síntese</b> concilia as vozes e ordena as alavancas. No fim: <b>VOCÊ REVISA</b> — o board recomenda, você decide.</p>
+
+  <h2>Como ler os selos</h2>
+  <table>
+    <thead><tr><th>Selo</th><th>Significa</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill real">Real</span></td><td>Veio pronto da Meta. Nada é calculado localmente.</td></tr>
+      <tr><td><span class="pill est">Estimado</span></td><td>Atribuição da plataforma. <b>Todo ROAS é Estimado</b> — não é caixa confirmado.</td></tr>
+      <tr><td><span class="pill calc">Calculado</span></td><td>Variação entre dois valores Real (comparação de períodos).</td></tr>
+      <tr><td>não fornecido</td><td>Campo ausente — não se inventa nem se deriva. No trimestre, taxas não são recalculadas.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Rodar agora</h2>
+  <div class="card">
+    <p>No terminal, na pasta do projeto:</p>
+    <p><code>/analista-de-dados</code></p>
+    <p style="margin-bottom:0">Ou manualmente: <code>node scripts/painel-trafego-data.mjs --account --saida=projetos/&lt;slug&gt;/dados-trafego/bundle.json</code> e depois <code>node scripts/painel-trafego-render.mjs --dados=… --board=… --tokens=projetos/&lt;slug&gt;/tokens.json --projeto="Sua Marca" --saida=projetos/&lt;slug&gt;/painel-trafego.html</code></p>
+  </div>
+
+  <p class="foot">Cohort de Marketing · Aula 04 (Dados) · Academia Lendária. O perfil orgânico (comentários e visualizações de posts) é roadmap — ver <a href="./docs/organico-roadmap.md">organico-roadmap.md</a>. Regras de dados em <a href="./docs/regras-de-dados.md">regras-de-dados.md</a>.</p>
+</div>
+</body>
+</html>

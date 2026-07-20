@@ -1,0 +1,38 @@
+{
+  "gerado_em": "2026-07-17",
+  "clones": [
+    {
+      "papel": "Media Buyer",
+      "titulo": "Realoque verba do MOF frio para o Retargeting",
+      "veredito": "A campanha de Retargeting (Quiz 7d) entrega ROAS 4,6x com CTR 2,25%, enquanto a MOF Lookalike roda a ROAS 1,4x e a de Interesses·Menopausa já está em 0,9x (pausada, bem). O dinheiro está sendo mal distribuído: quem converte está subfinanciado.",
+      "alavanca": "Suba +30% no orçamento do Retargeting e corte a Lookalike 1% para teste mínimo até o ROAS reagir. Mexa em UMA campanha por vez.",
+      "evidencia": "Retargeting ROAS 4,6x vs. Lookalike 1,4x (last_30d)",
+      "selo": "Estimado"
+    },
+    {
+      "papel": "Analista de Dados",
+      "titulo": "A tendência de CTR é de queda com escala — vigie o dado, não o palpite",
+      "veredito": "Na série diária, o CTR cai de ~1,9% para ~0,95% conforme a verba sobe e a frequência passa de 1,3 para acima de 3,0 — sinal clássico de saturação, não de criativo ruim. As compras só reagiram depois do dia 20. Todo ROAS aqui é Estimado (atribuição), então não trate como caixa confirmado.",
+      "alavanca": "Compare a última quinzena com a anterior antes de decidir: cliques subiram, mas a que custo de frequência? Use o toggle Dia/Mês para separar ruído de tendência.",
+      "evidencia": "CTR 1,9%→0,95% e frequência 1,3→3,2 na série diária",
+      "selo": "Real"
+    },
+    {
+      "papel": "Diretor de Criativos",
+      "titulo": "Fadiga confirmada no criativo principal por volta do dia 16",
+      "veredito": "O CTR despencou ~50% do pico antes da troca de criativo no dia 20, quando reagiu. Isso é fadiga de anúncio, não de oferta: o mesmo público viu o mesmo gancho vezes demais (frequência acima de 3). A recuperação após o novo criativo prova o diagnóstico.",
+      "alavanca": "Programe rotação de criativo a cada ~14 dias ou quando a frequência cruzar 3,0. Peça uma nova leva de ganchos ao Briefista a partir dos ângulos vencedores.",
+      "evidencia": "Queda de ~50% no CTR do pico antes do dia 20; recuperação após novo criativo",
+      "selo": "Real"
+    },
+    {
+      "papel": "CRO / Growth",
+      "titulo": "O gargalo é do clique ao checkout, não no anúncio",
+      "veredito": "O topo entrega cliques a CPC saudável, mas a taxa de compra por clique fica em ~2%. O Retargeting converte 3,6x melhor que a Lookalike com metade do gasto — ou seja, a página aquece bem quem já conhece, mas o público frio chega cru ao checkout. O vazamento está entre a página e a compra, não na mídia.",
+      "alavanca": "Antes de escalar o frio, feche o vazamento: teste a headline da página de vendas (o teste A/B já previsto no CRO) e confira a consistência plataforma↔checkout↔caixa.",
+      "evidencia": "Compra/clique ~2%; Retargeting converte ~3,6x a Lookalike",
+      "selo": "Estimado"
+    }
+  ],
+  "sintese": "Os quatro concordam num ponto: não escale o público frio ainda. O dinheiro rende mais realocando para o Retargeting (Media Buyer), a queda de CTR é saturação/fadiga e não oferta ruim (Analista + Diretor de Criativos), e o vazamento real está entre página e checkout (CRO). Ordem sugerida: (1) realoca verba pro que converte, (2) rotaciona criativo, (3) testa a headline da página — uma alavanca por vez, medindo antes da próxima."
+}

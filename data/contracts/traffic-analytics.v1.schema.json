@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketinglendario.local/cohort/traffic-analytics.v1.schema.json",
+  "title": "Traffic Analytics Bundle v1",
+  "description": "Bundle de dados que alimenta o painel-trafego.html (Aula 4). Saida de scripts/painel-trafego-data.mjs.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["modo", "gerado_em", "escopo", "series"],
+  "properties": {
+    "modo": { "enum": ["api", "exemplo"] },
+    "gerado_em": { "type": "string" },
+    "escopo": { "type": "string", "minLength": 1 },
+    "granularidade_pedida": { "type": "string" },
+    "series": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dia": { "$ref": "#/$defs/serie" },
+        "mes": { "$ref": "#/$defs/serie" },
+        "quarter": { "$ref": "#/$defs/serie" }
+      }
+    },
+    "campanhas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["nome"],
+        "properties": {
+          "id": { "type": "string" },
+          "nome": { "type": "string" },
+          "status": { "type": "string" },
+          "spend": { "type": ["number", "null"] },
+          "ctr": { "type": ["number", "null"] },
+          "purchases": { "type": ["number", "null"] },
+          "roas": { "$ref": "#/$defs/roas" },
+          "selo": { "$ref": "#/$defs/selo" }
+        }
+      }
+    },
+    "comparacao": {
+      "type": "object",
+      "properties": {
+        "periodo_a": { "type": "object" },
+        "periodo_b": { "type": "object" },
+        "deltas": { "type": "object" },
+        "selo_deltas": { "const": "Calculado" }
+      }
+    },
+    "perfil": {
+      "type": "object",
+      "required": ["disponivel"],
+      "properties": {
+        "disponivel": { "type": "boolean" },
+        "motivo": { "type": "string" },
+        "posts": { "type": "array" }
+      }
+    }
+  },
+  "$defs": {
+    "selo": { "enum": ["Real", "Estimado", "Calculado"] },
+    "roas": {
+      "type": ["object", "null"],
+      "properties": {
+        "valor": { "type": ["number", "null"] },
+        "selo": { "const": "Estimado" }
+      }
+    },
+    "serie": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["periodo", "granularidade", "selo"],
+        "properties": {
+          "periodo": { "type": "string" },
+          "granularidade": { "enum": ["dia", "mes", "quarter"] },
+          "spend": { "type": ["number", "null"] },
+          "impressions": { "type": ["number", "null"] },
+          "clicks": { "type": ["number", "null"] },
+          "inline_link_clicks": { "type": ["number", "null"] },
+          "ctr": { "type": ["number", "null"] },
+          "cpm": { "type": ["number", "null"] },
+          "cpc": { "type": ["number", "null"] },
+          "frequency": { "type": ["number", "null"] },
+          "reach": { "type": ["number", "null"] },
+          "purchases": { "type": ["number", "null"] },
+          "roas": { "$ref": "#/$defs/roas" },
+          "selo": { "$ref": "#/$defs/selo" },
+          "fonte": { "type": "string" }
+        }
+      }
+    }
+  }
+}
