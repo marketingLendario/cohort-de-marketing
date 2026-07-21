@@ -208,6 +208,7 @@ A skill **sempre** entrega 3 arquivos para cada concorrente analisado:
 1. **`dossie-{concorrente}.md`** — fonte de verdade (markdown editável)
 2. **`dossie-{concorrente}.html`** — versão visual com brand
 3. **`dossie-{concorrente}.pdf`** — versão para imprimir ou compartilhar
+4. **`espiao/index.html`** — índice do Book com links para todos os dossiês aprovados
 
 ### Como gerar os 3 arquivos
 

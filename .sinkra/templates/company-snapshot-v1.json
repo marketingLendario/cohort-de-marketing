@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sinkra-hub/templates/company-snapshot-v1.json",
+  "title": "Company Snapshot v1",
+  "description": "Output template for tsk02_capturar_company_snapshot + tsk03_completar_gaps_company_snapshot. Autocontido — agrega/normaliza qualquer fonte (AIOX files, external docs, audio, text, system access).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "company", "founders_and_leadership", "organization"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["session_id", "completeness_score"],
+      "properties": {
+        "session_id": { "type": "string" },
+        "completeness_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "gaps_identified": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field_path", "severity"],
+            "properties": {
+              "field_path": { "type": "string" },
+              "severity": { "type": "string", "enum": ["blocking", "high", "medium", "low"] },
+              "field_schema": { "type": "object" }
+            }
+          }
+        },
+        "sources_summary": { "type": "object" }
+      }
+    },
+    "company": {
+      "type": "object",
+      "required": ["name", "segment", "industry"],
+      "properties": {
+        "name": { "type": "string" },
+        "segment": { "type": "string", "enum": ["Enterprise", "Mid-Market", "SMB", "Individual", "Agency"] },
+        "industry": { "type": "string" },
+        "size": { "type": "string" },
+        "stage": { "type": "string" }
+      }
+    },
+    "founders_and_leadership": {
+      "type": "object",
+      "properties": {
+        "founders": { "type": "array", "items": { "type": "object" } },
+        "decision_making": { "type": "string" }
+      }
+    },
+    "organization": {
+      "type": "object",
+      "required": ["squads"],
+      "properties": {
+        "squads": { "type": "array", "items": { "type": "object" } },
+        "business_units": { "type": "array", "items": { "type": "object" } },
+        "structure": { "type": "string", "enum": ["single_company", "multi_bu", "multi_company"] }
+      }
+    },
+    "products_and_services": { "type": "object" },
+    "existing_processes": { "type": "array", "items": { "type": "object" } },
+    "tools_stack": { "type": "array", "items": { "type": "object" } },
+    "documentation_inventory": { "type": "object" },
+    "cultural_context": { "type": "object" },
+    "strategic_context": { "type": "object" },
+    "business_metrics": { "type": "object" },
+    "source_provenance": {
+      "type": "object",
+      "description": "Per-section provenance: { aiox|file|audio|text|elicit|inferred + confidence_score 0-1 }",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "_source": { "type": "string" },
+          "_confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    }
+  }
+}

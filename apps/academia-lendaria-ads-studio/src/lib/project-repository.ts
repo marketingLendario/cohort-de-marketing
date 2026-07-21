@@ -498,6 +498,7 @@ export interface ProjectRepository {
   listSkillRuns(workspaceId: string, projectId: string): Promise<SkillRun[]>;
   createSkillRun(input: CreateSkillRunInput): Promise<SkillRun>;
   updateSkillRun(workspaceId: string, id: string, patch: UpdateSkillRunInput): Promise<SkillRun>;
+  supersedeSkillRun(workspaceId: string, parentRunId: string, continuationRunId: string): Promise<SkillRun>;
 
   // Planos de campanha (versionados — OCC)
   listCampaignPlanRevisions(workspaceId: string, campaignId: string): Promise<CampaignPlanRevision[]>;
@@ -702,6 +703,16 @@ export function createSupabaseProjectRepository(client: SupabaseClient = supabas
         .eq('id', id)
         .select(SKILL_RUN_COLS)
         .single();
+      if (error) throw toRepositoryError(error, 'skill_runs');
+      return rowToSkillRun(data as SkillRunRow);
+    },
+
+    async supersedeSkillRun(workspaceId, parentRunId, continuationRunId) {
+      const { data, error } = await client.rpc('supersede_skill_run_checkpoint', {
+        p_workspace_id: workspaceId,
+        p_parent_run_id: parentRunId,
+        p_continuation_run_id: continuationRunId,
+      }).single();
       if (error) throw toRepositoryError(error, 'skill_runs');
       return rowToSkillRun(data as SkillRunRow);
     },

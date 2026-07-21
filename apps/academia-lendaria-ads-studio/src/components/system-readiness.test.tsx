@@ -88,4 +88,27 @@ describe('SystemReadiness', () => {
     expect(screen.queryByRole('dialog', { name: 'Diagnóstico do ambiente' })).not.toBeInTheDocument();
     await waitFor(() => expect(trigger).toHaveFocus());
   });
+
+  it('configures Apify only after a protected value and explicit confirmation', async () => {
+    const fetchMock = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        status: 'degraded', checkedAt: '2026-07-11T12:00:00.000Z', source: 'launcher', diagnosisHash: 'a'.repeat(64),
+        checks: [{ id: 'apify', label: 'Pesquisa', status: 'degraded', detail: 'Ausente.', required: false, recoveryActionId: 'configure-apify' }],
+      }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        status: 'ready', checkedAt: '2026-07-11T12:01:00.000Z', source: 'launcher', diagnosisHash: 'b'.repeat(64),
+        checks: [{ id: 'apify', label: 'Pesquisa', status: 'ready', detail: 'Configurado.', required: false }],
+      }), { status: 200 }));
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    render(<SystemReadiness />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Um item precisa de atenção' }));
+    const save = screen.getByRole('button', { name: 'Salvar com minha autorização' });
+    expect(save).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Token do Apify'), { target: { value: 'apify_api_1234567890abcdefghijkl' } });
+    expect(save).toBeEnabled();
+    fireEvent.click(save);
+    await waitFor(() => expect(fetchMock).toHaveBeenLastCalledWith('/api/local/environment-bootstrap/recover', expect.objectContaining({ method: 'POST' })));
+    const request = fetchMock.mock.calls.at(-1)?.[1] as RequestInit;
+    expect(JSON.parse(String(request.body))).toMatchObject({ consent: true, actionId: 'configure-apify' });
+  });
 });

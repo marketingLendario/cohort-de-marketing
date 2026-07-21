@@ -1,8 +1,10 @@
 import { Link } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { Icon } from '@/lib/lendaria-ds';
 import { skillCatalog } from '@/generated/skill-catalog';
 import { evaluateProjectSkills, nextProjectAction } from '@/lib/readiness';
 import { getDemoCampaigns } from '@/lib/demo-mode';
+import { fetchProjectStatus, type ProjectStatusView } from '@/lib/project-status';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
 
 const READINESS_LABELS = {
@@ -38,6 +40,7 @@ function studentMissingLabel(value: string | undefined) {
 }
 
 export function ProjectOverview({ projectId }: { projectId: string }) {
+  const [filesystemStatus, setFilesystemStatus] = useState<ProjectStatusView | null>(null);
   const project = useProjectStore((state) => state.projects.find((candidate) => candidate.id === projectId));
   const revisions = useProjectStore((state) => state.briefRevisions);
   const allArtifacts = useProjectStore((state) => state.artifacts);
@@ -45,11 +48,17 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
   const artifacts = allArtifacts.filter((artifact) => artifact.projectId === projectId);
   const runs = allRuns.filter((run) => run.projectId === projectId);
   const brief = activeBriefFor(projectId, revisions);
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetchProjectStatus(projectId, controller.signal).then(setFilesystemStatus).catch(() => undefined);
+    return () => controller.abort();
+  }, [projectId]);
   if (!project || !brief) return null;
 
   const evaluations = evaluateProjectSkills(brief, artifacts, runs);
   const next = nextProjectAction(evaluations);
-  const nextSkill = skillCatalog.skills.find((skill) => skill.id === next?.skillId);
+  const reconciledSkillId = filesystemStatus?.nextCommand.replace(/^\//, '');
+  const nextSkill = skillCatalog.skills.find((skill) => skill.id === (reconciledSkillId || next?.skillId));
   const done = evaluations.filter((evaluation) => evaluation.lifecycle === 'done').length;
   const ready = evaluations.filter((evaluation) => ['ready', 'recommended'].includes(evaluation.readiness) && evaluation.lifecycle === 'idle').length;
   const pendingReview = evaluations.filter((evaluation) => evaluation.lifecycle === 'needs_review').length;
@@ -58,7 +67,16 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
   const missingLabel = studentMissingLabel(next?.missingFields[0] ?? next?.missingArtifacts[0] ?? next?.missingAlternatives[0]);
 
   const sectionId = next?.missingFields[0]?.split('.')[0] ?? 'project';
-  const actionLink = !next ? null : next.action === 'fill_field' ? (
+  const actionLink = filesystemStatus ? (
+    <Link
+      to="/projects/$projectId/journey"
+      params={{ projectId }}
+      className="al-btn al-btn--primary cms-action-link"
+    >
+      Continuar no painel
+      <Icon name="nav-arrow-right" size={14} />
+    </Link>
+  ) : !next ? null : next.action === 'fill_field' ? (
     <Link
       to="/projects/$projectId/briefing/$sectionId"
       params={{ projectId, sectionId }}
@@ -103,6 +121,11 @@ export function ProjectOverview({ projectId }: { projectId: string }) {
           <span className="cms-kicker">Ação recomendada</span>
           <h2>{nextSkill?.title ?? 'Tudo em dia'}</h2>
           <p>{studentDescription(nextSkill?.id, nextSkill?.description) ?? 'Não há pendências abertas neste projeto.'}</p>
+          {filesystemStatus ? (
+            <span className="cms-next-action__reason">
+              {filesystemStatus.completed}/{filesystemStatus.total} peças no disco · {filesystemStatus.pending.open} pendências · {filesystemStatus.divergences.length} divergências
+            </span>
+          ) : null}
           {missingLabel ? <span className="cms-next-action__reason">Falta resolver: {missingLabel}</span> : null}
         </div>
         {actionLink}

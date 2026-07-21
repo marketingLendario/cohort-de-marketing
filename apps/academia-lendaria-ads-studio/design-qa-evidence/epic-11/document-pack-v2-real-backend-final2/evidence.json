@@ -1,0 +1,316 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T02:17:46.533Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "backend-funil"
+    ],
+    "catalogHash": "857876a222a747476d54dcc1f2ce16e3504ae9167ae851b3e1b8136101025f9e"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "backend-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "69e98654b174ed6c7f5a2dea09d387a2ee4617a7709cba438dc5bb561babbd5f",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "backend-funil.html",
+          "backend-funil.md",
+          "backend-funil.pdf",
+          "book-do-funil.json",
+          "index.html",
+          "pagina/downsell.html",
+          "pagina/upsell.html"
+        ],
+        "files": [
+          {
+            "path": "backend-funil-v1.html",
+            "format": "html",
+            "bytes": 2652,
+            "hash": "b5444ab1848ce185cc48e3a5049c3fabc541ddc2cab7d8917a3630d4b8c478dd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.md",
+            "format": "markdown",
+            "bytes": 5764,
+            "hash": "0f61829a63639137a5a5d44c83f9a740948715cd495b811c77edef57c25219cd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 140195,
+            "hash": "09fe89879eae1bb0a714de9d97f4611ee11c53f579d393bdaf04feb01b3bce98",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.html",
+            "format": "html",
+            "bytes": 2652,
+            "hash": "b5444ab1848ce185cc48e3a5049c3fabc541ddc2cab7d8917a3630d4b8c478dd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.md",
+            "format": "markdown",
+            "bytes": 5764,
+            "hash": "0f61829a63639137a5a5d44c83f9a740948715cd495b811c77edef57c25219cd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.pdf",
+            "format": "pdf",
+            "bytes": 140195,
+            "hash": "09fe89879eae1bb0a714de9d97f4611ee11c53f579d393bdaf04feb01b3bce98",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 481,
+            "hash": "d6b5677b39a440682309d4ed9e7cea4ee91706702023121db69e47d8a03ae994",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3666,
+            "hash": "98c5c68143654aae65ff302a42f6c9be07b1fed2106dd23a87e531c1487b20fd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell-v1.html",
+            "format": "html",
+            "bytes": 1860,
+            "hash": "68fb6ae0442c9e84c1b57db97ed44ccb1333461cb56efa75429beae7dbd44eae",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell.html",
+            "format": "html",
+            "bytes": 1860,
+            "hash": "68fb6ae0442c9e84c1b57db97ed44ccb1333461cb56efa75429beae7dbd44eae",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell-v1.html",
+            "format": "html",
+            "bytes": 2467,
+            "hash": "c76afde9314d786cec13f224f8f7bcd33f91c6b8fb03a92293903c38f02492b6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell.html",
+            "format": "html",
+            "bytes": 2467,
+            "hash": "c76afde9314d786cec13f224f8f7bcd33f91c6b8fb03a92293903c38f02492b6",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "backend-funil.html",
+          "backend-funil.md",
+          "backend-funil.pdf",
+          "book-do-funil.json",
+          "index.html",
+          "pagina/downsell.html",
+          "pagina/upsell.html"
+        ],
+        "files": [
+          {
+            "path": "backend-funil-v1.html",
+            "format": "html",
+            "bytes": 2237,
+            "hash": "298b4fed8f8bcf6180e97fd3c1dc74c3bd32d26641945fed688f67e4859070bf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.md",
+            "format": "markdown",
+            "bytes": 3167,
+            "hash": "be6e1717b83f628a9024e510d27ced5940a84dd1a8e70b00bdce8c7b9cb65430",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 132778,
+            "hash": "d2378f3f06dd3a61fd4d0c5c8fdfe14e96a8ad52df0c6e2e5bb7caf73860397c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.html",
+            "format": "html",
+            "bytes": 2237,
+            "hash": "298b4fed8f8bcf6180e97fd3c1dc74c3bd32d26641945fed688f67e4859070bf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.md",
+            "format": "markdown",
+            "bytes": 3167,
+            "hash": "be6e1717b83f628a9024e510d27ced5940a84dd1a8e70b00bdce8c7b9cb65430",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.pdf",
+            "format": "pdf",
+            "bytes": 132778,
+            "hash": "d2378f3f06dd3a61fd4d0c5c8fdfe14e96a8ad52df0c6e2e5bb7caf73860397c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 479,
+            "hash": "9035b27517283facc1f366ae9bd152424c7a809c3b019311166119ff6f24a0e4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3664,
+            "hash": "639745b74ba8f3485bd521f05082a08cf11eb1d6daeafe93bba81c023e0564b5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell-v1.html",
+            "format": "html",
+            "bytes": 1607,
+            "hash": "5e4a12d840993a7e854406f0ed0f9ec9113514c6700d41a3268f02a841219dcb",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell.html",
+            "format": "html",
+            "bytes": 1607,
+            "hash": "5e4a12d840993a7e854406f0ed0f9ec9113514c6700d41a3268f02a841219dcb",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell-v1.html",
+            "format": "html",
+            "bytes": 2055,
+            "hash": "b5165998d3d30ec2d773104ee7787097944ddb5db135bc88459d3dfe25787878",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell.html",
+            "format": "html",
+            "bytes": 2055,
+            "hash": "b5165998d3d30ec2d773104ee7787097944ddb5db135bc88459d3dfe25787878",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

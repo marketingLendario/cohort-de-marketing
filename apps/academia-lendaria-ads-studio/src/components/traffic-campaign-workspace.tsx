@@ -9,6 +9,8 @@ import { getPath, type CampaignPlanRevision } from '@/lib/project-domain';
 import { executeLocalSkill, type SkillProposal } from '@/lib/skill-runtime';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
 import { TrafficSimulationBanner } from '@/components/traffic-simulation-banner';
+import { RealCreativeFactory } from '@/components/creative-factory/real-creative-factory';
+import { promotionArtifact, type CreativePromotionResponse } from '@/lib/creative-factory-runtime';
 
 const STAGES = [
   { id: 'foundations', label: 'Fundamentos', icon: 'database' },
@@ -16,6 +18,7 @@ const STAGES = [
   { id: 'briefista', label: 'Briefista', icon: 'spark' },
   { id: 'curation', label: 'Curadoria', icon: 'check-circle' },
   { id: 'structure', label: 'Estrutura', icon: 'network' },
+  { id: 'creatives', label: 'Criativos', icon: 'image' },
   { id: 'submission', label: 'Subida manual', icon: 'upload' },
   { id: 'metrics', label: 'Leitura', icon: 'stats-up-square' },
   { id: 'diagnosis', label: 'Alavanca', icon: 'flash' },
@@ -23,13 +26,20 @@ const STAGES = [
 
 type StageId = (typeof STAGES)[number]['id'];
 
+const SUBMISSION_STATUS_LABEL = {
+  not_ready: 'Aguardando pacote',
+  ready: 'Pronto para subida',
+  confirmed_by_human: 'Subida confirmada',
+} as const;
+
 function stageAvailable(stage: StageId, plan: CampaignPlanRevision): boolean {
   if (stage === 'foundations') return true;
   if (stage === 'tracking') return plan.budget.daily >= 20;
   if (stage === 'briefista') return ['OK', 'PARCIAL'].includes(plan.tracking.status);
   if (stage === 'curation') return ['OK', 'PARCIAL'].includes(plan.tracking.status);
   if (stage === 'structure') return canStructureCampaign(plan);
-  if (stage === 'submission') return Boolean(plan.structure);
+  if (stage === 'creatives') return Boolean(plan.structure);
+  if (stage === 'submission') return plan.creativeFactory?.status === 'approved';
   return plan.manualSubmission.status === 'confirmed_by_human';
 }
 
@@ -39,6 +49,8 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
   const brief = activeBriefFor(projectId, revisions);
   const project = useProjectStore((state) => state.projects.find((candidate) => candidate.id === projectId));
   const plans = useProjectStore((state) => state.campaignPlans);
+  const artifacts = useProjectStore((state) => state.artifacts);
+  const projectArtifacts = useMemo(() => artifacts.filter((artifact) => artifact.projectId === projectId), [artifacts, projectId]);
   const upsertPlan = useProjectStore((state) => state.upsertCampaignPlan);
   const addArtifact = useProjectStore((state) => state.addArtifact);
   const [campaign, setCampaign] = useState<AdsCampaign | null>(() => getDemoCampaign(campaignId));
@@ -85,6 +97,11 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
   const activePlan = plan;
   const activeBrief = brief;
   const workspaceId = project.workspaceId;
+  const submissionStatus = activePlan.manualSubmission.status === 'confirmed_by_human'
+    ? 'confirmed_by_human'
+    : activePlan.creativeFactory?.status === 'approved'
+      ? 'ready'
+      : activePlan.manualSubmission.status;
 
   function save(patch: Partial<CampaignPlanRevision>) {
     upsertPlan({ ...activePlan, ...patch, id: activePlan.id, updatedAt: new Date().toISOString() });
@@ -132,9 +149,13 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
       content: proposal.value.resultMarkdown,
     });
     if (proposal.skillId === 'estruturador') {
-      save({ structure: { artifactId, markdown: proposal.value.resultMarkdown }, manualSubmission: { status: 'ready' } });
+      save({ structure: { artifactId, markdown: proposal.value.resultMarkdown }, manualSubmission: { status: 'not_ready' } });
     }
     setProposal(null);
+  }
+
+  function registerCreativePromotion(response: CreativePromotionResponse): string {
+    return addArtifact(promotionArtifact({ workspaceId, projectId, response }));
   }
 
   function confirmTracking() {
@@ -219,10 +240,21 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
       <div className="cms-structure-summary"><div><span>Tipo</span><strong>{plan.objective === 'sales' ? 'Vendas' : 'Cadastro'}</strong></div><div><span>Público</span><strong>Amplo/frio + Advantage+</strong></div><div><span>Criativos</span><strong>{plan.finalists.length}</strong></div><div><span>Verba</span><strong>R$ {plan.budget.daily}/dia</strong></div></div>
       <Button onClick={() => void runSkill('estruturador')} disabled={running || !canStructureCampaign(plan)}><Icon name="network" size={13} /> {running ? 'Estruturando...' : 'Gerar plano campo a campo'}</Button>
     </section>
+  ) : currentStage === 'creatives' ? (
+    <RealCreativeFactory
+      projectId={projectId}
+      workspaceId={workspaceId}
+      campaignId={campaignId}
+      brief={activeBrief.data as unknown as Record<string, unknown>}
+      artifacts={projectArtifacts}
+      plan={activePlan}
+      onSave={save}
+      onPromoted={registerCreativePromotion}
+    />
   ) : currentStage === 'submission' ? (
     <section className="cms-campaign-stage">
       <div className="cms-stage-intro"><span className="cms-kicker">Ação exclusiva do operador</span><h2>Subida manual</h2><p>Revise a estrutura, replique no Gerenciador de Anúncios e confirme somente depois de clicar em Publicar.</p></div>
-      <div className="cms-manual-checklist"><span><Icon name="check" size={13} /> Estrutura aprovada</span><span><Icon name="check" size={13} /> Tracking confirmado</span><span><Icon name="check" size={13} /> {plan.finalists.length} criativos finalistas</span><span><Icon name="lock" size={13} /> Nenhuma mutação automática disponível</span></div>
+      <div className="cms-manual-checklist"><span><Icon name="check" size={13} /> Estrutura aprovada</span><span><Icon name="check" size={13} /> Tracking confirmado</span><span><Icon name="check" size={13} /> Pacote criativo promovido</span><span><Icon name="lock" size={13} /> Nenhuma publicação automática disponível</span></div>
       <Button onClick={() => save({ manualSubmission: { status: 'confirmed_by_human', confirmedAt: new Date().toISOString(), confirmedBy: 'operador' } })} disabled={plan.manualSubmission.status === 'confirmed_by_human'}><Icon name="check" size={13} /> {plan.manualSubmission.status === 'confirmed_by_human' ? 'Publicação humana registrada' : 'Confirmar que publiquei na Meta'}</Button>
     </section>
   ) : (
@@ -234,7 +266,7 @@ export function TrafficCampaignWorkspace({ projectId, campaignId, stageId }: { p
 
   return (
     <div className="asx-page cms-page cms-campaign-workspace">
-      <div className="asx-page-head"><div><div className="asx-page-head__eyebrow">Campanha · {campaign?.name ?? campaignId}</div><h1 className="asx-page-head__title">Operação de <em>tráfego</em></h1></div><span className="cms-campaign-pill"><span>{plan.manualSubmission.status}</span></span></div>
+      <div className="asx-page-head"><div><div className="asx-page-head__eyebrow">Campanha · {campaign?.name ?? campaignId}</div><h1 className="asx-page-head__title">Operação de <em>tráfego</em></h1></div><span className="cms-campaign-pill"><span>{SUBMISSION_STATUS_LABEL[submissionStatus]}</span></span></div>
       <TrafficSimulationBanner />
       <nav className="cms-campaign-stages" aria-label="Etapas da campanha">{STAGES.map((stage, index) => { const available = stageAvailable(stage.id, plan); return <button key={stage.id} type="button" className={`${stage.id === currentStage ? 'is-active' : ''} ${!available ? 'is-locked' : ''}`} disabled={!available} onClick={() => go(stage.id)}><span>{available ? index + 1 : <Icon name="lock" size={10} />}</span><strong>{stage.label}</strong></button>; })}</nav>
       {runtimeError ? <div className="cms-inline-error">{runtimeError}</div> : null}

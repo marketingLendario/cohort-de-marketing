@@ -1,0 +1,247 @@
+# QA Pre-Commit Quality Gate — Story 8.W2.3 (Aprovação em duas fases: DB e filesystem)
+# @qa (Quinn) — read-only gate. No tracked files modified, no commit/push/PR/merge.
+storyId: "8.W2.3"
+title: "Aprovação em duas fases: DB e filesystem"
+reviewer: "@qa (Quinn)"
+date: "2026-07-10"
+worktree: "/Users/rafaelcosta/Projects/cohort-de-marketing/.claude/worktrees/story-8.W2.3"
+base_commit: "278d671470db295fbada8f725c75cb37f593f83f"
+mode: read-only
+
+verdict: CONCERNS   # SHIP requires no P0/P1/P2; one P2 found → NOT SHIP.
+summary: >
+  Implementação sólida e completa: saga/outbox determinística, idempotência por
+  chave, injeção de falha antes/depois do rename com repair convergente, hash único
+  cross-surface, staleness por revisão+hash, RLS/tenant no outbox, e reidratação
+  terminal (done/cancelled) fechando o residual W2.2. Todos os 8 gates verdes. Um
+  defeito real de convergência (P2) na corrida de edição concorrente: o gateway
+  Supabase REAL grava o artefato ANTES do CAS guardado, deixando linha órfã/duplicada
+  em project_artifacts com content_hash divergente do arquivo — divergência silenciosa
+  DB/FS não reparável (viola o invariante literal da AC3). Mascarado porque o fake de
+  teste faz o oposto (checa revisão antes de escrever). Correção mínima disponível.
+
+# ---------------------------------------------------------------------------
+# FINDINGS (mais severo primeiro)
+# ---------------------------------------------------------------------------
+findings:
+  - id: P2-01
+    severity: P2
+    category: correctness / convergence (AC3)
+    title: >
+      Corrida de edição concorrente deixa linha órfã/duplicada em project_artifacts
+      com hash divergente do filesystem (upsert antes do CAS no gateway real).
+    file: apps/academia-lendaria-ads-studio/server/artifact-approval.ts
+    lines: "946-983 (finalizeApproval: upsert em project_artifacts 946-964 ANTES do CAS 966-983)"
+    ac_impact: "AC3 (DB e filesystem não ficam silenciosamente divergentes); toca AC4."
+    failure_scenario: >
+      Sessão A aprova a revisão 1 (idempotencyKey K1): materialize escreve o arquivo
+      (conteúdo rev-1, hash H1) e o outbox chega a `materialized`/`recording`. Entre o
+      materialize e o CAS final, Sessão B edita a mesma run (bump proposal_revision 1→2,
+      status permanece needs_review). recordApproval chama finalizeApproval(expectedRevision=1):
+      o upsert de project_artifacts (id-A, state=confirmed, content_hash=H1) É COMMITADO
+      (linhas 961-964); só então o CAS `WHERE proposal_revision=1` retorna 0 linhas →
+      committed=false → terminalFail → outbox K1=`failed`. Até aqui FS e a linha id-A
+      concordam (ambos H1). O humano então aprova a revisão 2 (K2): materialize
+      SOBRESCREVE o arquivo (rev-2, H2), upsert cria id-B (H2), CAS rev-2 → done.
+      Estado final: arquivo em disco = H2; project_artifacts tem DUAS linhas confirmed
+      para o MESMO path — id-A (H1, agora ≠ disco) e id-B (H2). A linha id-A é uma
+      divergência DB↔FS silenciosa e PERMANENTE: `repair` não a toca (K1 é terminal
+      `failed`), não há unique(project_id, path) em project_artifacts (migração
+      20260709225123 linhas 69-85), e o id do artefato é randomUUID() por decisão
+      (artifact-approval.ts:461), então cada aprovação cria linha nova. O caminho
+      superseded via `repair` (fault afterRename + edição concorrente) produz o mesmo
+      órfão.
+    why_untested: >
+      O fake de teste (artifact-approval.test.ts:55-62) checa a revisão PRIMEIRO e
+      retorna {committed:false} SEM escrever qualquer artefato — semântica CAS-first,
+      oposta ao gateway real (upsert-first). Portanto os 212 testes passam sem nunca
+      exercitar o caminho órfão; há um gap comportamental fake↔produção exatamente
+      sobre o invariante da AC3.
+    smallest_correction: >
+      Em createSupabaseApprovalRunGateway.finalizeApproval, executar o CAS guardado de
+      skill_runs PRIMEIRO e só fazer o upsert de project_artifacts quando committed
+      (espelhando a ordem do fake). Ambas as escritas seguem idempotentes (upsert por id;
+      CAS done→done permitido), então repair continua convergindo. Elimina a linha órfã;
+      o arquivo transitório rev-1 é sobrescrito pela revisão vencedora. Opcional/defensivo:
+      unique(project_id, path) parcial em project_artifacts para barrar duplicatas de path.
+    scope_note: >
+      Fora do fluxo single-user/single-tab das ACs (exige edição concorrente da MESMA run).
+      O @dev documentou como risco residual (story linhas 188-193). Mesmo assim é uma
+      divergência DB/FS não reparável e silenciosa no gateway de produção, então o gate
+      não pode marcar SHIP. Waiver é decisão do @po/accountable se o risco for aceito.
+
+  - id: P3-01
+    severity: P3
+    category: security (defense-in-depth)
+    title: "Leitura da Fase 1 (readCurrentFile) não tem a contenção anti-symlink do materializador W1.3."
+    file: apps/academia-lendaria-ads-studio/server/artifact-approval.ts
+    lines: "339-354"
+    detail: >
+      readCurrentFile valida isAbsolute + segmentos '..' + startsWith(root+sep), mas NÃO
+      resolve realpath nem recusa ancestrais symlink como resolveSafeTarget faz
+      (artifact-materializer.ts:186-248). Um symlink plantado sob projetos/{slug}/ poderia
+      redirecionar a LEITURA do diff da Fase 1 para fora da raiz (vazamento de conteúdo
+      no preview). Read-only, ferramenta local single-operator, slug vem do DB → severidade
+      baixa. A escrita (Fase 2) permanece protegida pelo materializador.
+    recommendation: "Reusar a verificação estrutural de ancestrais (ou realpath+containment) também na leitura da Fase 1."
+
+  - id: P3-02
+    severity: P3
+    category: correctness (latent)
+    title: "rejectProposal espelha cache→cancelled incondicionalmente mesmo sem persistir no BFF."
+    file: apps/academia-lendaria-ads-studio/src/components/project-journey.tsx
+    lines: "466-487"
+    detail: >
+      No modo real, quando workspaceActions existe mas approvalPlan é null, o ramo do BFF
+      é pulado e `updateRun(run.id, {status:'cancelled'})` roda mesmo assim — cache vira
+      cancelled sem persistência no banco (após reload voltaria a needs_review). Hoje é
+      inalcançável porque os botões ficam desabilitados quando (!!workspaceActions && !approvalPlan);
+      é uma divergência latente se a guarda de UI for contornada.
+    recommendation: "Só flipar o cache local após confirmação do BFF no modo real (ou exigir approvalPlan antes de qualquer updateRun de decisão)."
+
+  - id: P3-03
+    severity: P3
+    category: dead-code
+    title: "ApprovalErrorCode 'materialize-conflict' é declarado/mapeado mas nunca produzido."
+    file: apps/academia-lendaria-ads-studio/server/artifact-approval.ts
+    lines: "199-206 (+ app.ts approvalErrorStatus)"
+    detail: >
+      approve sempre usa onConflict:'overwrite', então materialize nunca retorna outcome
+      'conflict' nem lança 'materialize-conflict'. Caminho morto inofensivo; remover ou
+      documentar como reservado.
+
+  - id: P3-04
+    severity: P3
+    category: robustness (informational)
+    title: "repairAll (boot + endpoint) não tem claim/lease sobre linhas do outbox."
+    file: apps/academia-lendaria-ads-studio/server/artifact-approval.ts
+    lines: "610-623 (+ app.ts repair no boot)"
+    detail: >
+      Diferente do skill runner (leases), o repair do outbox não reivindica linhas. Seguro
+      para uma única instância local do BFF porque todo efeito é idempotente (materialize
+      no-op por hash; upsert por id; CAS guardado), mas duas instâncias em boot simultâneo
+      processariam as mesmas linhas em paralelo. Sem impacto no deploy atual (BFF local).
+
+# ---------------------------------------------------------------------------
+# ACCEPTANCE CRITERIA — validação end-to-end
+# ---------------------------------------------------------------------------
+acceptance_criteria:
+  - id: AC1
+    text: "UI mostra diff, arquivos afetados, warnings e invalidações antes de aprovar."
+    status: PASS
+    evidence: >
+      ArtifactApprovalReview (artifact-approval-review.tsx) renderiza arquivos afetados com
+      changeType + delta (+add/-rem), preview de diff, avisos (plan.warnings + proposalWarnings)
+      e invalidações a jusante. Diff acurado vem do BFF /plan (Fase 1 read-only,
+      artifact-approval.ts:366-402 lê o arquivo atual). Invalidações computadas no cliente
+      via buildInvalidations(skillId, artifacts) com `artifacts` = artefatos existentes do
+      projeto (project-journey.tsx:92,306). Modo demo cai para visão create-only sem FS.
+
+  - id: AC2
+    text: "Aprovação chama endpoint idempotente com expected hash/revision."
+    status: PASS
+    evidence: >
+      POST /api/local/artifact-approvals com expectedProposalHash + expectedProposalRevision +
+      idempotencyKey (makeIdempotencyKey = run:hash:decision). Idempotência: unique
+      (workspace_id, idempotency_key) na migração + getByKey retorna a MESMA linha em replay
+      (decide 408-412). Autenticado pelo token do boundary local (guardApprovalRequest, app.ts:
+      guard + authorizeLocalRunnerRequest). Testes: replay idempotente (server test 124,436).
+
+  - id: AC3
+    text: "Fluxo usa outbox/compensação: DB e filesystem não ficam silenciosamente divergentes."
+    status: CONCERNS
+    evidence: >
+      Saga determinística pending→materializing→materialized→recording→done / pending→rejected,
+      checkpoints repairáveis, repair/repairAll convergentes. PORÉM ver P2-01: na corrida de
+      edição concorrente o gateway REAL grava project_artifacts antes do CAS, deixando linha
+      órfã/duplicada com hash divergente do FS — divergência silenciosa não reparável. Fora do
+      fluxo single-user mas viola o invariante literal da AC3.
+
+  - id: AC4
+    text: "Sucesso materializa arquivo, metadado, evento e status done com o mesmo hash."
+    status: PASS
+    evidence: >
+      Caminho feliz: materialize W1.3 (hashAfter) → upsert project_artifacts (content_hash) →
+      CAS skill_runs→done (proposal_hash) → audit event. Teste 'approves: ... one proposal hash
+      across FS/DB/event' (server test 94-122) assere content_hash igual em FS/DB/evento e
+      proposalHash igual em outbox/evento/skill_run.
+
+  - id: AC5
+    text: "Rejeição/cancelamento não escreve arquivos; edição gera nova proposta/revisão."
+    status: PASS
+    evidence: >
+      reject só transiciona skill_runs→cancelled (runReject, sem materialize); teste 'rejects:
+      persists the decision without writing files' (server test 201) confirma ausência de arquivo.
+      editProposal (project-journey.tsx:491-528) bumpa proposalRevision (+1) e persiste novo
+      proposalHash → invalida aprovação obsoleta (gate stale, decide 420-431).
+
+  - id: AC6
+    text: "Testes injetam falha antes/depois do rename e provam retry/repair determinístico."
+    status: PASS
+    evidence: >
+      Hooks beforeRename/afterRename cercam o materializador sem tocá-lo. Testes: repair de falha
+      ANTES do rename (server test 221, nenhum arquivo escrito → repair re-materializa → done) e
+      DEPOIS do rename (server test 261, arquivo existe, sem escrita duplicada → repair retoma DB
+      → done), + repairAll drena todas (305). Convergem ao mesmo conteúdo/hash.
+
+  - id: AC7
+    text: "Approve/reject persistem a revisão humana; após reload done/cancelled reaparece e nunca volta a needs_review."
+    status: PASS
+    evidence: >
+      Decisão terminal persistida em skill_runs pela saga (CAS status). ProjectRepository lê
+      proposal_hash/proposal_revision (rowToSkillRun) e status terminal na hidratação. Round-trip
+      em use-project-workspace.test.ts prova que done/cancelled reaparece igual após nova sessão
+      e não regride para needs_review (residual W2.2 fechado).
+
+# ---------------------------------------------------------------------------
+# GATES (todos executados no worktree)
+# ---------------------------------------------------------------------------
+gates:
+  npm_test:      { status: PASS, detail: "212 passed (28 files)" }
+  lint:          { status: PASS, detail: "ESLint: No issues found" }
+  typecheck:     { status: PASS, detail: "tsc -b OK (catalog gerado + validado)" }
+  build:         { status: PASS, detail: "vite build ✓ built" }
+  build_server:  { status: PASS, detail: "tsc -p tsconfig.server.json OK" }
+  lint_db:       { status: PASS, detail: "supabase db lint --local: No schema errors found" }
+  test_db:       { status: PASS, detail: "supabase test db: 4 files / 21 tests PASS; artifact_approval 6/6" }
+  git_diff_check: { status: PASS, detail: "clean" }
+
+# ---------------------------------------------------------------------------
+# ÁREAS INSPECIONADAS EXPLICITAMENTE (checklist do gate)
+# ---------------------------------------------------------------------------
+inspection_notes:
+  read_only_phase1: "OK — /plan é read-only (readCirurrentFile só readFile); diff/arquivos/warnings acurados. Symlink read: P3-01."
+  authenticated_endpoints: "OK — plan/decide/repair passam por guardApprovalRequest (503 se capacidade off; 401/403 no token do boundary local; browser nunca vê o segredo)."
+  proposal_hash_revision: "OK — computeProposalHash canônico (ordena por path, ignora artifactType/title); expected hash+revision ecoados do /plan."
+  tenant_isolation: "OK — workspaceId derivado da run (não do input do caller); RLS no outbox (private.is_workspace_member); pgTAP tenant test."
+  idempotency_concurrent_replay: "OK — unique(workspace_id, idempotency_key) + getByKey; fake e Supabase store espelham semântica de duplicata (23505 → re-read)."
+  outbox_transitions_cas: "OK (caminho feliz e repair) — CAS guardado em (proposal_revision, status); superseded → failed terminal. Ver P2-01 para a corrida."
+  cross_surface_hash: "OK — mesmo SHA-256 em FS (materializer hashAfter), project_artifacts.content_hash, skill_runs.proposal_hash e audit event."
+  reject_cancel_no_files: "OK — reject não materializa; teste confirma ausência de arquivo."
+  edit_bumps_revision: "OK — editProposal bumpa revision + persiste novo hash; gate stale rejeita 409 antes de qualquer escrita."
+  persisted_terminal_rehydration: "OK — done/cancelled sobrevive a reload; nunca regride a needs_review."
+  failure_injection_before_after_rename: "OK — beforeRename/afterRename + repair determinístico; sem escrita duplicada."
+  path_traversal_symlink_root_containment: "Escrita OK (materializer realpath + ancestrais). Leitura Fase 1 sem symlink-guard: P3-01."
+  service_role_trust: "OK — service-role bypassa RLS por design (BFF confiável, padrão W2.1/W2.2); workspace não vem do caller."
+  browser_vs_server_hashing: "OK — browser NUNCA hasheia; hash computado no BFF (Fase 1) e ecoado; sem drift cross-runtime."
+  startup_repair_ownership: "OK funcional — repairAll no boot (guardado por recoverOnBoot!==false). Sem lease: P3-04 (informational, single-instance)."
+  duplicate_artifact_rows_events: "Ver P2-01 — sem unique(project_id, path); id randomUUID por decisão → duplicatas possíveis na corrida."
+  partial_multifile_proposals: "OK — plan mapeia N artefatos; materialize por entrada; aggregateOutcome combina; audit por-arquivo."
+  demo_real_seams_bypass_persistence: "OK — modo real roteia tudo pelo BFF (SOT) e espelha no cache; modo demo é cache-only por design (sem workspaceActions)."
+
+# ---------------------------------------------------------------------------
+# DECISÃO
+# ---------------------------------------------------------------------------
+decision:
+  p0: 0
+  p1: 0
+  p2: 1
+  p3: 4
+  ship: false
+  rationale: >
+    Regra do gate: SHIP apenas com zero P0/P1/P2. Há 1 P2 (divergência DB/FS não reparável
+    na corrida de edição concorrente, com gap fake↔produção). Verdict CONCERNS. Recomenda-se
+    aplicar a correção mínima (CAS-first no finalizeApproval) e adicionar um teste que
+    exercite o superseded pós-materialize; ou @po/accountable registrar waiver explícito
+    aceitando o risco (fora do fluxo single-user das ACs). Todos os 8 gates verdes; demais
+    ACs atendidas.

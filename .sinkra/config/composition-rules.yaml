@@ -1,0 +1,6 @@
+version: "1.0.0"
+scope: sinkra-hub
+description: "Repo-local pointer for SINKRA composition rules used by mechanical gates."
+canonical_refs:
+  composition_rules: squads/sinkra-squad/data/composition-rules.yaml
+  token_registry: squads/sinkra-squad/data/token-registry.yaml

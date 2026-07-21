@@ -72,13 +72,14 @@ if [ -n "$CHROME" ]; then
   # set -e esta ativo: se o Chrome sair com codigo != 0, o || true evita matar o script
   # antes dos fallbacks. O sucesso e checado pela EXISTENCIA do PDF logo abaixo.
   "$CHROME" \
-    --headless \
+    --headless=new \
     --disable-gpu \
     --no-sandbox \
+    --run-all-compositor-stages-before-draw \
     --print-to-pdf="$PDF_FILE" \
     --print-to-pdf-no-header \
     --no-pdf-header-footer \
-    --virtual-time-budget=10000 \
+    --virtual-time-budget=30000 \
     "$HTML_URL" 2>/dev/null || true
 
   if [ -f "$PDF_FILE" ]; then

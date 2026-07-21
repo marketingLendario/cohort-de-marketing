@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W2.2",
+  "generatedAt": "2026-07-12T02:47:06.414Z",
+  "fixture": {
+    "workspaceId": "81000000-0000-0000-0000-000000000111",
+    "projectId": "82000000-0000-0000-0000-000000000112",
+    "projectSlug": "epic-11-document-pack-cli"
+  },
+  "cli": {
+    "creatives": {
+      "skillId": "criativos-funil",
+      "jobId": "71ecb93b-4ddd-43e2-81f3-1a7892f1b689",
+      "skillRunId": "55c8a214-72f2-42c6-9f3f-deab6e3cefd0",
+      "model": "codex-cli-default+codex-cli-image-gen",
+      "skillHash": "8c141e07bb4be31befbdf84105b53407029314460455402793ac3609d601ff2c",
+      "artifactTypes": [
+        "creatives",
+        "mediaSnapshot",
+        "creativeFactoryBatch"
+      ],
+      "batchId": "71ecb93b-4ddd-43e2-81f3-1a7892f1b689",
+      "productionSkillId": "criativos-funil",
+      "items": 1,
+      "readyItems": 1,
+      "assets": [
+        {
+          "itemId": "creative-pilot-dark-editorial-0",
+          "id": "creative-pilot-dark-editorial-0-feed",
+          "format": "feed",
+          "width": 1080,
+          "height": 1350,
+          "sha256": "c0699d04e1cabad7bc07a2fe9deaf48a18af5278fec79de2926907f4e5f78db3",
+          "bytes": 2302362
+        },
+        {
+          "itemId": "creative-pilot-dark-editorial-0",
+          "id": "creative-pilot-dark-editorial-0-story",
+          "format": "story",
+          "width": 1080,
+          "height": 1920,
+          "sha256": "1c5c4ed444bce291f0a3942212b9414b1b4fb1f86c2134ab7fc4c66090dda2a0",
+          "bytes": 2993812
+        },
+        {
+          "itemId": "creative-pilot-dark-editorial-0",
+          "id": "creative-pilot-dark-editorial-0-square",
+          "format": "square",
+          "width": 1080,
+          "height": 1080,
+          "sha256": "e014efe5da2bafc48e2e1eb0ea5454e67fa78e134b698b8f87269e0deb553482",
+          "bytes": 1904051
+        }
+      ]
+    },
+    "mockups": {
+      "skillId": "mockup-produto-funil",
+      "jobId": "589ba663-c80c-4e64-bde3-639568fc9c7e",
+      "skillRunId": "95f0a60e-fbd6-4b73-ab62-108b70448c5b",
+      "model": "codex-cli-default+codex-cli-image-gen",
+      "skillHash": "fcee05e9359dee0e73864bb6988e6e794ec82fdc6cb716499da8ced2f45725e9",
+      "artifactTypes": [
+        "mockups",
+        "creativeFactoryBatch"
+      ],
+      "batchId": "589ba663-c80c-4e64-bde3-639568fc9c7e",
+      "productionSkillId": "mockup-produto-funil",
+      "items": 1,
+      "readyItems": 1,
+      "assets": [
+        {
+          "itemId": "mockup-pilot-mockup-product-0",
+          "id": "mockup-pilot-mockup-product-0-feed",
+          "format": "feed",
+          "width": 1080,
+          "height": 1350,
+          "sha256": "fc3c5c1db5869a0eea83f811e34b87bb130492107ee00ef6474ea418ea800022",
+          "bytes": 1832452
+        },
+        {
+          "itemId": "mockup-pilot-mockup-product-0",
+          "id": "mockup-pilot-mockup-product-0-story",
+          "format": "story",
+          "width": 1080,
+          "height": 1920,
+          "sha256": "fd49d9da2cd74882d2d2f722c8325d0ed83e1cf02e112e3bbb55b2eac16f3b7d",
+          "bytes": 2480495
+        },
+        {
+          "itemId": "mockup-pilot-mockup-product-0",
+          "id": "mockup-pilot-mockup-product-0-square",
+          "format": "square",
+          "width": 1080,
+          "height": 1080,
+          "sha256": "b13c9139f36816cc54d84da8b61b076a142d49ca869cf58cc5c248b016413365",
+          "bytes": 1522717
+        }
+      ]
+    }
+  },
+  "panel": {
+    "design": "Pré-requisito DESIGN.md confirmado; paridade validada no document-pack v2 dedicado.",
+    "creatives": {
+      "desktop": "criativos-panel-desktop.png",
+      "mobile": "criativos-panel-mobile.png"
+    },
+    "mockups": {
+      "desktop": "mockups-panel-desktop.png",
+      "mobile": "mockups-panel-mobile.png"
+    }
+  },
+  "previews": {
+    "design": [
+      {
+        "name": "desktop",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "screenshot": "design-preview-desktop.png",
+        "horizontalOverflow": false,
+        "errors": []
+      },
+      {
+        "name": "mobile",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "screenshot": "design-preview-mobile.png",
+        "horizontalOverflow": false,
+        "errors": []
+      }
+    ],
+    "creatives": [
+      {
+        "name": "desktop",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "screenshot": "criativos-three-formats-desktop.png",
+        "horizontalOverflow": false,
+        "imageCount": 3
+      },
+      {
+        "name": "mobile",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "screenshot": "criativos-three-formats-mobile.png",
+        "horizontalOverflow": false,
+        "imageCount": 3
+      }
+    ],
+    "mockups": [
+      {
+        "name": "desktop",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "screenshot": "mockups-three-formats-desktop.png",
+        "horizontalOverflow": false,
+        "imageCount": 3
+      },
+      {
+        "name": "mobile",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "screenshot": "mockups-three-formats-mobile.png",
+        "horizontalOverflow": false,
+        "imageCount": 3
+      }
+    ]
+  },
+  "media": {
+    "origin": "url",
+    "sourceLabel": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+    "sourceLimitation": "MP4 público neutro usado para validar o intake técnico; não comprova performance de anúncio concorrente.",
+    "mimeType": "video/mp4",
+    "byteSize": 4372373,
+    "sha256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+    "transcriptionStatus": "transcribed",
+    "transcriptionEngine": "openai-whisper",
+    "transcriptCharCount": 148
+  },
+  "promoted": {
+    "creatives": 6820,
+    "mockups": 6487
+  }
+}

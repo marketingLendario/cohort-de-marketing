@@ -1,0 +1,99 @@
+{
+  "schema_version": "wave-plan-v1",
+  "epic_id": "8",
+  "wave_id": "W2",
+  "generated_at": "2026-07-10T00:08:10.965Z",
+  "origin_sync": "ahead",
+  "parallel_groups": [
+    [
+      "8.W2.1",
+      "8.W2.2"
+    ],
+    [
+      "8.W2.3"
+    ]
+  ],
+  "stories": [
+    {
+      "story_id": "8.W2.1",
+      "path": "docs/stories/epic-8/STORY-8.W2.1-ui-repository-hydration.md",
+      "status": "Ready",
+      "origin_sha": null,
+      "parallel_group": 0,
+      "worktree": {
+        "path": ".claude/worktrees/story-8.W2.1",
+        "branch": "wave/8-w2/story-8.W2.1",
+        "state": "provision"
+      }
+    },
+    {
+      "story_id": "8.W2.2",
+      "path": "docs/stories/epic-8/STORY-8.W2.2-durable-async-skill-runs.md",
+      "status": "Ready",
+      "origin_sha": null,
+      "parallel_group": 0,
+      "worktree": {
+        "path": ".claude/worktrees/story-8.W2.2",
+        "branch": "wave/8-w2/story-8.W2.2",
+        "state": "provision"
+      }
+    },
+    {
+      "story_id": "8.W2.3",
+      "path": "docs/stories/epic-8/STORY-8.W2.3-two-phase-artifact-approval.md",
+      "status": "Draft",
+      "origin_sha": null,
+      "parallel_group": 1,
+      "worktree": {
+        "path": ".claude/worktrees/story-8.W2.3",
+        "branch": "wave/8-w2/story-8.W2.3",
+        "state": "provision"
+      }
+    }
+  ],
+  "orphaned_worktrees": [],
+  "cross_epic_dispatch_check": {
+    "check": "ev_cross_epic_dispatch_check",
+    "status": "skipped",
+    "reason": "graphs-absent",
+    "wave_id": "8.W2",
+    "file_set_size": 2,
+    "logical": {
+      "ok": false,
+      "warn": true,
+      "block": false,
+      "mode": "WARN",
+      "api": "checkLogicalConflict",
+      "reason": "graphs-absent",
+      "hint": "run `node .claude/skills/sinkra-wave-execute/scripts/build-cross-epic-graph.js` first (W2.1)",
+      "wave": "8.W2",
+      "scope": {
+        "epic": "8",
+        "wave": "W2",
+        "scoped": true
+      },
+      "satisfied": null,
+      "unsatisfied": [],
+      "unresolved": []
+    },
+    "physical": {
+      "ok": false,
+      "warn": true,
+      "block": false,
+      "mode": "WARN",
+      "api": "checkPhysicalConflict",
+      "reason": "graphs-absent",
+      "hint": "run `node .claude/skills/sinkra-wave-execute/scripts/build-cross-epic-graph.js` first (W2.1)",
+      "basis": "file_ownership_overlap",
+      "candidates": [
+        "exclusive",
+        "shared"
+      ],
+      "overlaps": [],
+      "domain_overlaps": []
+    },
+    "proposals": [],
+    "impact_notifications": []
+  },
+  "daemon": null
+}

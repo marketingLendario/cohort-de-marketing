@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillRunId": "37485cfc-e31f-434f-a7fd-7f16ab2b16cf",
+  "status": "done",
+  "approval": {
+    "state": "done",
+    "outcome": "written",
+    "proposalHash": "3deca2ee7efd222baaa1401f407d1824000b783483f036f458fdb911e003d5b6",
+    "proposalRevision": 1,
+    "files": [
+      {
+        "path": "briefing-offerbook.md",
+        "format": "markdown",
+        "contentHash": "5d51b6cefe33e0fd46e4b4ffb61d536604610f8d99d52088905db47383046a6b"
+      },
+      {
+        "path": "offerbook.md",
+        "format": "markdown",
+        "contentHash": "3b4cab04233dc5e253b585e7ba915fd678386f48a5bc5e05a15d04e5025f6fa3"
+      },
+      {
+        "path": "offerbook.html",
+        "format": "html",
+        "contentHash": "3e2a3637fd738607a9af7c89ca27f51c34a9f011c4007bdc7e035282c9a69ddf"
+      },
+      {
+        "path": "offerbook.r1.md",
+        "format": "markdown",
+        "contentHash": "3b4cab04233dc5e253b585e7ba915fd678386f48a5bc5e05a15d04e5025f6fa3"
+      },
+      {
+        "path": "offerbook.r1.html",
+        "format": "html",
+        "contentHash": "3e2a3637fd738607a9af7c89ca27f51c34a9f011c4007bdc7e035282c9a69ddf"
+      },
+      {
+        "path": "briefing-offerbook.r1.md",
+        "format": "markdown",
+        "contentHash": "5d51b6cefe33e0fd46e4b4ffb61d536604610f8d99d52088905db47383046a6b"
+      },
+      {
+        "path": "offerbook.docx",
+        "format": "docx",
+        "contentHash": "be32e33d6ca85486befa2ad88704deaab02603f9b67a49162d4c287ed4111223"
+      },
+      {
+        "path": "offerbook.r1.docx",
+        "format": "docx",
+        "contentHash": "be32e33d6ca85486befa2ad88704deaab02603f9b67a49162d4c287ed4111223"
+      },
+      {
+        "path": "book-do-funil.json",
+        "format": "json",
+        "contentHash": "ac5ff4638001d932f52308254d7db024a1a7c79218543f740bb880cc1d57a11c"
+      },
+      {
+        "path": "index.html",
+        "format": "html",
+        "contentHash": "563cb9ddbab2d2ad7fce4e18cc2d9ddad373c3eca8da1575ca22afc8aabe3c66"
+      }
+    ]
+  }
+}

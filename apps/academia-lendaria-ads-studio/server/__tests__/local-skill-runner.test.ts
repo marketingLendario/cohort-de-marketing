@@ -4,7 +4,9 @@ import { buildApp } from '../app.js';
 import {
   CodexCliLocalSkillRunner,
   LocalSkillRunAbortError,
+  defaultCodexExecutor,
   derivedUnavailableTrafficMetrics,
+  stableElicitationDecisions,
   type LocalSkillRunner,
   type SkillProposal,
   unavailableTrafficMetrics,
@@ -68,6 +70,12 @@ async function pollUntil(
 }
 
 describe('local skill runner endpoint', () => {
+  it('assigns stable semantic ids to elicitation decisions across surfaces', () => {
+    const first = stableElicitationDecisions(['Qual é a oferta?', 'Qual é o preço?']);
+    const second = stableElicitationDecisions(['  QUAL É A OFERTA? ', 'Qual é o preço?']);
+    expect(second.map((decision) => decision.id)).toEqual(first.map((decision) => decision.id));
+    expect(first.every((decision) => decision.digest.length === 64)).toBe(true);
+  });
   const apps: BuiltApp[] = [];
 
   afterEach(async () => {
@@ -449,9 +457,21 @@ describe('local skill runner endpoint', () => {
         artifacts: [{
           artifactType: 'offerbook',
           title: 'Offerbook',
-          path: 'generated/offerbook.md',
+          path: 'offerbook.md',
           format: 'markdown',
           content: '# Offerbook',
+        }, {
+          artifactType: 'offerbook',
+          title: 'Offerbook visual',
+          path: 'offerbook.html',
+          format: 'html',
+          content: '<main><nav aria-label="Navegação"><a href="index.html">Book do Funil</a></nav><h1>Offerbook</h1></main>',
+        }, {
+          artifactType: 'offerbook',
+          title: 'Briefing do Offerbook',
+          path: 'briefing-offerbook.md',
+          format: 'markdown',
+          content: '# Briefing',
         }],
         fields: [],
         questions: [],
@@ -462,6 +482,8 @@ describe('local skill runner endpoint', () => {
         '--ephemeral',
         '--sandbox',
         'read-only',
+        '--config',
+        'model_reasoning_effort="medium"',
         '--output-schema',
         '--output-last-message',
       ]));
@@ -471,6 +493,7 @@ describe('local skill runner endpoint', () => {
     });
     const runner = new CodexCliLocalSkillRunner({
       repoRoot: new URL('../../../../', import.meta.url).pathname,
+      reasoningEffort: 'medium',
       execute,
     });
 
@@ -490,7 +513,7 @@ describe('local skill runner endpoint', () => {
     }
   });
 
-  it('fails with an actionable error when a skill omits its required artifact', async () => {
+  it('accepts a question-only checkpoint when a skill needs human elicitation before its artifacts', async () => {
     const execute = vi.fn(async ({ outputPath }: { outputPath: string }) => {
       await writeFile(outputPath, JSON.stringify({
         summary: 'Faltam dados para materializar o Offerbook.',
@@ -506,6 +529,72 @@ describe('local skill runner endpoint', () => {
       execute,
     });
 
+    await expect(runner.run('offerbook', { projectId: 'project-1', brief: {} }))
+      .resolves.toMatchObject({ proposal: { questions: ['Qual é a oferta?'], artifacts: [] } });
+  });
+
+  it('normalizes blank and duplicate elicitation questions before exposing the checkpoint', async () => {
+    const execute = vi.fn(async ({ outputPath }: { outputPath: string }) => {
+      await writeFile(outputPath, JSON.stringify({
+        summary: 'Falta uma decisão.',
+        resultMarkdown: 'Preencha a decisão pendente.',
+        artifacts: [],
+        fields: [],
+        questions: [' Qual é a oferta? ', '', 'qual é a oferta?'],
+        warnings: [],
+      } satisfies SkillProposal));
+    });
+    const runner = new CodexCliLocalSkillRunner({ repoRoot: new URL('../../../../', import.meta.url).pathname, execute });
+
+    await expect(runner.run('offerbook', { projectId: 'project-1', brief: {} }))
+      .resolves.toMatchObject({ proposal: { questions: ['Qual é a oferta?'] } });
+  });
+
+  it('injects only the bounded terminal cause on a corrective retry', async () => {
+    let capturedPrompt = '';
+    const execute = vi.fn(async ({ outputPath, prompt }: { outputPath: string; prompt: string }) => {
+      capturedPrompt = prompt;
+      await writeFile(outputPath, JSON.stringify({
+        summary: 'Offerbook corrigido.',
+        resultMarkdown: '# Offerbook',
+        artifacts: [
+          { artifactType: 'offerbook', title: 'Offerbook', path: 'offerbook.md', format: 'markdown', content: '# Offerbook' },
+          { artifactType: 'offerbook', title: 'Offerbook HTML', path: 'offerbook.html', format: 'html', content: '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offerbook</title><style>body{font-family:sans-serif}</style></head><body><main><h1>Offerbook</h1><a href="index.html">Book do Funil</a></main></body></html>' },
+          { artifactType: 'offerbook', title: 'Briefing', path: 'briefing-offerbook.md', format: 'markdown', content: '# Briefing' },
+        ],
+        fields: [],
+        questions: [],
+        warnings: [],
+      } satisfies SkillProposal));
+    });
+    const runner = new CodexCliLocalSkillRunner({
+      repoRoot: new URL('../../../../', import.meta.url).pathname,
+      execute,
+    });
+    const previousFailureReason = `BEGIN-PREVIOUS-PROMPT\n${'conteúdo ecoado '.repeat(500)}\nERRO TERMINAL: faltou offerbook.md`;
+
+    await runner.run('offerbook', { projectId: 'project-1', brief: {} }, {
+      attempt: 2,
+      previousFailureReason,
+    });
+
+    expect(capturedPrompt).toContain('ERRO TERMINAL: faltou offerbook.md');
+    expect(capturedPrompt).not.toContain('BEGIN-PREVIOUS-PROMPT');
+    expect(capturedPrompt.match(/conteúdo ecoado/g)?.length ?? 0).toBeLessThan(150);
+  });
+
+  it('still rejects a missing required artifact when no elicitation question explains the checkpoint', async () => {
+    const execute = vi.fn(async ({ outputPath }: { outputPath: string }) => {
+      await writeFile(outputPath, JSON.stringify({
+        summary: 'Saída incompleta.',
+        resultMarkdown: 'Não materializado.',
+        artifacts: [],
+        fields: [],
+        questions: [],
+        warnings: [],
+      } satisfies SkillProposal));
+    });
+    const runner = new CodexCliLocalSkillRunner({ repoRoot: new URL('../../../../', import.meta.url).pathname, execute });
     await expect(runner.run('offerbook', { projectId: 'project-1', brief: {} }))
       .rejects.toThrow('não produziu o artefato obrigatório');
   });
@@ -645,6 +734,25 @@ describe('local skill runner endpoint', () => {
     await new Promise((r) => setTimeout(r, 20));
     controller.abort();
     await expect(run).rejects.toBeInstanceOf(LocalSkillRunAbortError);
+  });
+
+  it('keeps the BFF alive when cancellation closes stdin during a large prompt write', async () => {
+    const controller = new AbortController();
+    const execute = defaultCodexExecutor(process.execPath);
+    const run = execute({
+      args: ['-e', 'process.stdin.resume(); setTimeout(() => {}, 10000)'],
+      prompt: 'x'.repeat(4 * 1024 * 1024),
+      cwd: process.cwd(),
+      outputPath: '/tmp/codex-cancelled-output.json',
+      timeoutMs: 10_000,
+      killGraceMs: 20,
+      env: process.env,
+      signal: controller.signal,
+    });
+
+    controller.abort();
+    await expect(run).rejects.toBeInstanceOf(LocalSkillRunAbortError);
+    await new Promise((resolvePromise) => setTimeout(resolvePromise, 50));
   });
 });
 

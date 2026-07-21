@@ -1,13 +1,103 @@
 import assert from 'node:assert/strict';
+import { execFile, spawn } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
+import { createServer } from 'node:net';
+import { promisify } from 'node:util';
 import { chromium } from 'playwright';
+import { createClient } from '@supabase/supabase-js';
 
-const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:5177';
+let baseURL = process.env.E2E_BASE_URL;
+let demoServer;
 const evidenceDir = process.env.E2E_EVIDENCE_DIR ?? '/tmp/story-8-w3-2-evidence';
+const execFileAsync = promisify(execFile);
 await mkdir(evidenceDir, { recursive: true });
+
+async function availablePort() {
+  const server = createServer();
+  await new Promise((resolvePromise, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', resolvePromise);
+  });
+  const address = server.address();
+  const port = typeof address === 'object' && address ? address.port : 0;
+  await new Promise((resolvePromise) => server.close(resolvePromise));
+  return port;
+}
+
+async function waitForServer(url, timeoutMs = 30_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) return;
+    } catch {
+      // Server is still booting.
+    }
+    await new Promise((resolvePromise) => setTimeout(resolvePromise, 200));
+  }
+  throw new Error(`Servidor demo não iniciou em ${url}.`);
+}
+
+if (!baseURL) {
+  const port = await availablePort();
+  baseURL = `http://127.0.0.1:${port}`;
+  demoServer = spawn('npm', ['run', 'dev', '--', '--host', '127.0.0.1', '--port', String(port)], {
+    cwd: process.cwd(),
+    env: { ...process.env, VITE_DEMO_AUTH: 'true' },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  await waitForServer(baseURL);
+}
+
+async function ensureDemoUser() {
+  const { stdout } = await execFileAsync('supabase', ['status', '-o', 'json'], { cwd: process.cwd(), maxBuffer: 2_000_000 });
+  const local = JSON.parse(stdout);
+  const admin = createClient(local.API_URL, local.SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+  const listed = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  if (listed.error) throw listed.error;
+  const existing = listed.data.users.find((candidate) => candidate.email === 'demo@academialendaria.local');
+  const result = existing
+    ? await admin.auth.admin.updateUserById(existing.id, { password: 'adsfactory', email_confirm: true })
+    : await admin.auth.admin.createUser({ email: 'demo@academialendaria.local', password: 'adsfactory', email_confirm: true });
+  if (result.error) throw result.error;
+}
+
+if (process.env.E2E_BASE_URL) await ensureDemoUser();
 
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ locale: 'pt-BR', viewport: { width: 1440, height: 1000 } });
+if (!process.env.E2E_BASE_URL) {
+  await context.route('**/api/local/environment-bootstrap', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      status: 'ready',
+      checkedAt: '2026-07-12T00:00:00.000Z',
+      source: 'manual',
+      checks: [],
+    }),
+  }));
+  await context.route('**/api/local/projects/*/status', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      schemaVersion: '1.0.0',
+      projectSlug: 'maquina-de-receita-com-ia',
+      pieces: [],
+      alternatives: [],
+      pending: { open: 0, resolved: 0, decisions: [] },
+      completed: 0,
+      total: 31,
+      nextCommand: '/avatar-funil',
+      divergences: [],
+      sourceHashes: { filesystem: 'demo', database: 'demo', book: null, pendings: null },
+      readOnly: true,
+      profile: { offerType: 'especialista', destination: 'checkout', voice: 'marca', affiliate: false },
+      guidance: null,
+      sourceIssues: [],
+    }),
+  }));
+}
 const page = await context.newPage();
 const consoleErrors = [];
 const failedRequests = [];
@@ -177,10 +267,23 @@ try {
   await page.reload();
   await page.getByTestId('legacy-cutover-bridge').waitFor();
 
+  assert.deepEqual(badResponses, [], `bad responses: ${badResponses.join('\n')}`);
   assert.deepEqual(consoleErrors, [], `console errors: ${consoleErrors.join('\n')}`);
   assert.deepEqual(failedRequests, [], `failed requests: ${failedRequests.join('\n')}`);
-  assert.deepEqual(badResponses, [], `bad responses: ${badResponses.join('\n')}`);
   console.log(`Story 8.W3.2 Playwright PASS. Evidence: ${evidenceDir}`);
 } finally {
   await browser.close();
+  if (demoServer && !demoServer.killed) {
+    demoServer.kill('SIGTERM');
+    await new Promise((resolvePromise) => {
+      const timer = setTimeout(() => {
+        demoServer.kill('SIGKILL');
+        resolvePromise();
+      }, 5_000);
+      demoServer.once('exit', () => {
+        clearTimeout(timer);
+        resolvePromise();
+      });
+    });
+  }
 }

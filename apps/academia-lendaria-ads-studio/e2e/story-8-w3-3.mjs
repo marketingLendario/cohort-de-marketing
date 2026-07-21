@@ -120,7 +120,7 @@ try {
   const panel = page.getByRole('dialog', { name: 'Estado do Marketing Studio' });
   await panel.waitFor();
   await panel.getByText('Acesso à inteligência artificial', { exact: true }).waitFor();
-  await panel.getByText('Tela do Marketing Studio', { exact: true }).waitFor();
+  await panel.getByText('Etapas do painel e dos comandos', { exact: true }).waitFor();
   await page.screenshot({ path: resolve(evidenceDir, 'readiness-desktop.png'), fullPage: true });
 
   await readinessButton.click();

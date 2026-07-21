@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(28);
+select plan(32);
 
 insert into auth.users (id)
 values
@@ -21,13 +21,14 @@ values
   ('30000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'project-a', 'Project A'),
   ('30000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000002', 'project-b', 'Project B');
 
-insert into public.skill_runs (id, workspace_id, project_id, skill_id, skill_hash, status)
+insert into public.skill_runs (id, workspace_id, project_id, skill_id, skill_hash, status, input_snapshot)
 values
-  ('50000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-a', 'needs_review'),
-  ('50000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000002', 'offerbook', 'skill-hash-b', 'needs_review'),
-  ('50000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-c', 'running'),
-  ('50000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-d', 'running'),
-  ('50000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-e', 'running');
+  ('50000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-a', 'needs_review', '{}'::jsonb),
+  ('50000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000002', 'offerbook', 'skill-hash-b', 'needs_review', '{}'::jsonb),
+  ('50000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-c', 'running', '{}'::jsonb),
+  ('50000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-d', 'running', '{}'::jsonb),
+  ('50000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-e', 'running', '{}'::jsonb),
+  ('50000000-0000-0000-0000-000000000006', '20000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 'offerbook', 'skill-hash-f', 'running', '{"elicitationParentRunId":"50000000-0000-0000-0000-000000000003"}'::jsonb);
 
 insert into public.artifact_approval_outbox
   (id, workspace_id, project_id, skill_run_id, idempotency_key, decision, proposal_hash, state)
@@ -188,6 +189,34 @@ select throws_ok(
   '40001',
   'proposal revision is stale or skill_run is not reviewable',
   'proposal RPC enforces the expected revision CAS'
+);
+
+select lives_ok(
+  $$ select * from public.supersede_skill_run_checkpoint(
+       '20000000-0000-0000-0000-000000000001',
+       '50000000-0000-0000-0000-000000000003',
+       '50000000-0000-0000-0000-000000000006'
+     ) $$,
+  'authenticated member can supersede a review checkpoint with its linked continuation'
+);
+select is(
+  (select status from public.skill_runs where id = '50000000-0000-0000-0000-000000000003'),
+  'cancelled',
+  'supersede RPC marks only the parent checkpoint cancelled'
+);
+select ok(
+  (select error from public.skill_runs where id = '50000000-0000-0000-0000-000000000003') like '%50000000-0000-0000-0000-000000000006%',
+  'supersede RPC records the continuation identity'
+);
+select throws_ok(
+  $$ select * from public.supersede_skill_run_checkpoint(
+       '20000000-0000-0000-0000-000000000001',
+       '50000000-0000-0000-0000-000000000001',
+       '50000000-0000-0000-0000-000000000006'
+     ) $$,
+  '40001',
+  'checkpoint is stale or continuation linkage is invalid',
+  'supersede RPC rejects a continuation linked to a different parent'
 );
 
 reset role;

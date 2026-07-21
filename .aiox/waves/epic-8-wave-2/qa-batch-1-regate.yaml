@@ -1,0 +1,284 @@
+schema: sinkra-wave-qa-gate-result-v1
+epic: epic-8
+wave: W2
+batch: 1
+role: "@qa (independent quality re-gate — post-recovery)"
+mode: read-only-runtime-review
+generated_at: "2026-07-10"
+branch: rafaelscosta
+head_reviewed: "602f44ccd167575c4273b8ab91cac11ab1f4e1eb"
+base_commit: "c8fc264eed6283e7ddb6d3072926ffabad60273d"
+recovery_commit: "602f44ccd167575c4273b8ab91cac11ab1f4e1eb"   # fix: close QA batch-1 blockers
+recovery_base: "d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+stories_in_batch: ["8.W2.1", "8.W2.2"]
+supersedes: ".aiox/waves/epic-8-wave-2/qa-batch-1.yaml (BLOCK on QA-W2B1-01/02)"
+
+# ---------------------------------------------------------------------------
+verdict: SHIP
+verdict_reason: >
+  The recovery commit 602f44c closes all four findings from the prior gate and
+  I re-verified each independently against HEAD, both by code trace and by
+  re-running the full gate suite (all 7 green + git diff --check clean). The two
+  P2 blockers are gone: (QA-W2B1-01) a concurrent double-retry now yields exactly
+  ONE scheduled attempt — the Supabase store performs an atomic terminal-state
+  compare-and-swap so the losing retry matches zero rows, returns undefined, and
+  the endpoint replies 409 SKILL_RUN_RETRY_REJECTED, never dispatching a second
+  Codex child; a synchronous UI in-flight guard (retryInFlightRef) plus a disabled
+  Repetir button close the same-client double-click at the source. (QA-W2B1-02) in
+  the default real/Supabase mode the skill run is now persisted as a durable
+  pointer through ProjectRepository ONLY after the backend 202, cached only after
+  repository success, carries the jobId in inputSnapshot, survives a fresh
+  store/controller hydration (listSkillRuns → reattach-by-jobId effect), and
+  persists the terminal proposal + real skillHash / error / cancel / retry
+  transitions; a saga-style compensation cancels the orphan backend job if the
+  domain pointer fails to persist. The two P3 hardening items are also closed:
+  (QA-W2B1-03) the tenant axis is now derived server-side from the project and a
+  mismatched client workspace is rejected (400) before any service-role write,
+  failing closed (500, no dispatch) on lookup error or a missing authoritative
+  workspace — and this is gated on the SAME backendSupabase credential as the
+  service-role writer, so the trust-client fallback only exists where no
+  RLS-bypassing writer is present; (QA-W2B1-04) sanitizeCodexEnv is now an
+  operational allowlist, so arbitrary/Supabase/runner/API secrets can no longer
+  reach the spawned Codex child while PATH/HOME/CODEX_HOME/XDG/locale survive.
+  No P0/P1/P2 remain. The only open items are P3 informational and an explicit,
+  documented scope handoff of approve/reject persistence to STORY-8.W2.3.
+
+# ---------------------------------------------------------------------------
+gate_evidence:
+  location: "apps/academia-lendaria-ads-studio"
+  environment:
+    node: "v22.16.0"
+    supabase_cli: "2.84.2 (behind latest 2.109.x — non-blocking, matches fan-in R5)"
+    supabase_local: running
+    env_note: >
+      Untracked apps/.../.env created from the committed .env.example (public
+      client keys only — VITE_SUPABASE_URL + anon key, no service_role) so the
+      client tests that import @/lib/supabase load. .env is gitignored; no
+      tracked file was created or modified. Same setup the prior gate used.
+  npm_test:
+    command: "npm test  (vitest run)"
+    status: PASS
+    detail: "Test Files: 25 passed (25); Tests: 176 passed (176)"
+  npm_run_lint:
+    command: "npm run lint  (eslint .)"
+    status: PASS
+    detail: "ESLint: No issues found"
+  npm_run_typecheck:
+    command: "npm run typecheck  (catalog:generate+validate → tsc -b)"
+    status: PASS
+    detail: "Skill catalog OK: 30 skills, 40 edges, canonical mirror verified; tsc -b exit 0 (only cosmetic NO_COLOR/FORCE_COLOR warnings)"
+  npm_run_build:
+    command: "npm run build  (vite build)"
+    status: PASS
+    detail: "built in 412ms; index bundle 255.70 kB (gzip 81.01 kB)"
+  npm_run_build_server:
+    command: "npm run build:server  (tsc -p tsconfig.server.json)"
+    status: PASS
+    detail: "exit 0, no errors"
+  npm_run_lint_db:
+    command: "npm run lint:db  (supabase db lint --local --level warning)"
+    status: PASS
+    detail: "extensions/private/public linted — No schema errors found"
+  npm_run_test_db:
+    command: "npm run test:db  (supabase test db)"
+    status: PASS
+    detail: "Files=3, Tests=15, Result: PASS (marketing_project_rls, project_repository, skill_run_jobs)"
+  git_diff_check:
+    command: "git diff --check c8fc264..602f44c"
+    status: clean
+    exit_code: 0
+  tracked_tree:
+    command: "git status --porcelain (tracked)"
+    status: clean
+    detail: >
+      No tracked file modified during the gate (catalog regeneration produced no
+      diff). Only the four pre-existing untracked dirs remain (.aiox/,
+      .claude/worktrees/, .codegraph/, design-qa-evidence/) plus this report.
+  note: >
+    Independent re-run — not a copy of the recovery ACK. Every gate reproduced
+    here at 602f44c matches the ACK's claimed numbers exactly.
+
+# ---------------------------------------------------------------------------
+findings:  # ordered by severity; no P0/P1/P2 remain
+  p0: []
+  p1: []
+  p2: []
+  p3:
+    - id: QA-W2B1-R1
+      severity: P3
+      story: "8.W2.2"
+      category: robustness-note
+      title: "Real-mode terminal persistRunUpdate is fire-and-forget (eventually-consistent, not lossy)"
+      evidence:
+        - "apps/academia-lendaria-ads-studio/src/components/project-journey.tsx:120 — persistRunUpdate() in real mode does `void workspaceActions.persistSkillRunUpdate(...).catch(setRuntimeError)`; the terminal onDone write (needs_review + proposal + skillHash) is not awaited."
+      failure_scenario: >
+        Operator reloads within the sub-second window after onDone fires but
+        before repository.updateSkillRun resolves. The repo row is still
+        `running`; on reload the reattach-by-jobId effect re-observes the backend
+        job, whose durable journal (skill_run_jobs) is terminal, so the SSE
+        snapshot re-delivers done → the terminal update is re-applied. No proposal
+        is lost (the backend journal is the SOT for the proposal); the window only
+        delays UI convergence by one reattach cycle.
+      blast_radius: "Cosmetic/timing. Backend journal preserves the proposal; reattach reconciles. The recovery documents this reconciliation design explicitly."
+      recommendation: "Optional: await the terminal persist (or mark the run needs_review optimistically then reconcile) if instant post-reload consistency is desired. Not required for AC6."
+      verdict: PLAUSIBLE
+    - id: QA-W2B1-05
+      severity: P3
+      story: "8.W2.1"
+      ac: ["AC2"]
+      category: ux-note
+      title: "Conflict hydration state is global — one project's OCC conflict blocks the whole workspace"
+      evidence:
+        - "carried over from the prior gate (qa-batch-1.yaml QA-W2B1-05); untouched by the recovery. project-store.ts flagConflict sets the single hydration.status; project-hydration-boundary.tsx blocks all children on 'conflict'."
+      blast_radius: "Cosmetic/UX; AC2 explicitly lists conflict as a boundary state — acceptable as designed. Note only."
+      verdict: PLAUSIBLE
+
+# ---------------------------------------------------------------------------
+findings_reverification:  # each prior finding re-tested against 602f44c
+  - id: QA-W2B1-01
+    prior_severity: P2
+    now: CLOSED
+    ac: ["AC4", "AC5"]
+    requirement: "concurrent retry must yield exactly one scheduling/attempt and loser 409; UI guard must close same-client double-click"
+    evidence:
+      - "server/jobs/supabase-skill-job-store.ts:260 — startRetry() now UPDATEs with `.in('status', SKILL_RUN_TERMINAL_STATUSES)` + `.maybeSingle()`: atomic terminal-state CAS. Two concurrent retries both read a terminal row and compute a fresh attempt, but Postgres row-locking lets only the first UPDATE match (status→queued); the second re-evaluates the WHERE against the now-queued row → zero rows → returns undefined."
+      - "server/app.ts:408-420 — POST /retry: startRetry()===undefined → get(jobId): missing → 404 SKILL_RUN_NOT_FOUND, else → 409 SKILL_RUN_RETRY_REJECTED; only the winner reaches scheduleRun() exactly once → exactly one attempt/schedule."
+      - "src/components/project-journey.tsx:298-311 — retryRun() has a synchronous hard guard (retryInFlightRef.current.has(jobId) → return) set BEFORE any await/re-render, plus setRetryingJobId; the Repetir button is disabled (project-journey.tsx:478 `disabled={retryingJobId === latestJobId}`). A double-click emits a single POST."
+    regression_tests:
+      - "server/jobs/supabase-skill-job-store.test.ts:111 — 'two concurrent retries of a terminal job yield exactly one queued attempt; the loser is undefined'"
+      - "server/jobs/supabase-skill-job-store.test.ts:133 — 'a retry of an already-retried (now queued) job is rejected (undefined)'"
+      - "src/components/project-journey.test.tsx:121 — 'does not issue overlapping retry POSTs on a double-click (in-flight guard, QA-W2B1-01)'"
+    verdict: CONFIRMED_FIXED
+  - id: QA-W2B1-02
+    prior_severity: P2
+    now: CLOSED
+    ac: ["AC6"]
+    requirement: >
+      run pointer created through ProjectRepository only after backend 202, cached only after
+      repository success, carry jobId, survive fresh store/controller hydration, reattach, persist
+      terminal proposal/skillHash/error/cancel/retry; compensation cancels orphan backend job if
+      domain persistence fails
+    evidence:
+      - "src/components/project-journey.tsx:236-263 — executeRun(): `start = await startSkillRun(...)` (POST /run returns 202 only after skillJobStore.create durable persist), THEN persistRunStart(...) writes the pointer via repository.createSkillRun with inputSnapshot.jobId = start.jobId. Pointer created only after the 202."
+      - "src/hooks/use-project-workspace.ts:286-306 — persistSkillRunStart (real mode): `await repository.createSkillRun({... skillHash: PENDING, status: running, inputSnapshot})` THEN `store.getState().upsertSkillRun(run)` — cache mirrors only after repository success, using the DB-authoritative id."
+      - "src/components/project-journey.tsx:173-181 — reattach effect iterates rehydrated `runs`, and for status running|queued reads jobIdOf(run) (inputSnapshot.jobId, project-journey.tsx:21) and calls attach(run.id, jobId) — resumes the SSE/poll stream after reload with no dependency on the original request (AC6)."
+      - "src/components/project-journey.tsx:155-168 — onDone persists {needs_review, real skillHash, proposal}; onError persists {failed|cancelled, error} via repository.updateSkillRun; retryRun (project-journey.tsx:304) persists {running, error:null}. UpdateSkillRunInput/skillRunUpdate now carry skillHash (project-repository.ts:346,432)."
+      - "src/components/project-journey.tsx:264-271 — compensation: if persistRunStart throws, `await cancelSkillRun(start.jobId)` cancels the durable backend job (no orphan) and surfaces an actionable error."
+      - "PRODUCTION SEAM CHECK: useOptionalProjectWorkspaceActions (project-hydration-boundary.tsx) returns null ONLY outside the boundary (isolated component tests). In production ProjectJourney is mounted at routes/projects/$projectId/journey.tsx under routes/projects.tsx → AuthenticatedRoute → ProjectHydrationBoundary → ProjectWorkspaceActionsProvider, so the seam is non-null and the real repository path is used. The optional seam does NOT weaken real production mode."
+    regression_tests:
+      - "src/hooks/use-project-workspace.test.ts:396 — 'persiste um skill run pelo repository e reidrata em nova sessão com jobId, status terminal, proposta e skillHash (QA-W2B1-02)'"
+      - "src/components/project-journey.test.tsx:198 — 'executa uma skill persistindo o início pelo repository com o jobId, e reata o stream (QA-W2B1-02)'"
+      - "src/components/project-journey.test.tsx:167 — 'reata pelo jobId e persiste a transição terminal pelo repository (ações do workspace)'"
+      - "src/components/project-journey.test.tsx:68 — 'resumes a non-terminal run by jobId after reload, without the original request'"
+    residual: "See QA-W2B1-R1 (fire-and-forget terminal write is eventually-consistent, not lossy)."
+    verdict: CONFIRMED_FIXED
+  - id: QA-W2B1-03
+    prior_severity: P3
+    now: CLOSED
+    ac: ["AC2"]
+    requirement: "derive tenant from project, reject mismatch, fail closed on lookup error or missing authoritative workspace before service-role write"
+    evidence:
+      - "server/app.ts:262-266 — resolveWorkspaceId(projectId, provided) = resolveTenantWorkspaceId(projectId, provided, await deriveProjectWorkspaceId(projectId)); called at app.ts:318 BEFORE skillJobStore.create (app.ts:321)."
+      - "server/local-runner-security.ts:250-262 — resolveTenantWorkspaceId: derived present → a divergent provided throws WorkspaceMismatchError (→ 400 SKILL_RUN_WORKSPACE_MISMATCH at app.ts:334); provided absent/equal → derived."
+      - "server/app.ts:236-252 — default deriveProjectWorkspaceId queries marketing_projects; on Supabase error THROWS ('lookup failed'), on missing workspace THROWS ('has no authoritative workspace') → caught at app.ts:340 → 500 LOCAL_SKILL_ENQUEUE_FAILED, no dispatch (limiter.release, no scheduleRun). Fails closed."
+      - "GATING PROOF: app.ts:108,119-121,236-243 — both the durable Supabase skill-run store (the service-role RLS-bypassing writer) and deriveProjectWorkspaceId are gated on the SAME backendSupabase credential. Whenever a service-role write can occur, derivation is authoritative; the client-trust fallback (derived=null) exists only with the in-memory store where there is no RLS-bypassing writer to protect."
+    regression_tests:
+      - "server/__tests__/local-skill-runner.test.ts:127 — 'derives the workspace from the project and rejects a mismatched client workspace before writing (QA-W2B1-03)'"
+      - "server/__tests__/local-skill-runner.test.ts:168 — 'fails closed when the authoritative workspace lookup fails before writing'"
+      - "server/__tests__/local-skill-runner.test.ts:585 — 'never trusts a client workspace against the derived one (QA-W2B1-03)' (pure decisor unit)"
+    verdict: CONFIRMED_FIXED
+  - id: QA-W2B1-04
+    prior_severity: P3
+    now: CLOSED
+    requirement: "arbitrary/Supabase/runner/API secrets cannot reach the Codex child while required local CLI path/session variables remain"
+    evidence:
+      - "server/local-runner-security.ts:212-224 — sanitizeCodexEnv now builds the child env by ALLOWLIST (starts from {}), copying only CODEX_ENV_ALLOWLIST + LC_ prefix + operator escape hatch; CODEX_ENV_ALLOWLIST itself is never forwarded."
+      - "server/local-runner-security.ts:31-52 — CODEX_ENV_ALLOWLIST = PATH, HOME, SHELL, USER, LOGNAME, TERM, TMPDIR/TEMP/TMP, LANG/LANGUAGE, TZ, CODEX_HOME, XDG_CONFIG/CACHE/DATA_HOME, XDG_RUNTIME_DIR (+ LC_ prefix). Required local-CLI path/session vars survive; SUPABASE_SERVICE_ROLE_KEY, LOCAL_SKILL_RUNNER_TOKEN, APIFY_TOKEN, OPENAI_API_KEY/CODEX_API_KEY and arbitrary vars are absent → stripped."
+      - "server/local-skill-runner.ts:306 + :163-167 — the Codex child is spawned with `env: sanitizeCodexEnv(process.env)`; the read-only sandbox limits fs/network and the env allowlist now closes the proposal-exfil channel for inherited secrets."
+    regression_tests:
+      - "server/__tests__/local-skill-runner.test.ts:531 — 'passes only operational essentials to the child — no inherited secrets (AC4 / QA-W2B1-04)'"
+      - "server/__tests__/local-skill-runner.test.ts:570 — 'honors the operator escape hatch CODEX_ENV_ALLOWLIST without leaking it or other secrets'"
+      - "server/__tests__/local-skill-runner.test.ts:522 — 'strips OpenAI/Codex keys without mutating the source env (AC4)'"
+    verdict: CONFIRMED_FIXED
+
+# ---------------------------------------------------------------------------
+regression_and_seam_inspection:
+  circular_dependencies: >
+    NONE introduced. project-journey.tsx now imports useOptionalProjectWorkspaceActions
+    (project-hydration-boundary.tsx) and toCacheRunPatch/PersistSkillRunStartInput
+    (use-project-workspace.ts); neither of those imports back into project-journey or
+    the boundary (boundary imports use-project-workspace type-only). tsc -b, eslint and
+    vite build are all clean — no import cycle.
+  races: >
+    Retry double-submit race CLOSED at the store (atomic CAS) and the endpoint (409) and
+    the UI (synchronous ref guard). Recovery-on-boot claim path unchanged and still
+    single-scheduling. No new race introduced; the fire-and-forget terminal write is
+    eventually-consistent against the durable journal (QA-W2B1-R1), not a data race.
+  optional_boundary_seam_weakening_production: >
+    CHECKED and NEGATIVE. useOptionalProjectWorkspaceActions returns null only when
+    ProjectJourney is rendered outside ProjectHydrationBoundary — i.e. isolated component
+    tests. The production route tree (routes/projects.tsx → AuthenticatedRoute →
+    ProjectHydrationBoundary → ProjectWorkspaceActionsProvider → journey route →
+    ProjectJourney) always provides the actions, so real mode always persists via the
+    repository. The seam preserves test ergonomics without weakening production.
+
+# ---------------------------------------------------------------------------
+ac_verdicts:
+  story_8_W2_1:
+    AC1_zustand_cache_supabase_sot: PASS
+    AC2_hydration_states_no_fixture_flash: PASS
+    AC3_autosave_group_preserve_falsy_reconcile_conflict: PASS
+    AC4_fixtures_only_when_demo_flag: PASS
+    AC5_project_brief_artifacts_plans_weeks_roundtrip: PASS   # + skillRuns now round-trip UI-side (QA-W2B1-02)
+    AC6_component_and_e2e_tests: CONCERNS   # strong component/unit coverage; NO E2E Playwright (story acknowledges; not a batch blocker, no P-level regression)
+  story_8_W2_2:
+    AC1_202_after_durable_persist: PASS
+    AC2_supabase_journal_workspace_project_hash: PASS   # + tenant now derived server-side, mismatch rejected (QA-W2B1-03)
+    AC3_sse_snapshot_progress_done_error_polling: PASS
+    AC4_cancel_and_auditable_retry: PASS   # was CONCERNS — retry concurrency now safe (QA-W2B1-01)
+    AC5_recovery_without_duplicate_side_effects: PASS   # was CONCERNS — same-owner double-retry now single-attempt (QA-W2B1-01)
+    AC6_ui_progress_cancel_retry_resume: PASS   # was BLOCK — reload-resume now delivered in real/default mode (QA-W2B1-02)
+
+# ---------------------------------------------------------------------------
+proved_or_challenged:
+  retry_double_submit_single_attempt: "PROVEN — atomic terminal-state CAS in startRetry + 409 on the loser + synchronous UI guard; store test asserts exactly one queued attempt, loser undefined."
+  reload_resume_real_mode: "PROVEN — skill run persisted via ProjectRepository after the 202, cached after repo success, jobId in inputSnapshot, rehydrated by listSkillRuns, reattached by jobId; round-trip tests at repo, controller and ProjectJourney levels."
+  pointer_created_only_after_202: "PROVEN — executeRun awaits startSkillRun (202) before persistRunStart→createSkillRun."
+  compensation_cancels_orphan: "PROVEN — persistRunStart failure triggers cancelSkillRun(jobId) + actionable error."
+  tenant_derived_fail_closed: "PROVEN — resolveWorkspaceId derives from marketing_projects, rejects mismatch (400) and fails closed (500, no dispatch) on lookup error/missing; gated on the same credential as the service-role writer."
+  codex_env_allowlist: "PROVEN — sanitizeCodexEnv is an allowlist; child spawned with it; secrets (Supabase/runner/APIFY/OpenAI/arbitrary) stripped, PATH/HOME/CODEX_HOME/XDG/locale retained; escape hatch not leaked."
+  optional_seam_no_prod_weakening: "PROVEN — production always mounts ProjectJourney under the boundary; seam null only in isolated tests."
+  all_gates_green_at_602f44c: "PROVEN — independently re-ran test/lint/typecheck/build/build:server/lint:db/test:db + git diff --check; all pass."
+
+# ---------------------------------------------------------------------------
+scope_handoff_W2_3:
+  status: approved_and_explicit
+  detail: >
+    approveProposal/rejectProposal (human review decisions) remain cache-only by
+    design. The done/cancelled transition from human review and the materialization
+    of approved artifacts are scoped to STORY-8.W2.3 (two-phase artifact approval);
+    persisting only the run status here would create an inconsistency against
+    not-yet-persisted artifacts. After a reload post-approval the run still shows
+    needs_review until W2.3 closes that seam. This is a KNOWN, ACCEPTED gap — not a
+    regression introduced by this recovery, and NOT a blocker for this batch. QA
+    explicitly approves shipping batch 1 with approve/reject persistence deferred to
+    W2.3, and expects W2.3 to (1) persist the human-review terminal transition and
+    (2) materialize approved artifacts durably so a post-approval reload shows done.
+
+# ---------------------------------------------------------------------------
+residual_notes:
+  - "Supabase CLI local is 2.84.2 (behind latest) — same non-blocking note as fan-in R5 / Wave 1."
+  - "resolveTenantWorkspaceId no-DB fallback still trusts the client workspace — accepted: that path has no RLS-bypassing service-role writer to protect (the real protection applies exactly where backendSupabase exists)."
+  - "8.W2.1 AC6 has no E2E Playwright (component/unit only) — acknowledged by the story; carried as CONCERNS, not a P-level finding and not a batch blocker."
+  - "No tracked files were modified during this gate. Untracked .env (public keys) created from .env.example for client tests; gitignored. Only pre-existing untracked dirs plus this report exist. No commit/push/PR/merge performed."
+
+# ---------------------------------------------------------------------------
+next_action: >
+  SHIP. No P0/P1/P2 remain; all four prior findings (QA-W2B1-01..04) are
+  independently re-verified as fixed at 602f44c and the full gate suite is green.
+  Batch 1 (stories 8.W2.1 + 8.W2.2) is cleared for promotion. Promotion
+  (git push / gh pr create / merge) remains @devops-exclusive and was intentionally
+  not performed here. @qa may now re-issue an accurate 8.W2.2 sdc-complete.ack with
+  AC6 met in real/Supabase mode. approve/reject persistence is explicitly scoped to
+  STORY-8.W2.3 (see scope_handoff_W2_3) — sequence it before Wave 2 is considered
+  operationally complete.

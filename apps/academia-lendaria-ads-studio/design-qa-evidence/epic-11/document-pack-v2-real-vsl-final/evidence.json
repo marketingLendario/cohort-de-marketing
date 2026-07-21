@@ -1,0 +1,316 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T23:22:47.869Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "vsl-funil"
+    ],
+    "catalogHash": "e9f29bdb356bdbe951ab4dae660fdf949917b02a1c892e3cecb9b51096903f4e"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "vsl-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "9aad4ce3dcc95ab6cd500e90a264f353e2be4559cb0ef44f19a180af899cc4c7",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/vsl-roteiro.html",
+          "pagina/vsl.html",
+          "vsl.html",
+          "vsl.md",
+          "vsl.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 444,
+            "hash": "0b9b3851bbba0a22423c3f0e4f95dc6bb6ff1801f196b37008a9460251a91e97",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3598,
+            "hash": "88e4597ac5ff0edbe9cc7f0b19b4802eeef6fa3b60da8db60b229cb84d20a6d9",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro-v1.html",
+            "format": "html",
+            "bytes": 6458,
+            "hash": "402ceb802a441d4861671ffcc50b04bf6ecede2159c1205389b28f82ce6fc28e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro.html",
+            "format": "html",
+            "bytes": 6458,
+            "hash": "402ceb802a441d4861671ffcc50b04bf6ecede2159c1205389b28f82ce6fc28e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-v1.html",
+            "format": "html",
+            "bytes": 6451,
+            "hash": "11084c82b2d684963bfdea541c96e9dd3523925b1dc5bcfbcba4838fce93aa18",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl.html",
+            "format": "html",
+            "bytes": 6451,
+            "hash": "11084c82b2d684963bfdea541c96e9dd3523925b1dc5bcfbcba4838fce93aa18",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.html",
+            "format": "html",
+            "bytes": 3398,
+            "hash": "45485c95f8fa3ec5cd5e734fee1737679f6c28beb4232023b41efdb6c6bdb7b7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.md",
+            "format": "markdown",
+            "bytes": 3235,
+            "hash": "467f09d9507061ddb24828dba2537ffb275b839f8d836efa4ff1c676c6078e15",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.pdf",
+            "format": "pdf",
+            "bytes": 174042,
+            "hash": "0f4450244fefec0d5a11f8e885c099d36537a98de7271ad1233bc551bcbab6ec",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.html",
+            "format": "html",
+            "bytes": 3398,
+            "hash": "45485c95f8fa3ec5cd5e734fee1737679f6c28beb4232023b41efdb6c6bdb7b7",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.md",
+            "format": "markdown",
+            "bytes": 3235,
+            "hash": "467f09d9507061ddb24828dba2537ffb275b839f8d836efa4ff1c676c6078e15",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.pdf",
+            "format": "pdf",
+            "bytes": 174042,
+            "hash": "0f4450244fefec0d5a11f8e885c099d36537a98de7271ad1233bc551bcbab6ec",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/vsl-roteiro.html",
+          "pagina/vsl.html",
+          "vsl.html",
+          "vsl.md",
+          "vsl.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 442,
+            "hash": "990fa93259bbd579819856f801d35654fe4ec324f1596882fe033d0ff2818ece",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3596,
+            "hash": "d633837737d07258c59cc470ab72d3f2591c902c1fa18e968b5b9dcb8368ad14",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro-v1.html",
+            "format": "html",
+            "bytes": 8126,
+            "hash": "abbc45d249b5643a25b7dbd9527aa9106718e77dc31fbd712002ebcf88e7cb95",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro.html",
+            "format": "html",
+            "bytes": 8126,
+            "hash": "abbc45d249b5643a25b7dbd9527aa9106718e77dc31fbd712002ebcf88e7cb95",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-v1.html",
+            "format": "html",
+            "bytes": 6872,
+            "hash": "f177f745669a0e92179e610da5fe94f68623a67e964bdf5812e3c5e2461c22d6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl.html",
+            "format": "html",
+            "bytes": 6872,
+            "hash": "f177f745669a0e92179e610da5fe94f68623a67e964bdf5812e3c5e2461c22d6",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.html",
+            "format": "html",
+            "bytes": 4036,
+            "hash": "f13c288258a148e30255c53cda9b73c3097a1235c2a800897802e4ea9affae59",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.md",
+            "format": "markdown",
+            "bytes": 4198,
+            "hash": "31b1d4e8857d4bbdb822018a06bef33d4ee0b5b617e0b009c0c351a60efeca09",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.pdf",
+            "format": "pdf",
+            "bytes": 164357,
+            "hash": "da99011db736f6efef15fe3a6b4515b652041c2bc84ec93bffbd67ed0f30640e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.html",
+            "format": "html",
+            "bytes": 4036,
+            "hash": "f13c288258a148e30255c53cda9b73c3097a1235c2a800897802e4ea9affae59",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.md",
+            "format": "markdown",
+            "bytes": 4198,
+            "hash": "31b1d4e8857d4bbdb822018a06bef33d4ee0b5b617e0b009c0c351a60efeca09",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.pdf",
+            "format": "pdf",
+            "bytes": 164357,
+            "hash": "da99011db736f6efef15fe3a6b4515b652041c2bc84ec93bffbd67ed0f30640e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

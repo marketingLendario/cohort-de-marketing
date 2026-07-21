@@ -56,7 +56,7 @@ Da identidade visual ao funil montado: `/design-md` → `/metodo-funil` (o mapa 
 
 ---
 
-## As 30 skills
+## As 31 skills
 
 Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao abrir o Claude Code na pasta. Para o Codex, `.agents/skills/` é um espelho literal da pasta canônica; chame com `@` quando a interface usar esse prefixo. Se houver dúvida, siga sempre `.claude/skills/` como fonte de verdade.
 
@@ -68,7 +68,7 @@ Instaladas canonicamente em `.claude/skills/` — carregam automaticamente ao ab
 | **Formatos de funil** | `/quiz-funil` · `/webinario-funil` · `/vsl-funil` · `/advertorial-funil` · `/lancamento-funil` |
 | **Peças** | `/pagina-vendas-funil` · `/email-funil` · `/whatsapp-funil` · `/conteudo-funil` · `/recuperacao-funil` · `/backend-funil` · `/cro-funil` |
 | **Reforço de oferta** | `/mockup-produto-funil` · `/bonus-funil` · `/criativos-funil` |
-| **Tráfego (Aula 3)** | `/zelador` · `/briefista` · `/estruturador` · `/leitor-de-metricas` · `/diagnosticador` |
+| **Tráfego (Aula 3)** | `/zelador` · `/briefista` · `/estruturador` · `/ads-creative-factory` · `/leitor-de-metricas` · `/diagnosticador` |
 
 As skills leem o **Perfil do Projeto** (no topo do seu offerbook) e se adaptam ao seu negócio: especialista, agência, B2B, negócio local, nicho regulado (saúde/jurídico/psico/financeiro), afiliado ou "ainda não sei o que vender".
 

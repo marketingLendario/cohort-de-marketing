@@ -1,0 +1,84 @@
+# Independent QA re-gate — Story 8.W2.3
+storyId: "8.W2.3"
+title: "Aprovação em duas fases: DB e filesystem"
+reviewer: "@qa via Codex CLI local"
+date: "2026-07-10"
+base_commit: "278d671470db295fbada8f725c75cb37f593f83f"
+mode: read-only
+verdict: BLOCK
+
+summary: >
+  A correção CAS-first e a contenção anti-symlink fecharam os findings do gate
+  anterior, mas a revisão independente encontrou dois P1 e dois P2 ainda não
+  cobertos. A story não pode ser integrada até fechar autoridade do outbox,
+  identidade do CAS, paths duplicados e reutilização semântica da chave idempotente.
+
+findings:
+  - id: W23-RG-P1-01
+    severity: P1
+    category: security / tenant isolation / authority
+    file: apps/academia-lendaria-ads-studio/supabase/migrations/20260710120000_artifact-approval.sql
+    lines: "42-43, 84-88"
+    title: "Authenticated pode forjar a saga e misturar IDs de tenants"
+    minimum_correction: >
+      Tornar o outbox exclusivo de service-role/BFF, amarrar workspace, projeto e
+      skill run por constraints/policies consistentes e adicionar pgTAP de escrita
+      direta recusada e referências cross-tenant recusadas.
+
+  - id: W23-RG-P1-02
+    severity: P1
+    category: correctness / idempotency / convergence
+    file: apps/academia-lendaria-ads-studio/server/artifact-approval.ts
+    lines: "960-981"
+    title: "CAS permite que outro hash substitua uma revisão já concluída"
+    minimum_correction: >
+      Fazer CAS apenas de needs_review para done; considerar done como replay
+      somente quando o hash armazenado for exatamente o mesmo. Alinhar fake e
+      cobrir aprovações concorrentes com hashes divergentes.
+
+  - id: W23-RG-P2-01
+    severity: P2
+    category: correctness / multi-file
+    file: apps/academia-lendaria-ads-studio/server/artifact-approval.ts
+    lines: "378-413, 459-490, 527-543"
+    title: "Paths canônicos duplicados podem divergir filesystem e metadados"
+    minimum_correction: >
+      Normalizar e rejeitar paths duplicados antes do hash, plano, outbox e
+      materialização. Adicionar regressão de proposta multi-arquivo e falha parcial.
+
+  - id: W23-RG-P2-02
+    severity: P2
+    category: correctness / idempotency
+    file: apps/academia-lendaria-ads-studio/server/artifact-approval.ts
+    lines: "419-424"
+    title: "Reuso da chave não valida a identidade imutável da requisição"
+    minimum_correction: >
+      Antes de retornar/resumir uma linha existente, comparar run, decisão, hash,
+      revisão e plano canônico; conflito semântico deve responder 409 sem efeito.
+
+acceptance_criteria:
+  AC1: PASS
+  AC2: BLOCKED
+  AC3: BLOCKED
+  AC4: BLOCKED
+  AC5: CONCERNS
+  AC6: PARTIAL
+  AC7: PASS
+
+gates:
+  focused_tests: "PASS — 37 testes / 3 arquivos (QA CLI)"
+  npm_test: "PASS — 218 testes / 28 arquivos (independent orchestrator rerun)"
+  lint: PASS
+  typecheck: PASS
+  build: PASS
+  build_server: PASS
+  lint_db: PASS
+  test_db: "PASS — 4 arquivos / 21 testes"
+  git_diff_check: PASS
+
+decision:
+  p0: 0
+  p1: 2
+  p2: 2
+  p3: 0
+  ship: false

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "pagina-vendas-funil",
+  "jobId": "4ea38372-a0b1-46b1-a561-63ac4c3144db",
+  "skillRunId": "7118d94d-d6bf-424b-a447-615ab8237c02",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "3bae0d3fa66b81aabf8654d455dac927a4824e5a1f9134f6806ff9a088939cfa",
+  "proposal": {
+    "fields": [
+      {
+        "key": "status",
+        "value": "blocked_by_human_gate"
+      },
+      {
+        "key": "project",
+        "value": "epic-11-document-pack-cli"
+      },
+      {
+        "key": "required_sources",
+        "value": "copy.md e DESIGN.md encontrados"
+      },
+      {
+        "key": "missing_authorizations",
+        "value": "aprovação final do Offerbook, aprovação da fundação de copy, responsável técnico e registro, validação técnica das fases e liberação jurídica/regulatória"
+      }
+    ],
+    "summary": "Página não gerada porque o gate humano de compliance e aprovação ainda está aberto.",
+    "warnings": [
+      "A publicação permanece bloqueada mesmo após a geração até validação humana e regulatória.",
+      "Não serão inventados credenciais, provas, depoimentos, preço-âncora, parcelamento, valores de bônus, escassez, urgência ou alegações clínicas.",
+      "O termo “Desinflamar” exige validação técnica e não poderá ser apresentado como alegação clínica."
+    ],
+    "artifacts": [],
+    "questions": [
+      "O dono da oferta aprova formalmente o `offerbook.md`, campo a campo, para uso na página de vendas?",
+      "O dono aprova a fundação do `copy.md`, incluindo a direção de headline e os bullets selecionados, para gerar a copy aplicada?",
+      "Qual é o nome do responsável técnico, seu registro profissional e a confirmação de que o método, as alegações de saúde e a página foram liberados pela revisão jurídica/regulatória?"
+    ],
+    "resultMarkdown": "O `offerbook.md` e o `copy.md` estão presentes, mas ambos declaram a copy e a publicação bloqueadas. Como a oferta trata de saúde e emagrecimento, não é permitido fabricar a página final antes das aprovações exigidas. Nenhum arquivo foi criado ou alterado."
+  }
+}

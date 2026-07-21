@@ -1,0 +1,244 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-11T14:07:24.224Z",
+  "viewports": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scenarios": [
+        {
+          "skillId": "avatar-funil",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "desktop-avatar-funil.png"
+        },
+        {
+          "skillId": "espiao-do-concorrente",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "desktop-espiao-do-concorrente.png"
+        },
+        {
+          "skillId": "trend-hunting",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "desktop-trend-hunting.png"
+        },
+        {
+          "skillId": "conteudo-funil",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "desktop-conteudo-funil.png"
+        }
+      ],
+      "layout": {
+        "horizontalOverflow": false,
+        "secretMarkersVisible": false
+      },
+      "consoleErrors": [],
+      "requestFailures": []
+    },
+    {
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scenarios": [
+        {
+          "skillId": "avatar-funil",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "mobile-avatar-funil.png"
+        },
+        {
+          "skillId": "espiao-do-concorrente",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "mobile-espiao-do-concorrente.png"
+        },
+        {
+          "skillId": "trend-hunting",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "mobile-trend-hunting.png"
+        },
+        {
+          "skillId": "conteudo-funil",
+          "modes": [
+            "Rede",
+            "Material colado",
+            "Híbrido"
+          ],
+          "sourceOptions": [
+            "Busca pública",
+            "Perfil do Instagram",
+            "Hashtag do Instagram",
+            "Perfil do TikTok",
+            "Hashtag do TikTok",
+            "Meta Ad Library",
+            "URL pública"
+          ],
+          "offline": {
+            "materialVisible": true,
+            "targetHidden": true
+          },
+          "hybrid": {
+            "materialVisible": true,
+            "targetVisible": true
+          },
+          "screenshot": "mobile-conteudo-funil.png"
+        }
+      ],
+      "layout": {
+        "horizontalOverflow": false,
+        "secretMarkersVisible": false
+      },
+      "consoleErrors": [],
+      "requestFailures": []
+    }
+  ]
+}

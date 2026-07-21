@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T02:22:20.146Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "cro-funil"
+    ],
+    "catalogHash": "27a3ca4b2573bbcbf25fe12fa997ad27cbcfa1a848b2032590c5d9648b368db0"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "cro-funil",
+      "contractGroup": "owner-document",
+      "contractHash": "f0bef05a14a62b867a8f6a4ef269917ead7286a5515999fc0fadd3dac4db0aef",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "cro.html",
+          "cro.md",
+          "cro.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 448,
+            "hash": "2881b9aa98e108931cbfb17a3e5efb34573048b6e92027acd10d80c1e2ca731c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.html",
+            "format": "html",
+            "bytes": 4550,
+            "hash": "60435344fd13cdbb142fd29c0e60dd841bcb0f7226087361d4d53614e19ac9a7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.md",
+            "format": "markdown",
+            "bytes": 6122,
+            "hash": "1180cea3ab4e8439e9679bea85a2317a3139ac5777a7764381e328a880a21566",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.pdf",
+            "format": "pdf",
+            "bytes": 182458,
+            "hash": "1b87ca3120df3210d127a7f443278aacf827bce884f85f71ebb3424c2fdfa9a5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.html",
+            "format": "html",
+            "bytes": 4550,
+            "hash": "60435344fd13cdbb142fd29c0e60dd841bcb0f7226087361d4d53614e19ac9a7",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.md",
+            "format": "markdown",
+            "bytes": 6122,
+            "hash": "1180cea3ab4e8439e9679bea85a2317a3139ac5777a7764381e328a880a21566",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.pdf",
+            "format": "pdf",
+            "bytes": 182458,
+            "hash": "1b87ca3120df3210d127a7f443278aacf827bce884f85f71ebb3424c2fdfa9a5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3606,
+            "hash": "ed8dea0c9ddb843f132396057ecf1759f57b27eb3df8d2294de6ecba7e1ff21d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "cro.html",
+          "cro.md",
+          "cro.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 446,
+            "hash": "98c2ce32cfe549b57a959909ec5a78df38eb1f520de43344543359416d39265d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.html",
+            "format": "html",
+            "bytes": 5109,
+            "hash": "4514c7527b9e1ef1a71529b42af67b20a0197102739129d4b598657447ccd47b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.md",
+            "format": "markdown",
+            "bytes": 5469,
+            "hash": "854d497b5665a789310538d48d4a38070a80701b0c033269e9feceb607ef7dcf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.pdf",
+            "format": "pdf",
+            "bytes": 195090,
+            "hash": "166a57ccc0b4d91a53d5efc3e622a8de684f5b6bfc131added72969367835a76",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.html",
+            "format": "html",
+            "bytes": 5109,
+            "hash": "4514c7527b9e1ef1a71529b42af67b20a0197102739129d4b598657447ccd47b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.md",
+            "format": "markdown",
+            "bytes": 5469,
+            "hash": "854d497b5665a789310538d48d4a38070a80701b0c033269e9feceb607ef7dcf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.pdf",
+            "format": "pdf",
+            "bytes": 195090,
+            "hash": "166a57ccc0b4d91a53d5efc3e622a8de684f5b6bfc131added72969367835a76",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3604,
+            "hash": "32bbb57f207483c87c6452f0f4c87ae69a8eb8d6c8abb7c75d93d204ce154608",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

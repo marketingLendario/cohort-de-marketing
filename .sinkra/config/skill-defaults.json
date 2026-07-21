@@ -1,0 +1,119 @@
+{
+  "$schema": "sinkra-config-v1",
+  "description": "Skill Defaults — SINKRA Behavioral Config. Resolution order (D5): .sinkra/config/ > .env > infrastructure-map.json. NO SECRETS — only behavioral configuration.",
+  "created_at": "2026-05-03",
+  "updated_at": "2026-06-11",
+  "owner": "sinkra-squad",
+  "source": "MS-TRIAD-CONNECT-V1 D4+D5",
+
+  "promotion": {
+    "skill_threshold": 80,
+    "squad_threshold": 70,
+    "tier1_bypass_staging": true,
+    "_notes": {
+      "skill_threshold": "Minimum validate-skill score to promote squad workflow → production skill",
+      "squad_threshold": "Minimum validate-squad score for squad to be eligible for promotion",
+      "tier1_bypass_staging": "Tier 1 skills can be created directly without staging"
+    }
+  },
+
+  "resolution_order": {
+    "description": "Order in which config values are resolved",
+    "chain": [
+      {
+        "source": ".sinkra/config/",
+        "type": "behavioral",
+        "description": "Skill defaults, thresholds, behavioral config",
+        "priority": 1
+      },
+      {
+        "source": ".env",
+        "type": "secrets",
+        "description": "API keys, tokens, environment-specific values",
+        "priority": 2
+      },
+      {
+        "source": "infrastructure-map.json",
+        "type": "infrastructure",
+        "description": "Deploy targets, service URLs, infra topology",
+        "priority": 3
+      }
+    ],
+    "future": "@sinkra/config-reader package (planned)"
+  },
+
+  "executor_assignment": {
+    "primary_source": ".sinkra/registries/dev-executors.json",
+    "fallback": "hardcoded-table",
+    "ci_revalidation": true,
+    "_notes": {
+      "primary_source": "Registry-based selection from dev-executors.json",
+      "fallback": "Keyword-based table (legacy)",
+      "ci_revalidation": "CI re-validation when source squad changes"
+    }
+  },
+
+  "canonization": {
+    "gates": [
+      { "id": "G1", "name": "Brownfield SINKRA v3 mapping done", "required": true },
+      { "id": "G2", "name": "Agent in .claude/agents/", "required": true },
+      { "id": "G3", "name": "Sub-skills with tasks defined", "required": true },
+      { "id": "G4", "name": "Orchestrator skill (Tier 2+)", "required": true },
+      { "id": "G5", "name": "artifact_contracts declared in config.yaml", "required": true },
+      { "id": "G6", "name": "executor_type explicitly 'agent'", "required": true }
+    ]
+  },
+
+  "quality_scoring": {
+    "weights": {
+      "fail_deduction": 20,
+      "concerns_deduction": 10
+    },
+    "risk_thresholds": {
+      "fail": 9,
+      "concerns": 6
+    },
+    "_notes": {
+      "fail_deduction": "Points deducted from quality score per FAIL finding in review-story",
+      "concerns_deduction": "Points deducted per CONCERNS finding in review-story",
+      "fail": "Risk score >= this triggers automatic FAIL gate verdict",
+      "concerns": "Risk score >= this triggers CONCERNS gate verdict"
+    }
+  },
+
+  "learning": {
+    "base_path": ".sinkra/learning/",
+    "promotion_thresholds": {
+      "pattern": 3.5,
+      "rule": 4.0
+    },
+    "_notes": {
+      "base_path": "Root directory for all learning logs (entries, logs, schemas)",
+      "pattern": "Minimum confidence score for observation to be promoted to pattern",
+      "rule": "Minimum confidence score for pattern to be promoted to rule"
+    }
+  },
+
+  "coderabbit": {
+    "skip_behavior": "skip_with_warning",
+    "severity_filter": "warning",
+    "_notes": {
+      "skip_behavior": "Behavior when WSL/CodeRabbit unavailable: skip_with_warning | block | skip_silent",
+      "severity_filter": "Minimum severity level to report: error | warning | info"
+    }
+  },
+
+  "registry_governance": {
+    "coverage_target": 60,
+    "_notes": {
+      "coverage_target": "Target percentage for registry update coverage score (close-story CHK-9)"
+    }
+  },
+
+  "dynamic_agent_binding": {
+    "fallback_agent": "po",
+    "_notes": {
+      "fallback_agent": "Agent ID to load when quality_gate agent file is not found in .claude/agents/. Used by /close-story Dynamic Agent Binding. Value = agent ID without @ prefix."
+    }
+  }
+}

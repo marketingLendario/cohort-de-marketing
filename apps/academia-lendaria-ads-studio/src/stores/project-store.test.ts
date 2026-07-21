@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createProjectStore, DEMO_PROJECT_ID } from '@/stores/project-store';
+import { createProjectStore, DEMO_PROJECT_ID, latestCampaignPlans } from '@/stores/project-store';
 import { getPath } from '@/lib/project-domain';
-import type { MarketingProject, ProjectArtifact, ProjectBriefRevision } from '@/lib/project-domain';
+import type { CampaignPlanRevision, MarketingProject, ProjectArtifact, ProjectBriefRevision } from '@/lib/project-domain';
 
 describe('project store — modo demo (fixtures locais)', () => {
   // Storage local isolado por teste: o store demo persiste em `localStorage`
@@ -295,5 +295,24 @@ describe('project store — modo real (cache de hidratação)', () => {
     expect(store.getState().artifacts).toHaveLength(1);
     expect(store.getState().artifacts[0]?.title).toBe('Offerbook revisado');
     expect(store.getState().artifacts[0]?.hash).toBe('sha-2');
+  });
+
+  it('mantém somente a revisão mais recente de cada plano de campanha', () => {
+    const base = {
+      schemaVersion: '1.0.0', projectId: 'p1', campaignId: 'campaign-1', sourceBrief: { id: 'b1', revision: 1 },
+      platform: 'meta', objective: 'sales', budget: { daily: 30, periodDays: 7, currency: 'BRL' }, angles: [], finalists: [],
+      tracking: { status: 'OK', criticalItemsConfirmed: true, checks: {} }, structure: {},
+      manualSubmission: { status: 'not_ready' }, overrides: {},
+    } satisfies Omit<CampaignPlanRevision, 'id' | 'revision' | 'updatedAt'>;
+    const oldPlan: CampaignPlanRevision = { ...base, id: 'plan-1', revision: 1, updatedAt: '2026-07-11T01:00:00.000Z' };
+    const newPlan: CampaignPlanRevision = { ...base, id: 'plan-2', revision: 2, updatedAt: '2026-07-11T02:00:00.000Z' };
+    expect(latestCampaignPlans([oldPlan, newPlan])).toEqual([newPlan]);
+
+    const store = realStore();
+    store.getState().replaceAll({ projects: [], briefRevisions: [], artifacts: [], skillRuns: [], campaignPlans: [oldPlan, newPlan] });
+    expect(store.getState().campaignPlans).toEqual([newPlan]);
+    const third = { ...newPlan, id: 'plan-3', revision: 3, updatedAt: '2026-07-11T03:00:00.000Z' };
+    store.getState().upsertCampaignPlan(third, false);
+    expect(store.getState().campaignPlans).toEqual([third]);
   });
 });

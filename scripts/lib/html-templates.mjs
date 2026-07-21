@@ -11,10 +11,8 @@ export const BRAND = {
   warm: '#F59E0B',
 };
 
-const FONTS =
-  '<link rel="preconnect" href="https://fonts.googleapis.com">' +
-  '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
-  '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">';
+// Generated documents must remain self-contained and render without a network.
+const FONTS = '';
 
 const BASE_CSS = `
 :root {
@@ -383,30 +381,42 @@ export function brandHtml(title, body) {
   return landingHtml(title, `<div class="wrap">${body}</div>`);
 }
 
-export function salesPageHtml({ headline, sub, bullets, priceOld, priceNow, faq }) {
+export function salesPageHtml({ headline, sub, bullets, priceOld, priceNow, faq, ctaUrl = '#checkout' }) {
   const bulletHtml = bullets.map((b) => `<li>${esc(b)}</li>`).join('');
-  const faqHtml = faq.map((f) => `<div class="card"><strong>${esc(f.q)}</strong><p style="margin:8px 0 0;color:var(--muted)">${esc(f.a)}</p></div>`).join('');
-  return landingHtml('Método Consistência 90', `
-<section class="hero">
+  const faqHtml = faq.map((f) => `<details class="card"><summary><strong>${esc(f.q)}</strong></summary><p style="margin:8px 0 0;color:var(--muted)">${esc(f.a)}</p></details>`).join('');
+  const tracking = `<!-- Meta Pixel: [PLUG: SEU_PIXEL_ID] | GTM: [PLUG: GTM-XXXXXXX] -->`;
+  const body = `<div class="wrap-wide" data-page-contract="sales-page-v1">
+<section class="hero" data-section="hero">
   <span class="kicker">Programa · Mulheres 35+</span>
   <h1>${esc(headline)}</h1>
   <p class="lead">${esc(sub)}</p>
 </section>
-<div class="vsl-slot">Assista ao vídeo de apresentação (VSL)</div>
-<div class="card card-accent"><strong>Mecanismo único:</strong> Ciclo de 3 Fases — Desinflamar, Reprogramar, Manter</div>
-<div class="card">
+<section data-section="vsl"><div class="vsl-slot"><span>Assista à apresentação</span><a href="roteiro-vsl.html">Ver roteiro do vídeo</a></div></section>
+<section data-section="primary-cta"><a class="btn btn-block" data-track="cta-principal" href="${esc(ctaUrl)}">QUERO COMEÇAR AGORA</a></section>
+<section class="card card-accent" data-section="mechanism"><strong>O ciclo em três fases</strong><p>Desinflamar, reprogramar hábitos e manter uma rotina possível.</p></section>
+<section class="card" data-section="offer"><h2>O que você recebe</h2>
   <div class="stack-row"><span>Programa 90 dias</span><span>R$ 1.997</span></div>
   <div class="stack-row"><span>Comunidade + 3 bônus</span><span>R$ 938</span></div>
-  <div class="stack-row"><span>Total ancorado</span><span style="text-decoration:line-through;color:var(--muted)">R$ ${priceOld}</span></div>
-  <div class="stack-row"><span>Investimento hoje</span><span class="price-now">R$ ${priceNow}</span></div>
-</div>
-<ul>${bulletHtml}</ul>
-<a class="btn btn-block" href="#">QUERO COMEÇAR AGORA</a>
-<h2>FAQ</h2>
-${faqHtml}
-<a class="btn btn-block" href="#">QUERO COMEÇAR AGORA</a>
-<p class="foot">Garantia 30 dias · Turma limitada jul/2026</p>
-`);
+  </section>
+<section class="card" data-section="pricing"><h2>Seu investimento</h2><p><span class="price-old">R$ ${priceOld}</span><span class="price-now">R$ ${priceNow}</span></p></section>
+<section data-section="proof"><h2>O que sustenta esta proposta</h2><p>Rotina documentada, acompanhamento e transparência sobre o que ainda precisa ser validado. Resultados variam de pessoa para pessoa.</p></section>
+<section data-section="benefits"><h2>O que muda na prática</h2><ul>${bulletHtml}</ul></section>
+<section class="grid-2" data-section="bonuses"><div class="card"><strong>Planejador semanal</strong><p>Organize refeições e rotina.</p></div><div class="card"><strong>Comunidade</strong><p>Acompanhamento durante o ciclo.</p></div></section>
+<section class="card card-accent" data-section="guarantee"><h2>30 dias para decidir com calma</h2><p>Se o programa não fizer sentido, solicite o cancelamento dentro do prazo informado nos termos.</p></section>
+<section class="card" data-section="urgency"><h2>Próxima turma</h2><p>As inscrições encerram quando as vagas de acompanhamento forem preenchidas.</p></section>
+<section data-section="faq"><h2>Perguntas frequentes</h2>${faqHtml}</section>
+<section id="checkout" class="card" data-section="checkout"><h2>Receba os próximos passos</h2><form action="https://example.com/checkout" method="post"><label>Nome<input class="input" name="name" autocomplete="name" required></label><label>E-mail<input class="input" type="email" name="email" autocomplete="email" required></label><label>Telefone<input class="input" type="tel" name="phone" autocomplete="tel" required></label><button class="btn btn-block" type="submit">QUERO GARANTIR MINHA VAGA</button></form></section>
+<section data-section="final-cta"><a class="btn btn-block" data-track="cta-final" href="${esc(ctaUrl)}">QUERO COMEÇAR AGORA</a></section>
+<footer class="foot" data-section="footer"><p>Academia Fit · Termos · Privacidade · Contato</p></footer>
+</div>`;
+  const script = `<script>
+window.dataLayer=window.dataLayer||[];function track(event){window.dataLayer.push({event})}
+track('PageView');track('ViewContent');
+document.querySelectorAll('[data-track]').forEach((link)=>link.addEventListener('click',()=>track('cta_principal')));
+document.querySelector('form').addEventListener('submit',()=>track('Lead'));
+new IntersectionObserver((entries,observer)=>{if(entries.some((entry)=>entry.isIntersecting)){track('chegou_na_oferta');observer.disconnect()}},{threshold:.35}).observe(document.querySelector('[data-section="pricing"]'));
+</script>`;
+  return pageShell({ title: 'Método Consistência 90', body: `${tracking}${body}${script}` });
 }
 
 export function quizPageHtml(quizJs) {

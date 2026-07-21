@@ -72,7 +72,9 @@ function WizardStep() {
       ) : step === '4' ? (
         <CreativeBriefStep campaignId={campaignId} onBack={() => goToStep(3)} onAdvanced={goToStep} />
       ) : step === '5' ? (
-        <CreativeFactoryStep campaignId={campaignId} onBack={() => goToStep(4)} onAdvanced={goToStep} />
+        DEMO_AUTH_ENABLED
+          ? <CreativeFactoryStep campaignId={campaignId} onBack={() => goToStep(4)} onAdvanced={goToStep} />
+          : null
       ) : step === '6' ? (
         <TrackingAuditStep campaignId={campaignId} onBack={() => goToStep(5)} onAdvanced={goToStep} />
       ) : step === '7' ? (

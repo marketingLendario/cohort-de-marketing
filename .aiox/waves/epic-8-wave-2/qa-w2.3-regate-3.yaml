@@ -1,0 +1,199 @@
+storyId: "8.W2.3"
+title: "Aprovação em duas fases: DB e filesystem"
+reviewer: "@qa independente via Codex CLI local"
+date: "2026-07-10"
+base_commit: "278d671470db295fbada8f725c75cb37f593f83f"
+mode: read-only
+reviewed_scope: "Diff completo do worktree contra o base_commit, incluindo arquivos não rastreados da story, relatórios qa-w2.3-regate.yaml e qa-w2.3-regate-2.yaml."
+verdict: BLOCK
+
+summary: >
+  Os casos estáticos de W23-RG2-P1-01 foram corrigidos e W23-RG2-P3-01 está
+  fechado, mas a garantia de contenção ainda falha sob uma corrida TOCTOU real
+  e a política RLS de skill_runs permite forjar uma decisão terminal diretamente
+  por authenticated. Há 2 P1; SHIP não é permitido.
+
+findings:
+  p0: []
+  p1:
+    - id: W23-RG3-P1-01
+      severity: P1
+      category: security / filesystem boundary / TOCTOU
+      title: "Validação anti-symlink do slug não é atômica e ainda permite leitura/escrita externa sob corrida"
+      evidence:
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
+          lines: "253-293, 304-309"
+          detail: >
+            assertProjectRootIsNotSymlink() faz lstat(projectRoot), depois
+            resolveSafeTarget() faz realpath(projectRoot) e somente depois
+            percorre os ancestrais. A identidade do caminho pode mudar entre
+            essas operações; o código usa o pathname novamente após a validação.
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
+          lines: "408-446"
+          detail: >
+            Após a varredura, readFile(target), writeFile(tempPath) e
+            rename(tempPath, target) continuam baseados em nomes de caminho,
+            sem descriptor de diretório/openat/O_NOFOLLOW que fixe a identidade.
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
+          lines: "320-346"
+          detail: >
+            resolveSafeReadTarget() retorna um pathname após a mesma sequência
+            de check-then-use; a leitura efetiva acontece depois no caller.
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-approval.ts"
+          lines: "409-420"
+          detail: >
+            readCurrentFile() recebe o pathname validado e executa readFile em
+            uma operação posterior, deixando a janela de substituição aberta
+            também para o plan/read.
+      reproduced:
+        materialize_race: >
+          Harness somente em /tmp alternou continuamente projetos/victim entre
+          diretório e symlink para outside durante 4000 materializeArtifact().
+          Resultado: {external: true, outside: "ATTACK-19"}; o arquivo fora da
+          raiz foi alterado.
+        read_race: >
+          Harness somente em /tmp alternou a mesma raiz durante 4000 chamadas
+          de resolveSafeReadTarget() seguidas de readFile(). Resultado:
+          {leaked: true}; o conteúdo SECRET-OUTSIDE foi lido.
+      impact: >
+        Um processo local capaz de alterar a árvore do projeto pode transformar
+        o boundary de projetos/{slug} em escrita arbitrária ou exfiltração de
+        conteúdo fora da raiz, apesar de o caso não concorrente do slug symlink
+        ser recusado.
+      required_fix: >
+        Remover a dependência check-then-use de pathnames: abrir e validar a
+        raiz do projeto, cada diretório intermediário e o arquivo com
+        descriptors relativos, O_NOFOLLOW/no-follow equivalente e rename
+        relativo ao diretório confiável; o plan/read deve ler do descriptor
+        validado. Adicionar regressões concorrentes que comprovem que nenhum
+        conteúdo externo é lido e nenhum arquivo externo é escrito.
+
+    - id: W23-RG3-P1-02
+      severity: P1
+      category: security / DB authority / RLS
+      title: "authenticated pode forjar skill_run done/proposal_hash sem outbox, filesystem, artefato ou auditoria"
+      evidence:
+        - file: "apps/academia-lendaria-ads-studio/supabase/migrations/20260709225123_unified_marketing_project_domain.sql"
+          lines: "208-211, 236"
+          detail: >
+            A policy "workspace members manage skill runs" é FOR ALL para
+            authenticated e o role recebe UPDATE; não há separação de colunas
+            ou transições para status/proposal_hash/proposal_revision.
+        - file: "apps/academia-lendaria-ads-studio/src/lib/project-repository.ts"
+          lines: "438-446, 673-680"
+          detail: >
+            O repository expõe patch direto de status, proposal_hash e
+            proposal_revision para o client Supabase autenticado.
+        - file: "apps/academia-lendaria-ads-studio/supabase/migrations/20260710120000_artifact-approval.sql"
+          lines: "31-37"
+          detail: >
+            A migration da story adiciona os campos e apenas um check de
+            proposal_revision; não restringe a escrita desses campos ao BFF.
+      reproduced: >
+        Após fresh local reset, uma transação docker/psql inseriu workspace,
+        projeto e skill_run needs_review; sob SET LOCAL ROLE authenticated e
+        claim de membro, UPDATE public.skill_runs SET status='done',
+        proposal_hash='forged-without-fs' ... RETURNING afetou 1 linha. A
+        transação terminou em ROLLBACK. O mesmo ambiente mostrou policy/grant
+        FOR ALL/UPDATE para authenticated em skill_runs; o outbox continua
+        corretamente sem grants/policy para authenticated.
+      impact: >
+        Um membro autenticado pode fazer o banco declarar uma aprovação terminal
+        sem materialização, metadado de artefato, evento ou outbox. Também pode
+        rebaixar/alterar revisão e hash durante uma decisão, enfraquecendo a
+        autoridade do CAS e a persistência/reload como fonte de verdade.
+      required_fix: >
+        Fazer status terminal, proposal_hash e proposal_revision serem escritos
+        somente pelo BFF/service-role ou por RPC SECURITY DEFINER com transições
+        e revisão monotônicas verificadas; mover edição de proposta para esse
+        caminho ou restringir as colunas sensíveis por grants/RLS. Adicionar
+        pgTAP que tente UPDATE autenticado para done/hash/revision e prove
+        recusa, além de provar que só a saga cria a combinação terminal.
+
+  p2: []
+  p3:
+    - id: W23-RG2-P3-01
+      severity: P3
+      status: CLOSED
+      title: "Adapter Supabase após 23505 sem regressão versionada"
+      closure: >
+        server/artifact-approval.test.ts agora exercita createSupabaseArtifactApprovalStore.create():
+        insert retorna 23505, lookup por idempotency_key perde e lookup semântico
+        por workspace/run/revision recupera a mesma linha.
+
+prior_findings_resolution:
+  W23-RG2-P1-01: >
+    PARTIAL/CLOSED only for the non-racing case. Focused tests pass for plan/read
+    and materialize/write when projectsRoot/{slug} is already a symlink, and a
+    projectsRoot symlink remains accepted. Reopened as W23-RG3-P1-01 because the
+    required no-external-read/write guarantee fails under the reproduced TOCTOU
+    race.
+  W23-RG2-P3-01: >
+    CLOSED. Versioned adapter regression passed and returned the existing
+    semantic row after UNIQUE_VIOLATION 23505.
+  W23-RG-P1-01: >
+    CLOSED for the artifact_approval_outbox surface: authenticated/anon direct
+    access is denied, service_role is the only granted role, composite FKs reject
+    cross-tenant/project/run references. Broader skill_runs authority is a new
+    P1 in W23-RG3-P1-02.
+  W23-RG-P1-02: >
+    CLOSED in the tested gateway: CAS is needs_review -> done first, exact same
+    hash is required for done replay, divergent hash does not upsert.
+  W23-RG-P2-01: >
+    CLOSED for canonical duplicate paths and partial multi-file repair; aliases
+    normalize before hash/plan/outbox/materialization.
+  W23-RG-P2-02: >
+    CLOSED for lexical/semantic idempotency conflicts; divergent reuse returns
+    idempotency-conflict without a side effect.
+  repairAll_no_claim_lease: >
+    RECHECKED, remains documented non-blocking P3 residual; duplicate work is
+    possible but tested effects are idempotent/convergent.
+
+acceptance_criteria:
+  AC1: PASS
+  AC2: PASS
+  AC3: BLOCKED
+  AC4: BLOCKED
+  AC5: PASS
+  AC6: PASS
+  AC7: CONCERNS
+
+gates:
+  diff_review: >
+    PASS for complete review against 278d671470db295fbada8f725c75cb37f593f83f;
+    worktree contained the expected uncommitted story diff and no QA edits.
+  focused_tests: "PASS — 67 tests / 4 files"
+  npm_test: "PASS — 228 tests / 28 files"
+  npm_run_lint: "PASS — exit 0"
+  npm_run_typecheck: "PASS — catalog validated: 30 skills / 40 edges; tsc -b exit 0"
+  npm_run_build: >
+    PASS when run alone after the server build; Vite production build completed.
+    An earlier intentionally parallel invocation with build:server hit ENOTEMPTY
+    while both commands touched dist/server; sequential rerun passed.
+  npm_run_build_server: "PASS — tsc -p tsconfig.server.json"
+  supabase_db_reset_local_yes: "PASS — fresh local reset applied all migrations"
+  npm_run_lint_db: "PASS — no schema errors found"
+  npm_run_test_db: "PASS — 4 files / 26 pgTAP tests"
+  git_diff_check: "PASS — git diff --check 278d671470db295fbada8f725c75cb37f593f83f produced no whitespace errors"
+  slug_symlink_static_regressions: >
+    PASS for existing deterministic tests: slug-root symlink is rejected for
+    plan/materialize, external target is unchanged, and projectsRoot symlink is
+    allowed.
+  supabase_23505_regression: "PASS — versioned adapter test recovers semantic row after 23505"
+  db_rls_authority_probe: "FAIL — authenticated UPDATE of skill_runs status/proposal_hash succeeded inside rollback transaction"
+  filesystem_toc_tou_probe: "FAIL — concurrent slug swap caused external write and external read"
+
+decision:
+  p0: 0
+  p1: 2
+  p2: 0
+  p3: 1
+  ship: false
+  required: >
+    Fix W23-RG3-P1-01 with descriptor-relative no-follow filesystem operations
+    and close W23-RG3-P1-02 by enforcing BFF/RPC-only authority for terminal
+    skill_run decision fields; add the requested race and authenticated RLS
+    regressions, then rerun the complete gate.
+
+reviewed_head: "base commit + complete uncommitted worktree diff"
+reviewed_at: "2026-07-10T09:50:00-03:00"

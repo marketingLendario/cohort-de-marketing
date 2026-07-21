@@ -168,6 +168,19 @@ function createFakeRepository(): ProjectRepository {
       skillRuns[index] = updated;
       return updated;
     },
+    async supersedeSkillRun(workspaceId, parentRunId, continuationRunId) {
+      const parentIndex = skillRuns.findIndex((run) => run.workspaceId === workspaceId && run.id === parentRunId);
+      const continuation = skillRuns.find((run) => run.workspaceId === workspaceId && run.id === continuationRunId);
+      if (parentIndex === -1 || !continuation) throw new Error('Continuação inválida.');
+      const updated: SkillRun = {
+        ...skillRuns[parentIndex]!,
+        status: 'cancelled',
+        error: `Continuação registrada no run ${continuationRunId}.`,
+        updatedAt: now(),
+      };
+      skillRuns[parentIndex] = updated;
+      return updated;
+    },
     async listCampaignPlanRevisions(workspaceId, campaignId) {
       return campaignPlans
         .filter((p) => p.campaignId === campaignId && projects.some((proj) => proj.id === p.projectId && proj.workspaceId === workspaceId))

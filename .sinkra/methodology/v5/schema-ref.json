@@ -1,0 +1,6 @@
+{
+  "schema_version": "V5.1",
+  "description": "Canonical $ref to sinkra-output V5.1 schema (how_to{} field — commit a0f90214b)",
+  "$ref": ".claude/skills/sinkra-pipeline/data/sinkra-output-v5-schema.json",
+  "resolved_at": "2026-06-15"
+}

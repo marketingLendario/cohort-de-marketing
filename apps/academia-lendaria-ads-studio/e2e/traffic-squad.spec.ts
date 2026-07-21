@@ -160,10 +160,69 @@ async function selectSkill(page: Page, title: string): Promise<void> {
   }
   throw new Error(`A seleção da skill ${title} não estabilizou após a hidratação.`);
 }
-async function waitReview(page: Page): Promise<void> { await expect(page.getByTestId('artifact-approval-review')).toBeVisible({ timeout: 10 * 60 * 1000 }); }
+
+function trafficElicitationAnswer(question: string): string {
+  const normalized = normalizeText(question);
+  if (normalized.includes('capi') || normalized.includes('conversions api')) return 'O Events Manager mostra literalmente CAPI: Ativo.';
+  if (normalized.includes('event_id') || normalized.includes('conversao de teste')) return 'Sim. A compra aparece exatamente uma vez e registra event_id fixture-purchase-001.';
+  if (normalized.includes('dominio')) return 'O domínio aparece literalmente como Verificado.';
+  if (normalized.includes('pagamento')) return 'O meio de pagamento aparece como Aprovado, sem erro ou rejeição.';
+  if (normalized.includes('pixel helper')) return 'O Pixel Helper mostra o evento Purchase, indicador verde e número 1.';
+  if (normalized.includes('gerenciador de anuncios') || normalized.includes('conta de anuncios')) return 'A conta aparece literalmente como Ativa e sem revisão pendente.';
+  if (normalized.includes('business manager') || /\bbm\b/.test(normalized)) return 'Status literal da fixture: Ativo. Nenhuma restrição ou bloqueio ativo.';
+  if (normalized.includes('metrica') || normalized.includes('ctr') || normalized.includes('roas')) {
+    return 'Dados literais da fixture: gasto R$210; impressões 41.800; cliques no link 334; Compra 4; CPA R$52,50; ROAS 3,1x. CTR, alcance, frequência, CPM e janela de atribuição não foram fornecidos.';
+  }
+  if (normalized.includes('angulo') || normalized.includes('finalista')) return 'Use somente os dois ângulos com nível de consciência declarado e mantenha a decisão final para curadoria humana.';
+  if (normalized.includes('orcamento') || normalized.includes('campanha') || normalized.includes('public')) return 'Default confirmado: Vendas, Conversão, público amplo/frio com Advantage+, posicionamento automático e R$30/dia por 7 dias. Não publicar.';
+  return 'Confirmação literal da fixture pelo operador: prossiga somente com os dados fornecidos, sem inventar lacunas, e mantenha a decisão humana explícita.';
+}
+
+async function waitForHumanReview(page: Page, title: string, skillId: string): Promise<void> {
+  const review = page.getByTestId('artifact-approval-review');
+  const elicitation = page.locator('section.cms-elicitation');
+  for (let round = 0; round < 12; round += 1) {
+    if (await review.isVisible().catch(() => false)) return;
+    if (!await elicitation.isVisible().catch(() => false)) {
+      await reloadAndProve(page, `${title} hidratado para decisão humana`);
+      await selectSkill(page, title);
+      if (await review.isVisible().catch(() => false)) return;
+    }
+    if (!await elicitation.isVisible().catch(() => false)) {
+      await page.waitForTimeout(500);
+      continue;
+    }
+
+    const checkpoint = await fixture.latestSkillRun(skillId);
+    if (!checkpoint || checkpoint.status !== 'needs_review') {
+      throw new Error(`${title}: checkpoint de elicitação não está persistido em needs_review.`);
+    }
+    const labels = elicitation.locator('label');
+    for (let index = 0; index < await labels.count(); index += 1) {
+      const label = labels.nth(index);
+      const question = await label.locator('span').innerText();
+      await label.locator('textarea').fill(trafficElicitationAnswer(question));
+    }
+    await elicitation.getByRole('button', { name: 'Continuar com respostas', exact: true }).click();
+    const successor = await fixture.waitForLatestSkillRun(
+      skillId,
+      (run) => run.id !== checkpoint.id
+        && run.input_snapshot?.elicitationParentRunId === checkpoint.id
+        && ['needs_review', 'failed', 'cancelled', 'done'].includes(run.status),
+      10 * 60 * 1000,
+    );
+    if (successor.status !== 'needs_review') {
+      throw new Error(`${title}: continuação terminou em ${successor.status}: ${successor.error ?? 'sem diagnóstico'}`);
+    }
+    await reloadAndProve(page, `${title} continuado após checkpoint ${round + 1}`);
+    await selectSkill(page, title);
+  }
+  throw new Error(`${title}: excedeu 12 checkpoints sem chegar à revisão de artefatos.`);
+}
+
 async function approveCurrent(page: Page, title: string, operatorInput: string, editForHumanCuration = false): Promise<PilotStageEvidence> {
   const skillId = title === 'Leitor de Metricas' ? 'leitor-de-metricas' : title.toLowerCase();
-  const startedAt = Date.now(); await selectSkill(page, title); await page.getByLabel('Contexto adicional').fill(operatorInput); const executeButton = page.getByRole('button', { name: 'Executar skill', exact: true }); await expect(executeButton).toBeEnabled(); await executeButton.click(); await fixture.waitForLatestJob(skillId, (job) => job.status === 'succeeded'); await reloadAndProve(page, `${title} pronto para revisão`); await selectSkill(page, title); await waitReview(page);
+  const startedAt = Date.now(); await selectSkill(page, title); await page.getByLabel('Contexto adicional').fill(operatorInput); const executeButton = page.getByRole('button', { name: 'Executar skill', exact: true }); const previousJob = await fixture.latestJob(skillId); await expect(executeButton).toBeEnabled(); await executeButton.click(); await fixture.waitForLatestJob(skillId, (job) => job.id !== previousJob?.id && job.status === 'succeeded'); await reloadAndProve(page, `${title} pronto para decisão humana`); await selectSkill(page, title); await waitForHumanReview(page, title, skillId);
   const review = page.getByTestId('artifact-approval-review');
   if (editForHumanCuration) {
     await review.getByRole('button', { name: 'Editar', exact: true }).click();
@@ -203,7 +262,7 @@ async function captureCompletedDiagnostic(page: Page, path: string): Promise<boo
 
 test.beforeAll(async () => {
   fixture = await createTrafficPilotFixture();
-  const common = serviceEnv({ SUPABASE_URL: fixture.config.url, SUPABASE_SERVICE_ROLE_KEY: fixture.config.serviceRoleKey, COHORT_REPO_ROOT: fixture.repoRoot, LOCAL_SKILL_RUNNER_ENABLED: 'true', LOCAL_SKILL_RUNNER_TOKEN: TRAFFIC_PILOT.boundaryToken, CODEX_SKILL_TIMEOUT_MS: '600000', PORT: '3302', HOST: '127.0.0.1', CORS_ORIGIN: TRAFFIC_PILOT.webUrl });
+  const common = serviceEnv({ SUPABASE_URL: fixture.config.url, SUPABASE_SERVICE_ROLE_KEY: fixture.config.serviceRoleKey, COHORT_REPO_ROOT: fixture.repoRoot, LOCAL_SKILL_RUNNER_ENABLED: 'true', LOCAL_SKILL_RUNNER_TOKEN: TRAFFIC_PILOT.boundaryToken, CODEX_SKILL_TIMEOUT_MS: '1200000', CODEX_SKILL_REASONING_EFFORT: 'medium', PORT: '3302', HOST: '127.0.0.1', CORS_ORIGIN: TRAFFIC_PILOT.webUrl });
   bff = launch('npm', ['run', 'dev:server'], common); await waitFor(`${TRAFFIC_PILOT.bffUrl}/healthz`);
   vite = launch('npm', ['run', 'dev', '--', '--config', 'e2e/fixtures/traffic-pilot/vite.config.mjs', '--host', '127.0.0.1', '--port', '5178'], serviceEnv({ VITE_SUPABASE_URL: fixture.config.url, VITE_SUPABASE_ANON_KEY: fixture.config.anonKey, VITE_DEMO_AUTH: 'false', VITE_TRAFFIC_SIMULATION: 'true', LOCAL_SKILL_RUNNER_TOKEN: TRAFFIC_PILOT.boundaryToken })); await waitFor(TRAFFIC_PILOT.webUrl); await saveEvidence();
 }, e2eTimeoutMs);
@@ -219,7 +278,7 @@ test('executa o Squad de Tráfego real pela interface e reconcilia DB/filesystem
   });
   await page.goto('/'); await page.getByLabel('E-mail').fill(TRAFFIC_PILOT.email); await page.getByLabel('Senha').fill(TRAFFIC_PILOT.password); await page.getByRole('button', { name: 'Entrar', exact: true }).click(); await expect(page.getByRole('heading', { name: /Seus projetos/i })).toBeVisible({ timeout: 30_000 }); await expect(page.getByRole('button', { name: new RegExp(TRAFFIC_PILOT.projectName) })).toBeVisible(); await page.getByRole('button', { name: new RegExp(TRAFFIC_PILOT.projectName) }).click(); await page.getByRole('link', { name: 'Jornada', exact: true }).click(); await expect(page.getByRole('heading', { name: /Mapa do trabalho/i })).toBeVisible();
 
-  const refusalStart = Date.now(); await selectSkill(page, 'Zelador'); await page.getByLabel('Contexto adicional').fill('O operador não confirmou CAPI nem deduplicação. Responda CRITICO, registre a recusa honesta e não libere campanha.'); const refusalExecuteButton = page.getByRole('button', { name: 'Executar skill', exact: true }); await expect(refusalExecuteButton).toBeEnabled(); await refusalExecuteButton.click(); await fixture.waitForLatestJob('zelador', (job) => job.status === 'succeeded'); await reloadAndProve(page, 'Zelador crítico pronto para revisão'); await selectSkill(page, 'Zelador'); await waitReview(page); const refusalReview = page.getByTestId('artifact-approval-review'); const refusalText = await refusalReview.innerText(); await refusalReview.getByRole('button', { name: 'Rejeitar', exact: true }).click(); await expect(refusalReview).not.toBeVisible({ timeout: 30_000 }); const refusedRun = await fixture.waitForLatestSkillRun('zelador', (candidate) => candidate.status === 'cancelled'); evidence.refusals.push({ skillId: 'zelador', runId: refusedRun.id, durationMs: durationMs(refusalStart), reason: 'Revisão humana recusou proposta com CAPI/deduplicação não confirmadas.', proposalExcerpt: refusalText.slice(0, 600), outbox: await fixture.approvalFor(refusedRun.id) }); await saveEvidence();
+  const refusalStart = Date.now(); await selectSkill(page, 'Zelador'); await page.getByLabel('Contexto adicional').fill('O operador não confirmou CAPI nem deduplicação. Responda CRITICO, registre a recusa honesta e não libere campanha.'); const refusalExecuteButton = page.getByRole('button', { name: 'Executar skill', exact: true }); const previousZeladorJob = await fixture.latestJob('zelador'); await expect(refusalExecuteButton).toBeEnabled(); await refusalExecuteButton.click(); await fixture.waitForLatestJob('zelador', (job) => job.id !== previousZeladorJob?.id && job.status === 'succeeded'); await reloadAndProve(page, 'Zelador crítico pronto para decisão humana'); await selectSkill(page, 'Zelador'); await waitForHumanReview(page, 'Zelador', 'zelador'); const refusalReview = page.getByTestId('artifact-approval-review'); const refusalText = await refusalReview.innerText(); await refusalReview.getByRole('button', { name: 'Rejeitar', exact: true }).click(); await expect(refusalReview).not.toBeVisible({ timeout: 30_000 }); const refusedRun = await fixture.waitForLatestSkillRun('zelador', (candidate) => candidate.status === 'cancelled'); evidence.refusals.push({ skillId: 'zelador', runId: refusedRun.id, durationMs: durationMs(refusalStart), reason: 'Revisão humana recusou proposta com CAPI/deduplicação não confirmadas.', proposalExcerpt: refusalText.slice(0, 600), outbox: await fixture.approvalFor(refusedRun.id) }); await saveEvidence();
 
   await reloadAndProve(page, 'recusa do Zelador persistida'); await selectSkill(page, 'Zelador'); const retryButton = page.getByRole('button', { name: 'Repetir', exact: true }); await expect(retryButton).toBeVisible(); const retryResponsePromise = page.waitForResponse((response) => response.url().endsWith(`/api/local/skill-runs/${refusedRun.input_snapshot?.jobId}/retry`) && response.request().method() === 'POST', { timeout: 30_000 }); await retryButton.dispatchEvent('click'); const retryResponse = await retryResponsePromise; expect(retryResponse.status()).toBe(202); await expect(page.getByRole('button', { name: 'Cancelar', exact: true })).toBeVisible({ timeout: 30_000 }); await page.getByRole('button', { name: 'Cancelar', exact: true }).click(); const retryJob = await fixture.waitForLatestJob('zelador', (job) => job.attempt >= 2 && job.status === 'cancelled'); await fixture.waitForLatestSkillRun('zelador', (candidate) => candidate.status === 'cancelled'); evidence.retries.push({ jobId: refusedRun.input_snapshot?.jobId ?? null, attempt: retryJob.attempt, status: retryJob.status, retryHttpStatus: retryResponse.status(), cancelAfterRetry: true }); await saveEvidence();
 

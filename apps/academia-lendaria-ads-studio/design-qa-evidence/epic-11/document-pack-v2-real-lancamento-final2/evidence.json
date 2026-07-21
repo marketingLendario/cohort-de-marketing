@@ -1,0 +1,354 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T23:42:25.322Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "lancamento-funil"
+    ],
+    "catalogHash": "3eede77179be44b766df79ffa2fd83a68dcb68a37a7df81a2f31c9598338691d"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "lancamento-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "941914be7e9aa410b4626d2b1a70735932bf70ff8ab97d3cf9da345722e478a5",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "lancamento.html",
+          "lancamento.md",
+          "lancamento.pdf",
+          "pagina/plc-1-roteiro.html",
+          "pagina/plc-2-roteiro.html",
+          "pagina/plc-3-roteiro.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 474,
+            "hash": "4172fedb8358033215bb6d403f4e363bb818669f601d7b114eb781eafea65137",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3658,
+            "hash": "98fc4691798c49e8db7327c9e79219cc80759faef38964643e317498df8bffaa",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.html",
+            "format": "html",
+            "bytes": 3110,
+            "hash": "b5f7260dcda0ba827576f15de0c00a85125b07c9dbee7772a461daa712c2f1b7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.md",
+            "format": "markdown",
+            "bytes": 5339,
+            "hash": "f8d60ec818899ab0868af2ac036b82cc11e138ce1819435e7d03b6fab43b4394",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.pdf",
+            "format": "pdf",
+            "bytes": 161252,
+            "hash": "460e44e76bd73e833029cedebcc5280677feae06856abbdaf5d6658da6b7849f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.html",
+            "format": "html",
+            "bytes": 3110,
+            "hash": "b5f7260dcda0ba827576f15de0c00a85125b07c9dbee7772a461daa712c2f1b7",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.md",
+            "format": "markdown",
+            "bytes": 5339,
+            "hash": "f8d60ec818899ab0868af2ac036b82cc11e138ce1819435e7d03b6fab43b4394",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.pdf",
+            "format": "pdf",
+            "bytes": 161252,
+            "hash": "460e44e76bd73e833029cedebcc5280677feae06856abbdaf5d6658da6b7849f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro-v1.html",
+            "format": "html",
+            "bytes": 3211,
+            "hash": "81b794332b6095cc40e2f165f595532b36e7a647cfea3c8e5765df4c7dec9341",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro.html",
+            "format": "html",
+            "bytes": 3211,
+            "hash": "81b794332b6095cc40e2f165f595532b36e7a647cfea3c8e5765df4c7dec9341",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro-v1.html",
+            "format": "html",
+            "bytes": 3358,
+            "hash": "ead56c5d1ea1eb9344dbb4ec70c58fb64c1c00b92aca4a21f63970308acbd2aa",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro.html",
+            "format": "html",
+            "bytes": 3358,
+            "hash": "ead56c5d1ea1eb9344dbb4ec70c58fb64c1c00b92aca4a21f63970308acbd2aa",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro-v1.html",
+            "format": "html",
+            "bytes": 3684,
+            "hash": "0cf3ceac7a1649c79c3183a060e119c03d65cd7afc2e3606d18e6f15f3ff10a3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro.html",
+            "format": "html",
+            "bytes": 3684,
+            "hash": "0cf3ceac7a1649c79c3183a060e119c03d65cd7afc2e3606d18e6f15f3ff10a3",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "lancamento.html",
+          "lancamento.md",
+          "lancamento.pdf",
+          "pagina/plc-1-roteiro.html",
+          "pagina/plc-2-roteiro.html",
+          "pagina/plc-3-roteiro.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 472,
+            "hash": "f1989b1e4487fd8b41a9ac2fe180f1c49651e2606eb7248dfcf1330908843fb4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3656,
+            "hash": "0cd82125c409cad65b491f3320be5d7411c0474f4ffaa4f4601e079b2a4728cd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.html",
+            "format": "html",
+            "bytes": 4232,
+            "hash": "f14df2f55b2f5564991764c862696f7b8cf545bdd236f9f365482fad48da5b72",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.md",
+            "format": "markdown",
+            "bytes": 6080,
+            "hash": "6e9add96a0da7532e510594c52d14450b1e3ca0fcfe7f59159700ecc4b34baac",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.pdf",
+            "format": "pdf",
+            "bytes": 200846,
+            "hash": "3a1985cbb0e495972f34a3ba1dadcc8e7f982c93e607328a65bb3646b9d58f7c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.html",
+            "format": "html",
+            "bytes": 4232,
+            "hash": "f14df2f55b2f5564991764c862696f7b8cf545bdd236f9f365482fad48da5b72",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.md",
+            "format": "markdown",
+            "bytes": 6080,
+            "hash": "6e9add96a0da7532e510594c52d14450b1e3ca0fcfe7f59159700ecc4b34baac",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.pdf",
+            "format": "pdf",
+            "bytes": 200846,
+            "hash": "3a1985cbb0e495972f34a3ba1dadcc8e7f982c93e607328a65bb3646b9d58f7c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro-v1.html",
+            "format": "html",
+            "bytes": 3718,
+            "hash": "6d98876b851ca4ae6172d41c10bf8fe5047c2dec249a3df3d8f6a2787d3c1236",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro.html",
+            "format": "html",
+            "bytes": 3718,
+            "hash": "6d98876b851ca4ae6172d41c10bf8fe5047c2dec249a3df3d8f6a2787d3c1236",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro-v1.html",
+            "format": "html",
+            "bytes": 4199,
+            "hash": "04a8316c014e88908434aca08ab8ce69009944cd4a11721f369abb0dfa5aca60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro.html",
+            "format": "html",
+            "bytes": 4199,
+            "hash": "04a8316c014e88908434aca08ab8ce69009944cd4a11721f369abb0dfa5aca60",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro-v1.html",
+            "format": "html",
+            "bytes": 4647,
+            "hash": "4c3ade2012d61941606322729723104610542298d39e24101532ea36d461d812",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro.html",
+            "format": "html",
+            "bytes": 4647,
+            "hash": "4c3ade2012d61941606322729723104610542298d39e24101532ea36d461d812",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

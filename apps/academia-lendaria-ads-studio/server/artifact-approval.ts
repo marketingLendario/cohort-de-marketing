@@ -36,6 +36,7 @@ import {
   type ArtifactWriteRequest,
   type ArtifactWriteResult,
 } from './artifact-materializer.js';
+import { materializeConfinedBinaryArtifact } from './artifact-fs-worker-client.js';
 
 // ---------------------------------------------------------------------------
 // Contract
@@ -60,6 +61,7 @@ export const APPROVAL_REPAIRABLE_STATES: readonly ApprovalState[] = [
 ];
 
 export type ApprovalFormat = 'markdown' | 'json' | 'yaml' | 'html';
+export type StoredApprovalFormat = ApprovalFormat | 'pdf' | 'docx' | 'image' | 'zip';
 
 /** An artifact the human is approving — the exact bytes shown in Phase 1. */
 export interface ApprovalArtifactInput {
@@ -81,8 +83,12 @@ export interface PlannedArtifact {
   artifactType: string;
   title: string;
   path: string;
-  format: ApprovalFormat;
+  format: StoredApprovalFormat;
   content: string;
+  /** Missing on legacy rows means UTF-8. Binary bytes are journaled as base64. */
+  contentEncoding?: 'utf8' | 'base64';
+  /** Canonical approved source path for a deterministic derived artifact. */
+  derivedFrom?: string | null;
   /** SHA-256 of the content once materialized (the cross-surface anchor per file). */
   contentHash: string | null;
 }
@@ -123,6 +129,19 @@ export interface ApprovalOutboxRecord {
   updatedAt: string;
 }
 
+/** Browser projection: preserve metadata/hashes, never send journaled binary bytes. */
+export function approvalRecordForBrowser(record: ApprovalOutboxRecord): ApprovalOutboxRecord {
+  return {
+    ...record,
+    plan: record.plan.map((entry) => (entry.contentEncoding === 'base64'
+      ? { ...entry, content: '' }
+      : { ...entry })),
+    auditEvent: record.auditEvent
+      ? { ...record.auditEvent, files: record.auditEvent.files.map((file) => ({ ...file })) }
+      : null,
+  };
+}
+
 export interface CreateApprovalOutboxInput {
   workspaceId: string;
   projectId: string;
@@ -160,6 +179,7 @@ export interface ApprovalRunState {
   workspaceId: string;
   projectId: string;
   projectSlug: string;
+  skillId: string;
   status: string;
   proposalRevision: number;
   proposalHash: string | null;
@@ -176,8 +196,8 @@ export interface FinalizeApprovalInput {
     artifactType: string;
     title: string;
     path: string;
-    format: ApprovalFormat;
-    content: string;
+    format: StoredApprovalFormat;
+    content: string | null;
     contentHash: string;
   }>;
 }
@@ -283,7 +303,9 @@ function canonicalPlanValue(artifacts: ApprovalArtifactInput[], projectSlug?: st
 
 function storedPlanValue(plan: PlannedArtifact[]): ReturnType<typeof canonicalPlanValue> {
   return plan
+    .filter((artifact) => (artifact.contentEncoding ?? 'utf8') === 'utf8')
     .map(({ artifactType, title, path, format, content }) => ({ artifactType, title, path, format, content }))
+    .map((artifact) => ({ ...artifact, format: artifact.format as ApprovalFormat }))
     .map((artifact) => ({ ...artifact, path: canonicalizeRelativeArtifactPath(artifact.path) }))
     .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
 }
@@ -364,6 +386,26 @@ export interface ArtifactApprovalServiceDeps {
     request: ArtifactWriteRequest,
     options: { projectsRoot: string; now?: () => Date },
   ) => Promise<ArtifactWriteResult>;
+  deriveArtifacts?: (input: {
+    skillId: string;
+    projectSlug: string;
+    skillRunId: string;
+    proposalRevision: number;
+    artifacts: ApprovalArtifactInput[];
+  }) => Promise<Array<{
+    artifactType: string;
+    title: string;
+    path: string;
+    format: StoredApprovalFormat;
+    content: Buffer;
+    derivedFrom: string;
+  }>>;
+  materializeBinary?: (input: {
+    projectSlug: string;
+    relativePath: string;
+    content: Buffer;
+    hashAfter: string;
+  }) => Promise<ApprovalMaterializeResult>;
   now?: () => Date;
   /**
    * Fault hooks around the atomic rename (tests). `beforeRename` throws before
@@ -373,6 +415,11 @@ export interface ArtifactApprovalServiceDeps {
    */
   faults?: { beforeRename?: () => void | Promise<void>; afterRename?: () => void | Promise<void> };
 }
+
+type ApprovalMaterializeResult = Pick<
+  ArtifactWriteResult,
+  'outcome' | 'hashBefore' | 'hashAfter' | 'absolutePath' | 'relativePath' | 'bytesWritten'
+>;
 
 export interface DecideApprovalInput {
   skillRunId: string;
@@ -421,6 +468,15 @@ async function readCurrentFile(projectsRoot: string, slug: string, relativePath:
 export function createArtifactApprovalService(deps: ArtifactApprovalServiceDeps): ArtifactApprovalService {
   const materialize = deps.materialize ?? materializeArtifact;
   const clock = deps.now ?? (() => new Date());
+  const materializeBinary = deps.materializeBinary ?? (async (input) =>
+    materializeConfinedBinaryArtifact({
+      projectsRoot: deps.projectsRoot,
+      slug: input.projectSlug,
+      relativePath: input.relativePath,
+      content: input.content,
+      hashAfter: input.hashAfter,
+      onConflict: 'overwrite',
+    }));
 
   async function loadReviewableRun(skillRunId: string): Promise<ApprovalRunState> {
     const state = await deps.runs.getRunState(skillRunId);
@@ -562,8 +618,38 @@ export function createArtifactApprovalService(deps: ArtifactApprovalServiceDeps)
       path: artifact.path,
       format: artifact.format,
       content: artifact.content,
+      contentEncoding: 'utf8',
+      derivedFrom: null,
       contentHash: null,
     }));
+    const derived = await deps.deriveArtifacts?.({
+      skillId: run.skillId,
+      projectSlug: run.projectSlug,
+      skillRunId: input.skillRunId,
+      proposalRevision: input.expectedProposalRevision,
+      artifacts,
+    });
+    for (const artifact of derived ?? []) {
+      const path = canonicalizeRelativeArtifactPath(artifact.path);
+      if (planned.some((entry) => entry.path === path)) {
+        throw new ArtifactApprovalError('duplicate-path', `Artefato derivado duplicou o caminho canônico ${JSON.stringify(path)}.`);
+      }
+      const sourcePath = canonicalizeRelativeArtifactPath(artifact.derivedFrom);
+      if (!planned.some((entry) => entry.path === sourcePath && (entry.contentEncoding ?? 'utf8') === 'utf8')) {
+        throw new ArtifactApprovalError('invalid-path', `Fonte aprovada ${JSON.stringify(sourcePath)} não existe no pack.`);
+      }
+      planned.push({
+        artifactId: randomUUID(),
+        artifactType: artifact.artifactType,
+        title: artifact.title,
+        path,
+        format: artifact.format,
+        content: artifact.content.toString('base64'),
+        contentEncoding: 'base64',
+        derivedFrom: sourcePath,
+        contentHash: createHash('sha256').update(artifact.content).digest('hex'),
+      });
+    }
     const record = await deps.store.create({
       workspaceId: run.workspaceId,
       projectId: run.projectId,
@@ -611,22 +697,30 @@ export function createArtifactApprovalService(deps: ArtifactApprovalServiceDeps)
       // will re-materialize from the persisted `materializing` state.
       await faults?.beforeRename?.();
 
-      const results = new Map<string, ArtifactWriteResult>();
+      const results = new Map<string, ApprovalMaterializeResult>();
       for (const entry of current.plan) {
-        const result = await materialize(
-          {
-            schemaVersion: ARTIFACT_WRITE_SCHEMA_VERSION,
-            projectSlug: run.projectSlug,
-            relativePath: entry.path,
-            format: entry.format,
-            content: entry.content,
-            runId: record.skillRunId,
-            // The human explicitly approved this content; a modify overwrites.
-            // Idempotent re-approval of identical bytes short-circuits to 'unchanged'.
-            onConflict: 'overwrite',
-          },
-          { projectsRoot: deps.projectsRoot, now: deps.now },
-        );
+        const isBinary = (entry.contentEncoding ?? 'utf8') === 'base64';
+        const result = isBinary
+          ? await materializeBinary({
+              projectSlug: run.projectSlug,
+              relativePath: entry.path,
+              content: Buffer.from(entry.content, 'base64'),
+              hashAfter: entry.contentHash ?? createHash('sha256').update(Buffer.from(entry.content, 'base64')).digest('hex'),
+            })
+          : await materialize(
+              {
+                schemaVersion: ARTIFACT_WRITE_SCHEMA_VERSION,
+                projectSlug: run.projectSlug,
+                relativePath: entry.path,
+                format: entry.format as ApprovalFormat,
+                content: entry.content,
+                runId: record.skillRunId,
+                // The human explicitly approved this content; a modify overwrites.
+                // Idempotent re-approval of identical bytes short-circuits to 'unchanged'.
+                onConflict: 'overwrite',
+              },
+              { projectsRoot: deps.projectsRoot, now: deps.now },
+            );
         results.set(entry.path, result);
       }
 
@@ -659,7 +753,7 @@ export function createArtifactApprovalService(deps: ArtifactApprovalServiceDeps)
   async function recordApproval(
     record: ApprovalOutboxRecord,
     run: ApprovalRunState,
-    results: Map<string, ArtifactWriteResult>,
+    results: Map<string, ApprovalMaterializeResult>,
   ): Promise<ApprovalOutboxRecord> {
     const recording = await deps.store.advance(record.id, { state: 'recording', error: null });
     const finalize = await deps.runs.finalizeApproval({
@@ -674,7 +768,7 @@ export function createArtifactApprovalService(deps: ArtifactApprovalServiceDeps)
         title: entry.title,
         path: entry.path,
         format: entry.format,
-        content: entry.content,
+        content: (entry.contentEncoding ?? 'utf8') === 'base64' ? null : entry.content,
         contentHash: entry.contentHash ?? results.get(entry.path)?.hashAfter ?? sha256(entry.content),
       })),
     });
@@ -768,14 +862,14 @@ export function createArtifactApprovalService(deps: ArtifactApprovalServiceDeps)
   return { plan, decide, repair, repairAll };
 }
 
-function aggregateOutcome(results: ArtifactWriteResult[]): ApprovalOutcome {
+function aggregateOutcome(results: ApprovalMaterializeResult[]): ApprovalOutcome {
   if (results.length === 0) return 'unchanged';
   if (results.some((result) => result.outcome === 'conflict')) return 'conflict';
   if (results.some((result) => result.outcome === 'written')) return 'written';
   return 'unchanged';
 }
 
-function buildFileAudit(record: ApprovalOutboxRecord, results: Map<string, ArtifactWriteResult>): ApprovalAuditEvent['files'] {
+function buildFileAudit(record: ApprovalOutboxRecord, results: Map<string, ApprovalMaterializeResult>): ApprovalAuditEvent['files'] {
   return record.plan.map((entry) => {
     const result = results.get(entry.path);
     return {
@@ -1035,7 +1129,7 @@ export function createSupabaseApprovalRunGateway(client: SupabaseClient): Approv
     async getRunState(skillRunId) {
       const { data, error } = await client
         .from('skill_runs')
-        .select('workspace_id, project_id, status, proposal_revision, proposal_hash, marketing_projects(slug)')
+        .select('workspace_id, project_id, skill_id, status, proposal_revision, proposal_hash, marketing_projects(slug)')
         .eq('id', skillRunId)
         .maybeSingle();
       if (error) throw new Error(`[artifact-approval] run lookup failed: ${error.message}`);
@@ -1043,6 +1137,7 @@ export function createSupabaseApprovalRunGateway(client: SupabaseClient): Approv
       const row = data as {
         workspace_id: string;
         project_id: string;
+        skill_id: string;
         status: string;
         proposal_revision: number | null;
         proposal_hash: string | null;
@@ -1054,6 +1149,7 @@ export function createSupabaseApprovalRunGateway(client: SupabaseClient): Approv
         workspaceId: row.workspace_id,
         projectId: row.project_id,
         projectSlug: project.slug,
+        skillId: row.skill_id,
         status: row.status,
         proposalRevision: row.proposal_revision ?? 1,
         proposalHash: row.proposal_hash,

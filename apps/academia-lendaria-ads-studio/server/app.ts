@@ -39,6 +39,7 @@ import { createSkillRunEventBus, type SkillRunEventBus } from './jobs/events.js'
 import { createSkillRunWorker, type SkillRunWorker } from './jobs/skill-run-worker.js'
 import {
   ArtifactApprovalError,
+  approvalRecordForBrowser,
   createArtifactApprovalService,
   createSupabaseApprovalRunGateway,
   createSupabaseArtifactApprovalStore,
@@ -54,6 +55,9 @@ import {
 import { getBffHealth } from './index.js'
 import { getWorkerHealth } from './worker/index.js'
 import { createLocalSkillRunnerFromEnv, type LocalSkillRunner } from './local-skill-runner.js'
+import { CreativeFactoryLocalRunner } from './creative-factory/runner.js'
+import { RoutedLocalSkillRunner } from './routed-skill-runner.js'
+import { createDocumentPackApprovalDeriver } from './document-pack/approval-deriver.js'
 import {
   LOCAL_RUNNER_TOKEN_HEADER,
   WorkspaceMismatchError,
@@ -81,6 +85,22 @@ import {
   type ProjectIntakeErrorCode,
   type ProjectIntakeService,
 } from './project-intake.js'
+import {
+  createProjectStatusService,
+  createSupabaseProjectStatusStore,
+  ProjectStatusError,
+  type ProjectStatusService,
+} from './project-status/service.js'
+import {
+  createEnvironmentBootstrapService,
+  EnvironmentBootstrapError,
+  type EnvironmentBootstrapService,
+} from './environment-bootstrap/service.js'
+import {
+  promoteCreativeFactoryBatch,
+  readCreativeFactoryAsset,
+  readCreativeFactoryManifest,
+} from './creative-factory/storage.js'
 
 export interface BuildAppOptions {
   /** Inject a store (tests); defaults to the in-memory skeleton store. */
@@ -137,10 +157,22 @@ export interface BuildAppOptions {
   localBootstrapService?: LocalBootstrapService | null
   /** Intake seguro de artefatos do filesystem; injetável para testes. */
   projectIntakeService?: ProjectIntakeService | null
+  /** Status reconciliado e estritamente read-only do projeto. */
+  projectStatusService?: ProjectStatusService | null
+  /** Diagnóstico canônico do /comecar e recuperações com consentimento. */
+  environmentBootstrapService?: EnvironmentBootstrapService | null
+  /** Runtime root for generated creative batches (injectable in tests). */
+  creativeFactoryRuntimeRoot?: string
+  /** Authoritative project slug resolver used by binary promotion. */
+  resolveProjectSlug?: (projectId: string) => Promise<string | null>
 }
 
 export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
   const store = options.store ?? createInMemoryJobStore()
+  const cohortRepoRoot = options.cohortRepoRoot ?? process.env.COHORT_REPO_ROOT ?? resolvePath(process.cwd(), '../..')
+  const projectsRoot = resolvePath(cohortRepoRoot, 'projetos')
+  const creativeFactoryRuntimeRoot = options.creativeFactoryRuntimeRoot ?? process.env.MARKETING_STUDIO_CREATIVE_ROOT
+    ?? resolvePath(process.env.TMPDIR ?? '/tmp', 'marketing-studio-creative-factory')
   // Cliente Supabase backend compartilhado (service-role, NFR10) — usado pelo
   // Gate#1 e pelo journal durável de skill-runs. Null sem credenciais.
   const backendSupabase: SupabaseClient | null = createBackendSupabaseClient()
@@ -156,7 +188,15 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
       : backendSupabase
         ? createSupabaseCampaignRepo(backendSupabase)
         : null
-  const skillRunner = options.skillRunner !== undefined ? options.skillRunner : createLocalSkillRunnerFromEnv()
+  const genericSkillRunner = options.skillRunner !== undefined ? options.skillRunner : createLocalSkillRunnerFromEnv()
+  const skillRunner = options.skillRunner !== undefined
+    ? options.skillRunner
+    : genericSkillRunner
+      ? new RoutedLocalSkillRunner(
+          genericSkillRunner,
+          new CreativeFactoryLocalRunner({ repoRoot: cohortRepoRoot, runtimeRoot: creativeFactoryRuntimeRoot }),
+        )
+      : null
 
   // Journal durável do skill-run (AC2): Supabase em produção, fake in-memory
   // quando não há credenciais (o BFF ainda sobe — NFR9).
@@ -171,8 +211,6 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
   // filesystem e o banco coerentes via a saga/outbox. Requer o backend Supabase
   // (service-role) para persistir o outbox/artefato/skill_run; sem credenciais a
   // capacidade fica desligada (o BFF ainda sobe — NFR9).
-  const cohortRepoRoot = options.cohortRepoRoot ?? process.env.COHORT_REPO_ROOT ?? resolvePath(process.cwd(), '../..')
-  const projectsRoot = resolvePath(cohortRepoRoot, 'projetos')
   const artifactApprovalService: ArtifactApprovalService | null =
     options.artifactApprovalService !== undefined
       ? options.artifactApprovalService
@@ -181,6 +219,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
             store: createSupabaseArtifactApprovalStore(backendSupabase),
             runs: createSupabaseApprovalRunGateway(backendSupabase),
             projectsRoot,
+            deriveArtifacts: createDocumentPackApprovalDeriver({ repoRoot: cohortRepoRoot, projectsRoot }),
           })
         : null
   const projectIntakeService: ProjectIntakeService | null =
@@ -192,6 +231,18 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
             projectsRoot,
           })
         : null
+  const projectStatusService: ProjectStatusService | null =
+    options.projectStatusService !== undefined
+      ? options.projectStatusService
+      : backendSupabase
+        ? createProjectStatusService({
+            store: createSupabaseProjectStatusStore(backendSupabase),
+            projectsRoot,
+          })
+        : null
+  const environmentBootstrapService = options.environmentBootstrapService !== undefined
+    ? options.environmentBootstrapService
+    : createEnvironmentBootstrapService({ repoRoot: cohortRepoRoot })
 
   // Boundary de segurança do runner local (STORY-8.W1.2). O TOKEN é o segredo do
   // boundary `/api/local/*` inteiro (runner + aprovação de artefatos), então é
@@ -250,6 +301,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
   }
 
   const app = Fastify({
+    bodyLimit: 12 * 1024 * 1024,
     logger: {
       level: process.env.LOG_LEVEL || 'info',
       // Nunca registrar o segredo do boundary, mesmo se headers forem logados (AC3).
@@ -393,6 +445,17 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     return resolveTenantWorkspaceId(projectId, provided, derived)
   }
 
+  const resolveProjectSlug = options.resolveProjectSlug ?? (async (projectId: string): Promise<string | null> => {
+    if (!backendSupabase) return null
+    const { data, error } = await backendSupabase
+      .from('marketing_projects')
+      .select('slug')
+      .eq('id', projectId)
+      .maybeSingle()
+    if (error) throw new Error(`[creative-factory] project slug lookup failed: ${error.message}`)
+    return typeof data?.slug === 'string' ? data.slug : null
+  })
+
   /**
    * Boundary guard shared by every skill-run endpoint (STORY-8.W1.2 hardening
    * preserved): 503 when the capability is off, 401/403 on the token. The Vite
@@ -416,6 +479,24 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
       Array.isArray(providedToken) ? providedToken[0] : providedToken,
       runnerToken,
     )
+    if (!auth.ok) {
+      reply.status(auth.status).send({ code: auth.code, message: auth.message })
+      return false
+    }
+    return true
+  }
+
+  function guardCreativeFactoryRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!isLoopbackRequest(req)) {
+      reply.status(403).send({ code: 'CREATIVE_FACTORY_LOOPBACK_ONLY', message: 'Este recurso só está disponível localmente.' })
+      return false
+    }
+    if (!runnerToken) {
+      reply.status(503).send({ code: 'CREATIVE_FACTORY_DISABLED', message: 'Creative Factory local desabilitada.' })
+      return false
+    }
+    const providedToken = req.headers[LOCAL_RUNNER_TOKEN_HEADER]
+    const auth = authorizeLocalRunnerRequest(Array.isArray(providedToken) ? providedToken[0] : providedToken, runnerToken)
     if (!auth.ok) {
       reply.status(auth.status).send({ code: auth.code, message: auth.message })
       return false
@@ -475,6 +556,42 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
       Array.isArray(providedToken) ? providedToken[0] : providedToken,
       runnerToken,
     )
+    if (!auth.ok) {
+      reply.status(auth.status).send({ code: auth.code, message: auth.message })
+      return false
+    }
+    return true
+  }
+
+  function guardProjectStatusRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!isLoopbackRequest(req)) {
+      reply.status(403).send({ code: 'PROJECT_STATUS_LOOPBACK_ONLY', message: 'Este recurso só está disponível localmente.' })
+      return false
+    }
+    if (!projectStatusService || !runnerToken) {
+      reply.status(503).send({ code: 'PROJECT_STATUS_DISABLED', message: 'Status local do projeto indisponível.' })
+      return false
+    }
+    const providedToken = req.headers[LOCAL_RUNNER_TOKEN_HEADER]
+    const auth = authorizeLocalRunnerRequest(Array.isArray(providedToken) ? providedToken[0] : providedToken, runnerToken)
+    if (!auth.ok) {
+      reply.status(auth.status).send({ code: auth.code, message: auth.message })
+      return false
+    }
+    return true
+  }
+
+  function guardEnvironmentBootstrapRequest(req: FastifyRequest, reply: FastifyReply): boolean {
+    if (!isLoopbackRequest(req)) {
+      reply.status(403).send({ code: 'ENVIRONMENT_BOOTSTRAP_LOOPBACK_ONLY', message: 'Este recurso só está disponível localmente.' })
+      return false
+    }
+    if (!environmentBootstrapService || !runnerToken) {
+      reply.status(503).send({ code: 'ENVIRONMENT_BOOTSTRAP_DISABLED', message: 'Diagnóstico do ambiente indisponível.' })
+      return false
+    }
+    const providedToken = req.headers[LOCAL_RUNNER_TOKEN_HEADER]
+    const auth = authorizeLocalRunnerRequest(Array.isArray(providedToken) ? providedToken[0] : providedToken, runnerToken)
     if (!auth.ok) {
       reply.status(auth.status).send({ code: auth.code, message: auth.message })
       return false
@@ -605,6 +722,43 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     }
   })
 
+  app.get('/api/local/projects/:projectId/status', async (req, reply) => {
+    if (!guardProjectStatusRequest(req, reply)) return reply
+    const parsed = z.object({ projectId: z.string().min(1) }).safeParse(req.params)
+    if (!parsed.success) return reply.status(400).send({ code: 'INVALID_PROJECT_STATUS_INPUT', issues: parsed.error.issues })
+    reply.header('cache-control', 'no-store')
+    try {
+      return reply.status(200).send(await projectStatusService!.read(parsed.data.projectId))
+    } catch (error) {
+      if (error instanceof ProjectStatusError) {
+        return reply.status(error.code === 'project-not-found' ? 404 : 400).send({ code: error.code, message: error.message })
+      }
+      req.log.error(error, 'project status read failed')
+      return reply.status(500).send({ code: 'PROJECT_STATUS_FAILED', message: 'Não foi possível reconciliar o status do projeto.' })
+    }
+  })
+
+  app.get('/api/local/environment-bootstrap', async (req, reply) => {
+    if (!guardEnvironmentBootstrapRequest(req, reply)) return reply
+    reply.header('cache-control', 'no-store')
+    return reply.status(200).send(await environmentBootstrapService!.diagnose())
+  })
+
+  app.post('/api/local/environment-bootstrap/recover', async (req, reply) => {
+    if (!guardEnvironmentBootstrapRequest(req, reply)) return reply
+    const parsed = z.object({ actionId: z.string().min(1), expectedDiagnosisHash: z.string().length(64), consent: z.literal(true), value: z.string().max(256).optional() }).safeParse(req.body)
+    if (!parsed.success) return reply.status(400).send({ code: 'INVALID_ENVIRONMENT_RECOVERY_INPUT', issues: parsed.error.issues })
+    try {
+      return reply.status(200).send(await environmentBootstrapService!.recover(parsed.data))
+    } catch (error) {
+      if (error instanceof EnvironmentBootstrapError) {
+        return reply.status(error.code === 'stale-diagnosis' ? 409 : 400).send({ code: error.code, message: error.message })
+      }
+      req.log.error(error, 'environment recovery failed')
+      return reply.status(500).send({ code: 'ENVIRONMENT_RECOVERY_FAILED', message: 'Não foi possível aplicar a recuperação.' })
+    }
+  })
+
   // --- Phase 1: plan (read-only diff/affected/warnings — AC1) ---------------
   app.post('/api/local/artifact-approvals/plan', { bodyLimit: runnerLimits.bodyLimitBytes }, async (req, reply) => {
     if (!guardApprovalRequest(req, reply)) return reply
@@ -636,7 +790,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     }
     try {
       const record = await artifactApprovalService!.decide(parsed.data)
-      return reply.status(200).send(record)
+      return reply.status(200).send(approvalRecordForBrowser(record))
     } catch (error) {
       if (error instanceof ArtifactApprovalError) {
         return reply.status(approvalErrorStatus(error.code)).send({ code: error.code, message: error.message })
@@ -655,7 +809,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     const { id } = req.params as { id: string }
     try {
       const record = await artifactApprovalService!.repair(id)
-      return reply.status(200).send(record)
+      return reply.status(200).send(approvalRecordForBrowser(record))
     } catch (error) {
       if (error instanceof ArtifactApprovalError) {
         return reply.status(approvalErrorStatus(error.code)).send({ code: error.code, message: error.message })
@@ -664,6 +818,75 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
       return reply.status(500).send({
         code: 'ARTIFACT_APPROVAL_REPAIR_FAILED',
         message: error instanceof Error ? error.message : 'Falha ao reparar a decisão de aprovação.',
+      })
+    }
+  })
+
+  const creativeAssetParamsSchema = z.object({
+    batchId: z.string().regex(/^[a-f0-9-]{16,64}$/i),
+    assetId: z.string().regex(/^[a-z0-9-]{1,120}$/),
+  }).strict()
+  const creativePromotionSchema = z.object({
+    projectId: z.string().min(1).max(200),
+    selectedItemIds: z.array(z.string().regex(/^[a-z0-9-]{1,120}$/)).min(1).max(36),
+  }).strict()
+
+  function factoryJobId(batchId: string): string {
+    return batchId.replace(/-a\d+$/, '')
+  }
+
+  app.get('/api/local/creative-factory/batches/:batchId/assets/:assetId', async (req, reply) => {
+    if (!guardCreativeFactoryRequest(req, reply)) return reply
+    const parsed = creativeAssetParamsSchema.safeParse(req.params)
+    if (!parsed.success) return reply.status(400).send({ code: 'INVALID_CREATIVE_ASSET', issues: parsed.error.issues })
+    try {
+      const job = await skillJobStore.get(factoryJobId(parsed.data.batchId))
+      if (!job || !['ads-creative-factory', 'criativos-funil', 'mockup-produto-funil'].includes(job.skillId) || job.status !== 'succeeded') {
+        return reply.status(404).send({ code: 'CREATIVE_BATCH_NOT_FOUND', message: 'Lote criativo não encontrado.' })
+      }
+      const manifest = await readCreativeFactoryManifest(creativeFactoryRuntimeRoot, parsed.data.batchId)
+      if (manifest.projectId !== job.projectId) throw new Error('Projeto do manifesto diverge do journal.')
+      const asset = await readCreativeFactoryAsset({ runtimeRoot: creativeFactoryRuntimeRoot, ...parsed.data })
+      reply.header('content-type', 'image/png')
+      reply.header('cache-control', 'private, no-store')
+      reply.header('etag', `"${asset.sha256}"`)
+      return reply.status(200).send(asset.content)
+    } catch (error) {
+      req.log.warn(error, 'creative asset read rejected')
+      return reply.status(404).send({ code: 'CREATIVE_ASSET_NOT_FOUND', message: 'Asset criativo indisponível ou inválido.' })
+    }
+  })
+
+  app.post('/api/local/creative-factory/batches/:batchId/promote', { bodyLimit: runnerLimits.bodyLimitBytes }, async (req, reply) => {
+    if (!guardCreativeFactoryRequest(req, reply)) return reply
+    const batch = z.object({ batchId: z.string().regex(/^[a-f0-9-]{16,64}$/i) }).safeParse(req.params)
+    const body = creativePromotionSchema.safeParse(req.body)
+    if (!batch.success || !body.success) {
+      return reply.status(400).send({ code: 'INVALID_CREATIVE_PROMOTION', issues: [...(!batch.success ? batch.error.issues : []), ...(!body.success ? body.error.issues : [])] })
+    }
+    try {
+      const job = await skillJobStore.get(factoryJobId(batch.data.batchId))
+      if (!job || !['ads-creative-factory', 'criativos-funil', 'mockup-produto-funil'].includes(job.skillId) || job.status !== 'succeeded') {
+        return reply.status(404).send({ code: 'CREATIVE_BATCH_NOT_FOUND', message: 'Lote criativo não encontrado.' })
+      }
+      if (job.projectId !== body.data.projectId) {
+        return reply.status(403).send({ code: 'CREATIVE_PROJECT_MISMATCH', message: 'O lote não pertence ao projeto informado.' })
+      }
+      const projectSlug = await resolveProjectSlug(body.data.projectId)
+      if (!projectSlug) return reply.status(503).send({ code: 'CREATIVE_PROJECT_UNAVAILABLE', message: 'Projeto não possui slug autoritativo para promoção.' })
+      const result = await promoteCreativeFactoryBatch({
+        runtimeRoot: creativeFactoryRuntimeRoot,
+        projectsRoot,
+        projectSlug,
+        batchId: batch.data.batchId,
+        selectedItemIds: body.data.selectedItemIds,
+      })
+      return reply.status(200).send(result)
+    } catch (error) {
+      req.log.error(error, 'creative batch promotion failed')
+      return reply.status(409).send({
+        code: 'CREATIVE_PROMOTION_REJECTED',
+        message: error instanceof Error ? error.message : 'Não foi possível promover o lote criativo.',
       })
     }
   })

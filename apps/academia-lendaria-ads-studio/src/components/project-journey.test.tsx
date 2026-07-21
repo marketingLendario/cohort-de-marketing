@@ -65,6 +65,175 @@ describe('ProjectJourney — durable async runs (AC6)', () => {
     expect(screen.getByRole('heading', { name: /Mapa do/i })).toBeInTheDocument();
   });
 
+  it('collects a structured external-research request from the friendly panel controls', async () => {
+    useProjectStore.setState((state) => ({
+      artifacts: state.artifacts.filter((artifact) => artifact.artifactType !== 'avatar'),
+      skillRuns: state.skillRuns.filter((run) => run.skillId !== 'avatar-funil'),
+    }));
+    render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
+    fireEvent.click(screen.getAllByText('avatar-funil')[0]);
+
+    expect(screen.getByRole('group', { name: 'Modo da pesquisa' })).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText('Tema, @perfil, hashtag ou URL'), { target: { value: 'gestores de tráfego sobrecarregados' } });
+    fireEvent.click(screen.getByRole('button', { name: /Executar skill|Gerar proposta|Executar etapa guiada/i }));
+
+    await waitFor(() => expect(startSkillRun).toHaveBeenCalledWith(
+      'avatar-funil',
+      expect.objectContaining({
+        context: expect.objectContaining({
+          externalResearch: expect.objectContaining({
+            mode: 'network',
+            query: 'gestores de tráfego sobrecarregados',
+            maxBillableCalls: 1,
+            sources: [expect.objectContaining({
+              provider: 'apify',
+              kind: 'google-search',
+              target: 'gestores de tráfego sobrecarregados',
+              limit: 10,
+            })],
+          }),
+        }),
+      }),
+    ));
+  });
+
+  it('requires literal material before starting offline research', async () => {
+    useProjectStore.setState((state) => ({
+      artifacts: state.artifacts.filter((artifact) => artifact.artifactType !== 'avatar'),
+      skillRuns: state.skillRuns.filter((run) => run.skillId !== 'avatar-funil'),
+    }));
+    render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
+    fireEvent.click(screen.getAllByText('avatar-funil')[0]);
+    fireEvent.click(screen.getByRole('button', { name: 'Material colado' }));
+    fireEvent.click(screen.getByRole('button', { name: /Executar skill|Gerar proposta|Executar etapa guiada/i }));
+
+    expect(await screen.findByText('Cole o material que será analisado no modo offline ou híbrido.')).toBeInTheDocument();
+    expect(startSkillRun).not.toHaveBeenCalled();
+  });
+
+  it('continues external research from the frozen checkpoint without collecting the source again', async () => {
+    const store = useProjectStore.getState();
+    const parentRunId = store.startSkillRun(DEMO_PROJECT_ID, 'avatar-funil', { jobId: 'avatar-checkpoint' });
+    store.updateSkillRun(parentRunId, {
+      status: 'needs_review',
+      proposal: {
+        summary: 'Snapshot congelado; falta uma decisão.', resultMarkdown: '# Checkpoint', fields: [], warnings: [],
+        questions: ['Confirma o recorte do avatar?'],
+        artifacts: [{ artifactType: 'researchSnapshot', title: 'Snapshot', path: 'research/avatar/snapshot.json', format: 'json', content: '{"frozen":true}' }],
+      },
+    });
+    render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
+    fireEvent.click(screen.getAllByText('avatar-funil')[0]);
+    fireEvent.change(screen.getByLabelText('Confirma o recorte do avatar?'), { target: { value: 'Confirmo.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar com respostas' }));
+
+    await waitFor(() => expect(startSkillRun).toHaveBeenCalledWith(
+      'avatar-funil',
+      expect.objectContaining({
+        context: expect.not.objectContaining({ externalResearch: expect.anything() }),
+        operatorInput: expect.stringContaining('Resposta: Confirmo.'),
+      }),
+    ));
+  });
+
+  it('collects a public brand URL for design-md without exposing credentials', async () => {
+    useProjectStore.setState((state) => ({
+      artifacts: state.artifacts.filter((artifact) => artifact.artifactType !== 'design'),
+      skillRuns: state.skillRuns.filter((run) => run.skillId !== 'design-md'),
+    }));
+    render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
+    fireEvent.click(screen.getAllByText('design-md')[0]);
+    fireEvent.click(screen.getByRole('button', { name: 'URL pública' }));
+    fireEvent.change(screen.getByLabelText('URL pública da marca'), { target: { value: 'https://marca.example/identidade' } });
+    fireEvent.click(screen.getByRole('button', { name: /Executar skill|Gerar proposta|Executar etapa guiada/i }));
+
+    await waitFor(() => expect(startSkillRun).toHaveBeenCalledWith(
+      'design-md',
+      expect.objectContaining({
+        context: expect.objectContaining({
+          brandDesign: { mode: 'url', url: 'https://marca.example/identidade', maxBytes: 1_000_000 },
+        }),
+      }),
+    ));
+  });
+
+  it('encodes a local moodboard for design-md and caps the upload to five images', async () => {
+    useProjectStore.setState((state) => ({
+      artifacts: state.artifacts.filter((artifact) => artifact.artifactType !== 'design'),
+      skillRuns: state.skillRuns.filter((run) => run.skillId !== 'design-md'),
+    }));
+    render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
+    fireEvent.click(screen.getAllByText('design-md')[0]);
+    fireEvent.click(screen.getByRole('button', { name: 'Moodboard' }));
+    const files = Array.from({ length: 6 }, (_, index) => new File(
+      [new Uint8Array([137, 80, 78, 71, index])],
+      `referencia-${index}.png`,
+      { type: 'image/png' },
+    ));
+    fireEvent.change(screen.getByLabelText('Imagens do moodboard (até 5)'), { target: { files } });
+    expect(await screen.findByText('5 imagem(ns) pronta(s) para análise local.')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Executar skill|Gerar proposta|Executar etapa guiada/i }));
+
+    await waitFor(() => expect(startSkillRun).toHaveBeenCalledWith(
+      'design-md',
+      expect.objectContaining({
+        context: expect.objectContaining({
+          brandDesign: expect.objectContaining({
+            mode: 'moodboard',
+            maxImageBytes: 2 * 1024 * 1024,
+            images: expect.arrayContaining([expect.objectContaining({ kind: 'base64', data: expect.any(String) })]),
+          }),
+        }),
+      }),
+    ));
+    const payload = startSkillRun.mock.calls.at(-1)?.[1] as { context?: { brandDesign?: { images?: unknown[] } } };
+    expect(payload.context?.brandDesign?.images).toHaveLength(5);
+  });
+
+  it('collects a three-format visual-production request without likeness data', async () => {
+    useProjectStore.setState((state) => ({
+      artifacts: state.artifacts.filter((artifact) => artifact.artifactType !== 'creatives'),
+      skillRuns: state.skillRuns.filter((run) => run.skillId !== 'criativos-funil'),
+    }));
+    render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
+    fireEvent.click(screen.getAllByText('criativos-funil')[0]!);
+
+    expect(screen.getByLabelText('Configuração da produção visual')).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText('Tema, @perfil, hashtag ou URL'), { target: { value: 'Marca Referência' } });
+    fireEvent.change(screen.getByLabelText('URL pública do áudio ou vídeo'), { target: { value: 'https://cdn.example.com/anuncio.mp4' } });
+    fireEvent.change(screen.getByLabelText('Idioma da mídia'), { target: { value: 'en' } });
+    fireEvent.change(screen.getByLabelText('Transcript literal (opcional)'), { target: { value: 'Fala literal do anúncio fornecida pelo operador.' } });
+    fireEvent.change(screen.getByPlaceholderText('Headline ou nome do produto'), { target: { value: 'Pare de improvisar seus anúncios' } });
+    fireEvent.change(screen.getByPlaceholderText('Descreva o conteúdo, a promessa permitida e o que deve aparecer.'), { target: { value: 'Banner tipográfico com contraste alto e legenda completa.' } });
+    fireEvent.click(screen.getByRole('button', { name: /Executar skill|Gerar proposta|Executar etapa guiada/i }));
+
+    await waitFor(() => expect(startSkillRun).toHaveBeenCalledWith(
+      'criativos-funil',
+      expect.objectContaining({
+        context: expect.objectContaining({
+          mediaIntake: {
+            items: [{
+              id: 'media-primary',
+              role: 'competitor-ad',
+              source: { origin: 'url', url: 'https://cdn.example.com/anuncio.mp4' },
+              pastedTranscript: 'Fala literal do anúncio fornecida pelo operador.',
+              language: 'en',
+            }],
+          },
+          visualProduction: {
+            formats: ['feed', 'story', 'square'],
+            archetypes: ['dark_editorial', 'light_clean', 'didactic_compare'],
+            variants: 1,
+            items: [{ id: 'visual-1', title: 'Pare de improvisar seus anúncios', description: 'Banner tipográfico com contraste alto e legenda completa.' }],
+            cta: 'Saiba mais',
+            personas: [],
+            likenessAuthorizations: [],
+          },
+        }),
+      }),
+    ));
+  });
+
   it('resumes a non-terminal run by jobId after reload, without the original request', () => {
     seedRun('running', 'job-resume');
     render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
@@ -171,6 +340,12 @@ describe('ProjectJourney — persistência real-mode via ações do workspace (Q
       persistSkillRunUpdate: vi.fn(async (runId, patch) => {
         useProjectStore.getState().updateSkillRun(runId, toCacheRunPatch(patch));
       }),
+      supersedeSkillRun: vi.fn(async (parentRunId, continuationRunId) => {
+        useProjectStore.getState().updateSkillRun(parentRunId, {
+          status: 'cancelled',
+          error: `Continuação registrada no run ${continuationRunId}.`,
+        });
+      }),
     };
   }
 
@@ -220,7 +395,7 @@ describe('ProjectJourney — persistência real-mode via ações do workspace (Q
         <ProjectJourney projectId={DEMO_PROJECT_ID} />
       </ProjectWorkspaceActionsProvider>,
     );
-    fireEvent.click(screen.getByRole('button', { name: /Executar skill/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Executar etapa guiada|Executar skill/i }));
 
     // 202 primeiro (jobId durável), depois o pointer via repository carregando o jobId.
     await waitFor(() => expect(actions.persistSkillRunStart).toHaveBeenCalled());
@@ -233,5 +408,74 @@ describe('ProjectJourney — persistência real-mode via ações do workspace (Q
     );
     // Reatou o run recém-criado pelo jobId devolvido pelo backend.
     await waitFor(() => expect(observeSkillRun).toHaveBeenCalledWith('job-new', expect.any(Object)));
+  });
+
+  it('continua uma elicitação pelo painel e supersede o checkpoint anterior de forma auditável', async () => {
+    const store = useProjectStore.getState();
+    const parentRunId = store.startSkillRun(DEMO_PROJECT_ID, SKILL_ID, {
+      jobId: 'job-question',
+      elicitationHistory: 'Pergunta anterior: Qual é o público?\nResposta: Gestores de tráfego.',
+    });
+    store.updateSkillRun(parentRunId, {
+      status: 'needs_review',
+      proposal: {
+        summary: 'Falta uma decisão da oferta.',
+        resultMarkdown: 'Responda para continuar.',
+        artifacts: [{ artifactType: 'offerbook', title: 'Amostra', path: 'amostra.md', format: 'markdown', content: '# Amostra provisória' }],
+        fields: [],
+        questions: ['Qual é a oferta principal?'],
+        warnings: [],
+      },
+    });
+    const actions = makeFakeActions();
+    render(
+      <ProjectWorkspaceActionsProvider value={actions}>
+        <ProjectJourney projectId={DEMO_PROJECT_ID} />
+      </ProjectWorkspaceActionsProvider>,
+    );
+    fireEvent.click(screen.getAllByText(SKILL_TITLE)[0]);
+    fireEvent.change(screen.getByLabelText('Qual é a oferta principal?'), { target: { value: 'Cohort de Marketing' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar com respostas' }));
+
+    await waitFor(() => expect(startSkillRun).toHaveBeenCalledWith(
+      SKILL_ID,
+      expect.objectContaining({
+        operatorInput: expect.stringContaining('Resposta: Cohort de Marketing'),
+        context: expect.objectContaining({ artifacts: expect.arrayContaining([expect.objectContaining({ path: 'amostra.md', content: '# Amostra provisória' })]) }),
+      }),
+    ));
+    expect(startSkillRun).toHaveBeenCalledWith(
+      SKILL_ID,
+      expect.objectContaining({ operatorInput: expect.stringContaining('Resposta: Gestores de tráfego.') }),
+    );
+    expect(actions.persistSkillRunStart).toHaveBeenCalledWith(expect.objectContaining({
+      inputSnapshot: expect.objectContaining({
+        elicitationParentRunId: parentRunId,
+        jobId: 'job-new',
+        elicitationHistory: expect.stringContaining('Resposta: Cohort de Marketing'),
+      }),
+    }));
+    await waitFor(() => expect(actions.supersedeSkillRun).toHaveBeenCalledWith(parentRunId, 'real-run-1'));
+    expect(screen.getByText('Em execução')).toBeInTheDocument();
+    expect(screen.queryByText('Cancelada')).not.toBeInTheDocument();
+  });
+
+  it('mantém a continuação ativa visível mesmo quando o checkpoint supersedido recebe updatedAt mais novo', () => {
+    const store = useProjectStore.getState();
+    const parentRunId = store.startSkillRun(DEMO_PROJECT_ID, SKILL_ID, { jobId: 'job-parent' });
+    store.updateSkillRun(parentRunId, { status: 'cancelled' });
+    const continuationRunId = store.startSkillRun(DEMO_PROJECT_ID, SKILL_ID, {
+      jobId: 'job-continuation',
+      elicitationParentRunId: parentRunId,
+    });
+    store.updateSkillRun(continuationRunId, { status: 'running' });
+    store.updateSkillRun(parentRunId, { status: 'cancelled', error: `Continuação registrada no run ${continuationRunId}.` });
+
+    render(<ProjectJourney projectId={DEMO_PROJECT_ID} />);
+    fireEvent.click(screen.getAllByText(SKILL_TITLE)[0]);
+
+    expect(screen.getByText('Em execução')).toBeInTheDocument();
+    expect(screen.queryByText('Cancelada')).not.toBeInTheDocument();
+    expect(observeSkillRun).toHaveBeenCalledWith('job-continuation', expect.any(Object));
   });
 });

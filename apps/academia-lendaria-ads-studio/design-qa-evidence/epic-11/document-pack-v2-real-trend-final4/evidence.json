@@ -1,0 +1,439 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T23:05:18.242Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "trend-hunting"
+    ],
+    "catalogHash": "de5d18c36b1262519e5b616ad04241882262193c9120df4bf6eb30d30b9377f2"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "trend-hunting",
+      "contractGroup": "dynamic-library",
+      "contractHash": "dc85f0df47523a296103f07581c30a0cba7531188fcf644c28ff3569e1ff3471",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "trends/briefing-media-buyer.md",
+          "trends/index.html",
+          "trends/trends-educacao-profissional-2026-07-11.html",
+          "trends/trends-educacao-profissional-2026-07-11.md",
+          "trends/trends-educacao-profissional-2026-07-11.pdf",
+          "trends/variacoes-teste-2026-07-11.html",
+          "trends/variacoes-teste-2026-07-11.md",
+          "trends/variacoes-teste-2026-07-11.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 474,
+            "hash": "cbd521ba0d5e462fbe4b46bf25ebe3da5c143ff188cad25ff52ce0d5d95e075b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3653,
+            "hash": "d2c4ae9d4390847e9eacd18085297764c276666ef6652600a14466b57e6b3a27",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 3575,
+            "hash": "9cdec40ffbaa11c5ebb99c1ce328e86e6f385eed46489b11894e1add1a4d5414",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/index.html",
+            "format": "html",
+            "bytes": 1654,
+            "hash": "3f47a5edb90736dc41da87dae820a52d0ab3a8456cd4343c7b2cca816439758d",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-educacao-profissional-2026-07-11.html",
+            "format": "html",
+            "bytes": 3568,
+            "hash": "5175e2f0a8881a2939af5478b22a069354ccf0aedfe84ae5412834f78d6f2f41",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-educacao-profissional-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 3307,
+            "hash": "ed5aa570c96a5b49946552976e372a34f4fa0ed1058d3eb493cfd7f82514f94c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-educacao-profissional-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 110691,
+            "hash": "b6a86abc439ba8a48f161d8c56c4396b67b39394ab95327e9da79f47d4b1e00d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 3575,
+            "hash": "9cdec40ffbaa11c5ebb99c1ce328e86e6f385eed46489b11894e1add1a4d5414",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/index.html",
+            "format": "html",
+            "bytes": 1654,
+            "hash": "3f47a5edb90736dc41da87dae820a52d0ab3a8456cd4343c7b2cca816439758d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-educacao-profissional-2026-07-11.html",
+            "format": "html",
+            "bytes": 3568,
+            "hash": "5175e2f0a8881a2939af5478b22a069354ccf0aedfe84ae5412834f78d6f2f41",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-educacao-profissional-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 3307,
+            "hash": "ed5aa570c96a5b49946552976e372a34f4fa0ed1058d3eb493cfd7f82514f94c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-educacao-profissional-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 110691,
+            "hash": "b6a86abc439ba8a48f161d8c56c4396b67b39394ab95327e9da79f47d4b1e00d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-2026-07-11.html",
+            "format": "html",
+            "bytes": 5842,
+            "hash": "9f22d80de49f8a7f5e862456d7e09c70b32cbe3e467db75ce29a89d5eb6e5223",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 3585,
+            "hash": "b09b6b0a92fd81229707b745df5795ec97582fc072edfb482fb4ac98b23111b0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 117916,
+            "hash": "59d1e00ea749b4bbea17897a9f5a19b476214dfe319b80837773d69263088877",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-2026-07-11.html",
+            "format": "html",
+            "bytes": 5842,
+            "hash": "9f22d80de49f8a7f5e862456d7e09c70b32cbe3e467db75ce29a89d5eb6e5223",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 3585,
+            "hash": "b09b6b0a92fd81229707b745df5795ec97582fc072edfb482fb4ac98b23111b0",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 117916,
+            "hash": "59d1e00ea749b4bbea17897a9f5a19b476214dfe319b80837773d69263088877",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "trends/briefing-media-buyer.md",
+          "trends/index.html",
+          "trends/trends-educacao-profissional-2026-07-11.html",
+          "trends/trends-educacao-profissional-2026-07-11.md",
+          "trends/trends-educacao-profissional-2026-07-11.pdf",
+          "trends/variacoes-teste-2026-07-11.html",
+          "trends/variacoes-teste-2026-07-11.md",
+          "trends/variacoes-teste-2026-07-11.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 472,
+            "hash": "b7f8c35dd8bb0d1fc0576df833a674e9262dd5b9802f66bb2e3784ecdb4931a5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3651,
+            "hash": "179e2dc180c645c642472f0da305ea8ee33cc130ed07cb15732a5e84c4af4e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/trend-hunting/sources-01fd76640973cd8e.json",
+            "format": "json",
+            "bytes": 9757,
+            "hash": "38062e3594b5a7064a4b4532e95322c36cfbf90892a7d102482d0f8fa946f8a0",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 2972,
+            "hash": "662759bde9b8978b08da796ba6e30a7c5ca68f29b66f098e4341168c9a450dd5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/index.html",
+            "format": "html",
+            "bytes": 1973,
+            "hash": "4284d998cc68994a5d959f6cb939a0ae298028028322dad7f20ed40504baa64c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-educacao-profissional-2026-07-11.html",
+            "format": "html",
+            "bytes": 5029,
+            "hash": "9ecb0c41e2eb7a1219e29b324712636e90b718fc467c298a4c882d1852319eaf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-educacao-profissional-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 6383,
+            "hash": "a6a7b3f222b4067820bb0aa7fa6685240892b0e84a05ed976bdaa742803eb7b6",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-educacao-profissional-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 122352,
+            "hash": "207fcf2f82878c719c97fb93ae8202f8766b70e6876a512c1f18eb3ec9d3ce66",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 2972,
+            "hash": "662759bde9b8978b08da796ba6e30a7c5ca68f29b66f098e4341168c9a450dd5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/index.html",
+            "format": "html",
+            "bytes": 1973,
+            "hash": "4284d998cc68994a5d959f6cb939a0ae298028028322dad7f20ed40504baa64c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-educacao-profissional-2026-07-11.html",
+            "format": "html",
+            "bytes": 5029,
+            "hash": "9ecb0c41e2eb7a1219e29b324712636e90b718fc467c298a4c882d1852319eaf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-educacao-profissional-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 6383,
+            "hash": "a6a7b3f222b4067820bb0aa7fa6685240892b0e84a05ed976bdaa742803eb7b6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-educacao-profissional-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 122352,
+            "hash": "207fcf2f82878c719c97fb93ae8202f8766b70e6876a512c1f18eb3ec9d3ce66",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-2026-07-11.html",
+            "format": "html",
+            "bytes": 5967,
+            "hash": "158541bd54a5b2c6715ff3dbf798ee4278ae7338eaa61817d58e8fcf5e8050bc",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 4527,
+            "hash": "95496d36df657d5898a5e06789b3e6b175b4bd7fe05c2282dcbb2017da5a1e74",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 137807,
+            "hash": "19008ac5c7f2cce54240ef07e47b50d1603c72af088567a28b78c200ff9e063a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-2026-07-11.html",
+            "format": "html",
+            "bytes": 5967,
+            "hash": "158541bd54a5b2c6715ff3dbf798ee4278ae7338eaa61817d58e8fcf5e8050bc",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-2026-07-11.md",
+            "format": "markdown",
+            "bytes": 4527,
+            "hash": "95496d36df657d5898a5e06789b3e6b175b4bd7fe05c2282dcbb2017da5a1e74",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-2026-07-11.pdf",
+            "format": "pdf",
+            "bytes": 137807,
+            "hash": "19008ac5c7f2cce54240ef07e47b50d1603c72af088567a28b78c200ff9e063a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

@@ -1,0 +1,395 @@
+# .sinkra/methodology/v5/ontology.yaml — Canonical entity ontology (V5 framework)
+# Generated for STORY-181.W1.7 (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY D-C). LOCAL governance artifact.
+# Consumed by sinkra-squad-creator-mapear (W3.2) + gate D-C in scripts/validate-forge-contract.js.
+schema_version: '1.0'
+created_at: '2026-06-15'
+source_stem: sp_sinkra_hub_stem
+source_stem_path: .sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.json
+source_adr: docs/architecture/sinkra-hub/ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY.md
+note_d_b: >-
+  D-B (dois stems separados) SUPERSEDED 2026-06-15 — stem unificado sp_sinkra_hub_stem.
+  entity_skill/entity_task/entity_leaf são a MESMA entidade-schema universal (não homônimos).
+framework_entity_types:
+  - entity_skill
+  - entity_agent
+  - entity_leaf
+  - entity_task
+  - entity_squad
+  - entity_branch
+  - executor
+coverage_note: >-
+  entity_types[] cobre os 7 tipos do framework (full) + 19 tipos de governança/negócio do hub-stem (lighter,
+  framework_type:false) — total cobre os 25 entity_types do hub-stem para o gate D-C.
+entity_types:
+  - name: entity_skill
+    stem_name: Skill
+    framework_type: true
+    description: >-
+      Representação LOCAL de uma skill executável (SKILL.md + config.yaml + tasks/*.md). Materializa um leaf do branch
+      como artefato invocável; é a entidade-instanciada de um leaf.
+    fields:
+      - name: skill_id
+        type: string
+        required: true
+      - name: executor
+        type: executor_ref
+        required: true
+      - name: context
+        type: enum(inline|fork|conversation)
+        required: true
+      - name: target_v5_leaf
+        type: string
+        required: false
+        note: liga a skill ao leaf que ela materializa (self-hosting evidence)
+      - name: tasks
+        type: array<entity_task>
+        required: false
+    maturity_states: []
+    maturity_note: skills não têm maturity própria; a maturity é da entity_task que a skill executa.
+  - name: entity_agent
+    stem_name: Agent
+    framework_type: true
+    description: Agente executor com role + persona + authority boundary. Resolve para um subagent_type via squads/INDEX.json.
+    fields:
+      - name: agent_id
+        type: string
+        required: true
+      - name: role
+        type: string
+        required: true
+      - name: persona_ref
+        type: string
+        required: false
+      - name: authority
+        type: array<string>
+        required: false
+        note: exclusive operations (ver agent-authority.md)
+      - name: squad
+        type: string
+        required: false
+    maturity_states: []
+    maturity_note: lifecycle completo em branch_agent_lifecycle (definição→ativação→materialização→suspensão→aposentadoria).
+  - name: entity_leaf
+    stem_name: Leaf (Sub-skill)
+    framework_type: true
+    description: Unidade de lifecycle / QG que AGRUPA tasks dentro de um branch. Pode ser materializada como sinkra-leaf-* skill.
+    fields:
+      - name: leaf_id
+        type: string
+        required: true
+      - name: in_branch
+        type: branch_ref
+        required: true
+      - name: tasks
+        type: array<entity_task>
+        required: true
+      - name: gate
+        type: gate_object
+        required: false
+      - name: transition
+        type: string
+        required: false
+        note: status do branch que este leaf libera ao concluir
+    maturity_states: []
+  - name: entity_task
+    stem_name: Task (Atômica)
+    framework_type: true
+    description: >-
+      Unidade atômica de trabalho dentro de um leaf — 1 verbo, ≤1 artefato output (sinkra-pipeline-canon R15). Quem
+      executa é declarado por task (executor).
+    fields:
+      - name: task_id
+        type: string
+        required: true
+      - name: executor
+        type: executor_ref
+        required: true
+      - name: inputs
+        type: array
+        required: false
+      - name: outputs
+        type: array
+        required: false
+        note: ≤1 item type:artifact (R15 teto)
+      - name: how_to
+        type: how_to_object
+        required: false
+        note: null-safe V5.1; how_to.populated_by registra quem/o que populou
+      - name: acceptance_criteria
+        type: array<string>
+        required: false
+      - name: depends_on
+        type: array<task_ref>
+        required: false
+    maturity_states:
+      - mapeado
+      - gerado
+      - em_aprovacao
+      - aprovado
+    maturity_note: >-
+      Alinhado ao schema V5.1: a transição gerado→em_aprovacao corresponde a task_object.how_to.populated_by preenchido
+      (.claude/skills/sinkra-pipeline/data/sinkra-output-v5-schema.json
+      $defs.task_object.properties.how_to.properties.populated_by).
+  - name: entity_squad
+    stem_name: Squad
+    framework_type: true
+    description: Conjunto de agents + skills agrupados por domínio, sob governança SINKRA.
+    fields:
+      - name: squad_id
+        type: string
+        required: true
+      - name: agents
+        type: array<entity_agent>
+        required: true
+      - name: skills
+        type: array<entity_skill>
+        required: true
+      - name: domain
+        type: string
+        required: false
+    maturity_states: []
+  - name: entity_branch
+    stem_name: Branch (Squad Orquestrador)
+    framework_type: true
+    description: >-
+      Processo mapeado de um entity_type — status_machine + leafs. O branch orquestrador agrupa os leafs do lifecycle de
+      uma entidade.
+    fields:
+      - name: branch_id
+        type: string
+        required: true
+      - name: status_machine
+        type: status_machine
+        required: true
+      - name: leafs
+        type: array<entity_leaf>
+        required: true
+      - name: entity_type
+        type: string
+        required: false
+        note: o tipo de entidade cujo lifecycle este branch mapeia
+    maturity_states: []
+  - name: executor
+    stem_name: null
+    framework_type: true
+    description: >-
+      Binding de um agent_id + role + type. NÃO é um entity_type do hub-stem — é o sub-tipo de atribuição consumido por
+      cada entity_task.
+    fields:
+      - name: id
+        type: string
+        required: true
+        note: executor/agent id resolvível a uma row executors no seed
+      - name: role
+        type: string
+        required: false
+      - name: type
+        type: enum
+        required: true
+    executor_types:
+      - agent
+      - clone
+      - worker
+      - human
+    executor_types_note: >-
+      Conjunto canônico V5 = {agent, clone, worker, human} (schema V5.1 + scripts/validate-forge-contract.js
+      EXECUTOR_TYPES + agentes sinkra-squad-creator). NOTA: AC-2 da STORY-181.W1.7 citou 'human, worker, hybrid';
+      'hybrid' NÃO é um executor type canônico — divergência resolvida via Reality-First/No-Invention.
+    maturity_states: []
+  - name: entity_epic
+    stem_name: Epic
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Epic"). NÃO é um dos 7 tipos de entidade do framework (lens de resolução
+      do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_wave
+    stem_name: Wave
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Wave"). NÃO é um dos 7 tipos de entidade do framework (lens de resolução
+      do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_story
+    stem_name: Story
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Story"). NÃO é um dos 7 tipos de entidade do framework (lens de resolução
+      do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_pr
+    stem_name: PR
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("PR"). NÃO é um dos 7 tipos de entidade do framework (lens de resolução do
+      sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_deploy
+    stem_name: Deploy
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Deploy"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_product_sot
+    stem_name: Product SOT
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Product SOT"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_adr
+    stem_name: ADR
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("ADR"). NÃO é um dos 7 tipos de entidade do framework (lens de resolução
+      do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_constitution
+    stem_name: Constitution
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Constitution"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_learning
+    stem_name: Learning
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Learning"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_knowledge
+    stem_name: Knowledge
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Knowledge"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_rule
+    stem_name: Rule
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Rule"). NÃO é um dos 7 tipos de entidade do framework (lens de resolução
+      do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_change_contract
+    stem_name: Change Contract
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Change Contract"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_log
+    stem_name: Log
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Log"). NÃO é um dos 7 tipos de entidade do framework (lens de resolução
+      do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_memoria
+    stem_name: Memoria
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Memoria"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_domain_synapse
+    stem_name: Domain SYNAPSE
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Domain SYNAPSE"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_metodologia_sinkra
+    stem_name: Metodologia SINKRA
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Metodologia SINKRA"). NÃO é um dos 7 tipos de entidade do framework (lens
+      de resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_processo_sinkra
+    stem_name: Processo SINKRA
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Processo SINKRA"). NÃO é um dos 7 tipos de entidade do framework (lens de
+      resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_instancia_do_processo
+    stem_name: Instância do Processo
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Instância do Processo"). NÃO é um dos 7 tipos de entidade do framework
+      (lens de resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+  - name: entity_sinkra_squad_creator_run
+    stem_name: Sinkra Squad Creator Run
+    framework_type: false
+    category: governance
+    description: >-
+      Tipo de governança/negócio do hub-stem ("Sinkra Squad Creator Run"). NÃO é um dos 7 tipos de entidade do framework
+      (lens de resolução do sinkra-squad-creator-mapear). Coberto aqui para satisfazer o gate D-C
+      (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY).
+    fields: []
+    maturity_states: []
+status_machine:
+  description: Schema auxiliar do campo status_machine em branch_process / entity_branch (não é um entity_type).
+  fields:
+    - name: states
+      type: array
+      items: string
+    - name: transitions
+      type: array
+      items:
+        from: string
+        to: string
+        trigger: string
+    - name: initial_state
+      type: string

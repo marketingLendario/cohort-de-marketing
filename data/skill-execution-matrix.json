@@ -1,0 +1,455 @@
+{
+  "schemaVersion": "1.0.0",
+  "skills": [
+    {
+      "id": "comecar",
+      "family": "environment",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "environment-bootstrap",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/environment-bootstrap/service.test.ts",
+        "server/skill-cli.test.ts",
+        "src/components/system-readiness.test.tsx",
+        "e2e/story-9-w1-onboarding.mjs",
+        "e2e/epic-11-setup-status-parity.mjs",
+        "design-qa-evidence/epic-11/setup-status-parity/evidence.json"
+      ]
+    },
+    {
+      "id": "avatar-funil",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "design-qa-evidence/epic-11/external-research-live/evidence.json",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-avatar-final/evidence.json"
+      ]
+    },
+    {
+      "id": "espiao-do-concorrente",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-espiao-final/evidence.json"
+      ]
+    },
+    {
+      "id": "trend-hunting",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "design-qa-evidence/epic-11/external-research-live/evidence.json",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-trend-final4/evidence.json"
+      ]
+    },
+    {
+      "id": "swipe-file",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-swipe-final2/evidence.json"
+      ]
+    },
+    {
+      "id": "offerbook",
+      "family": "document",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/approval.integration.test.ts",
+        "server/document-pack/renderers.integration.test.ts",
+        "e2e/epic-11-book-visual.mjs",
+        "e2e/epic-11-document-pack-parity.mjs",
+        "src/components/project-journey.test.tsx"
+      ]
+    },
+    {
+      "id": "design-md",
+      "family": "brand",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "brand-design",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/brand-design/preview.test.ts",
+        "e2e/epic-11-visual-production.mjs",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/visual-production-live/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-design-url-final2/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-design-moodboard-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "metodo-funil",
+      "family": "document",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-metodo/evidence.json"
+      ]
+    },
+    {
+      "id": "copy-funil",
+      "family": "document",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/approval.integration.test.ts",
+        "e2e/epic-11-document-pack-parity.mjs",
+        "src/components/project-journey.test.tsx"
+      ]
+    },
+    {
+      "id": "vsl-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-vsl-final/evidence.json"
+      ]
+    },
+    {
+      "id": "advertorial-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-advertorial-final/evidence.json"
+      ]
+    },
+    {
+      "id": "lancamento-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-lancamento-final2/evidence.json"
+      ]
+    },
+    {
+      "id": "webinario-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-webinario-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "quiz-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-quiz-final/evidence.json"
+      ]
+    },
+    {
+      "id": "pagina-vendas-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/approval.integration.test.ts",
+        "server/document-pack/sales-page-validator.test.ts",
+        "e2e/epic-11-sales-page-production.mjs",
+        "e2e/epic-11-cli-panel-handoff.mjs",
+        "e2e/epic-11-document-pack-parity.mjs",
+        "design-qa-evidence/epic-11/cli-sales-page-real-evidence.json",
+        "src/components/project-journey.test.tsx"
+      ]
+    },
+    {
+      "id": "conteudo-funil",
+      "family": "acquisition",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "server/external-research/transcription.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-content-media-final5/evidence.json"
+      ]
+    },
+    {
+      "id": "criativos-funil",
+      "family": "visual",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "visual-production",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/visual-production/runner.test.ts",
+        "src/components/visual-production-review.test.tsx",
+        "e2e/epic-11-visual-production.mjs",
+        "design-qa-evidence/epic-11/visual-production-live/evidence.json"
+      ]
+    },
+    {
+      "id": "email-funil",
+      "family": "communication",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-email-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "whatsapp-funil",
+      "family": "communication",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-whatsapp-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "mockup-produto-funil",
+      "family": "visual",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "visual-production",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/visual-production/runner.test.ts",
+        "server/creative-factory/creative-factory.test.ts",
+        "src/components/visual-production-review.test.tsx",
+        "e2e/epic-11-visual-production.mjs",
+        "design-qa-evidence/epic-11/visual-production-live/evidence.json"
+      ]
+    },
+    {
+      "id": "bonus-funil",
+      "family": "support",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-bonus-final/evidence.json"
+      ]
+    },
+    {
+      "id": "recuperacao-funil",
+      "family": "backend",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-recuperacao-final4/evidence.json"
+      ]
+    },
+    {
+      "id": "backend-funil",
+      "family": "backend",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-backend-final2/evidence.json"
+      ]
+    },
+    {
+      "id": "cro-funil",
+      "family": "optimization",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-cro-final/evidence.json"
+      ]
+    },
+    {
+      "id": "status-funil",
+      "family": "utility",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "project-status",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/project-status/service.test.ts",
+        "server/project-status/status.test.ts",
+        "server/skill-cli.test.ts",
+        "src/lib/project-status.test.ts",
+        "src/components/project-overview.tsx",
+        "e2e/epic-11-setup-status-parity.mjs",
+        "design-qa-evidence/epic-11/setup-status-parity/evidence.json"
+      ]
+    },
+    {
+      "id": "zelador",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "briefista",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "estruturador",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "leitor-de-metricas",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "diagnosticador",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "ads-creative-factory",
+      "family": "traffic-creative",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "creative-factory",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/epic-10-field-validation.mjs",
+        "server/creative-factory/creative-factory.test.ts"
+      ]
+    }
+  ]
+}

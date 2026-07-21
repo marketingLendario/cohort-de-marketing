@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T17:08:26.130Z",
+  "lane": {
+    "type": "controlled-contract",
+    "runner": "deterministic-local-fixture",
+    "codexRealEquivalent": false,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "A geracao textual e controlada e nao substitui a lane separada com Codex CLI real."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "metodo-funil"
+    ],
+    "catalogHash": "1e4b27700d2cb29c1497050b7d6a9aea32986d1c9566bb492b4b919a7d1728f9"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "metodo-funil",
+      "contractGroup": "owner-document",
+      "contractHash": "4581c542eb7001e4df4781abd5fdaaf9593962760bcbca56938b6f96d046da5d",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "funil.html",
+          "funil.md",
+          "funil.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 476,
+            "hash": "4652f3ad9048508fad296179b744cb9d9c645aa92374fc337d61074df8f87a07",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3663,
+            "hash": "5eb78d581f3f3beefb5e8ce6046b7901928a55051b574309d46f134c3e30cbe1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "funil.html",
+          "funil.md",
+          "funil.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 474,
+            "hash": "4d059ac8d819860c6556c7a024a7ecd08647af6cbe6a7c72ce91f7af236b1eb8",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3661,
+            "hash": "d0a471f7cce39c8009fecafaf8cbb1765908b0a5a329f39e14b93ed04a62fe2d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

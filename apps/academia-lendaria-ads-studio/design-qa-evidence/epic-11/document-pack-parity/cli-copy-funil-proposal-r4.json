@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "copy-funil",
+  "jobId": "fa125243-d3cc-4760-a7f2-d46ef6ada735",
+  "skillRunId": "5ffc27b3-9ab6-43c8-9a61-3299f3d6f146",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "2ee064debb78130817e028c58ef5d5995cd72cf1340e9e6ab8bb55364a71a85c",
+  "proposal": {
+    "fields": [],
+    "summary": "",
+    "warnings": [],
+    "artifacts": [],
+    "questions": [
+      "Checkpoint obrigatório da Fase 3. Você aprova estas 5 headlines para teste?\n1. Como parar de recomeçar toda segunda-feira e construir uma rotina mais sustentável ao longo de 90 dias\n2. Se você já tentou de tudo, talvez tenha faltado uma etapa dedicada a manter o que começou\n3. O Ciclo de 3 Fases para quem cansou de perder o ritmo e começar tudo de novo\n4. Toda segunda-feira parece um novo começo? Descubra qual parte da sua rotina costuma ficar sem continuidade\n5. Uma rotina possível de continuar começa com três fases: Desinflamar, Reprogramar e Manter\nResponda “aprovo” ou indique os números e ajustes desejados.",
+      "Você aprova estes 15 bullets para o banco principal?\n1. Entenda por que tentativas que terminam antes da manutenção podem alimentar o Ciclo do Recomeço. [reason-why]\n2. Descubra como o Ciclo de 3 Fases organiza início, repetição guiada e manutenção. [mecanismo]\n3. Conheça a etapa dedicada a continuar quando a motivação inicial diminui. [curiosidade]\n4. Veja como transformar o próximo começo em uma rotina com continuidade planejada. [benefício]\n5. Identifique qual parte da sua rotina costuma quebrar antes de você recomeçar. [autodiagnóstico]\n6. Entenda por que depender apenas de intensidade pode dificultar a continuidade. [reason-why]\n7. Conheça uma proposta de 90 dias voltada à construção gradual de hábitos. [especificidade]\n8. Use o Checklist semanal anti-sanfona para acompanhar sua rotina ao longo do programa. [praticidade]\n9. Organize a primeira fase com o Workbook Fase 1, conforme o conteúdo que ainda será validado. [transparência]\n10. Consulte o E-book Anti-Sanfona como material complementar durante o ciclo. [valor agregado]\n11. Conte com um plano prático dividido em três fases sequenciais. [clareza]\n12. Participe da Comunidade Consistência conforme regras, canal e período de acesso ainda pendentes. [honestidade]\n13. Escolha uma abordagem que inclui manutenção desde o desenho do programa. [diferenciação]\n14. Construa uma relação menos punitiva com a rotina, sem promessa de resultado individual. [esperança ética]\n15. Comece com 30 dias de garantia e devolução integral conforme os termos da oferta. [redução de risco]\nResponda “aprovo” ou indique os números e ajustes desejados."
+    ],
+    "resultMarkdown": ""
+  }
+}

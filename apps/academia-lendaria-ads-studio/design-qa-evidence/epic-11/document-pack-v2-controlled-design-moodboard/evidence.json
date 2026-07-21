@@ -1,0 +1,257 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T18:11:32.984Z",
+  "lane": {
+    "type": "controlled-contract",
+    "runner": "deterministic-local-fixture",
+    "codexRealEquivalent": false,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "A geracao textual e controlada e nao substitui a lane separada com Codex CLI real."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "design-md"
+    ],
+    "catalogHash": "c403ff10bd2397810155f69ebbffb06ea597c54be4bb10f99796c2e6c187e965"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "design-md",
+      "contractGroup": "brand-system",
+      "contractHash": "7f9fe686a213c16acf55179aa7d7f57a44b96fec07750e0bbd89e544014013cb",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "DESIGN.md",
+          "book-do-funil.json",
+          "index.html",
+          "preview.html",
+          "tokens.json"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 464,
+            "hash": "bb221c1634c3889847736e1894f56a3e2f436b83b5cc0fdbed48e42079618343",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN-v1.md",
+            "format": "markdown",
+            "bytes": 251,
+            "hash": "3598f60e85c328d92da68af15b2304ffe2422f40e5fdb71b2263e5bfa6432f1d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN.md",
+            "format": "markdown",
+            "bytes": 251,
+            "hash": "3598f60e85c328d92da68af15b2304ffe2422f40e5fdb71b2263e5bfa6432f1d",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3634,
+            "hash": "b3c1bfaef09dcf5b4d88ad485640302af18dfa7559aa04f03c2ecb1201f9af58",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview-v1.html",
+            "format": "html",
+            "bytes": 2351,
+            "hash": "8506743b732125cdad7f255511104315de7a37877a4ac1d80a874f03759e3e18",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview.html",
+            "format": "html",
+            "bytes": 2351,
+            "hash": "8506743b732125cdad7f255511104315de7a37877a4ac1d80a874f03759e3e18",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/design-md/snapshot-348dd513a10714f1.json",
+            "format": "json",
+            "bytes": 1109,
+            "hash": "caf135cbbf00d9dc8f08ddcaa5aabbf4a095c4cb464bcb0ca61f869d82c15ab2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens-v1.json",
+            "format": "json",
+            "bytes": 242,
+            "hash": "cae4dbb6c24ec48bf611a99a5ff36d5a5747d9b2baacd1102efb4fc579f0cf74",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens.json",
+            "format": "json",
+            "bytes": 242,
+            "hash": "cae4dbb6c24ec48bf611a99a5ff36d5a5747d9b2baacd1102efb4fc579f0cf74",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "DESIGN.md",
+          "book-do-funil.json",
+          "index.html",
+          "preview.html",
+          "tokens.json"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 462,
+            "hash": "e16c0085601bb5df626df4df11cbbfd0a769a5b036bc670d9fbf7a3b41f5ba4f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN-v1.md",
+            "format": "markdown",
+            "bytes": 251,
+            "hash": "3598f60e85c328d92da68af15b2304ffe2422f40e5fdb71b2263e5bfa6432f1d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN.md",
+            "format": "markdown",
+            "bytes": 251,
+            "hash": "3598f60e85c328d92da68af15b2304ffe2422f40e5fdb71b2263e5bfa6432f1d",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3632,
+            "hash": "cfc0bfcdd548436a4060de9780c7e93ee298ab7c24db205b7eae2677109b73c0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview-v1.html",
+            "format": "html",
+            "bytes": 2351,
+            "hash": "8506743b732125cdad7f255511104315de7a37877a4ac1d80a874f03759e3e18",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview.html",
+            "format": "html",
+            "bytes": 2351,
+            "hash": "8506743b732125cdad7f255511104315de7a37877a4ac1d80a874f03759e3e18",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/design-md/snapshot-d9113dba790648c0.json",
+            "format": "json",
+            "bytes": 1109,
+            "hash": "f5774096f6d377e6b7b3214b8f43210ca80828b446a593c991409aa5fe2269ba",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens-v1.json",
+            "format": "json",
+            "bytes": 242,
+            "hash": "cae4dbb6c24ec48bf611a99a5ff36d5a5747d9b2baacd1102efb4fc579f0cf74",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens.json",
+            "format": "json",
+            "bytes": 242,
+            "hash": "cae4dbb6c24ec48bf611a99a5ff36d5a5747d9b2baacd1102efb4fc579f0cf74",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

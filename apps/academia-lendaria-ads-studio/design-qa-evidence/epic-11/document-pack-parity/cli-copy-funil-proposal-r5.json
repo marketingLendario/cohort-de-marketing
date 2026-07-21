@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "copy-funil",
+  "jobId": "cd467686-b76d-40b2-b832-4c888e8f015c",
+  "skillRunId": "5aa96ea3-5e3f-4c62-815d-ef219e356797",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "2ee064debb78130817e028c58ef5d5995cd72cf1340e9e6ab8bb55364a71a85c",
+  "proposal": {
+    "fields": [
+      {
+        "key": "fase_3",
+        "value": "aprovada"
+      },
+      {
+        "key": "offerbook",
+        "value": "aprovação final pendente"
+      },
+      {
+        "key": "compliance",
+        "value": "responsável técnico, registro e liberação regulatória pendentes"
+      },
+      {
+        "key": "pack",
+        "value": "não gerado"
+      }
+    ],
+    "summary": "Pack final bloqueado pelo gate do Offerbook e de compliance.",
+    "warnings": [
+      "Nicho regulado de saúde: a copy deve permanecer em linguagem de possibilidade, sem promessa de emagrecimento, cura ou resultado garantido.",
+      "Nenhuma prova real foi fornecida; depoimentos, cases, credenciais e números de resultado não podem ser inventados.",
+      "Aprovação da Fase 3 não substitui os gates anteriores registrados no Offerbook."
+    ],
+    "artifacts": [],
+    "questions": [
+      "O dono da oferta aprovou formalmente o Offerbook final, campo a campo?",
+      "Qual é o nome do responsável técnico, seu registro profissional e o órgão ou conselho aplicável?",
+      "O responsável técnico e o jurídico/compliance liberaram a elaboração desta fundação de copy para revisão humana? Responda separadamente para cada aprovação."
+    ],
+    "resultMarkdown": "A Fase 3 está aprovada: as 5 headlines e os 15 bullets foram aceitos. Porém, o `offerbook.md` fornecido permanece como proposta não aprovada e determina explicitamente que a copy não seja liberada antes da aprovação do dono da oferta, da identificação do responsável técnico e da validação regulatória. Por isso, `copy.md` e `copy.html` não foram produzidos."
+  }
+}

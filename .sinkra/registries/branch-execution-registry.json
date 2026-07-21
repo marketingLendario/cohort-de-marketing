@@ -1,0 +1,185 @@
+{
+  "$schema": "branch-execution-registry-v1",
+  "schema_version": "1.0.0",
+  "description": "Histórico de TODAS execuções do branch_processo_sinkra_lifecycle (/sinkra-pipeline V5) | 2026-06-15: UNIFICAÇÃO — self-model + sinkra-squad-creator absorvidos em sp_sinkra_hub_stem (R18 P1, merge-in-place).",
+  "created_at": "2026-06-08T00:00:00Z",
+  "last_updated": "2026-07-15T19:24:24Z",
+  "branches": [
+    {
+      "run_id": "run-lancamento-pago-20260715",
+      "process_id": "sp_lancamento_pago_workspace",
+      "process_type": "workspace",
+      "scope": "company",
+      "company": "agnostic-methodology",
+      "target_entity": null,
+      "objective": "CREATE workspace agnóstico sp_lancamento_pago_workspace — metodologia Lançamento Pago (Mecanismo Corredor Polonês, Leandro Ferrari) mapeada como processo SINKRA reutilizável para qualquer negócio. Parâmetros por negócio (expert, produto, preços, datas, distribuição de verba) viram inputs/variáveis do processo (R18 P3 --new-workspace confirmado pelo founder via AskUserQuestion 2026-07-15).",
+      "narrative_sources": [
+        "~/Documents/lancamento-corredor-polones/ (playbook extraído: README.md + dados-lancamento.yaml + 7 fases, 130 atividades com IDs estáveis PRE/PREP/ATR/CAP/EVT/CAR/POS)"
+      ],
+      "mode": "executor-directed (R13 P1.b document-narrative-first)",
+      "status": "completed",
+      "created_at": "2026-07-15T16:58:27Z",
+      "last_updated": "2026-07-15T19:24:24Z",
+      "stages_completed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "next_stage": null,
+      "stage_1_output_ref": ".sinkra/state/run-lancamento-pago-20260715/stage-descobrir-output.json",
+      "stage_2_output_ref": ".sinkra/state/run-lancamento-pago-20260715/stage-definir-tasks-output.json",
+      "stage_3_output_ref": ".sinkra/state/run-lancamento-pago-20260715/stage-validar-qualidade-output.json",
+      "workspace_output_ref": ".sinkra/state/run-lancamento-pago-20260715/sinkra-output.json"
+    },
+    {
+      "branch_id": "br-sinkra-hub-stem-20260612",
+      "process_id": "sp_sinkra_hub_stem",
+      "process_type": "stem",
+      "scope": "company",
+      "company": "sinkra-hub",
+      "target_branch": "branch_sdc_lifecycle",
+      "objective": "CREATE stem sp_sinkra_hub_stem com foco no branch_sdc_lifecycle — processo completo de desenvolvimento: /sinkra-governance-pipeline → /sinkra-wave-execute → /sinkra-full-cycle + sub-skills (validate/develop/review/deploy/verify/close/push) + Wave Conductor system",
+      "narrative_sources": [
+        "docs/architecture/SOT-wave-conductor-system.md",
+        "docs/architecture/SOT-wave-conductor-system (1).md",
+        "docs/architecture/ADR-MULTI-CLI-EPIC-LOOP-HARNESS.md",
+        "docs/architecture/ADR-SELF-IMPROVEMENT-LOOP.md",
+        ".claude/rules/ (orchestration-telemetry, conductor-decision-routing, skill-agnosticism, bounded-autonomy-levels, story-lifecycle, worktree-isolation)",
+        ".claude/skills/sinkra-* (full-cycle, wave-execute, validate, develop, review, close, deploy, verify, push, governance-pipeline)",
+        "docs/stories/epic-*/ (exemplares reais R14)"
+      ],
+      "status": "completed",
+      "created_at": "2026-06-12T00:00:00Z",
+      "last_updated": "2026-06-15T12:46:49.461Z",
+      "leafs_completed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "next_leaf": null,
+      "stem_output_ref": ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.json",
+      "unification_20260615": {
+        "absorbed_branches": [
+          "branch_processo_sinkra_lifecycle (self-model)",
+          "branch_sinkra_squad_creator_lifecycle (ex-forja; leaf_publicar→ev_publication_gateway)"
+        ],
+        "schema_version": "5.1.0",
+        "entity_types": 25,
+        "branches": 20,
+        "relationships": 52,
+        "event_processes": 3,
+        "supersedes": "ADR-FORGE-ONTOLOGY-CANONICA D-B/Alt-1 (errata 2026-06-15)",
+        "provenance": [
+          ".sinkra/state/br-sinkra-self-20260605 (sp_sinkra_pipeline_v3)",
+          "/Users/Perfil1/Workspaces/Allfluence/allfluence/.sinkra/state/br-sinkra-self-20260605 (byte-idêntico)"
+        ],
+        "backup": ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.pre-unification-20260615.json.bak"
+      }
+    },
+    {
+      "branch_id": "br-synapse-context-20260612",
+      "process_id": "sp_sinkra_hub_stem",
+      "process_type": "stem",
+      "scope": "company",
+      "company": "sinkra-hub",
+      "target_branch": "branch_knowledge_governance_subsystem",
+      "objective": "ENRIQUECIMENTO do stem (R18 merge in-place): subsistema de governança de conhecimento/contexto — 2 raízes (Constitution prescritiva + Learning empírica) + conversor de promoção (anti-pattern ≥3x → rule) + Rule dual-parent + Digest/Domain SYNAPSE/Memória + ativação de contexto (144k→~18k ambiente)",
+      "narrative_sources": [
+        ".sinkra/extraction/synapse-context-system-20260612/synapse-narrative.md",
+        ".aiox-core/core/synapse/ (engine L0-L7)",
+        ".sinkra/learning/ + V5-LEARNING-LOOP-SPEC.md",
+        "squads/squad-creator-pro/minds/*/heuristics/ (PV_KE_*, decision-cards)",
+        ".aiox-core/constitution.md + constitution-compact.md"
+      ],
+      "status": "completed",
+      "created_at": "2026-06-12T18:30:00Z",
+      "last_updated": "2026-06-15T12:46:49.461Z",
+      "leafs_completed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "next_leaf": null,
+      "note": "Já absorvido no stem oficial antes da unificação (entity_knowledge/rule/change_contract/agent/log/memoria/domain_synapse/constitution/learning + branches presentes). Status reconciliado para completed."
+    },
+    {
+      "branch_id": "br-sinkra-self-forja-20260614",
+      "process_id": "sp_sinkra_hub_stem",
+      "process_type": "stem",
+      "scope": "company",
+      "target_branch": "branch_sinkra_squad_creator_lifecycle",
+      "stem_output_ref": ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.json",
+      "objective": "Reconcile V4->V5 + expand sp_sinkra_pipeline_v3 with branch_forja_lifecycle (the Forge)",
+      "status": "absorbed",
+      "created_at": "2026-06-14T17:00:00Z",
+      "last_updated": "2026-06-15T12:46:49.461Z",
+      "leafs_completed": [
+        1,
+        2,
+        3
+      ],
+      "next_leaf": null,
+      "absorbed_into": "sp_sinkra_hub_stem",
+      "absorbed_at": "2026-06-15T12:46:49.461Z",
+      "note": "R18 fork reconciliado (era sp_sinkra_pipeline_v3). Leaf 4 segurado absorvido na unificação; leaf_publicar extraído para ev_publication_gateway; forge→sinkra-squad-creator no canônico."
+    },
+    {
+      "branch_id": "br-adr-enrichment-20260620",
+      "process_id": "sp_sinkra_hub_stem",
+      "process_type": "stem",
+      "scope": "company",
+      "company": "sinkra-hub",
+      "target_branch": "branch_adr_lifecycle",
+      "objective": "ENRIQUECIMENTO (R18 merge in-place) do branch_adr_lifecycle: hierarchy operational→tactical; status-machine alinhada ao enum adr-frontmatter.md (draft→proposed→approved→superseded|deprecated|rejected); 9 leafs (8 fases de criação do gold-standard §4 + 1 pós-aprovação); 31 tasks; 11 gates (G0–G7 leaf + 2 branch). Sub-ADR spawn via complements (não pending_branch_inputs — R13 P6 reserva pending a operational).",
+      "narrative_sources": [
+        "docs/architecture/sinkra-hub/gold-standard-adr-creation.md §4 (origin/main commit c5b4952725)",
+        ".claude/rules/adr-frontmatter.md (enum status + schema P6)",
+        "docs/architecture/sinkra-hub/ (73 ADRs reais — R14)"
+      ],
+      "status": "completed",
+      "created_at": "2026-06-20T17:01:49.422Z",
+      "last_updated": "2026-06-20T17:01:49.422Z",
+      "leafs_completed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "next_leaf": null,
+      "stem_output_ref": ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.json",
+      "mode": "executor-directed-enrichment (modo A)",
+      "validation": "AJV PASS (validate-example-v5.js) — merge cirúrgico (só entity_adr + branch_adr_lifecycle; 25 entity_types / 20 branches preservados)",
+      "backup": ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.pre-adr-enrichment-20260620.json.bak"
+    },
+    {
+      "branch_id": "br-cross-epic-wave-gov-20260628",
+      "process_id": "sp_sinkra_hub_stem",
+      "process_type": "stem",
+      "scope": "company",
+      "company": "sinkra-hub",
+      "target_branch": "entity_analyzer_cross_epic + enrich(entity_epic,entity_wave,entity_story)",
+      "objective": "ENRIQUECIMENTO (R18 merge in-place) — governanca de desenvolvimento cross-epic: 2 relacoes de 1a classe (DependenciaLogica declarada + ConflitoFisico detectada), entity_analyzer_cross_epic transversal (Bee+Reactor §9), 2 sistemas protetores (CONTINUO authoring-time + EVENT-DRIVEN gate-time), cascade + feedback->spawn, gaps A/B/C -> capability_gaps. Enriquece stages de entity_epic/wave/story.",
+      "narrative_sources": [
+        ".sinkra/extraction/cross-epic-wave-governance-20260628/mapping-brief.md"
+      ],
+      "status": "completed",
+      "created_at": "2026-06-28T20:23:44.145Z",
+      "last_updated": "2026-06-28T21:08:42.777Z",
+      "leafs_completed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "next_leaf": null,
+      "stem_output_ref": ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.json",
+      "mode": "executor-directed-enrichment (modo A)",
+      "validation": "AJV PASS (validate-example-v5.js) — merge-in-place: +1 entity_type, +3 event_processes, +3 gates, +6 relationships, +3 capability_gaps; 25 entity_types/52 relationships preservados",
+      "schema_change": "relationship_object.type.enum += physical_conflict (aditivo, backward-compat)",
+      "backup": ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.pre-cross-epic-gov-20260628.json.bak"
+    }
+  ]
+}

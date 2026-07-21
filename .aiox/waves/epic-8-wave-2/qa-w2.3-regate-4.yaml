@@ -1,0 +1,162 @@
+story: "8.W2.3"
+base_sha: "278d671470db295fbada8f725c75cb37f593f83f"
+date: "2026-07-10"
+reviewer: "@qa independente via Codex CLI local"
+verdict: BLOCK
+scope:
+  mode: read-only
+  reviewed: >
+    Story integral, diff local completo desde o base SHA, worker filesystem,
+    client de sessões, materializer, saga/outbox, migration/RPC/trigger,
+    repository, BFF e UI, além dos relatórios QA anteriores da wave.
+  worktree_changes: >
+    Nenhum arquivo de código, teste, story ou migration foi editado pelo QA.
+    O diff da story já estava presente no início da auditoria.
+
+commands:
+  - command: "npx vitest run server/__tests__/artifact-materializer.test.ts server/artifact-approval.test.ts src/lib/artifact-approval.test.ts src/components/artifact-approval-review.test.tsx src/lib/project-repository.test.ts src/hooks/use-project-workspace.test.ts src/stores/project-store.test.ts"
+    exit: 0
+    status: PASS
+    evidence: "125 tests / 7 files"
+  - command: "npm test"
+    exit: 0
+    status: PASS
+    evidence: "238 tests / 28 files"
+  - command: "npm run lint"
+    exit: 0
+    status: PASS
+  - command: "npm run typecheck"
+    exit: 0
+    status: PASS
+    evidence: "catalog 30 skills / 40 edges; tsc -b"
+  - command: "npm run build"
+    exit: 0
+    status: PASS
+    evidence: "Vite production build"
+  - command: "npm run build:server"
+    exit: 0
+    status: PASS
+    evidence: "tsc -p tsconfig.server.json"
+  - command: "compiled helper runtime probe"
+    exit: 0
+    status: PASS
+    evidence: "dist/server worker used; read/write passed, slug symlink rejected, external=false"
+  - command: "supabase db reset --local --yes"
+    exit: 0
+    status: PASS
+    evidence: "fresh reset applied all migrations"
+  - command: "supabase db lint --local --level warning"
+    exit: 0
+    status: PASS
+    evidence: "No schema errors found"
+  - command: "supabase test db"
+    exit: 0
+    status: PASS
+    evidence: "4 files / 41 pgTAP tests"
+  - command: "git diff --check 278d671470db295fbada8f725c75cb37f593f83f"
+    exit: 0
+    status: PASS
+  - command: "independent real filesystem race: 4000 writes + 4000 reads, slug root alternated real directory/symlink externo"
+    exit: 0
+    status: PASS
+    evidence: "external=false; leaked=false; 2 write successes, 3998 rejected; 19 inside reads, 3981 null, 0 outside"
+  - command: "independent intermediate-directory race: 4000 writes + 4000 reads, external symlink and internal-directory symlink"
+    exit: 0
+    status: PASS
+    evidence: "externalWrite=false; internalWrite=false; externalRead=false; internalRead=false; 11 inside reads, 3989 null"
+  - command: "independent session/timer/reuse stress: 1000 concurrent writes across siblings, idle delays, 100 reuse writes and readback"
+    exit: 0
+    status: PASS
+    evidence: "1000/1000 initial writes; 100/100 reuse writes; wrong=false; missing=0; all sibling directories valid"
+  - command: "independent post-RG3 regression probe"
+    exit: 0
+    status: PASS
+    evidence: "a/x.md=A and b/y.md=B; missing/child.md returned null without mkdir; error then valid write succeeded; projectsRoot symlink worked; leaf O_NOFOLLOW rejected and external leaf unchanged"
+  - command: "real Supabase service-role saga integration"
+    exit: 0
+    status: PASS
+    evidence: "plan revision 1; outbox done; skill_run done; proposal_hash matched; artifact confirmed; filesystem content matched"
+  - command: "real authenticated forgery/RPC probe via docker psql"
+    exit: 0
+    status: PASS_WITH_FINDING
+    evidence: >
+      Direct done/hash/revision writes, direct needs_review proposal edit,
+      illegal transition, outbox insert, cross-tenant RPC membership and stale
+      RPC CAS were rejected. Valid RPC incremented revision 1->2; stale retry
+      was rejected; service_role terminal update succeeded. A separate direct
+      cross-tenant skill_run INSERT was accepted; see P1 finding.
+
+findings:
+  p0: []
+  p1:
+    - id: W23-RG4-P1-01
+      severity: P1
+      category: security / tenant-isolation / database-integrity
+      title: "authenticated consegue criar skill_run com workspace e projeto de tenants diferentes"
+      file: "apps/academia-lendaria-ads-studio/supabase/migrations/20260710120000_artifact-approval.sql"
+      lines: "43-46, 87-99; 129-133"
+      evidence:
+        - detail: >
+            A migration cria apenas índice único em
+            skill_runs(id, workspace_id, project_id), não uma FK composta que
+            amarre project_id ao workspace_id do projeto. A tabela mantém
+            somente project_id REFERENCES marketing_projects(id).
+        - detail: >
+            O grant de authenticated permite INSERT de workspace_id e
+            project_id, enquanto a policy herdada em
+            unified_marketing_project_domain.sql:208-211 verifica apenas
+            membership de workspace_id.
+        - detail: >
+            Reprodução real após reset fresco: sob SET LOCAL ROLE
+            authenticated, membro apenas de Tenant A, INSERT de
+            skill_runs(workspace_id=A, project_id=project-B, status=running)
+            retornou INSERT 0 1 e a linha foi lida com os dois IDs misturados.
+            A transação foi rollbackada.
+      impact: >
+        Um membro autenticado pode contaminar a fonte de verdade de skill_runs
+        com uma identidade cross-tenant. A RPC de revisão usa membership e CAS
+        sobre essa linha já inválida, e o BFF/service_role recebe uma run cujo
+        projeto pertence a outro tenant; o outbox composto posteriormente falha,
+        mas a inconsistência é criada antes disso e pode ser observada pelo
+        tenant que controla workspace_id. Isso viola a garantia de isolamento e
+        a precondição da saga, mesmo sem permitir um done direto.
+      required_fix: >
+        Adicionar uma FK composta em skill_runs
+        (project_id, workspace_id) REFERENCES marketing_projects(id, workspace_id)
+        usando o índice composto já criado, tratar/validar dados legados na
+        migration e adicionar pgTAP que tente INSERT authenticated com projeto
+        de outro workspace e espere 23503. Reforçar a RPC com a mesma relação
+        como defesa explícita, se a política de dados exigir.
+      decision: BLOCK
+  p2: []
+  p3:
+    - id: W23-RG4-P3-01
+      severity: P3
+      category: proposal-integrity / denial-of-service
+      title: "RPC aceita hash hexadecimal fornecido pelo caller sem recomputar o hash do payload"
+      evidence:
+        - file: "apps/academia-lendaria-ads-studio/supabase/migrations/20260710120000_artifact-approval.sql"
+          lines: "208-223"
+          detail: "A RPC valida formato, membership e CAS, mas não vincula criptograficamente p_proposal_hash a p_proposal."
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-approval.ts"
+          lines: "509-553"
+          detail: "O BFF recomputa o hash dos artifacts no plan/approve e rejeita a decisão stale/hash-mismatch; nenhum bypass terminal foi reproduzido."
+      impact: >
+        Um membro pode gravar temporariamente um hash falso via a RPC legítima
+        e causar stale/DoS da aprovação até uma nova edição, embora não consiga
+        concluir a saga nem forjar done. Não bloqueia este gate porque o BFF
+        mantém a validação autoritativa da aprovação.
+      recommendation: "Documentar a confiança da RPC ou validar no banco o hash canônico do payload quando o algoritmo puder ser reproduzido com segurança."
+
+residual_risks:
+  - "repairAll não possui claim/lease entre instâncias; os efeitos observados permanecem idempotentes/convergentes, mas trabalho redundante é possível (P3 já documentado)."
+  - "Histórico de artefatos continua versionado por artifactId, sem unicidade global por (project_id, path); supersessão histórica por path permanece fora desta story."
+  - "O suporte a projectsRoot como symlink/mount, O_NOFOLLOW na folha e contenção de intermediários passou nos probes source e compilado."
+
+exact_resume_point: >
+  Corrigir a integridade cross-tenant de skill_runs antes de novo gate:
+  migration com FK composta (project_id, workspace_id) ->
+  marketing_projects(id, workspace_id), tratamento de dados legados e pgTAP
+  de INSERT authenticated cross-tenant. Depois executar novamente reset fresco,
+  lint DB, pgTAP, todos os testes/builds, os harnesses concorrentes de 4000
+  tentativas e o probe real da saga service_role. Não fazer commit.

@@ -110,9 +110,11 @@ describe('skill-run worker', () => {
     const store = createInMemorySkillRunJobStore()
     const bus = createSkillRunEventBus()
     let attempt = 0
+    const retryReasons: Array<string | undefined> = []
     const flakyRunner: LocalSkillRunner = {
-      async run(skillId) {
+      async run(skillId, _input, options) {
         attempt += 1
+        retryReasons.push(options?.previousFailureReason)
         if (attempt === 1) throw new Error('primeira tentativa falhou')
         return proposalResult(skillId)
       },
@@ -130,6 +132,7 @@ describe('skill-run worker', () => {
     const record = await store.get(job.jobId)
     expect(record?.status).toBe('succeeded')
     expect(record?.attempt).toBe(2)
+    expect(retryReasons).toEqual([undefined, 'primeira tentativa falhou'])
     // Attempt audit: attempt #1 failed, attempt #2 succeeded.
     expect(record?.attempts.map((a) => a.status)).toEqual(['failed', 'succeeded'])
   })

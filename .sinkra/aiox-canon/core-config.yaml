@@ -1,0 +1,510 @@
+# =============================================================================
+# Sinkra Hub — Core Configuration v3.0.0
+# =============================================================================
+# Merged from: AIOX Stage v2.1.0 + AllFluence v2.2.0
+# Hub-specific: Multi-business context, 4 spokes, canonical .aiox-core/ path
+# =============================================================================
+
+markdownExploder: true
+project:
+  type: greenfield
+  installedAt: '2026-03-24T00:00:00Z'
+  version: 3.0.0
+user_profile: advanced
+
+# =============================================================================
+# IDE Configuration (from AIOX Stage — multi-IDE sync)
+# =============================================================================
+ide:
+  selected:
+    - claude-code
+    - codex
+    - antigravity
+  configs:
+    vscode: false
+    cursor: false
+    windsurf: false
+    zed: false
+    claude-desktop: false
+    claude-code: true
+
+# =============================================================================
+# MCP Configuration (from AllFluence — Docker Gateway enabled)
+# =============================================================================
+mcp:
+  enabled: true
+  configLocation: .mcp.json
+  docker_mcp:
+    enabled: true
+    gateway:
+      transport: http
+      url: http://localhost:8080/mcp
+      port: 8080
+      watch: true
+      service_file: .docker/mcp/gateway-service.yml
+    presets:
+      minimal:
+        servers:
+          - context7
+          - desktop-commander
+          - playwright
+        description: Core MCPs - no API keys required
+        api_keys_required: false
+        estimated_tokens: 10-15k
+      full:
+        servers:
+          - context7
+          - desktop-commander
+          - playwright
+          - exa
+        description: All MCPs - requires EXA_API_KEY for exa
+        api_keys_required: true
+        estimated_tokens: 20-25k
+    defaultPreset: minimal
+  servers:
+    - playwright
+  preset: minimal
+
+# =============================================================================
+# Documentation & Architecture
+# =============================================================================
+qa:
+  qaLocation: docs/qa
+prd:
+  prdFile: docs/prd.md
+  prdVersion: v4
+  prdSharded: true
+  prdShardedLocation: docs/prd
+  epicFilePattern: epic-{n}*.md
+architecture:
+  architectureFile: docs/architecture.md
+  architectureVersion: v4
+  architectureSharded: true
+  architectureShardedLocation: docs/architecture
+customTechnicalDocuments: null
+devLoadAlwaysFiles:
+  - docs/framework/coding-standards.md
+  - docs/framework/tech-stack.md
+  - docs/framework/source-tree.md
+devLoadAlwaysFilesFallback:
+  - docs/framework/padroes-de-codigo.md
+  - docs/framework/pilha-tecnologica.md
+  - docs/framework/arvore-de-origem.md
+devDebugLog: .ai/debug-log.md
+devStoryLocation: docs/stories
+slashPrefix: SINKRA
+frameworkDocsLocation: docs/framework
+projectDocsLocation: docs/architecture/project-decisions
+
+# =============================================================================
+# Lazy Loading (from AIOX Stage — performance optimization)
+# =============================================================================
+lazyLoading:
+  enabled: true
+  heavySections:
+    - pvMindContext
+    - squads
+    - registry
+
+# =============================================================================
+# Git Configuration
+# =============================================================================
+git:
+  showConfigWarning: true
+  cacheTimeSeconds: 300
+
+# =============================================================================
+# Decision Logging (from AIOX Stage — governance)
+# =============================================================================
+decisionLogging:
+  enabled: true
+  async: true
+  location: .ai/
+  indexFile: decision-logs-index.md
+  format: adr
+  performance:
+    maxOverhead: 50
+
+# =============================================================================
+# Path Configuration (canonical: .aiox-core/)
+# =============================================================================
+toolsLocation: .aiox-core/tools
+scriptsLocation:
+  core: .aiox-core/core
+  development: .aiox-core/development/scripts
+  infrastructure: .aiox-core/infrastructure/scripts
+  legacy: .aiox-core/scripts
+dataLocation: .aiox-core/data
+elicitationLocation: .aiox-core/elicitation
+squadsLocation: squads
+mindsLocation: outputs/minds
+
+# =============================================================================
+# Project Status (from AIOX Stage — developer experience)
+# =============================================================================
+projectStatus:
+  enabled: true
+  autoLoadOnAgentActivation: true
+  showInGreeting: true
+  cacheTimeSeconds: 60
+  components:
+    gitBranch: true
+    gitStatus: true
+    recentWork: true
+    currentEpic: true
+    currentStory: true
+  statusFile: .aiox/project-status.yaml
+  maxModifiedFiles: 5
+  maxRecentCommits: 2
+
+# =============================================================================
+# Agent Identity (from AIOX Stage — agent UX)
+# =============================================================================
+agentIdentity:
+  greeting:
+    contextDetection: true
+    sessionDetection: hybrid
+    workflowDetection: hardcoded
+    performance:
+      gitCheckCache: true
+      gitCheckTTL: 300
+
+# =============================================================================
+# GitHub Integration (from AllFluence)
+# =============================================================================
+github:
+  enabled: true
+  cli_required: false
+  features:
+    pr_creation: true
+    issue_management: true
+  pr:
+    title_format: conventional
+    include_story_id: true
+    conventional_commits:
+      enabled: true
+      branch_type_map:
+        feature/: feat
+        feat/: feat
+        fix/: fix
+        bugfix/: fix
+        hotfix/: fix
+        docs/: docs
+        chore/: chore
+        refactor/: refactor
+        test/: test
+        perf/: perf
+        ci/: ci
+        style/: style
+        build/: build
+      default_type: feat
+    auto_assign_reviewers: false
+    draft_by_default: false
+  semantic_release:
+    enabled: true
+
+# =============================================================================
+# Boundary Protection (adapted for .aiox-core/ canonical path)
+# =============================================================================
+boundary:
+  frameworkProtection: true
+  protected:
+    - .aiox-core/core/**
+    - .aiox-core/development/tasks/**
+    - .aiox-core/development/templates/**
+    - .aiox-core/development/checklists/**
+    - .aiox-core/development/workflows/**
+    - .aiox-core/infrastructure/**
+    - .aiox-core/constitution.md
+  exceptions:
+    - .aiox-core/data/**
+    - .aiox-core/development/agents/*/MEMORY.md
+    - .aiox-core/core/config/schemas/**
+    - .aiox-core/core/config/template-overrides.js
+
+# =============================================================================
+# IDE Sync (from AIOX Stage — multi-target sync)
+# =============================================================================
+ideSync:
+  enabled: true
+  source: .aiox-core/development/agents
+  targets:
+    claude-code:
+      enabled: true
+      path: .claude/agents
+      format: claude-agent-wrapper
+    codex:
+      enabled: true
+      path: .codex/agents
+      format: lazy-agent
+    gemini:
+      enabled: true
+      path: .gemini/agents
+      format: lazy-agent
+    antigravity:
+      enabled: true
+      path: .agents/agents
+      format: lazy-agent
+    cursor:
+      enabled: false
+      path: .cursor/rules/agents
+      format: condensed-rules
+    windsurf:
+      enabled: false
+      path: .windsurf/rules/agents
+      format: xml-tagged-markdown
+  # extraSources: dynamically built by reconcile-ecosystem.js at sync time.
+  # Squad agents are discovered from squads/*/config.yaml → agents[] entries.
+  # The following static entry is kept as a bootstrap seed; reconciliation
+  # appends any additional squad agents automatically.
+  extraSources:
+    - path: squads/squad-creator/agents/squad-chief.md
+      as: squad-creator
+      sourcePath: squads/squad-creator/agents/squad-chief.md
+      greetingCmd: node squads/squad-creator/scripts/generate-squad-greeting.js squad-creator squad-chief
+  redirects:
+    sinkra-developer: sinkra-master
+    sinkra-orchestrator: sinkra-master
+    db-sage: data-engineer
+    github-devops: devops
+  skillSync:
+    enabled: true
+    source: .claude/skills
+    targets:
+      - .agents/skills
+      - .codex/skills
+  validation:
+    strictMode: true
+    failOnDrift: true
+    failOnOrphaned: false
+
+# =============================================================================
+# Synapse Engine Configuration (from AllFluence — ALF-WINS)
+# =============================================================================
+synapse:
+  enabled: true
+  version: SYN-2
+  mode: NOG-18
+  layers:
+    active:
+      - L0               # Constitution (inviolable principles)
+      - L1               # Global (project-wide context)
+      - L2               # Agent (per-agent domains)
+      - L7               # Slash Skills (/skill routing)
+    dormant:
+      - L3               # Workflow (requires session context)
+      - L4               # Task (requires active task detection)
+      - L5               # Squad (requires squad activation)
+      - L6               # Keyword (requires keyword index)
+    description: 'NOG-18: Constitution + Global + Agent + Slash Skills'
+  hooks:
+    synapse_engine:
+      event: UserPromptSubmit
+      script: .claude/hooks/synapse-engine.js
+      timeout: 10000
+      blocking: false
+    precompact_session_digest:
+      event: PreCompact
+      script: .claude/hooks/precompact-session-digest.js
+      timeout: 5000
+      blocking: true
+  domains:
+    path: .synapse/
+    manifest: .synapse/manifest
+    # count is determined at runtime by scanning .synapse/ — no hardcoded value
+  code_intelligence:
+    enabled: false
+    module_path: .aiox-core/core/synapse/code-intel/
+    status: defer
+  sessions:
+    path: .synapse/sessions/
+    schema: SYN-2
+    ttl: 24h
+    max_sessions: 10
+    staleTTLHours: 168
+  cache:
+    path: .synapse/cache/
+    ttl: 1h
+    invalidate_on:
+      - manifest-change
+      - domain-edit
+  permissions:
+    enabled: true
+    config: .synapse/permissions.yaml
+    fallback:
+      - L0
+      - L1
+  metrics:
+    track_load_time: true
+    track_domain_usage: false
+    max_load_time_ms: 100
+
+# =============================================================================
+# SINKRA v3.1 Extensions (from AllFluence — ALF-WINS)
+# =============================================================================
+sinkra_extensions:
+  version: "3.1"
+  extensions:
+    - id: artifact_system
+      description: "Output tipado com template binding e lifecycle"
+    - id: bu_system
+      description: "Business Unit isolation com handoff protocol"
+    - id: modes
+      description: "8 intent tokens para classificacao de comandos"
+    - id: inheritance
+      description: "Campo propagation declarativa parent->child"
+    - id: root_derived_entity
+      description: "Root Entity (Person, Company) vs Derived Entity (Lead, Client)"
+    - id: cross_bu_entity
+      description: "Entidades que pertencem a multiplas BUs simultaneamente"
+    - id: journey_log_universal
+      description: "Log universal de lifecycle events para todas entidades"
+  # Counts determined at runtime from canonical references below.
+  # Hardcoded counts removed to prevent stale references.
+  canonical_references:
+    composition_rules: squads/sinkra-squad/data/composition-rules.yaml
+    token_registry: squads/sinkra-squad/data/token-registry.yaml
+
+# =============================================================================
+# CodeRabbit Integration (from AllFluence — quality gate)
+# =============================================================================
+coderabbit_integration:
+  enabled: true
+  installation_mode: auto  # auto | native | wsl — auto detects OS at runtime
+  native_config:
+    installation_path: coderabbit  # expects coderabbit in $PATH (pip/pipx install)
+    working_directory: ${PROJECT_ROOT}
+  wsl_config:
+    distribution: Ubuntu
+    installation_path: coderabbit  # expects coderabbit in $PATH inside WSL
+    working_directory: ${PROJECT_ROOT}
+  self_healing:
+    enabled: true
+    type: full
+    max_iterations: 3
+    timeout_minutes: 30
+  severity_handling:
+    CRITICAL: auto_fix
+    HIGH: auto_fix
+    MEDIUM: document_as_debt
+    LOW: ignore
+  graceful_degradation:
+    skip_if_not_installed: true
+    fallback_message: 'CodeRabbit CLI not found. Install via: pip install coderabbit-cli'
+  report_location: docs/qa/coderabbit-reports/
+
+# =============================================================================
+# Squads & Minds
+# =============================================================================
+squads:
+  templateLocation: templates/squad
+  autoLoad: false
+pvMindContext:
+  enabled: true
+  location: outputs/minds/pedro_valerio
+  features:
+    persona_voice: true
+    technical_depth: advanced
+    communication_style: structured
+storyBacklog:
+  enabled: true
+  location: docs/stories/backlog
+  prioritization: value_risk
+
+# =============================================================================
+# Deployment (Hub-specific — no single-business targets)
+# =============================================================================
+deployment:
+  workflow: direct-to-main
+  branches:
+    staging_targets:
+      - feat/*
+      - fix/*
+      - docs/*
+      - chore/*
+      - refactor/*
+      - test/*
+    production_targets:
+      - hotfix/*
+    production_branch: main
+    default_target: main
+  quality_gates:
+    lint: true
+    typecheck: true
+    tests: true
+    security_scan: false
+    min_coverage: 0
+  pr_defaults:
+    auto_assign_reviewers: false
+    draft_by_default: false
+    include_deployment_info: true
+
+# =============================================================================
+# Features & Feature Flags
+# =============================================================================
+features:
+  documentation_integrity: true
+  source_tree_guardian: true
+  quality_metrics: true
+  documentation_integrity_options:
+    generate_source_tree: true
+    generate_coding_standards: true
+    generate_tech_stack: true
+    brownfield_analysis: false
+    gitignore_generation: true
+
+# Feature flags mitigam regressões das atualizações SWARM OS e CLI
+feature_flags:
+  swarm_native: true       # SWARM epic — ativado 2026-04-01
+  permission_sync: false   # TK-CC-009
+  hook_expansion: false    # TK-CC-012
+  compaction_pipeline: false # TK-CC-004
+  deferred_loading: false  # TK-CC-007
+  migration_system: false  # TK-CC-028
+  coordinator_mode: false  # TK-CC-020
+
+# =============================================================================
+# AutoClaude (from AllFluence)
+# =============================================================================
+autoClaude:
+  enabled: true
+  version: '3.0'
+  worktree:
+    enabled: true
+    autoCreate: on_story_start
+    autoCleanup: manual
+    maxWorktrees: 10
+    staleDays: 30
+    branchPrefix: auto-claude/
+  specPipeline:
+    enabled: false
+  execution:
+    enabled: false
+  qa:
+    enabled: false
+
+# =============================================================================
+# Hub Multi-Business Configuration (NEW — Hub-specific)
+# =============================================================================
+hub:
+  multi_business: true
+  spoke_registry:
+    allfluence:
+      description: "Marketing technology company (TTCX)"
+      status: active
+    aiox:
+      description: "AIOX Stage — brownfield development framework"
+      status: active
+    academia-lendaria:
+      description: "Academia Lendaria — education platform"
+      status: planned
+    bilhon:
+      description: "Bilhon — business venture"
+      status: planned
+  shared_resources:
+    - .aiox-core/          # Framework core (this package)
+    - squads/              # Shared squads
+    - .claude/             # Claude Code config
+  spoke_isolation:
+    rule: "Spokes MUST NOT import directly from other spokes"
+    boundary: "All cross-spoke communication via Hub shared resources"

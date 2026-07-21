@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sinkra-hub/templates/state-detection-report-v1.json",
+  "title": "State Detection Report v1",
+  "description": "Output template for tsk01_detectar_estado_existente (leaf_descobrir). Generated per branch_id at pipeline start.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["state", "user_question_response", "detected_at", "branch_id"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "state": {
+      "type": "string",
+      "enum": ["greenfield", "brownfield_complete", "brownfield_partial"]
+    },
+    "user_question_response": {
+      "type": "string",
+      "enum": ["yes", "no"]
+    },
+    "existing_sinkra_output_ref": {
+      "type": ["string", "null"],
+      "description": "Path to existing sinkra-output.json if brownfield_*"
+    },
+    "found_artifacts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "missing_artifacts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "user_choice_if_partial": {
+      "type": ["string", "null"],
+      "enum": ["a", "b", null],
+      "description": "(a) Juntar arquivos, (b) Partir só do sinkra-output existente"
+    },
+    "user_choice_rationale": { "type": "string" },
+    "detected_at": { "type": "string", "format": "date-time" },
+    "branch_id": { "type": "string" },
+    "task_id": { "type": "string" },
+    "task_status": {
+      "type": "string",
+      "enum": ["detectar", "detectando", "detectado"]
+    },
+    "ac_gate_passed": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

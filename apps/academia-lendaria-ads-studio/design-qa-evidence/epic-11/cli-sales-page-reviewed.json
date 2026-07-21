@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-11T09:44:50.677Z",
+  "scenarios": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshot": "cli-sales-page-reviewed-desktop.png",
+      "layout": {
+        "sectionOrder": [
+          "hero",
+          "vsl",
+          "primary-cta",
+          "mechanism",
+          "offer",
+          "pricing",
+          "proof",
+          "benefits",
+          "bonuses",
+          "guarantee",
+          "urgency",
+          "faq",
+          "checkout",
+          "final-cta",
+          "footer"
+        ],
+        "correctOrder": true,
+        "ctaImmediatelyAfterVsl": true,
+        "ctaBelowVsl": true,
+        "vslBottom": 1109.46875,
+        "horizontalOverflow": false,
+        "interactive": {
+          "formFields": [
+            "name",
+            "email",
+            "phone"
+          ],
+          "brokenHashCtas": 0,
+          "events": [
+            "PageView",
+            "ViewContent"
+          ]
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestFailures": []
+    },
+    {
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "cli-sales-page-reviewed-mobile.png",
+      "layout": {
+        "sectionOrder": [
+          "hero",
+          "vsl",
+          "primary-cta",
+          "mechanism",
+          "offer",
+          "pricing",
+          "proof",
+          "benefits",
+          "bonuses",
+          "guarantee",
+          "urgency",
+          "faq",
+          "checkout",
+          "final-cta",
+          "footer"
+        ],
+        "correctOrder": true,
+        "ctaImmediatelyAfterVsl": true,
+        "ctaBelowVsl": true,
+        "vslBottom": 683.375,
+        "horizontalOverflow": false,
+        "interactive": {
+          "formFields": [
+            "name",
+            "email",
+            "phone"
+          ],
+          "brokenHashCtas": 0,
+          "events": [
+            "PageView",
+            "ViewContent"
+          ]
+        }
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestFailures": []
+    }
+  ]
+}

@@ -235,6 +235,7 @@ A skill gera 7 arquivos no total (MD + HTML + PDF dos 2 entregáveis visuais, ma
 
 **Briefing:**
 7. `briefing-media-buyer.md` — briefing acionável com orçamento e métricas (só MD, é arquivo de trabalho)
+8. `trends/index.html` — índice do Book com links para o radar, as variações e o briefing aprovados
 
 ### Como gerar os 7 arquivos
 

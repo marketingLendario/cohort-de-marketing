@@ -1,0 +1,23 @@
+fan_in_report:
+  epic: "epic-12"
+  wave: "W5"
+  batch: 0
+  date: "2026-07-17"
+  mode: default
+  branches:
+    - branch: "wave/12-w5/story-12.W5.1"
+      story: "12.W5.1"
+      status: "Done"
+      head_sha: "5a16f389ef50285d990bdb4fd1397334503c3a75"
+      commits_ahead_of_origin_main: 10
+      files_vs_origin_main: 66
+  conflict_pairs: []
+  conflicts_detected: 0
+  notes: |
+    Wave de story única — sem pares cross-branch para comparar; relatório
+    emitido mesmo assim (regra: fan-in SEMPRE gera relatório, inclusive com
+    zero conflitos). A branch wave/12-w5/story-12.W5.1 é uma pilha LINEAR que
+    contém toda a cadeia do EPIC-12 (W1.1 → W5.1): as branches das waves
+    anteriores (story-12.W1.1, W2.1, W3.1, W4.1, W4.2) são ancestrais diretos
+    desta. Mergear esta branch em main entrega o épico completo de uma vez.
+  recommendation: "@devops merge wave/12-w5/story-12.W5.1 → main (fast-forward-able stack, zero conflitos internos)"

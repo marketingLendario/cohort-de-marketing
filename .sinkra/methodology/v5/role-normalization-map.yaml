@@ -1,0 +1,552 @@
+# .sinkra/methodology/v5/role-normalization-map.yaml — executor.role normalization map (V5 framework)
+# STORY-181.W5.2 (forge-engine-decision-2026-06-16.md D2 + D5). LOCAL governance artifact.
+# Maps each DISTINCT forge-spec executor.role (prose | @slug | /skill) -> canonical on-disk slug
+# OR "*Informação faltante*" (No-Invention F7 — never invents a persona). Consumed by the D5
+# data-gate (leaf_gerar W5.4) and the resolver-executor (leaf_resolver W3.3) to bind executors (CX-5).
+
+schema_version: "1.0"
+created_at: "2026-06-17"
+story_ref: "docs/stories/epic-181/STORY-181.W5.2-normalize-executor-roles.md"
+source_adr: "docs/architecture/sinkra-hub/forge-engine-decision-2026-06-16.md"
+adr_sections: ["D2", "D5"]
+
+# --- Contract header (AC-5: consumable by the gate + resolver) ---
+source:
+  forge_spec: ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.json"
+  pi1_readonly: true   # AC-4 — forge-spec is NEVER mutated; this map is a lateral artifact
+  schema_version: "5.1.0"
+
+reuse:
+  # IDS REUSE (Dev Notes): the resolver-executor W3.3 model was reused for the 4 canonical
+  # executor_types, the selection_function (STEP1 classify), and enum_drift_flags (user->human).
+  raci_resolver_model: ".sinkra/extraction/capabilities-raci-resolver-2026-06-15/raci-resolver-model.json"
+  reused: ["executor_types", "selection_function", "enum_drift_flags"]
+
+consumed_by:
+  # Mirrors raci-resolver-model.json consumed_by (AC-5).
+  - resolver_executor: ".claude/skills/sinkra-squad-creator-resolver-executor/SKILL.md"   # leaf_resolver (W3.3)
+  - data_gate_d5: ".claude/skills/sinkra-squad-creator-gerar/SKILL.md"                     # leaf_gerar (W5.4)
+
+# Canonical 4 executor types (reused from raci-resolver-model.json executor_types).
+# Note: forge-spec also carries a non-canonical 'managed_agent' type (2 refs) — surfaced as-is
+# in mappings[].executor_type for fidelity; canonical SINKRA executors are: human | agent | clone | worker.
+executor_types_canonical: ["human", "agent", "clone", "worker"]
+
+# --- Coverage (AC-3: resolved/total + explicit gaps = O2 feedback-loop) ---
+# Dois escopos são reportados (NÃO há drift do spec — ver scope_note):
+#   - executor_role_strict: o escopo que a story pede (apenas executor.role) = 48 distinct / 124 refs (CONFIRMA o claim original).
+#   - all_role_superset: toda chave .role do spec (executor.role + RACI responsible/accountable/consulted/informed) = 71 / 388.
+# Os campos top-level resolved/informacao_faltante abaixo referem-se ao SUPERSET (as 71 entradas de mappings[]).
+coverage:
+  scope_note: >-
+    A story pede normalizar `executor.role`. O escopo ESTRITO on-disk = 48 roles distintos / 124 refs —
+    o que CONFIRMA o claim original da story (AC/Contexto). A diferença entre 48 e 71 é apenas o ESCOPO da
+    contagem (executor.role vs todas as chaves `.role`), não uma alteração do forge-spec. Este
+    mapa usa um SUPERSET deliberado = 71 roles distintos / 388 refs (todas as chaves `.role` do spec:
+    executor.role + papéis RACI responsible/accountable/consulted/informed) para cobertura conservadora e
+    para também servir o resolver-executor (W3.3, que consome RACI). Os 48 executor.role estão integralmente
+    cobertos pelo superset (0 ausentes do mapa).
+  executor_role_strict:    # AC-3 "X/48" — o escopo que a story pede (apenas executor.role)
+    distinct: 48
+    refs: 124
+    resolved: 29
+    informacao_faltante: 19
+  all_role_superset:       # o escopo efetivo deste mapa (mappings[] tem 71 entradas)
+    distinct: 71
+    refs: 388
+    resolved: 43
+    informacao_faltante: 28
+  total_distinct_roles: 71   # = all_role_superset.distinct (as 71 entradas de mappings[] abaixo)
+  total_role_refs: 388
+  resolved: 43               # superset
+  informacao_faltante: 28    # superset
+  executor_type_counts:
+    human: 223
+    agent: 132
+    worker: 31
+    managed_agent: 2
+
+# --- Mappings (one per DISTINCT role; AC-1/AC-2) ---
+# Each resolved slug traces to a real on-disk file (resolved_via). RACI-G6: hub human accountable
+# is FIXED = Pedro (pedro-valerio); founder/CODEOWNERS human gates resolve to that slug.
+mappings:
+  - role: "Pedro Valério"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 46
+  - role: "founder"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 45
+  - role: "Founder/Owner"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 44
+  - role: "Founder/Pedro"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 36
+  - role: "Founder (Pedro Valério)"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 29
+  - role: "@sinkra-devops"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-devops"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-devops.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 18
+  - role: "synapse_domain_agent"
+    executor_type: "agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 12
+  - role: "Pedro Valerio"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 9
+  - role: "SYNAPSE Domain Agent"
+    executor_type: "agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 9
+  - role: "@sinkra-architect"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-architect"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-architect.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 8
+  - role: "process-discoverer"
+    executor_type: "agent"
+    slug: "process-discoverer"
+    resolved_via: "squads/sinkra-squad/agents/process-discoverer.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 8
+  - role: "Founder"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 7
+  - role: "knowledge_harness_worker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 7
+  - role: "@sinkra-po"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-po"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-po.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 6
+  - role: "composition-engineer"
+    executor_type: "agent"
+    slug: "composition-engineer"
+    resolved_via: "squads/sinkra-squad/agents/composition-engineer.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 5
+  - role: "quality-gatekeeper"
+    executor_type: "agent"
+    slug: "quality-gatekeeper"
+    resolved_via: "squads/sinkra-squad/agents/quality-gatekeeper.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 5
+  - role: "sinkra_devops"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-devops"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-devops.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 5
+  - role: "sinkra-chief"
+    executor_type: "agent"
+    slug: "sinkra-chief"
+    resolved_via: ".claude/skills/sinkra-chief/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 5
+  - role: "sinkra-squad-creator-mapear"
+    executor_type: "agent"
+    slug: "sinkra-squad-creator-mapear"
+    resolved_via: ".claude/skills/sinkra-squad-creator-mapear/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 5
+  - role: "DigestAgent (logico)"
+    executor_type: "agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 4
+  - role: "sinkra_pm"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-pm"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-pm.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 4
+  - role: "sinkra-squad-creator-gerar"
+    executor_type: "agent"
+    slug: "sinkra-squad-creator-gerar"
+    resolved_via: ".claude/skills/sinkra-squad-creator-gerar/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 4
+  - role: "synapse_memory_worker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 4
+  - role: "@sinkra-pm"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-pm"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-pm.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 3
+  - role: "harness"
+    executor_type: "agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 3
+  - role: "sinkra_architect"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-architect"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-architect.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 3
+  - role: "sinkra-squad-creator-resolver-executor"
+    executor_type: "agent"
+    slug: "sinkra-squad-creator-resolver-executor"
+    resolved_via: ".claude/skills/sinkra-squad-creator-resolver-executor/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 3
+  - role: "@sinkra-dev"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-dev"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-dev.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 2
+  - role: "@sinkra-qa"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-qa"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-qa.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 2
+  - role: "Framework Owner (Pedro Valério)"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 2
+  - role: "Knowledge Harness Worker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 2
+  - role: "sinkra_qa"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-qa"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-qa.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 2
+  - role: "sinkra_sm"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-sm"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-sm.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 2
+  - role: "static-analyzer (script)"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 2
+  - role: "@sinkra-po (CHK-8 no /sinkra-close consome e2e_verification)"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-po"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-po.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 1
+  - role: "@sinkra-qa (QG agent via /sinkra-verify skill)"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-qa"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-qa.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 1
+  - role: "@sinkra-sm"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-sm"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-sm.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 1
+  - role: "@squad-chief"
+    executor_type: "agent"
+    slug: "squad-chief"
+    resolved_via: ".claude/skills/squad-chief/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 1
+  - role: "*sync-ecosystem (reconciliation engine)"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "/roundtable ou /advisory-council (multi-agent review)"
+    executor_type: "agent"
+    slug: "roundtable"
+    resolved_via: ".claude/skills/roundtable/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 1
+  - role: "/skill-creator"
+    executor_type: "agent"
+    slug: "skill-creator"
+    resolved_via: ".claude/skills/skill-creator/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 1
+  - role: "CODEOWNERS founders (2/3 — shared paths) ou business owner (business paths)"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "CodeRabbit"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "CodeRabbit (worker review automatizado)"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "Coolify API (worker — docker pull por digest, NUNCA git-source/SSH)"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "DedupCascadeWorker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "entity_agent dono-de-dominio (LEARNS_VIA fatia domain-scoped)"
+    executor_type: "managed_agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "Founders (2/3 CODEOWNERS)"
+    executor_type: "agent"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "KnowledgeArtifactGatewayWorker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "KnowledgeCuratorAgent (assiste) + Founder (decide)"
+    executor_type: "agent"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "KnowledgeExtractionWorker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "log_archive_worker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "log_capture_worker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "log_mark_worker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "Owner Squad (squad responsável pela skill)"
+    executor_type: "agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "Pedro Valerio (CODEOWNERS approval requerido — shared paths 2/3 founders)"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "Pedro Valério (e founders afetados conforme CODEOWNERS)"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "publication-gateway (sistema dispara; @sinkra-devops EXCLUSIVE executa o seed transacional — agent-authority NON-NEGOTIABLE; Founder accountable)"
+    executor_type: "managed_agent"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "registry-governance-check.js (worker — pre-push check)"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "sinkra_db"
+    executor_type: "agent"
+    slug: "sinkra-aiox--sinkra-db"
+    resolved_via: ".claude/agents/sinkra-aiox--sinkra-db.md"
+    resolution_rule: "on-disk agent match"
+    frequency: 1
+  - role: "sinkra-squad-creator-gerar (quality-gate sub-role)"
+    executor_type: "agent"
+    slug: "sinkra-squad-creator-gerar"
+    resolved_via: ".claude/skills/sinkra-squad-creator-gerar/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 1
+  - role: "sinkra-squad-creator-resolver-executor (or companion session per R16)"
+    executor_type: "agent"
+    slug: "sinkra-squad-creator-resolver-executor"
+    resolved_via: ".claude/skills/sinkra-squad-creator-resolver-executor/SKILL.md"
+    resolution_rule: "on-disk skill match"
+    frequency: 1
+  - role: "Squad Engine Sync Worker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "static-analyzer"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "sw_synapse_injection"
+    executor_type: "agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "synapse_digest_event_process"
+    executor_type: "agent"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "synapse-engine"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "Team-lead humano (decisoes conductor DP-1..DP-6 — AskUserQuestion no processo pai)"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "Team-lead humano (Pedro) via CLI"
+    executor_type: "human"
+    slug: "pedro-valerio"
+    resolved_via: "squads/squad-creator-pro/agents/pedro-valerio.md"
+    resolution_rule: "RACI-G6 (hub accountable fixed = Pedro)"
+    frequency: 1
+  - role: "ThresholdEvaluatorWorker"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+  - role: "wave-launch.js (worker automatico)"
+    executor_type: "worker"
+    slug: "*Informação faltante*"
+    resolved_via: null
+    resolution_rule: "no on-disk persona/skill (No-Invention F7 -> gap, O2 feedback)"
+    frequency: 1
+
+# --- O2 feedback-loop (AC-3: explicit gap list to the upstream pipeline) ---
+# These roles have NO on-disk persona/skill. They are NOT failures (VC-1): they are the signal that
+# the forge-spec upstream needs enriched executors (new persona, runner script, or human-gate binding).
+# No-Invention F7: never fabricate a persona to close a gap.
+gaps_feedback_o2:
+  agent:   # 7 gap(s)
+    - "synapse_domain_agent"   # freq 12
+    - "SYNAPSE Domain Agent"   # freq 9
+    - "DigestAgent (logico)"   # freq 4
+    - "harness"   # freq 3
+    - "Owner Squad (squad responsável pela skill)"   # freq 1
+    - "sw_synapse_injection"   # freq 1
+    - "synapse_digest_event_process"   # freq 1
+  worker:   # 20 gap(s)
+    - "knowledge_harness_worker"   # freq 7
+    - "synapse_memory_worker"   # freq 4
+    - "Knowledge Harness Worker"   # freq 2
+    - "static-analyzer (script)"   # freq 2
+    - "*sync-ecosystem (reconciliation engine)"   # freq 1
+    - "CodeRabbit"   # freq 1
+    - "CodeRabbit (worker review automatizado)"   # freq 1
+    - "Coolify API (worker — docker pull por digest, NUNCA git-source/SSH)"   # freq 1
+    - "DedupCascadeWorker"   # freq 1
+    - "KnowledgeArtifactGatewayWorker"   # freq 1
+    - "KnowledgeExtractionWorker"   # freq 1
+    - "log_archive_worker"   # freq 1
+    - "log_capture_worker"   # freq 1
+    - "log_mark_worker"   # freq 1
+    - "registry-governance-check.js (worker — pre-push check)"   # freq 1
+    - "Squad Engine Sync Worker"   # freq 1
+    - "static-analyzer"   # freq 1
+    - "synapse-engine"   # freq 1
+    - "ThresholdEvaluatorWorker"   # freq 1
+    - "wave-launch.js (worker automatico)"   # freq 1
+  managed_agent:   # 1 gap(s)
+    - "entity_agent dono-de-dominio (LEARNS_VIA fatia domain-scoped)"   # freq 1
+
+# Gap categories (human-readable summary for the pipeline owner):
+gap_categories:
+  - synapse_logical_agents: agentes lógicos do SYNAPSE (synapse_domain_agent, DigestAgent, sw_synapse_injection, etc.) — sem persona slug em .claude/agents/ ou squads/*/agents/.
+  - deterministic_workers: workers/scripts (knowledge_*_worker, log_*_worker, CodeRabbit, wave-launch.js, registry-governance-check.js, etc.) — runners, não personas-agent; resolução de runner é fora do escopo das 3 fontes de persona (AC-2).
+  - managed_agent: entity_agent dono-de-domínio (LEARNS_VIA) — tipo não-canônico sem persona materializada.
+
+# --- Consumption contract (AC-5: how D5 gate + resolver read this) ---
+consumption_contract:
+  resolver_executor_w33: >-
+    O resolver (leaf_resolver) lê mappings[] por role verbatim; usa slug != "*Informação faltante*" como
+    binding de executor (CX-5) traçável a resolved_via. enum_drift já normalizado (user->human, @sinkra-x->sinkra-aiox--sinkra-x).
+  data_gate_d5_w54: >-
+    O data-gate D5 do leaf_gerar trata um role mapeado para "*Informação faltante*" como executor
+    NÃO-resolvível: a task correspondente cai em skills_pending_refinement[] (não bloqueia o leaf — VC-1).
+    Um role com slug resolvido + resolved_via válido passa o gate fonte-resolvível.
+  lookup_key: "mappings[].role (exact string match, verbatim do forge-spec executor.role)"

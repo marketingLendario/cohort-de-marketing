@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "offerbook",
+  "jobId": "1cf60f10-55e7-4ac9-95ff-c4f5c42489c1",
+  "skillRunId": "f9bc8da7-5b52-4ba7-80e7-fb584fc93f3b",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "ea6bd738f3475448bc83c9525ef8a57472d43bd955ba2c35dba6326c91cc4b1b",
+  "proposal": {
+    "fields": [
+      {
+        "key": "gate",
+        "value": "briefing-offerbook"
+      },
+      {
+        "key": "status",
+        "value": "aguardando_aprovacao_humana"
+      }
+    ],
+    "summary": "Gate de aprovação do briefing pendente; o pack final não pode ser produzido antes dessa decisão humana.",
+    "warnings": [
+      "Offerbook sem briefing aprovado é bloqueado pela skill porque constituiria ficção."
+    ],
+    "artifacts": [],
+    "questions": [
+      "Você aprova o briefing do Método Consistência 90 para virar offerbook, com promessa, mecanismo, preço de R$ 497, garantia de 30 dias e os três bônus confirmados, mantendo a ancoragem de valor e o responsável técnico como pendências e a publicação bloqueada até validação jurídica? Responda “sim” ou “não”."
+    ],
+    "resultMarkdown": ""
+  }
+}

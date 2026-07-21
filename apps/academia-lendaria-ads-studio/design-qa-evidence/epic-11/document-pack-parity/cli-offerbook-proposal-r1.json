@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "offerbook",
+  "jobId": "c98937ba-b316-4518-bf46-ade910a2a265",
+  "skillRunId": "3535188a-c87a-4c2e-96ff-57a68a47c657",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "ea6bd738f3475448bc83c9525ef8a57472d43bd955ba2c35dba6326c91cc4b1b",
+  "proposal": {
+    "fields": [
+      {
+        "key": "status",
+        "value": "aguardando_aprovacao_do_briefing"
+      },
+      {
+        "key": "gate",
+        "value": "offerbook_sem_briefing_aprovado_e_ficcao"
+      },
+      {
+        "key": "inputs_confirmados",
+        "value": "1 avatar + 1 dossiê de concorrente + 1 briefing de swipe-file"
+      },
+      {
+        "key": "campos_vazios_estimados",
+        "value": "menos de 30%, mas a autorização obrigatória está pendente"
+      },
+      {
+        "key": "publicacao",
+        "value": "bloqueada por ausência de responsável técnico e validação de compliance"
+      },
+      {
+        "key": "proximos_arquivos_apos_aprovacao",
+        "value": "offerbook.md e offerbook.html; offerbook.docx será derivado pelo BFF"
+      }
+    ],
+    "summary": "Encontrei 1 pesquisa de avatar, 1 dossiê de concorrente e 1 briefing de swipe-file confirmados. O briefing foi consolidado, mas o gate humano impede gerar offerbook.md e offerbook.html antes da aprovação explícita do dono da oferta.",
+    "warnings": [
+      "Gate duro aplicado: o Offerbook final não foi fabricado sem aprovação prévia do briefing.",
+      "Percentuais de prevalência por tema não constam na pesquisa; não serão calculados ou inventados.",
+      "A publicação deve permanecer bloqueada até informar o responsável técnico, seu registro profissional e validar o compliance aplicável.",
+      "Nenhum arquivo foi editado, nenhum binário foi gerado e nenhuma campanha foi alterada."
+    ],
+    "artifacts": [
+      {
+        "path": "briefing-offerbook.md",
+        "title": "Briefing Offerbook — Método Consistência 90",
+        "format": "markdown",
+        "content": "# Briefing Offerbook — Método Consistência 90\n\n> Status: proposta para revisão humana. Este briefing ainda não autoriza publicação nem produção de copy final.\n\n## Perfil do Projeto\n\n- Situação de partida: do-zero\n- Tipo de oferta: especialista\n- Quem opera: dono\n- Nicho regulado: saúde/médico\n- Voz: marca\n- Ticket: baixo\n- Destino do fechamento: venda direta por checkout\n\n## Inputs disponíveis (checklist)\n\n- [x] `relatorio-avatar.md` — caminho informado: `relatorio-avatar.md`; verificação: confirmada; amostra declarada: 47 trechos de quatro frentes.\n- [x] `dossie-{concorrente}.md` — caminho informado: `espiao/dossie-fitflow.md`; concorrente: FitFlow Academy; verificação: confirmada.\n- [x] `briefing-swipe-file.md` — caminho informado: `swipe/briefing-swipe-file.md`; verificação: confirmada.\n- [ ] Depoimentos/cases — N=0 ativos de prova confirmados. A história de Maria e resultados de peso não podem ser tratados como prova.\n- [x] Voz da marca / DESIGN.md — caminho informado: `DESIGN.md`; direção aprovada: dark premium com ouro e azul água; voz: marca.\n- [x] Materiais existentes — mapa do funil disponível em `funil.md`; entregáveis declarados: programa em vídeo de 90 dias, plano prático e Comunidade Consistência.\n- [ ] Transcrições, e-mails previamente aprovados e links de redes sociais/página de vendas — não informados.\n\n## Fundação de pesquisa\n\n- Público pesquisado: mulheres de 35 a 48 anos, classes B/C, Brasil.\n- Dor dominante registrada: perder peso e recuperar tudo por não conseguir sustentar a rotina.\n- Citação literal principal: “Já tentei de tudo, perco 3kg e volto tudo”.\n- Outras citações disponíveis:\n  - “A minha relação com a comida é meio tóxica... demorei anos para conseguir lidar”.\n  - “Belly fat won't budge no matter what I try”.\n  - “Trabalho o dia inteiro, não consigo cozinhar dieta”.\n  - “Já gastei demais em programa que não funcionou”.\n- Distribuição das fontes declarada: 8 trechos de reviews, 12 de comunidades e 27 de redes, totalizando 47 trechos.\n- Percentuais de prevalência por dor, desejo, objeção ou perfil: SEM DADO NA PESQUISA. A fonte ranqueia temas por score, mas não informa contagem temática suficiente para calcular percentuais sem inventar.\n- Brecha competitiva confirmada no dossiê: ausência de narrativa de manutenção após o programa.\n- Referência de copy do swipe-file: hook de confissão + número + chamada para o quiz.\n\n## Decisões prévias do dono da oferta\n\n- Nome da oferta: Método Consistência 90.\n- Promessa central, ajustada para linguagem de possibilidade: programa desenhado para ajudar mulheres 35+ a construir uma rotina sustentável de emagrecimento em 90 dias, sem dieta restritiva.\n- Mecanismo único: Ciclo de 3 Fases — Desinflamar, Reprogramar e Manter.\n- Mecanismo do problema: dietas isoladas ignoram a manutenção de hábitos e alimentam o ciclo de recomeços.\n- Mecanismo da solução: início simples, repetição guiada e manutenção obrigatória ao longo das três fases.\n- Preço confirmado: R$ 497.\n- Preço-âncora pretendido: SEM DADO INFORMADO.\n- Garantia: 30 dias, com devolução integral conforme os termos da oferta.\n- Entregáveis confirmados:\n  - Programa em vídeo de 90 dias.\n  - Plano prático.\n  - Comunidade Consistência.\n- Bônus confirmados como existentes e entregáveis:\n  - Checklist semanal anti-sanfona.\n  - E-book Anti-Sanfona.\n  - Workbook Fase 1.\n- Formato recomendado do funil: quiz de diagnóstico seguido de página de vendas.\n- Segmentação do quiz: perfil de decisão emocional, racional ou pragmático.\n- Momento de captura: antes do resultado do quiz.\n- Fonte de tráfego: pago, público frio.\n- Chamada principal: “Começar meu ciclo de 90 dias”.\n- Checkout informado: `https://fixture.local/academia-fit/checkout`.\n\n## Diretrizes obrigatórias de compliance\n\n- O projeto foi classificado como saúde/médico.\n- Toda promessa deve usar linguagem de possibilidade, sem cura, garantia de emagrecimento, resultado clínico certo ou prazo de perda de peso garantido.\n- Não usar “antes e depois”, sensacionalismo ou depoimentos de pacientes na copy.\n- Não tratar a história de Maria nem resultados de peso como prova confirmada.\n- Nome e registro do responsável técnico não foram informados.\n- Publicação bloqueada até informar o responsável técnico, seu registro profissional aplicável e concluir validação jurídica/regulatória.\n- A adequação específica ao conselho profissional competente deve ser validada antes da publicação; não foi possível determinar o conselho ou registro correto sem saber quem responde tecnicamente pela oferta.\n\n## Lacunas conhecidas\n\n### Dono da oferta\n\n- Aprovar explicitamente este briefing para que ele possa virar o Offerbook.\n- Informar o responsável técnico, a profissão e o número de registro no conselho aplicável.\n- Confirmar a composição detalhada das três fases, incluindo módulos, aulas, duração e técnica de cada componente.\n- Definir a ancoragem de valor e fornecer as respostas às nove perguntas de valor exigidas no Bloco 2.\n- Informar URLs públicas de Instagram, página de vendas e demais materiais que a equipe possa abrir.\n- Fornecer provas reais permitidas e documentadas, se existirem.\n\n### Equipe de marketing\n\n- Manter a publicação bloqueada até a regularização do responsável técnico e a validação de compliance.\n- Marcar como “SEM DADO NA PESQUISA” qualquer percentual temático não presente na pesquisa original.\n- Não transformar citações coletadas em depoimentos do produto.\n- Não usar história de personagem ou resultado de peso como prova factual.\n- Validar os termos completos da garantia antes de publicar.\n- Submeter a copy final à revisão jurídica/regulatória aplicável.\n\n## Autorização do dono\n\n- [ ] Dono da oferta aprovou este briefing para virar `offerbook.md` e `offerbook.html`.\n\nSem essa aprovação, o Offerbook não deve ser produzido. Após a aprovação, os arquivos continuarão como propostas para revisão humana e a publicação permanecerá bloqueada enquanto o responsável técnico estiver pendente.",
+        "artifactType": "offerbook"
+      }
+    ],
+    "questions": [
+      "O dono da oferta aprova este briefing para virar `offerbook.md` e `offerbook.html`? Responda “sim” ou indique objetivamente os ajustes necessários."
+    ],
+    "resultMarkdown": "O briefing está pronto para revisão humana. A geração do Offerbook permanece bloqueada até sua aprovação. A publicação também ficará bloqueada enquanto o responsável técnico e seu registro profissional não forem informados e o compliance de saúde não for validado."
+  }
+}

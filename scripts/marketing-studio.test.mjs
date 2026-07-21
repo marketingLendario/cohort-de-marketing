@@ -11,6 +11,7 @@ import {
   parseCli,
   redact,
   runtimePaths,
+  withManagedRuntimeChecks,
   windowsTaskkillArgs,
 } from './marketing-studio.mjs';
 
@@ -42,6 +43,17 @@ test('aggregateReadiness blocks only required blockers and preserves degradation
     { status: 'ready', required: true },
   ]), 'blocked');
   assert.equal(aggregateReadiness([{ status: 'blocked', required: true }]), 'blocked');
+});
+
+test('managed runtime replaces its own occupied ports with healthy service checks', () => {
+  const checks = withManagedRuntimeChecks([
+    { id: 'node', label: 'Node.js', status: 'ready', detail: 'ok', required: true },
+    { id: 'ports', label: 'Portas locais', status: 'blocked', detail: 'ocupadas', required: true },
+  ], { webPort: 5177, bffPort: 3002 });
+  assert.equal(checks.find((item) => item.id === 'ports').status, 'ready');
+  assert.equal(checks.find((item) => item.id === 'bff').status, 'ready');
+  assert.equal(checks.find((item) => item.id === 'web').status, 'ready');
+  assert.equal(aggregateReadiness(checks), 'ready');
 });
 
 test('redact removes API/JWT/database secret shapes from recovery output', () => {

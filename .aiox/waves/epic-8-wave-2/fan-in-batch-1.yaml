@@ -1,0 +1,27 @@
+schema: sinkra-wave-fan-in-v1
+epic: epic-8
+wave: W2
+batch: 1
+generated_at: "2026-07-10T00:57:10Z"
+base_commit: "c8fc264eed6283e7ddb6d3072926ffabad60273d"
+mode: default
+stories:
+  - story_id: "8.W2.1"
+    branch: "wave/8-w2/story-8.W2.1"
+    commit: "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0"
+    lifecycle_state: InReview
+    ack_path: ".claude/worktrees/story-8.W2.1/.sdc-ack/8.W2.1/sdc-complete.ack"
+  - story_id: "8.W2.2"
+    branch: "wave/8-w2/story-8.W2.2"
+    commit: "54782376b04df4723171e972e2cc8bde9bbbc145"
+    lifecycle_state: InReview
+    ack_path: ".claude/worktrees/story-8.W2.2/.sdc-ack/8.W2.2/sdc-complete.ack"
+pairwise_checks:
+  - branches: ["wave/8-w2/story-8.W2.1", "wave/8-w2/story-8.W2.2"]
+    conflicts: []
+diff_check: passed
+conflicts_detected: 0
+merge_sequence:
+  - "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0"
+  - "54782376b04df4723171e972e2cc8bde9bbbc145"
+recommendation: "Convergir localmente via @devops, executar gates integrados e submeter ao quality gate antes de liberar 8.W2.3."

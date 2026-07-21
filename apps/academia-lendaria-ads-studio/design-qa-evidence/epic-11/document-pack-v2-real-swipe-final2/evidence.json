@@ -1,0 +1,430 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T02:32:36.959Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "swipe-file"
+    ],
+    "catalogHash": "1958edc2d800a7df2ad32b6b1a49efd5ecdd2edc705c08b6eed4f1feab4f8921"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "swipe-file",
+      "contractGroup": "dynamic-library",
+      "contractHash": "3611d769a52857d7fb5de455295327bf2fc1b9af5c70e765a5dcd718f5d13d00",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "briefing-swipe-file.html",
+          "briefing-swipe-file.md",
+          "briefing-swipe-file.pdf",
+          "index.html",
+          "swipe-file-index.html",
+          "swipe-file-index.md",
+          "swipe-file-index.pdf",
+          "swipe-file/ads-meta/concorrentes-diretos/sw01-lista-beneficios.html",
+          "swipe-file/ads-meta/concorrentes-diretos/sw01-lista-beneficios.md"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 466,
+            "hash": "84d0375bdd5dd5f16c05d02e5e826738fc5924f19fcb88de762a259770c61edf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 3952,
+            "hash": "d66d843e03170e706a26bfb949c02f5443155b42b4d4b9840df41055753d13f5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 1412,
+            "hash": "f0e2fc254fe790f653b65e3366ea72011fd4914962d2db9f198ad36b0ec44b76",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 203663,
+            "hash": "93b372a11c6874fb6cc12beee17af1a913569236782b8c28a0ea0730eb793f9b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3630,
+            "hash": "41141f162575c1574e72c92a6339ce7a0a5a7074bf3ce008eab5e8e5e575b846",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.html",
+            "format": "html",
+            "bytes": 3735,
+            "hash": "738207db3e14c6f86f09d87b24b295cbca2126942edd7e7e3258f6db690fbe7d",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 1911,
+            "hash": "820396ae5408894e90682916e24ae737d6f0c7914231a7a91c12e00fb7edf6c1",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 161568,
+            "hash": "1ca48b19ec795a57ebfb5ad3f94f3893d0586b2c71bf074044360ae4340ee983",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/ads-meta/concorrentes-diretos/sw01-lista-beneficios.html",
+            "format": "html",
+            "bytes": 3943,
+            "hash": "a467bb4ee5cc8b79c3620d871859e3696ade4a15aa83dfc357629088d075460f",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/ads-meta/concorrentes-diretos/sw01-lista-beneficios.md",
+            "format": "markdown",
+            "bytes": 2222,
+            "hash": "c5a9e8e819f45c0b325db2a69bfecb644f42bf8f36b9e3987961bf2df29c6646",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/ads-meta/concorrentes-diretos/v1/sw01-lista-beneficios.html",
+            "format": "html",
+            "bytes": 3943,
+            "hash": "a467bb4ee5cc8b79c3620d871859e3696ade4a15aa83dfc357629088d075460f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/ads-meta/concorrentes-diretos/v1/sw01-lista-beneficios.md",
+            "format": "markdown",
+            "bytes": 2222,
+            "hash": "c5a9e8e819f45c0b325db2a69bfecb644f42bf8f36b9e3987961bf2df29c6646",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 3952,
+            "hash": "d66d843e03170e706a26bfb949c02f5443155b42b4d4b9840df41055753d13f5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 1412,
+            "hash": "f0e2fc254fe790f653b65e3366ea72011fd4914962d2db9f198ad36b0ec44b76",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 203663,
+            "hash": "93b372a11c6874fb6cc12beee17af1a913569236782b8c28a0ea0730eb793f9b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.html",
+            "format": "html",
+            "bytes": 3735,
+            "hash": "738207db3e14c6f86f09d87b24b295cbca2126942edd7e7e3258f6db690fbe7d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 1911,
+            "hash": "820396ae5408894e90682916e24ae737d6f0c7914231a7a91c12e00fb7edf6c1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 161568,
+            "hash": "1ca48b19ec795a57ebfb5ad3f94f3893d0586b2c71bf074044360ae4340ee983",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "briefing-swipe-file.html",
+          "briefing-swipe-file.md",
+          "briefing-swipe-file.pdf",
+          "index.html",
+          "swipe-file-index.html",
+          "swipe-file-index.md",
+          "swipe-file-index.pdf",
+          "swipe-file/posts-organicos/nicho-adjacente/sw01-lista-beneficios.html",
+          "swipe-file/posts-organicos/nicho-adjacente/sw01-lista-beneficios.md"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 464,
+            "hash": "60eac9427cab9de483eb354068432fa3801f66263569a3c74b29ac60340e44c7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 3602,
+            "hash": "1b424714d76210bafd4fca8d058d0118e0fd258f9f876a770bbd3494440b03ef",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 1303,
+            "hash": "989d5df6a6f686f6344c32e6f834efee616f134edb203369425772df27c82132",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 251940,
+            "hash": "bc1b7e04febb8898856056347fc1da9a1567505fd8462c30f528f9edb5d38dcb",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3628,
+            "hash": "c5ccf93ec2325935647ebaf77832190d1fcb77a21b86cba40c3c53db9efc648d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.html",
+            "format": "html",
+            "bytes": 3775,
+            "hash": "51a35bd596b440c4897f945af1b6b8e0082eb27e8746b41b98183aaef7643f72",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 1808,
+            "hash": "fc1c3ae2ae9401a7810ad8da84c8cffd1df77b1fea45b7d6268c262742e88a5b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 239812,
+            "hash": "6a7e9cc3b3db2cfa460f7ab9731c586aef65bfc1d38e39f434ceb088a324a1e0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/posts-organicos/nicho-adjacente/sw01-lista-beneficios.html",
+            "format": "html",
+            "bytes": 3336,
+            "hash": "07083940bc0644fecc1731818455477d2aabf0bd71904bcc8d986260496ef6ae",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/posts-organicos/nicho-adjacente/sw01-lista-beneficios.md",
+            "format": "markdown",
+            "bytes": 2051,
+            "hash": "94ad06b162ef5a60588945acb23156431d97f16e3c5559b00f0c389c66840180",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/posts-organicos/nicho-adjacente/v1/sw01-lista-beneficios.html",
+            "format": "html",
+            "bytes": 3336,
+            "hash": "07083940bc0644fecc1731818455477d2aabf0bd71904bcc8d986260496ef6ae",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/posts-organicos/nicho-adjacente/v1/sw01-lista-beneficios.md",
+            "format": "markdown",
+            "bytes": 2051,
+            "hash": "94ad06b162ef5a60588945acb23156431d97f16e3c5559b00f0c389c66840180",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 3602,
+            "hash": "1b424714d76210bafd4fca8d058d0118e0fd258f9f876a770bbd3494440b03ef",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 1303,
+            "hash": "989d5df6a6f686f6344c32e6f834efee616f134edb203369425772df27c82132",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 251940,
+            "hash": "bc1b7e04febb8898856056347fc1da9a1567505fd8462c30f528f9edb5d38dcb",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.html",
+            "format": "html",
+            "bytes": 3775,
+            "hash": "51a35bd596b440c4897f945af1b6b8e0082eb27e8746b41b98183aaef7643f72",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 1808,
+            "hash": "fc1c3ae2ae9401a7810ad8da84c8cffd1df77b1fea45b7d6268c262742e88a5b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 239812,
+            "hash": "6a7e9cc3b3db2cfa460f7ab9731c586aef65bfc1d38e39f434ceb088a324a1e0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

@@ -1,0 +1,31 @@
+diff --git a/apps/academia-lendaria-ads-studio/src/stores/project-store.ts b/apps/academia-lendaria-ads-studio/src/stores/project-store.ts
+index 3cbc65a..622dccc 100644
+--- a/apps/academia-lendaria-ads-studio/src/stores/project-store.ts
++++ b/apps/academia-lendaria-ads-studio/src/stores/project-store.ts
+@@ -1,4 +1,5 @@
+ import { create } from 'zustand';
++import type { StoreApi, UseBoundStore } from 'zustand';
+ import { createJSONStorage, persist } from 'zustand/middleware';
+@@ -161,6 +162,22 @@ const DEMO_ARTIFACTS: ProjectArtifact[] = [
++export interface ProjectCacheSnapshot {
++  projects: MarketingProject[];
++  briefRevisions: ProjectBriefRevision[];
++  artifacts: ProjectArtifact[];
++  skillRuns: SkillRun[];
++  campaignPlans: CampaignPlanRevision[];
++  weeklyPanels: WeeklyPanel[];
++  activeProjectId: string | null;
++}
++
+ interface ProjectState {
+@@ -169,6 +186,26 @@ interface ProjectState {
++  applyServerSnapshot: (snapshot: ProjectCacheSnapshot) => void;
++  ingestProject: (project: MarketingProject, brief: ProjectBriefRevision) => void;
++  clearCache: () => void;
++  reconcileArtifact: (localId: string, persisted: ProjectArtifact) => void;
++  reconcileSkillRun: (localId: string, persisted: SkillRun) => void;
+   setActiveProject: (projectId: string) => void;
+
+Note: comments were omitted from this compact runtime backup. The complete original
+diff remains recorded in the fan-in agent transcript. This scaffold declared cache
+methods without implementations and was superseded by STORY-8.W2.1 commit 28c05a6.

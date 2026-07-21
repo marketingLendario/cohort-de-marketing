@@ -49,6 +49,39 @@ E-mail: demo@academialendaria.local
 Senha: adsfactory
 ```
 
+No modo persistente (`VITE_DEMO_AUTH=false`), recrie o projeto piloto e associe o mesmo login após um reset destrutivo com:
+
+```bash
+npm run studio:seed-demo
+```
+
+### Executar uma skill pelo CLI local
+
+O CLI usa o mesmo BFF, journal, Codex autenticado e saga de aprovação do painel. As credenciais e o token local entram apenas por variáveis de ambiente; não use chave da OpenAI.
+
+```bash
+npm run skill:cli -- --skill pagina-vendas-funil --input entrada.json --output proposta.json
+
+# Depois de revisar proposta.json:
+npm run skill:cli -- --approve-run <skill-run-id> --proposal proposta.json --output aprovacao.json
+
+# Repetir um run reprovado sem criar outro pointer:
+npm run skill:cli -- --retry-run <skill-run-id> --job <job-id> --workspace <workspace-id> --output proposta-retry.json
+
+# Consultar ou cancelar o mesmo job durável:
+npm run skill:cli -- --run-status <job-id>
+npm run skill:cli -- --cancel-run <skill-run-id> --job <job-id> --workspace <workspace-id>
+
+# Rejeitar uma proposta pela mesma saga do painel:
+npm run skill:cli -- --reject-run <skill-run-id> --proposal proposta.json
+
+# Utilities efêmeras, sem criar artefato:
+npm run skill:cli -- --setup
+npm run skill:cli -- --status <project-id>
+```
+
+O primeiro comando termina com código `3` quando há decisões pendentes. Responda-as em uma nova entrada com `elicitationParentRunId`; o checkpoint anterior será supersedido pela RPC tenant-safe.
+
 ```bash
 # build de produção
 npm --prefix apps/academia-lendaria-ads-studio run build

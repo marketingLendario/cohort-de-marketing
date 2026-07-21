@@ -1,0 +1,119 @@
+story: "8.W2.3"
+base_sha: "278d671470db295fbada8f725c75cb37f593f83f"
+date: "2026-07-10"
+reviewer: "@qa independente via Codex CLI local — regate de falsificação"
+verdict: SHIP
+scope:
+  mode: read-only-except-authorized-report
+  reviewed: >
+    Story integral, diff completo do worktree desde o base SHA incluindo arquivos
+    não rastreados, relatórios qa-w2.3-regate-3.yaml e qa-w2.3-regate-4.yaml,
+    migration/RPC/trigger/pgTAP, worker/client filesystem, materializer, saga/
+    outbox/gateway/BFF, repository/hooks/store e UI.
+  writes: >
+    Nenhum código, teste, story, migration ou relatório anterior foi editado.
+    A única escrita deste QA foi este arquivo autorizado.
+
+commands:
+  - command: "supabase db reset --local --yes"
+    exit: 0
+    status: PASS
+    evidence: "Reset fresco aplicado até a migration 20260710120000 e finalizado com Finished supabase db reset."
+  - command: "npm run lint:db"
+    exit: 0
+    status: PASS
+    evidence: "No schema errors found."
+  - command: "npm run test:db"
+    exit: 0
+    status: PASS
+    evidence: "4 arquivos / 43 testes pgTAP; All tests successful."
+  - command: "independent authenticated SQL matrix via docker psql"
+    exit: 0
+    status: PASS
+    evidence: >
+      21/21 checks: membro apenas do Tenant A conseguiu INSERT same-tenant com
+      id default; projeto Tenant B com workspace A falhou 23503; FK composta,
+      cascades de projeto para skill_runs/outbox e três constraints compostas
+      foram confirmadas; RPC membro passou, membership ausente falhou 42501,
+      CAS stale falhou 40001 e revisão avançou 1->2; direct done/hash/revision/
+      proposal, needs_review->running, queued->done, cancelled->running e
+      reassignment cross-tenant falharam; service_role atualizou terminalmente.
+  - command: "npx vitest run server/__tests__/artifact-materializer.test.ts server/artifact-approval.test.ts src/lib/artifact-approval.test.ts src/components/artifact-approval-review.test.tsx src/lib/project-repository.test.ts src/hooks/use-project-workspace.test.ts src/stores/project-store.test.ts"
+    exit: 0
+    status: PASS
+    evidence: "7 arquivos / 125 testes."
+  - command: "npm test"
+    exit: 0
+    status: PASS
+    evidence: "28 arquivos / 238 testes."
+  - command: "npm run lint"
+    exit: 0
+    status: PASS
+  - command: "npm run typecheck"
+    exit: 0
+    status: PASS
+    evidence: "Catálogo 30 skills / 40 edges; tsc -b passou."
+  - command: "npm run build"
+    exit: 0
+    status: PASS
+    evidence: "Vite production build passou."
+  - command: "npm run build:server"
+    exit: 0
+    status: PASS
+    evidence: "tsc -p tsconfig.server.json passou; runtime compilado gerado em dist/server."
+  - command: "compiled helper runtime probe"
+    exit: 0
+    status: PASS
+    evidence: "Read/write passaram; slug symlink recusado; projectsRoot symlink aceito; leaf O_NOFOLLOW recusou; external=false e leaf externo permaneceu LEAF-UNCHANGED."
+  - command: "real service_role saga integration"
+    exit: 0
+    status: PASS
+    evidence: >
+      Cliente service_role real executou plan/approve/replay: record/outbox/skill_run
+      done, replaySameId=true, proposal_hash e audit hash iguais, artefato confirmed
+      com content_hash correto e filesystem exatamente igual ao conteúdo aprovado.
+      Dados e filesystem do probe foram limpos.
+  - command: "independent filesystem probes — source and compiled"
+    exit: 0
+    status: PASS
+    evidence: >
+      Source: 4000 writes sob troca contínua do slug tiveram external=0; 4000
+      reads tiveram leaked=0; swap de intermediário externo/interno teve
+      external=0, wrong=0 e leaked/wrong=0; siblings sequenciais A/B corretos,
+      read ausente retornou null sem mkdir, erro->sessão limpa recuperou write/read,
+      1000 writes concorrentes + 100 reuse deram REUSE-99. Compilado repetiu 4000
+      writes external=0, 4000 reads leaked=0, intermediários external/wrong/leaked/
+      wrong=0 e os mesmos testes determinísticos, incluindo REUSE-99.
+  - command: "git diff --check 278d671470db295fbada8f725c75cb37f593f83f"
+    exit: 0
+    status: PASS
+    evidence: "Nenhum erro de whitespace."
+
+findings:
+  p0: []
+  p1: []
+  p2: []
+  p3:
+    - id: W23-RG5-P3-01
+      severity: P3
+      status: OPEN_NON_BLOCKING
+      category: proposal-integrity / denial-of-service
+      title: "RPC aceita hash hexadecimal fornecido pelo caller sem recomputar o payload"
+      evidence: >
+        private.review_skill_run_proposal valida formato, membership, relação
+        projeto/workspace e CAS, mas grava p_proposal_hash sem derivá-lo de
+        p_proposal. O BFF plan/approve calcula o hash canônico e o saga real
+        passou sem bypass terminal; portanto não é P0/P1/P2 neste gate.
+      residual_impact: "Caller autorizado pode causar hash stale/DoS temporário até nova edição; não consegue concluir done nem materializar via RPC."
+      recommendation: "Recomputar/validar o hash no banco quando houver implementação canônica segura, ou manter a confiança documentada da RPC."
+
+residual_risks:
+  - "repairAll não possui claim/lease entre instâncias; pode haver trabalho redundante, com efeitos observados idempotentes/convergentes."
+  - "Histórico de artefatos continua versionado por artifactId, sem unicidade global por (project_id, path); supersessão histórica por path permanece fora desta story."
+  - "A RPC de revisão continua aceitando hash caller-supplied conforme W23-RG5-P3-01; o BFF é a superfície autoritativa usada pela UI e o gateway terminal exige CAS + hash."
+  - "A primeira tentativa de reset terminou em 502 transitório durante restart; a repetição final do mesmo reset terminou exit 0 e os gates DB finais passaram."
+
+exact_resume_point: >
+  Nenhum bloqueio de release. Story pode avançar para a transição de InReview;
+  próximo trabalho opcional é fechar W23-RG5-P3-01 com recomputação de hash na RPC
+  ou documentar formalmente essa confiança.

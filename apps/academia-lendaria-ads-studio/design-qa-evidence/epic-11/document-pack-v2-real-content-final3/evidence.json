@@ -1,0 +1,421 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T18:46:54.019Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "conteudo-funil"
+    ],
+    "catalogHash": "1bc221b83aeb6369c3db6b93fbafcf72379306fba7e9434aada3e58c521bc16f"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "conteudo-funil",
+      "contractGroup": "dynamic-library",
+      "contractHash": "32489ccc9f76e35535b265e3ddf38ce98a1b4895e9bf6ef0c545cb22633cc20b",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "carrossel/lote.html",
+          "conteudo/roteiros.html",
+          "conteudo/roteiros.md",
+          "conteudo/roteiros.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 493,
+            "hash": "ff5b2fdbc8862f7d4d30416753a06c4a84a0962fe6370219584402211bfd9038",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/index.html",
+            "format": "html",
+            "bytes": 908279,
+            "hash": "3b49738f1b1d65e02a7941e02344efd6129ded938146b52006e78f714c9a0730",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/lote.html",
+            "format": "html",
+            "bytes": 4114,
+            "hash": "049def8097eba5dba5cb299acfefb3c542f1b27168d6bc6910493297744f1373",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/conteudo-v1.zip",
+            "format": "zip",
+            "bytes": 226742,
+            "hash": "470832460f8f6b5e319bbb05d33cca4842da79246d81b01da27d3bf00c8c690f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/index.html",
+            "format": "html",
+            "bytes": 908279,
+            "hash": "3b49738f1b1d65e02a7941e02344efd6129ded938146b52006e78f714c9a0730",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/lote.html",
+            "format": "html",
+            "bytes": 4114,
+            "hash": "049def8097eba5dba5cb299acfefb3c542f1b27168d6bc6910493297744f1373",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/manifest.json",
+            "format": "json",
+            "bytes": 1071,
+            "hash": "c2cb696c8b93a154c4470929d5fb84ca8f119f36479428c0a0ab4cf6d8a5df3f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/slides/slide-01.png",
+            "format": "image",
+            "bytes": 74070,
+            "hash": "ff9130dd17f2913e358626676a2c5a8b104a6f93f8c21ea852e96b58e19c156f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/slides/slide-02.png",
+            "format": "image",
+            "bytes": 69031,
+            "hash": "f0647150c6a7a12d28617c5ef94c5a79ae0feb2ffbb56fd7b696cea7bb0256f6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/slides/slide-03.png",
+            "format": "image",
+            "bytes": 83277,
+            "hash": "724bee51136f213fd36ff18983fcb284c276965b27e55d4ba799dddfd3981fa7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/roteiros.html",
+            "format": "html",
+            "bytes": 8790,
+            "hash": "4e662d0bb668d1b4a7125272f9ea7aa61e75c75a7705c5b2eaf8cd19147a7ddf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/roteiros.md",
+            "format": "markdown",
+            "bytes": 7536,
+            "hash": "5819fd3c506956833a9ee2ce9e22e01e72572880e7a43f03f0a93fd7c4573b12",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/roteiros.pdf",
+            "format": "pdf",
+            "bytes": 126406,
+            "hash": "ea5a9b01d644c956c917dfb88d46586130f0ff05a4265e697be211dfda8f3025",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/v1/roteiros.html",
+            "format": "html",
+            "bytes": 8790,
+            "hash": "4e662d0bb668d1b4a7125272f9ea7aa61e75c75a7705c5b2eaf8cd19147a7ddf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/v1/roteiros.md",
+            "format": "markdown",
+            "bytes": 7536,
+            "hash": "5819fd3c506956833a9ee2ce9e22e01e72572880e7a43f03f0a93fd7c4573b12",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/v1/roteiros.pdf",
+            "format": "pdf",
+            "bytes": 126406,
+            "hash": "ea5a9b01d644c956c917dfb88d46586130f0ff05a4265e697be211dfda8f3025",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3689,
+            "hash": "e53f8e5769d87108760b21a92652ed81d31cc91ee22f4a7b840dd94dc5a004db",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/conteudo-funil/sources-3404a2c66aef4fa4.json",
+            "format": "json",
+            "bytes": 2657,
+            "hash": "8a4d7466f1a354fa7e07d38ea73d5de4c7cf01b7b2c55ded0790001e47d39410",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "carrossel/lote.html",
+          "conteudo/roteiros.html",
+          "conteudo/roteiros.md",
+          "conteudo/roteiros.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 491,
+            "hash": "89022e79a8eaaea4bf0a283b5fd9519b1f3e9edb4b0987f822f53b8391579fa8",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/index.html",
+            "format": "html",
+            "bytes": 685247,
+            "hash": "2dfe0f9f6e1217ffa2c13b0f0de41022ce0d3170986fbda8955558b32f732e12",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/lote.html",
+            "format": "html",
+            "bytes": 4430,
+            "hash": "121bd05a9a1ee9f9f015abb18559ea393236136cbcf4fa5b18b0d9f32275b891",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/conteudo-v1.zip",
+            "format": "zip",
+            "bytes": 170984,
+            "hash": "dcb1bfccf29aad4ec71a17b6e2165bcbbbd9e8d9e7373d1508ecc731891d1043",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/index.html",
+            "format": "html",
+            "bytes": 685247,
+            "hash": "2dfe0f9f6e1217ffa2c13b0f0de41022ce0d3170986fbda8955558b32f732e12",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/lote.html",
+            "format": "html",
+            "bytes": 4430,
+            "hash": "121bd05a9a1ee9f9f015abb18559ea393236136cbcf4fa5b18b0d9f32275b891",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/manifest.json",
+            "format": "json",
+            "bytes": 1071,
+            "hash": "0e232ea8e4facfd9ac6837a975a4f1a0bcdea8fb15dae820e21a5c58325fd4d1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/slides/slide-01.png",
+            "format": "image",
+            "bytes": 57545,
+            "hash": "828bcf7b8b5797c6a3643893cc70025b0491b6d6e233796f8ec8dbc16c00ec4a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/slides/slide-02.png",
+            "format": "image",
+            "bytes": 52841,
+            "hash": "4468342f4b9b48db48c7151fcc84d03a68f20d8ec9f680abc8ea325469e6e26e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "carrossel/v1/slides/slide-03.png",
+            "format": "image",
+            "bytes": 60234,
+            "hash": "ca2ace62d24ddefe3a0a393c76cd55228f74c3fb7e32a075c4ec0b86167d363d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/roteiros.html",
+            "format": "html",
+            "bytes": 9068,
+            "hash": "3f418a02a6ea1a6ecee051a5c55b58103fd809d96b4da494ea1e1f9d31ce222a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/roteiros.md",
+            "format": "markdown",
+            "bytes": 7021,
+            "hash": "7f3f4b9f9a42a1681ee833984c541dfbf3046658f9ab9c074c9007592072e1dc",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/roteiros.pdf",
+            "format": "pdf",
+            "bytes": 174752,
+            "hash": "96a39123b668319bd0bda136cee6752ddb1ce6edf5f5e58696f2423a3d5f6ad0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/v1/roteiros.html",
+            "format": "html",
+            "bytes": 9068,
+            "hash": "3f418a02a6ea1a6ecee051a5c55b58103fd809d96b4da494ea1e1f9d31ce222a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/v1/roteiros.md",
+            "format": "markdown",
+            "bytes": 7021,
+            "hash": "7f3f4b9f9a42a1681ee833984c541dfbf3046658f9ab9c074c9007592072e1dc",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "conteudo/v1/roteiros.pdf",
+            "format": "pdf",
+            "bytes": 174752,
+            "hash": "96a39123b668319bd0bda136cee6752ddb1ce6edf5f5e58696f2423a3d5f6ad0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3687,
+            "hash": "609befedc2cc9a955a41ef805c43f82354b502846a9245fbe13df3cbedc043e4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/conteudo-funil/sources-25adb160ec84534d.json",
+            "format": "json",
+            "bytes": 2685,
+            "hash": "dfc0c124e3e685d04fc9841c92063bd91a60013f7ff5e38e40569bf8c81c3591",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

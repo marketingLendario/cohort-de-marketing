@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sinkra-hub/templates/session-v1.json",
+  "title": "Session v1 (B1 Companion)",
+  "description": "Companion artifact para sinkra-output.json. B1 canon — pipeline state runtime (durations, qg_loops, leafs outcomes, learnings).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["session_id", "branch_id", "started_at", "outcome", "leafs_executed"],
+  "properties": {
+    "session_id": { "type": "string", "pattern": "^ps_[0-9A-Z]+$" },
+    "branch_id": { "type": "string" },
+    "execution_n": { "type": "integer", "minimum": 1 },
+    "started_at": { "type": "string", "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" },
+    "duration_minutes": { "type": "number" },
+    "outcome": {
+      "type": "string",
+      "enum": ["completed", "halted", "failed", "in_progress", "aborted"]
+    },
+    "mode": { "type": "string" },
+    "leafs_executed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "outcome"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^leaf_[a-z_]+$" },
+          "duration_min": { "type": "number" },
+          "qg_loops": { "type": "integer", "minimum": 0 },
+          "outcome": { "type": "string" },
+          "tasks_count": { "type": "integer" },
+          "implementation": { "type": "string", "enum": ["REAL", "STUB"] },
+          "strategy": { "type": "string" }
+        }
+      }
+    },
+    "qg_loops_explanation": { "type": "object" },
+    "validators_total_runs": { "type": "integer" },
+    "ajv_strict_final_verdict": { "type": "string", "enum": ["PASS", "FAIL"] },
+    "compliance_score_final": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "verdade_score_final": { "type": "number", "minimum": 0, "maximum": 10 },
+    "verdade_veto_check": { "type": "string" },
+    "anti_patterns_detected": { "type": "array" },
+    "smoke_test_findings_count": { "type": "integer" },
+    "smoke_test_findings_summary": { "type": "string" },
+    "learnings_captured": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "v5_canon_validation_smoke_test": {
+      "type": "object",
+      "properties": {
+        "dry_run_score": { "type": "string" },
+        "e2e_score": { "type": "string" },
+        "ready_for_sprint_3_2": { "type": "boolean" }
+      }
+    }
+  }
+}

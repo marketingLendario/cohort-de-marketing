@@ -44,6 +44,7 @@
       ],
       "outputs": [
         "avatar.md",
+        "relatorio-avatar.md",
         "relatorio-avatar.html",
         "relatorio-avatar.pdf",
         "pesquisa-avatar-*/"
@@ -77,9 +78,10 @@
         "avatar-funil (recomendado)"
       ],
       "outputs": [
-        "espiao/dossie-{concorrente}.md",
-        "espiao/dossie-{concorrente}.html",
-        "espiao/dossie-{concorrente}.pdf"
+        "espiao/index.html",
+        "espiao/dossie-*.md",
+        "espiao/dossie-*.html",
+        "espiao/dossie-*.pdf"
       ],
       "primaryArtifacts": [
         "competitorDossier"
@@ -110,9 +112,14 @@
         "espiao-do-concorrente"
       ],
       "outputs": [
-        "trends-{data}.md",
-        "trends-{data}.html",
-        "variacoes-{data}.md"
+        "trends/index.html",
+        "trends/briefing-media-buyer.md",
+        "trends/trends-*.md",
+        "trends/trends-*.html",
+        "trends/trends-*.pdf",
+        "trends/variacoes-teste-*.md",
+        "trends/variacoes-teste-*.html",
+        "trends/variacoes-teste-*.pdf"
       ],
       "primaryArtifacts": [
         "trendReport"
@@ -144,9 +151,14 @@
         "trend-hunting"
       ],
       "outputs": [
-        "swipe/briefing-swipe-file.md",
-        "swipe/briefing-swipe-file.html",
-        "swipe-file-index.html"
+        "swipe-file-index.md",
+        "swipe-file-index.html",
+        "swipe-file-index.pdf",
+        "briefing-swipe-file.md",
+        "briefing-swipe-file.html",
+        "briefing-swipe-file.pdf",
+        "swipe-file/*/*/*.md",
+        "swipe-file/*/*/*.html"
       ],
       "primaryArtifacts": [
         "swipeBrief"
@@ -283,7 +295,9 @@
         "offerbook"
       ],
       "outputs": [
-        "copy.md"
+        "copy.md",
+        "copy.html",
+        "copy.pdf"
       ],
       "primaryArtifacts": [
         "copy"
@@ -315,8 +329,10 @@
       ],
       "outputs": [
         "vsl.md",
-        "pagina/vsl-roteiro.html",
-        "pagina/vsl.html"
+        "vsl.html",
+        "vsl.pdf",
+        "pagina/vsl.html",
+        "pagina/vsl-roteiro.html"
       ],
       "primaryArtifacts": [
         "vsl"
@@ -349,6 +365,8 @@
       ],
       "outputs": [
         "advertorial.md",
+        "advertorial.html",
+        "advertorial.pdf",
         "pagina/advertorial.html"
       ],
       "primaryArtifacts": [
@@ -381,7 +399,11 @@
       ],
       "outputs": [
         "lancamento.md",
-        "lancamento.html"
+        "lancamento.html",
+        "lancamento.pdf",
+        "pagina/plc-1-roteiro.html",
+        "pagina/plc-2-roteiro.html",
+        "pagina/plc-3-roteiro.html"
       ],
       "primaryArtifacts": [
         "launch"
@@ -413,8 +435,13 @@
       ],
       "outputs": [
         "webinario.md",
+        "webinario.html",
+        "webinario.pdf",
         "pagina/registro.html",
-        "pagina/roteiro-webinario.html"
+        "pagina/obrigado.html",
+        "pagina/webinario-roteiro.html",
+        "pagina/oferta.html",
+        "pagina/agendamento.html"
       ],
       "primaryArtifacts": [
         "webinar"
@@ -446,8 +473,9 @@
       ],
       "outputs": [
         "quiz.md",
-        "pagina/quiz.html",
-        "pagina/resultado-*.html"
+        "quiz.html",
+        "quiz.pdf",
+        "pagina/quiz-app.html"
       ],
       "primaryArtifacts": [
         "quiz"
@@ -480,7 +508,8 @@
       ],
       "outputs": [
         "pagina/index.html",
-        "pagina/pagina-vendas.md"
+        "pagina/pagina-vendas.md",
+        "pagina/index.pdf"
       ],
       "primaryArtifacts": [
         "salesPage"
@@ -512,7 +541,12 @@
       ],
       "outputs": [
         "conteudo/roteiros.md",
-        "conteudo/carrosseis.html"
+        "conteudo/roteiros.html",
+        "conteudo/roteiros.pdf",
+        "carrossel/lote.html",
+        "carrossel/index.html",
+        "carrossel/v*/slides/*.png",
+        "carrossel/v*/*.zip"
       ],
       "primaryArtifacts": [
         "content"
@@ -576,9 +610,11 @@
         "DESIGN.md"
       ],
       "outputs": [
-        "emails/nutricao.html",
-        "emails/venda.html",
-        "emails/recuperacao.html"
+        "emails/index.html",
+        "emails/trilhas.md",
+        "emails/trilhas.html",
+        "emails/trilhas.pdf",
+        "emails/trilha-*-email-*.html"
       ],
       "primaryArtifacts": [
         "emails"
@@ -610,7 +646,10 @@
       ],
       "outputs": [
         "whatsapp.md",
-        "whatsapp/sequencia.md"
+        "whatsapp.html",
+        "whatsapp.pdf",
+        "whatsapp/index.html",
+        "whatsapp/*-*.html"
       ],
       "primaryArtifacts": [
         "whatsapp"
@@ -673,9 +712,10 @@
         "DESIGN.md"
       ],
       "outputs": [
-        "bonus/checklist.md",
-        "bonus/ebook.html",
-        "bonus/workbook.pdf"
+        "bonus/index.html",
+        "bonus/*/*.md",
+        "bonus/*/*.html",
+        "bonus/*/*.pdf"
       ],
       "primaryArtifacts": [
         "bonuses"
@@ -707,7 +747,9 @@
       ],
       "outputs": [
         "recuperacao.md",
-        "recuperacao.html"
+        "recuperacao.html",
+        "recuperacao.pdf",
+        "recuperacao/*.html"
       ],
       "primaryArtifacts": [
         "recovery"
@@ -738,7 +780,9 @@
         "offerbook"
       ],
       "outputs": [
-        "back-end.md",
+        "backend-funil.md",
+        "backend-funil.html",
+        "backend-funil.pdf",
         "pagina/upsell.html",
         "pagina/downsell.html"
       ],
@@ -749,7 +793,7 @@
         "cro-funil"
       ],
       "guard": "Lucro está no back-end.",
-      "artifactSummary": "back-end.md",
+      "artifactSummary": "backend-funil.md",
       "execution": {
         "mode": "local_skill",
         "requiresHumanReview": true
@@ -771,7 +815,8 @@
       ],
       "outputs": [
         "cro.md",
-        "cro.html"
+        "cro.html",
+        "cro.pdf"
       ],
       "primaryArtifacts": [
         "cro"
@@ -968,6 +1013,41 @@
       "execution": {
         "mode": "local_skill",
         "requiresHumanReview": true
+      }
+    },
+    {
+      "id": "ads-creative-factory",
+      "title": "Creative Factory",
+      "command": "/ads-creative-factory",
+      "description": "Produz lotes reais de imagens e legendas a partir dos finalistas curados, com arquétipos, formatos e gate visual.",
+      "phase": "Trafego",
+      "phaseColor": "#c9b298",
+      "order": 31,
+      "kind": "traffic",
+      "level": "Aula 3",
+      "skillPath": ".claude/skills/ads-creative-factory/SKILL.md",
+      "prerequisites": [
+        "briefista",
+        "estruturador",
+        "curadoria humana"
+      ],
+      "outputs": [
+        "criativos/factory/*/final/manifest.json",
+        "criativos/factory/*/final/legendas.md",
+        "criativos/factory/*/final/**/*.png"
+      ],
+      "primaryArtifacts": [
+        "creativeFactoryBatch"
+      ],
+      "feeds": [
+        "subida manual"
+      ],
+      "guard": "Gera propostas; somente itens aprovados pelo operador entram no pacote final.",
+      "artifactSummary": "Lote de imagens e legendas",
+      "execution": {
+        "mode": "local_skill",
+        "requiresHumanReview": true,
+        "mirrorTree": true
       }
     }
   ],
@@ -1171,6 +1251,11 @@
       "from": "diagnosticador",
       "to": "estruturador",
       "type": "feedback"
+    },
+    {
+      "from": "estruturador",
+      "to": "ads-creative-factory",
+      "type": "dependency"
     }
   ]
 }

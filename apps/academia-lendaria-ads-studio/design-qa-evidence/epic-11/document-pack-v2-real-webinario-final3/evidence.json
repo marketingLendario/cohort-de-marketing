@@ -1,0 +1,392 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T23:59:32.281Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "webinario-funil"
+    ],
+    "catalogHash": "2d1d3dec583886cd8f58f1872c497c923379d7e33a7a658a0a07ecd372a49f10"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "webinario-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "c6fde3f0d1f1c647db9e48b286a2fd3139fa297b98628a2d3e7d7dc26713405a",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/obrigado.html",
+          "pagina/oferta.html",
+          "pagina/registro.html",
+          "pagina/webinario-roteiro.html",
+          "webinario.html",
+          "webinario.md",
+          "webinario.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 469,
+            "hash": "8ad3e43fd231b863d4b8eb36fb16d1d26702058ec383ddcb903294630edf936b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3648,
+            "hash": "2a69a63e608f3268762f80bbbdccb193027c51ac8a610e4ba57a5f83ea0e7687",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado-v1.html",
+            "format": "html",
+            "bytes": 3404,
+            "hash": "aa0332e7eca9121c7ae25ff09d266c277639e47fe8ac77b1c7ce61bcb71b0f3b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado.html",
+            "format": "html",
+            "bytes": 3404,
+            "hash": "aa0332e7eca9121c7ae25ff09d266c277639e47fe8ac77b1c7ce61bcb71b0f3b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta-v1.html",
+            "format": "html",
+            "bytes": 2756,
+            "hash": "065a77a7ccbc2363bf82dcd02c97db937b64cbe03cfdd5d561777d94e0e16da4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta.html",
+            "format": "html",
+            "bytes": 2756,
+            "hash": "065a77a7ccbc2363bf82dcd02c97db937b64cbe03cfdd5d561777d94e0e16da4",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro-v1.html",
+            "format": "html",
+            "bytes": 3314,
+            "hash": "7878e575b37d5d27d54569a16c415c649e3d73e85405d96424e113176ff2d108",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro.html",
+            "format": "html",
+            "bytes": 3314,
+            "hash": "7878e575b37d5d27d54569a16c415c649e3d73e85405d96424e113176ff2d108",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro-v1.html",
+            "format": "html",
+            "bytes": 6147,
+            "hash": "4b065e973819a40b27c8bf854e0b4fe4515b28592813ea67b8d991e5bf7d9d91",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro.html",
+            "format": "html",
+            "bytes": 6147,
+            "hash": "4b065e973819a40b27c8bf854e0b4fe4515b28592813ea67b8d991e5bf7d9d91",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.html",
+            "format": "html",
+            "bytes": 2958,
+            "hash": "a667a01b420a36409062a6e0029cb941e067977d31ba33775be55234be6c3528",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.md",
+            "format": "markdown",
+            "bytes": 4591,
+            "hash": "e762e1b4858522b513508117a30f25162113baf6cbb83610f956e0dc33e6f0dd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.pdf",
+            "format": "pdf",
+            "bytes": 174399,
+            "hash": "e7c759bef74eb5190ebd6e67ee007ee600a00d537bc2e21a7cd304e8c48ac624",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.html",
+            "format": "html",
+            "bytes": 2958,
+            "hash": "a667a01b420a36409062a6e0029cb941e067977d31ba33775be55234be6c3528",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.md",
+            "format": "markdown",
+            "bytes": 4591,
+            "hash": "e762e1b4858522b513508117a30f25162113baf6cbb83610f956e0dc33e6f0dd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.pdf",
+            "format": "pdf",
+            "bytes": 174399,
+            "hash": "e7c759bef74eb5190ebd6e67ee007ee600a00d537bc2e21a7cd304e8c48ac624",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/obrigado.html",
+          "pagina/oferta.html",
+          "pagina/registro.html",
+          "pagina/webinario-roteiro.html",
+          "webinario.html",
+          "webinario.md",
+          "webinario.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 467,
+            "hash": "db83263f20faae440ec99cf0be08207f5f76ea34b9a105e28a1ae0e96655be0c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3646,
+            "hash": "c02e230662ef475c8afc781cc3dffdad2864d7b2f908c4d81ff8ed8dacf8a61a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado-v1.html",
+            "format": "html",
+            "bytes": 2916,
+            "hash": "010e97bfce9184ead2a02d4dcb374fd3514c65eb625021cb8a39bca68c8169fd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado.html",
+            "format": "html",
+            "bytes": 2916,
+            "hash": "010e97bfce9184ead2a02d4dcb374fd3514c65eb625021cb8a39bca68c8169fd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta-v1.html",
+            "format": "html",
+            "bytes": 2374,
+            "hash": "25931996dcb6d001c6438cf9495c4c0675bada87f9d15193b7eea9023b8d0f69",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta.html",
+            "format": "html",
+            "bytes": 2374,
+            "hash": "25931996dcb6d001c6438cf9495c4c0675bada87f9d15193b7eea9023b8d0f69",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro-v1.html",
+            "format": "html",
+            "bytes": 2756,
+            "hash": "efc0949f862713a41f20ef8715bab11b45fdd1b280a92f5569489a72f084d5be",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro.html",
+            "format": "html",
+            "bytes": 2756,
+            "hash": "efc0949f862713a41f20ef8715bab11b45fdd1b280a92f5569489a72f084d5be",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro-v1.html",
+            "format": "html",
+            "bytes": 5684,
+            "hash": "5e4fff28cc270d2152f6b07b7764abc66124adf668c3be66ff569d4496d7f92f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro.html",
+            "format": "html",
+            "bytes": 5684,
+            "hash": "5e4fff28cc270d2152f6b07b7764abc66124adf668c3be66ff569d4496d7f92f",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.html",
+            "format": "html",
+            "bytes": 2820,
+            "hash": "6793de82411f68353f8d0571f117e9b83cd64fdf0a41ee71686e15a8a06aad3e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.md",
+            "format": "markdown",
+            "bytes": 5282,
+            "hash": "9d651f292a6b2cb20e6ae0ab5bfcecb90a1e0ab3cf68b516299d9be22e78057f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.pdf",
+            "format": "pdf",
+            "bytes": 149739,
+            "hash": "dec17fc9f1feb2627e5b89d40d95e648b88d99aa378bd9440d673acd6fdfc3bc",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.html",
+            "format": "html",
+            "bytes": 2820,
+            "hash": "6793de82411f68353f8d0571f117e9b83cd64fdf0a41ee71686e15a8a06aad3e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.md",
+            "format": "markdown",
+            "bytes": 5282,
+            "hash": "9d651f292a6b2cb20e6ae0ab5bfcecb90a1e0ab3cf68b516299d9be22e78057f",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.pdf",
+            "format": "pdf",
+            "bytes": 149739,
+            "hash": "dec17fc9f1feb2627e5b89d40d95e648b88d99aa378bd9440d673acd6fdfc3bc",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

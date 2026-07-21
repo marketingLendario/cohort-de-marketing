@@ -1,0 +1,343 @@
+schema: sinkra-wave-fan-in-result-v1
+epic: epic-8
+wave: W2
+batch: 1
+executor: "@devops"
+mode: local-fan-in
+generated_at: "2026-07-10T01:15:00-03:00"
+resumed_after: "blocked run at 2026-07-10T01:02:06Z (see git history of this file / preflight section below); gate-failed run at 2026-07-10T01:15:00-03:00 (R4 typecheck defect, see residual_risks/correction_recovery below)"
+status: integrated_with_gates_passed
+integrated_sha: "206419d2fa99715742d50af0a67846bd0b1a8e0c"
+final_head: "d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+target_branch: rafaelscosta
+base_commit: "c8fc264eed6283e7ddb6d3072926ffabad60273d"
+
+preflight_recovery:
+  r1_dirty_project_store:
+    prior_finding: >
+      Blocked run found an uncommitted tracked modification to
+      apps/academia-lendaria-ads-studio/src/stores/project-store.ts
+      duplicating part of story 8.W2.1's payload (ProjectCacheSnapshot,
+      applyServerSnapshot, ingestProject, clearCache, reconcileArtifact,
+      reconcileSkillRun).
+    resolution_verified: >
+      The loose scaffold was archived to
+      .aiox/waves/epic-8-wave-2/pre-fan-in-project-store-scaffold.patch
+      and removed from the tracked tree. Verified `git diff --stat` for
+      project-store.ts against HEAD is empty and `git status --porcelain`
+      shows only the four pre-existing untracked directories
+      (.aiox/, .claude/worktrees/, .codegraph/, design-qa-evidence/) —
+      no tracked pending changes.
+    result: PASS
+  r2_ack_sha_mismatch:
+    prior_finding: >
+      .sdc-ack/8.W2.1/sdc-complete.ack declared sha
+      6ca5299a4cbc8671b66396430ec945b1a3d10bd5 (dangling, unreachable from
+      any ref) instead of the wave/8-w2/story-8.W2.1 tip.
+    resolution_verified: >
+      Re-read ack: sha field now reads
+      28c05a6060ff1f9715381bd4205fc06d6bf2f7d0, matching the handoff,
+      fan-in report, and worktree HEAD exactly.
+    result: PASS
+
+preflight:
+  branch:
+    expected: "rafaelscosta"
+    actual: "rafaelscosta"
+    result: PASS
+  head:
+    expected: "c8fc264eed6283e7ddb6d3072926ffabad60273d"
+    actual: "c8fc264eed6283e7ddb6d3072926ffabad60273d"
+    result: PASS
+  clean_tracked_tree:
+    result: PASS
+  ack_validation:
+    - story_id: "8.W2.1"
+      ack_declared_sha: "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0"
+      expected_commit: "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0"
+      result: PASS
+    - story_id: "8.W2.2"
+      ack_declared_sha: "54782376b04df4723171e972e2cc8bde9bbbc145"
+      expected_commit: "54782376b04df4723171e972e2cc8bde9bbbc145"
+      result: PASS
+  commit_objects_exist:
+    "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0": PASS
+    "54782376b04df4723171e972e2cc8bde9bbbc145": PASS
+  parents_check:
+    detail: "Both 28c05a6 and 5478237 share parent c8fc264 (== base HEAD); no file overlap between the two commits' file lists, consistent with pairwise_checks.conflicts: [] in fan-in-batch-1.yaml."
+
+cherry_picks:
+  - story_id: "8.W2.1"
+    source_commit: "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0"
+    result_commit: "a27b408446c49520387bfaa2ee4511592c86a70d"
+    conflicts: none
+  - story_id: "8.W2.2"
+    source_commit: "54782376b04df4723171e972e2cc8bde9bbbc145"
+    result_commit: "206419d2fa99715742d50af0a67846bd0b1a8e0c"
+    conflicts: none
+
+conflict_result: no_conflicts_mechanical_or_otherwise
+
+integration_gates:
+  location: "apps/academia-lendaria-ads-studio"
+  npm_test:
+    status: passed
+    detail: "24 test files, 164 tests passed"
+  npm_lint:
+    status: passed
+    detail: "ESLint: No issues found"
+  npm_typecheck:
+    status: FAILED
+    detail: >
+      tsc -b: 6 errors in src/components/project-journey.test.tsx
+      (TS2554 Expected 0 arguments but got 2; TS2556 spread argument must
+      have tuple type x3; TS2493 tuple of length 0 has no element at
+      index 1 x2). Root cause: the vi.mock factory wraps
+      observeSkillRun/startSkillRun/cancelSkillRun/retrySkillRun with
+      `vi.fn(() => ...)` (zero-arg implementation), so TypeScript infers
+      a 0-argument Mock type; the same file then calls these mocks with
+      arguments (line 22-25) and indexes `.mock.calls[0][1]` (line 65,
+      82), which the inferred 0-arg tuple type cannot satisfy.
+    root_cause_isolation: >
+      Reproduced this exact error running `npx tsc -b` directly inside
+      the story-8.W2.2 worktree (.claude/worktrees/story-8.W2.2, HEAD
+      54782376b04df4723171e972e2cc8bde9bbbc145) in isolation, i.e. WITHOUT
+      story 8.W2.1's commit present at all. Identical 6 errors, same
+      lines. This proves the failure is a pre-existing defect in story
+      8.W2.2's own commit — not a merge/cherry-pick artifact, not caused
+      by combining with 8.W2.1, and not a mechanical conflict this fan-in
+      run is scoped to resolve. It contradicts the gates.typecheck: passed
+      claim recorded in .sdc-ack/8.W2.2/sdc-complete.ack.
+  npm_build:
+    status: passed
+    detail: "vite build — built in 370ms (vite build does not invoke tsc -b, so it does not surface the test-file type error)"
+  npm_build_server:
+    status: passed
+    detail: "tsc -p tsconfig.server.json — no errors (server tsconfig does not include the affected test file)"
+  npm_lint_db:
+    status: passed
+    detail: "supabase db lint --local --level warning — No schema errors found"
+  npm_test_db:
+    status: passed
+    detail: "pgTAP — Files=3, Tests=15 (adds skill_run_jobs.sql from 8.W2.2), Result: PASS"
+
+diff_check:
+  command: "git diff --check c8fc264eed6283e7ddb6d3072926ffabad60273d..HEAD"
+  status: clean
+  exit_code: 0
+  note: >
+    This was the diff_check from the original gate-failed run at
+    integrated_sha 206419d. Re-verified again after the correction
+    commit — see correction_recovery.diff_check below (same command,
+    same clean result, against the new HEAD).
+
+push_pr_merge: none
+untracked_preserved:
+  - ".aiox/"
+  - ".claude/worktrees/"
+  - ".codegraph/"
+  - "apps/academia-lendaria-ads-studio/design-qa-evidence/"
+
+verdict: GATE_FAILED_AT_206419d_RESOLVED_AT_d6e413c
+residual_risks:
+  - id: R4
+    severity: high
+    status: RESOLVED
+    description: >
+      npm run typecheck failed on HEAD (206419d) due to a pre-existing
+      type defect in story 8.W2.2's project-journey.test.tsx (see
+      integration_gates.npm_typecheck above). The story's own ACK
+      (.sdc-ack/8.W2.2/sdc-complete.ack) recorded gates.typecheck:
+      passed, which this run disproved by direct reproduction in
+      isolation on the story's own commit.
+    recommendation: >
+      @dev to fix the vi.fn mock typings in
+      apps/academia-lendaria-ads-studio/src/components/project-journey.test.tsx
+      (type the mock implementations to accept
+      (jobId: string, handlers: ObserveSkillRunHandlers) / their real
+      signatures instead of 0-arg closures) and @qa to re-run typecheck
+      and re-issue sdc-complete.ack for 8.W2.2 with an accurate gate
+      record. Do not promote this branch (push/PR/merge) until
+      npm run typecheck passes on HEAD.
+    resolution: >
+      See correction_recovery below. Commit d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7
+      ("fix: type durable skill runtime mocks [Story 8.W2.2]") retypes the
+      four vi.fn mocks in project-journey.test.tsx against the exported
+      skill-runtime signatures (SkillRuntimeModule['observeSkillRun'] etc.,
+      via generic vi.fn<...> + Parameters<...> for the wrapper args) instead
+      of 0-arg/unknown[] closures. No runtime/mock-implementation behavior
+      changed — confirmed by diff review (only type annotations added).
+      Full gate suite re-run clean on d6e413c.
+  - id: R5
+    severity: low
+    description: >
+      Supabase CLI local is v2.84.2, behind latest v2.109.1 (same
+      pre-existing note as Wave 1 fan-in). Not blocking.
+    recommendation: "No action taken; informational, carried over from Wave 1."
+
+correction_recovery:
+  executor: "@devops"
+  commit:
+    sha: "d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+    parent: "206419d2fa99715742d50af0a67846bd0b1a8e0c"
+    message: "fix: type durable skill runtime mocks [Story 8.W2.2]"
+    files_changed:
+      - "apps/academia-lendaria-ads-studio/src/components/project-journey.test.tsx"
+    scope_check: >
+      Only the one tracked file listed above was staged and committed.
+      No untracked directory (.aiox/, .claude/worktrees/, .codegraph/,
+      apps/academia-lendaria-ads-studio/design-qa-evidence/) was added
+      to the tree; `git status --porcelain` after commit shows only
+      those four pre-existing untracked entries, no tracked changes.
+    diff_review: >
+      Change is confined to mock typings: adds a
+      `type SkillRuntimeModule = typeof import('@/lib/skill-runtime')`
+      alias, types the four vi.fn() constants as
+      `vi.fn<SkillRuntimeModule['<name>']>(...)`, and types the vi.mock
+      factory wrapper args as `Parameters<SkillRuntimeModule['<name>']>`
+      instead of a hand-written tuple / unknown[]. No mock
+      implementation bodies, call sites, or assertions changed. Pure
+      type-level fix, no runtime behavior change.
+  gates:
+    location: "apps/academia-lendaria-ads-studio"
+    npm_test:
+      status: passed
+      detail: "24 test files, 164 tests passed"
+    npm_lint:
+      status: passed
+      detail: "ESLint: No issues found"
+    npm_typecheck:
+      status: passed
+      detail: "tsc -b — no errors (R4 resolved)"
+    npm_build:
+      status: passed
+      detail: "vite build — built in 738ms"
+    npm_build_server:
+      status: passed
+      detail: "tsc -p tsconfig.server.json — no errors"
+    npm_lint_db:
+      status: passed
+      detail: "supabase db lint --local --level warning — No schema errors found"
+    npm_test_db:
+      status: passed
+      detail: "pgTAP — Files=3, Tests=15, Result: PASS"
+  diff_check:
+    command: "git diff --check c8fc264eed6283e7ddb6d3072926ffabad60273d..HEAD"
+    status: clean
+    exit_code: 0
+  targeted_test:
+    command: "npx vitest run src/components/project-journey.test.tsx"
+    status: passed
+    detail: "PASS (6) FAIL (0)"
+
+verdict_final: GATES_PASSED
+final_head_confirmed:
+  branch: rafaelscosta
+  sha: "d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+
+next_action: >
+  All quality gates pass on branch rafaelscosta at
+  d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7 (local only — no push, PR, or
+  remote merge performed, per scope). R4 is resolved by commit d6e413c.
+  R5 remains open as a low-severity, non-blocking informational note
+  (Supabase CLI version). This batch is ready to hand back for the next
+  wave step (e.g. @qa re-issuing an accurate sdc-complete.ack for
+  8.W2.2, or @pm/@po sequencing batch 2); push/PR remains @devops-exclusive
+  and was intentionally not performed in this local checkpoint.
+
+recovery_integration:
+  executor: "@devops"
+  generated_at: "2026-07-10T10:24:52Z"
+  trigger: >
+    Independent QA gate .aiox/waves/epic-8-wave-2/qa-batch-1.yaml
+    (head_reviewed d6e413c, base_commit c8fc264) returned verdict BLOCK
+    on 2 P2 findings (QA-W2B1-01 retry double-submit race,
+    QA-W2B1-02 AC6 reload-resume not persisted in real/Supabase mode)
+    plus 2 P3 hardening follow-ups (QA-W2B1-03 workspace tenancy trust,
+    QA-W2B1-04 Codex env denylist). @dev produced a recovery commit in
+    worktree .claude/worktrees/story-8.W2-recovery-batch-1 closing all
+    four findings; recovery ACK at that worktree's
+    .sdc-ack/8.W2.2/qa-recovery.ack.
+  recovery_sha: "602f44ccd167575c4273b8ab91cac11ab1f4e1eb"
+  base_sha: "d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+  recovery_branch: "wave/8-w2/recovery-batch-1"
+  commit_message: "fix: close QA batch-1 blockers for durable skill runs [Story 8.W2.2]"
+  findings_closed:
+    - "QA-W2B1-01 (P2): guarded startRetry() CAS + retryInFlightRef UI guard"
+    - "QA-W2B1-02 (P2): durable skill_run pointer persisted via ProjectRepository, threaded through ProjectWorkspaceController -> ProjectHydrationBoundary -> ProjectJourney"
+    - "QA-W2B1-03 (P3): resolveWorkspaceId derives authoritative workspace_id server-side, rejects mismatched client value"
+    - "QA-W2B1-04 (P3): sanitizeCodexEnv switched from 2-key denylist to operational allowlist"
+  preflight_verified_by_devops:
+    branch_before_ff:
+      expected: "rafaelscosta @ d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+      actual: "rafaelscosta @ d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+      clean_tracked_tree: PASS
+      result: PASS
+    recovery_commit_lineage:
+      parent_of_602f44c: "d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+      is_direct_descendant: PASS
+      merge_base_is_ancestor_check: PASS
+    recovery_worktree_tracked_tree:
+      branch: "wave/8-w2/recovery-batch-1"
+      head: "602f44ccd167575c4273b8ab91cac11ab1f4e1eb"
+      result: clean (only untracked .sdc-ack/ present)
+    diff_check:
+      command: "git diff --check c8fc264eed6283e7ddb6d3072926ffabad60273d..602f44ccd167575c4273b8ab91cac11ab1f4e1eb"
+      status: clean
+      exit_code: 0
+    recovery_diff_shape:
+      command: "git diff --stat d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7..602f44ccd167575c4273b8ab91cac11ab1f4e1eb"
+      files_changed: 14
+      insertions: 904
+      deletions: 47
+      matches_ack: true
+  gate_evidence_from_ack:
+    location: "apps/academia-lendaria-ads-studio"
+    note: "Gates as declared in the recovery ACK (post-commit, in the recovery worktree); this fan-in did not re-execute them independently."
+    npm_test:
+      status: PASS
+      detail: "Test Files: 25 passed (25); Tests: 176 passed (176)"
+    npm_run_lint:
+      status: PASS
+      detail: "eslint ., zero findings"
+    npm_run_typecheck:
+      status: PASS
+      detail: "pretypecheck catalog:generate+validate OK (30 skills, 40 edges, canonical mirror verified); tsc -b clean"
+    npm_run_build:
+      status: PASS
+      detail: "vite build, built in 392ms"
+    npm_run_build_server:
+      status: PASS
+      detail: "tsc -p tsconfig.server.json, clean"
+    npm_run_lint_db:
+      status: PASS
+      detail: "supabase db lint --local --level warning: No schema errors found"
+    npm_run_test_db:
+      status: PASS
+      detail: "supabase test db: Files=3, Tests=15, Result: PASS"
+  integration_action:
+    type: fast_forward_only
+    detail: >
+      Local branch rafaelscosta fast-forwarded from d6e413c to
+      602f44ccd167575c4273b8ab91cac11ab1f4e1eb (git merge --ff-only);
+      SHA preserved exactly, no cherry-pick rewrite, no new commit
+      created by this integration step.
+    push_pr_merge: none
+    post_integration_head:
+      branch: rafaelscosta
+      sha: "602f44ccd167575c4273b8ab91cac11ab1f4e1eb"
+      tracked_tree: clean
+  residual_risk_carried_from_ack:
+    - "Human review decisions (approveProposal/rejectProposal) remain cache-only; done/cancelled transition from human review scoped to STORY-8.W2.3 — known accepted gap, not a regression."
+    - "resolveTenantWorkspaceId's no-DB fallback path (dev, no Supabase backend) still trusts client-provided workspace_id; accepted because that path has no RLS-bypassing service-role writer."
+  status: pending_independent_qa_regate
+  next_action: >
+    Recovery commit 602f44c is integrated locally into rafaelscosta
+    (fast-forward, no push/PR/remote merge — @devops-exclusive gate not
+    yet exercised). Gate evidence above is the recovery author's ACK,
+    not an independent re-verification. Per qa-batch-1.yaml next_action,
+    do NOT promote (push/PR/merge) until @qa independently re-runs the
+    full gate suite against 602f44c and re-issues a gate verdict
+    (targeting QA-W2B1-01 and QA-W2B1-02 specifically, plus a check on
+    the QA-W2B1-03/04 P3 follow-ups) and an accurate 8.W2.2
+    sdc-complete.ack reflecting AC6 in real/Supabase mode.

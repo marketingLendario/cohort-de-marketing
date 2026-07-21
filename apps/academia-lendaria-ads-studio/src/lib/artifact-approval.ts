@@ -22,6 +22,7 @@ import type { SkillProposal } from '@/lib/skill-runtime';
 
 export type ApprovalDecision = 'approve' | 'reject';
 export type ApprovalFormat = 'markdown' | 'json' | 'yaml' | 'html';
+export type StoredApprovalFormat = ApprovalFormat | 'pdf' | 'docx' | 'image' | 'zip';
 export type FileChangeType = 'create' | 'modify' | 'unchanged';
 export type ApprovalState =
   | 'pending'
@@ -75,7 +76,17 @@ export interface ApprovalRecord {
   proposalHash: string;
   proposalRevision: number;
   error: string | null;
-  plan: Array<{ artifactId: string; artifactType: string; title: string; path: string; format: ApprovalFormat; content: string; contentHash: string | null }>;
+  plan: Array<{
+    artifactId: string;
+    artifactType: string;
+    title: string;
+    path: string;
+    format: StoredApprovalFormat;
+    content: string;
+    contentEncoding?: 'utf8' | 'base64';
+    derivedFrom?: string | null;
+    contentHash: string | null;
+  }>;
 }
 
 export interface DecideArtifactApprovalInput {

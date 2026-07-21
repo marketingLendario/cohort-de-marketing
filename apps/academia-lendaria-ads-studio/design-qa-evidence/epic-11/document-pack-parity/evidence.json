@@ -1,0 +1,567 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W1.2",
+  "generatedAt": "2026-07-11T13:05:54.900Z",
+  "fixture": {
+    "workspaceId": "81000000-0000-0000-0000-000000000111",
+    "panelProjectId": "82000000-0000-0000-0000-000000000111",
+    "cliProjectId": "82000000-0000-0000-0000-000000000112",
+    "source": "projetos/academia-fit"
+  },
+  "skills": [
+    {
+      "skillId": "offerbook",
+      "panel": {
+        "screenshot": "panel-offerbook.png",
+        "artifacts": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 457,
+            "contentHash": "61fed1bd1cdc0c0db157b9d384caba3c90fc655028de26d511e366fe801fa4d1",
+            "verified": true
+          },
+          {
+            "path": "briefing-offerbook.md",
+            "format": "markdown",
+            "bytes": 4353,
+            "contentHash": "553fca19314997a80e0dade2ae36e6319446d3e1614a41e0b3ccc86caf26ff28",
+            "verified": true
+          },
+          {
+            "path": "briefing-offerbook.r1.md",
+            "format": "markdown",
+            "bytes": 4353,
+            "contentHash": "553fca19314997a80e0dade2ae36e6319446d3e1614a41e0b3ccc86caf26ff28",
+            "verified": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3618,
+            "contentHash": "f19b49806ff74183abbf6d0894a7e392c4f679923d0a45c7dfd4de2a1bf07f37",
+            "verified": true
+          },
+          {
+            "path": "offerbook.docx",
+            "format": "docx",
+            "bytes": 263121,
+            "contentHash": "632c05724f38c496652e1c4aad1abbf1099df0fd8c3051b2d6e51268bf6f9fd4",
+            "verified": true
+          },
+          {
+            "path": "offerbook.html",
+            "format": "html",
+            "bytes": 14031,
+            "contentHash": "d382285f6583637d254879d12616b17f062c5eb30c19e9147c60c8ca3d8d0a24",
+            "verified": true
+          },
+          {
+            "path": "offerbook.md",
+            "format": "markdown",
+            "bytes": 20980,
+            "contentHash": "e5d6c5c041b6222c25874d13b34f3a1ea50ebb7c8c0d841ae8ab2f6eddbebbf6",
+            "verified": true
+          },
+          {
+            "path": "offerbook.r1.docx",
+            "format": "docx",
+            "bytes": 263121,
+            "contentHash": "632c05724f38c496652e1c4aad1abbf1099df0fd8c3051b2d6e51268bf6f9fd4",
+            "verified": true
+          },
+          {
+            "path": "offerbook.r1.html",
+            "format": "html",
+            "bytes": 14031,
+            "contentHash": "d382285f6583637d254879d12616b17f062c5eb30c19e9147c60c8ca3d8d0a24",
+            "verified": true
+          },
+          {
+            "path": "offerbook.r1.md",
+            "format": "markdown",
+            "bytes": 20980,
+            "contentHash": "e5d6c5c041b6222c25874d13b34f3a1ea50ebb7c8c0d841ae8ab2f6eddbebbf6",
+            "verified": true
+          }
+        ]
+      },
+      "cli": {
+        "skillRunId": "37485cfc-e31f-434f-a7fd-7f16ab2b16cf",
+        "jobId": "96a3d728-de62-4a32-85be-6e155e3629cf",
+        "model": "codex-cli-default",
+        "approvalOutcome": "written",
+        "artifacts": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 455,
+            "contentHash": "ac5ff4638001d932f52308254d7db024a1a7c79218543f740bb880cc1d57a11c",
+            "verified": true
+          },
+          {
+            "path": "briefing-offerbook.md",
+            "format": "markdown",
+            "bytes": 4020,
+            "contentHash": "5d51b6cefe33e0fd46e4b4ffb61d536604610f8d99d52088905db47383046a6b",
+            "verified": true
+          },
+          {
+            "path": "briefing-offerbook.r1.md",
+            "format": "markdown",
+            "bytes": 4020,
+            "contentHash": "5d51b6cefe33e0fd46e4b4ffb61d536604610f8d99d52088905db47383046a6b",
+            "verified": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3616,
+            "contentHash": "563cb9ddbab2d2ad7fce4e18cc2d9ddad373c3eca8da1575ca22afc8aabe3c66",
+            "verified": true
+          },
+          {
+            "path": "offerbook.docx",
+            "format": "docx",
+            "bytes": 264269,
+            "contentHash": "be32e33d6ca85486befa2ad88704deaab02603f9b67a49162d4c287ed4111223",
+            "verified": true
+          },
+          {
+            "path": "offerbook.html",
+            "format": "html",
+            "bytes": 14111,
+            "contentHash": "3e2a3637fd738607a9af7c89ca27f51c34a9f011c4007bdc7e035282c9a69ddf",
+            "verified": true
+          },
+          {
+            "path": "offerbook.md",
+            "format": "markdown",
+            "bytes": 20713,
+            "contentHash": "3b4cab04233dc5e253b585e7ba915fd678386f48a5bc5e05a15d04e5025f6fa3",
+            "verified": true
+          },
+          {
+            "path": "offerbook.r1.docx",
+            "format": "docx",
+            "bytes": 264269,
+            "contentHash": "be32e33d6ca85486befa2ad88704deaab02603f9b67a49162d4c287ed4111223",
+            "verified": true
+          },
+          {
+            "path": "offerbook.r1.html",
+            "format": "html",
+            "bytes": 14111,
+            "contentHash": "3e2a3637fd738607a9af7c89ca27f51c34a9f011c4007bdc7e035282c9a69ddf",
+            "verified": true
+          },
+          {
+            "path": "offerbook.r1.md",
+            "format": "markdown",
+            "bytes": 20713,
+            "contentHash": "3b4cab04233dc5e253b585e7ba915fd678386f48a5bc5e05a15d04e5025f6fa3",
+            "verified": true
+          }
+        ]
+      },
+      "contractPaths": [
+        "briefing-offerbook.md",
+        "offerbook.docx",
+        "offerbook.html",
+        "offerbook.md"
+      ],
+      "parity": "verified"
+    },
+    {
+      "skillId": "copy-funil",
+      "panel": {
+        "screenshot": "panel-copy-funil.png",
+        "artifacts": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 732,
+            "contentHash": "991980e95f7eb231cdb7c6a84053f66a3a09d9d36387026813ce14045f7df2ee",
+            "verified": true
+          },
+          {
+            "path": "copy.html",
+            "format": "html",
+            "bytes": 17918,
+            "contentHash": "f92a90f4e47848deb360ad1c64d43380e4fc1bbfe0ca9ed387f91a7cf453476f",
+            "verified": true
+          },
+          {
+            "path": "copy.md",
+            "format": "markdown",
+            "bytes": 22778,
+            "contentHash": "05a81770e18e95a779f654345cb54cc94109f2e22cf474bb0473e2e7f7097b71",
+            "verified": true
+          },
+          {
+            "path": "copy.pdf",
+            "format": "pdf",
+            "bytes": 272631,
+            "contentHash": "02bc1bfea9af8f42b63bde9e1b297fb7d0a17851f6a694f655c8151b7aa22295",
+            "verified": true
+          },
+          {
+            "path": "copy.r1.html",
+            "format": "html",
+            "bytes": 17918,
+            "contentHash": "f92a90f4e47848deb360ad1c64d43380e4fc1bbfe0ca9ed387f91a7cf453476f",
+            "verified": true
+          },
+          {
+            "path": "copy.r1.md",
+            "format": "markdown",
+            "bytes": 22778,
+            "contentHash": "05a81770e18e95a779f654345cb54cc94109f2e22cf474bb0473e2e7f7097b71",
+            "verified": true
+          },
+          {
+            "path": "copy.r1.pdf",
+            "format": "pdf",
+            "bytes": 272631,
+            "contentHash": "02bc1bfea9af8f42b63bde9e1b297fb7d0a17851f6a694f655c8151b7aa22295",
+            "verified": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4058,
+            "contentHash": "c76eba8fef5124f7b65a7be63def9cb1d1370d292a013e4e5ec3a5a644130df8",
+            "verified": true
+          }
+        ]
+      },
+      "cli": {
+        "skillRunId": "049c9ee8-7b86-49ab-9483-a7b74a787517",
+        "jobId": "fe28204b-85d3-45ee-931d-79547c2e7044",
+        "model": "codex-cli-default",
+        "approvalOutcome": "written",
+        "artifacts": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 730,
+            "contentHash": "0d06be139b96c34ef39dc57c46f6598f5f2f2bfd4ed3cf663aa8ffc1b134b753",
+            "verified": true
+          },
+          {
+            "path": "copy.html",
+            "format": "html",
+            "bytes": 14050,
+            "contentHash": "67b35e655cf2a7404a1d433c8e46713778df884e9fea68ee83ff751f1cd52efe",
+            "verified": true
+          },
+          {
+            "path": "copy.md",
+            "format": "markdown",
+            "bytes": 16362,
+            "contentHash": "fc9ce07cfff62d5ee76455682ac9eb1bb9a0914b3777b4be5096486642f52739",
+            "verified": true
+          },
+          {
+            "path": "copy.pdf",
+            "format": "pdf",
+            "bytes": 197426,
+            "contentHash": "37f1f8e4936bd782e826f908529bc8dcad51aa5b31f8a8dba83229935f07ace0",
+            "verified": true
+          },
+          {
+            "path": "copy.r1.html",
+            "format": "html",
+            "bytes": 14050,
+            "contentHash": "67b35e655cf2a7404a1d433c8e46713778df884e9fea68ee83ff751f1cd52efe",
+            "verified": true
+          },
+          {
+            "path": "copy.r1.md",
+            "format": "markdown",
+            "bytes": 16362,
+            "contentHash": "fc9ce07cfff62d5ee76455682ac9eb1bb9a0914b3777b4be5096486642f52739",
+            "verified": true
+          },
+          {
+            "path": "copy.r1.pdf",
+            "format": "pdf",
+            "bytes": 197426,
+            "contentHash": "37f1f8e4936bd782e826f908529bc8dcad51aa5b31f8a8dba83229935f07ace0",
+            "verified": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4056,
+            "contentHash": "9cc555d92cc04f4ab4af7d4356b20c959eca63bcd2c5edc6192b7aa828e176ba",
+            "verified": true
+          }
+        ]
+      },
+      "contractPaths": [
+        "copy.html",
+        "copy.md",
+        "copy.pdf"
+      ],
+      "parity": "verified"
+    },
+    {
+      "skillId": "pagina-vendas-funil",
+      "panel": {
+        "screenshot": "panel-pagina-vendas-funil.png",
+        "artifacts": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1027,
+            "contentHash": "33a3cf6b25d746a6907d2e0366651262e7ef9a433ccb149d863904e6be030f59",
+            "verified": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4610,
+            "contentHash": "24153b71ace137aefefb9e93a33e97dc99c73d60448ac14db1bad062deafd89f",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.html",
+            "format": "html",
+            "bytes": 17084,
+            "contentHash": "90fbd6b0822f5a37cf814f1d221f5101406f7b7a134f4b7a13b40c6be11e69aa",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.pdf",
+            "format": "pdf",
+            "bytes": 249277,
+            "contentHash": "db280bec892bd5e709e8128ba9eef3f92073853808f078e6bb2564ad55f85df9",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.r1.html",
+            "format": "html",
+            "bytes": 17084,
+            "contentHash": "90fbd6b0822f5a37cf814f1d221f5101406f7b7a134f4b7a13b40c6be11e69aa",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.r1.pdf",
+            "format": "pdf",
+            "bytes": 249277,
+            "contentHash": "db280bec892bd5e709e8128ba9eef3f92073853808f078e6bb2564ad55f85df9",
+            "verified": true
+          },
+          {
+            "path": "pagina/pagina-vendas.md",
+            "format": "markdown",
+            "bytes": 8803,
+            "contentHash": "d9dc250d3cbd948c5f34e6d70d3c859302a51f8953da0664f3abe354bc3c2b43",
+            "verified": true
+          },
+          {
+            "path": "pagina/pagina-vendas.r1.md",
+            "format": "markdown",
+            "bytes": 8803,
+            "contentHash": "d9dc250d3cbd948c5f34e6d70d3c859302a51f8953da0664f3abe354bc3c2b43",
+            "verified": true
+          }
+        ]
+      },
+      "cli": {
+        "skillRunId": "feea3316-b065-412a-8612-db30175d9c6e",
+        "jobId": "5fd9a4f5-5dca-43e7-a8ea-fb07ac36dc30",
+        "model": "codex-cli-default",
+        "approvalOutcome": "written",
+        "artifacts": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1025,
+            "contentHash": "ad3b305fb94fcfce3115c4bf88ea481d5017af9afa2d13ecc074882cdb56f529",
+            "verified": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4608,
+            "contentHash": "ced42d967e98019ed9fe64affadc77813973a1338570104fd6cd3b0f489a9aa8",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.html",
+            "format": "html",
+            "bytes": 22501,
+            "contentHash": "3665aeced12e83222957cb2741dc9522c27475cfaa3d631c39adc3c4e8a60ee4",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.pdf",
+            "format": "pdf",
+            "bytes": 295381,
+            "contentHash": "d46b6d588bd2051876261537aa0b41a381cfb0fe2403df2c73fe6dcdd66d8837",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.r1.html",
+            "format": "html",
+            "bytes": 22501,
+            "contentHash": "3665aeced12e83222957cb2741dc9522c27475cfaa3d631c39adc3c4e8a60ee4",
+            "verified": true
+          },
+          {
+            "path": "pagina/index.r1.pdf",
+            "format": "pdf",
+            "bytes": 295381,
+            "contentHash": "d46b6d588bd2051876261537aa0b41a381cfb0fe2403df2c73fe6dcdd66d8837",
+            "verified": true
+          },
+          {
+            "path": "pagina/pagina-vendas.md",
+            "format": "markdown",
+            "bytes": 10123,
+            "contentHash": "aaf07fb1def983f52d05734fc7907b2ce06e915ba837613aff086e3207e43a13",
+            "verified": true
+          },
+          {
+            "path": "pagina/pagina-vendas.r1.md",
+            "format": "markdown",
+            "bytes": 10123,
+            "contentHash": "aaf07fb1def983f52d05734fc7907b2ce06e915ba837613aff086e3207e43a13",
+            "verified": true
+          }
+        ]
+      },
+      "contractPaths": [
+        "pagina/index.html",
+        "pagina/index.pdf",
+        "pagina/pagina-vendas.md"
+      ],
+      "parity": "verified"
+    }
+  ],
+  "generatedPages": [
+    {
+      "surface": "panel",
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshot": "sales-page-panel-desktop.png",
+      "contract": "sales-page-v1",
+      "sections": [
+        "hero",
+        "vsl",
+        "primary-cta",
+        "mechanism",
+        "offer",
+        "pricing",
+        "proof",
+        "benefits",
+        "bonuses",
+        "guarantee",
+        "urgency",
+        "faq",
+        "checkout",
+        "final-cta",
+        "footer"
+      ],
+      "horizontalOverflow": false,
+      "formFields": true,
+      "consoleErrors": []
+    },
+    {
+      "surface": "panel",
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "sales-page-panel-mobile.png",
+      "contract": "sales-page-v1",
+      "sections": [
+        "hero",
+        "vsl",
+        "primary-cta",
+        "mechanism",
+        "offer",
+        "pricing",
+        "proof",
+        "benefits",
+        "bonuses",
+        "guarantee",
+        "urgency",
+        "faq",
+        "checkout",
+        "final-cta",
+        "footer"
+      ],
+      "horizontalOverflow": false,
+      "formFields": true,
+      "consoleErrors": []
+    },
+    {
+      "surface": "cli",
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshot": "sales-page-cli-desktop.png",
+      "contract": "sales-page-v1",
+      "sections": [
+        "hero",
+        "vsl",
+        "primary-cta",
+        "mechanism",
+        "offer",
+        "pricing",
+        "proof",
+        "benefits",
+        "bonuses",
+        "guarantee",
+        "urgency",
+        "faq",
+        "checkout",
+        "final-cta",
+        "footer"
+      ],
+      "horizontalOverflow": false,
+      "formFields": true,
+      "consoleErrors": []
+    },
+    {
+      "surface": "cli",
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "sales-page-cli-mobile.png",
+      "contract": "sales-page-v1",
+      "sections": [
+        "hero",
+        "vsl",
+        "primary-cta",
+        "mechanism",
+        "offer",
+        "pricing",
+        "proof",
+        "benefits",
+        "bonuses",
+        "guarantee",
+        "urgency",
+        "faq",
+        "checkout",
+        "final-cta",
+        "footer"
+      ],
+      "horizontalOverflow": false,
+      "formFields": true,
+      "consoleErrors": []
+    }
+  ]
+}

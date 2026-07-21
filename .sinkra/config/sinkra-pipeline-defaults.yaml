@@ -1,0 +1,126 @@
+# /sinkra-pipeline V5 — Default Configuration + Tokens TK-SINKRA-*
+# Created: 2026-06-05 | Owner: sinkra-squad
+# Updated: 2026-06-05 — Sprint 3.1 P2 hotfix (audit detected missing)
+
+schema_version: "1.0.0"
+
+# =============================================================================
+# CIRCUIT BREAKERS (Council Round 5 Contrarian R4 mitigation)
+# =============================================================================
+tokens:
+  # Parallelism limits (avoid harness rate limit + Opus-vs-Sonnet stalling)
+  TK-SINKRA-STAGE-MAX-PARALLEL:
+    type: threshold
+    default: 2
+    description: "Max parallel tasks within a leaf. Opus default 2 (safe). Sonnet stalls n=3 per feedback_wave_execute_opus_sequential."
+    range: [1, 4]
+
+  TK-SINKRA-TASK-RETRY-MAX:
+    type: threshold
+    default: 3
+    description: "Max retries per task (qg_loop_counter circuit breaker). Aligned with TK-WE-001."
+    range: [1, 5]
+
+  TK-SINKRA-STAGE-TIMEOUT:
+    type: time
+    default: PT2H
+    description: "Max duration per leaf execution. Default 2h (ISO 8601). Beyond = escalate."
+
+  TK-SINKRA-STAGE-COMPLETENESS-MIN:
+    type: threshold
+    default: 0.6
+    description: "Minimum completeness_score for leaf to PASS gate. company-snapshot uses 0.6 min, 0.95 ideal."
+
+  TK-SINKRA-COMPLIANCE-SCORE-MIN:
+    type: threshold
+    default: 70
+    description: "Minimum compliance_score for sinkra-output.json to pass stage_validar_qualidade gate (Verdade VETO ≥ 7.0 absolute)."
+
+  TK-SINKRA-VERDADE-MIN:
+    type: threshold
+    default: 7.0
+    description: "Verdade score VETO threshold (META_AXIOMAS). < 7.0 = HARD STOP, process redesign required."
+
+  # Learning loop (C6 — full loop)
+  TK-SINKRA-AP-MIN-OCCURRENCES:
+    type: threshold
+    default: 3
+    description: "Minimum anti-pattern occurrences before auto-validator proposal (Component 3)."
+
+  TK-SINKRA-AUTO-PREVENT-ENABLED:
+    type: boolean
+    default: true
+    description: "Enable Componente 1 — auto-prevent elicitations baseado em anti-patterns."
+
+  TK-SINKRA-SKIP-DETECTION-ENABLED:
+    type: boolean
+    default: true
+    description: "Enable Componente 2 — skip detection upfront ('Esta leaf historicamente falha. Quer revisar?')."
+
+  TK-SINKRA-VALIDATOR-PROPOSAL-ENABLED:
+    type: boolean
+    default: true
+    description: "Enable Componente 3 — AP → validator proposal automation (gera PR ADR sugerido)."
+
+  TK-SINKRA-SKIP-DETECTION-AVG-QG-THRESHOLD:
+    type: threshold
+    default: 2.0
+    description: "Component 2 trigger: SE avg_qg_loop_counter_last_3_executions >= 2.0, ask skip user."
+
+  TK-SINKRA-SKIP-DETECTION-FAILURE-RATE:
+    type: threshold
+    default: 0.33
+    description: "Component 2 trigger: SE failure_rate_last_3_executions >= 0.33, ask skip user."
+
+  TK-SINKRA-EMIT-VIZ-CANVAS:
+    type: boolean
+    default: false
+    description: "Opt-in: Leaf 4 (task04 emitir_companions) auto-emite canvas HTML via skill sinkra-output-viz (agent sinkra-viz/Vega) como 4º companion opcional (sinkra-output-canvas.html). Default false = zero impacto/retrocompat (não afeta AJV nem Sequence Lock). Ativar quando a viz estiver estável."
+
+# =============================================================================
+# AGENT TEAMS (P3 — Híbrido context)
+# =============================================================================
+agent_teams:
+  conversation_leafs:
+    - S01-descobrir-processo       # multi-agent (process-discoverer + reviewers)
+    - S02-definir-tasks   # multi-agent (composition-engineer + reviewers)
+  inline_leafs:
+    - S03-validar-qualidade  # validators auto (AJV + META_AXIOMAS), sem Agent Teams
+    - S04-consolidar-output  # writers, sem Agent Teams (herda phase07b inline)
+
+# =============================================================================
+# STORAGE PATHS (.sinkra/ paralelo synkra-hub — C5 founder decision ADR-V5-001)
+# =============================================================================
+storage:
+  branch_execution_registry: ".sinkra/registries/branch-execution-registry.json"
+  methodology_sinkra: ".sinkra/registries/methodology-sinkra.json"
+  branch_state_pattern: ".sinkra/state/{branch_id}/"
+  branch_execution_log_pattern: ".sinkra/state/{branch_id}/branch-execution-log.json"
+  stage_execution_log_pattern: ".sinkra/state/{branch_id}/exec_{ulid}/leaf-{N}-execution-log.json"
+  checkpoint_pattern: ".sinkra/state/{branch_id}/checkpoints/leaf-{N}.ack"
+  learning_logs: ".sinkra/learning/{stage_id}/"
+
+# =============================================================================
+# ADR REFERENCES
+# =============================================================================
+adrs:
+  - id: ADR-V5-001
+    path: "docs/architecture/ADR-V5-001-sinkra-paralelo.md"
+    status: ACCEPTED
+    description: "Justificativa formal de .sinkra/ paralelo synkra-hub (override PV_KE_130 — founder decision Pedro)"
+
+# =============================================================================
+# COUNCIL ROUND 5 (governance decisions applied)
+# =============================================================================
+council_round_5:
+  verdict: PROCEED_WITH_CONDITIONS
+  score: 6.8
+  date: "2026-06-05"
+  conditions_applied:
+    C1: "Hard cutover V4→V5 (founder override — 4/5 advisors recommended Strangler Fig)"
+    C2: "TaskCreate per task atomic (founder override — 3/5 advisors recommended per-leaf)"
+    C3: "Híbrido context (2 conversation + 2 inline)"
+    C4: "PreToolUse hook MATAR — Phase 0 inline"
+    C5: ".sinkra/ paralelo + ADR-V5-001 formal"
+    C6: "Full Learning Loop (3 componentes — V5-LEARNING-LOOP-SPEC.md)"
+    C7: "phase07b refactor D3+D9 antes copiar (stage_consolidar_output V7.0.0)"

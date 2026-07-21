@@ -1,0 +1,67 @@
+{
+  "schema_version": "wave-plan-v1",
+  "epic_id": "9",
+  "wave_id": "W2",
+  "generated_at": "2026-07-10T21:50:22.926Z",
+  "origin_sync": "ahead",
+  "parallel_groups": [
+    [
+      "9.W2.1",
+      "9.W2.2"
+    ],
+    [
+      "9.W2.3"
+    ]
+  ],
+  "stories": [
+    {
+      "story_id": "9.W2.1",
+      "path": "docs/stories/epic-9/STORY-9.W2.1-filesystem-project-intake.md",
+      "status": "Ready",
+      "origin_sha": null,
+      "parallel_group": 0,
+      "worktree": {
+        "path": ".claude/worktrees/story-9.W2.1",
+        "branch": "wave/9-w2/story-9.W2.1",
+        "state": "provision"
+      }
+    },
+    {
+      "story_id": "9.W2.2",
+      "path": "docs/stories/epic-9/STORY-9.W2.2-academia-lendaria-pilot-package.md",
+      "status": "Ready",
+      "origin_sha": null,
+      "parallel_group": 0,
+      "worktree": {
+        "path": ".claude/worktrees/story-9.W2.2",
+        "branch": "wave/9-w2/story-9.W2.2",
+        "state": "provision"
+      }
+    },
+    {
+      "story_id": "9.W2.3",
+      "path": "docs/stories/epic-9/STORY-9.W2.3-real-project-traffic-cycle.md",
+      "status": "Draft",
+      "origin_sha": null,
+      "parallel_group": 1,
+      "worktree": {
+        "path": ".claude/worktrees/story-9.W2.3",
+        "branch": "wave/9-w2/story-9.W2.3",
+        "state": "provision"
+      }
+    }
+  ],
+  "orphaned_worktrees": [],
+  "cross_epic_dispatch_check": {
+    "check": "ev_cross_epic_dispatch_check",
+    "status": "skipped",
+    "reason": "cross-epic analyzer ausente — dispatch sem check (forward-contract W2.2)",
+    "wave_id": "9.W2",
+    "file_set_size": 0,
+    "logical": null,
+    "physical": null,
+    "proposals": [],
+    "impact_notifications": []
+  },
+  "daemon": null
+}

@@ -22,6 +22,7 @@ function baseResult(overrides: Partial<UseProjectWorkspaceResult>): UseProjectWo
     importProjectBrief: vi.fn().mockResolvedValue('project-imported'),
     persistSkillRunStart: vi.fn(),
     persistSkillRunUpdate: vi.fn().mockResolvedValue(undefined),
+    supersedeSkillRun: vi.fn().mockResolvedValue(undefined),
     retry: vi.fn(),
     resolveConflict: vi.fn(),
     ...overrides,

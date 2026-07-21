@@ -1,0 +1,260 @@
+schema: sinkra-wave-qa-gate-result-v1
+epic: epic-8
+wave: W2
+batch: 1
+role: "@qa (independent quality gate)"
+mode: read-only-runtime-review
+generated_at: "2026-07-09"
+branch: rafaelscosta
+head_reviewed: "d6e413c65670cc1cc6791d66a6f2d9aa26a70ee7"
+base_commit: "c8fc264eed6283e7ddb6d3072926ffabad60273d"
+stories_in_batch: ["8.W2.1", "8.W2.2"]
+
+# ---------------------------------------------------------------------------
+verdict: BLOCK
+verdict_reason: >
+  All 8 quality gates pass empirically on HEAD, and the core mechanics
+  (durable journal, 202-before-execute, atomic cross-process recovery claim,
+  OCC conflict-without-overwrite, demo/real isolation, autosave 0/false/NA)
+  are correct and well tested. However two P2 defects survive verification:
+  (1) a retry double-submit race in the Supabase job store that can spawn a
+  duplicate Codex child and corrupt the attempt audit trail (violates
+  8.W2.2 AC4/AC5 "sem duplicar side effects"); (2) 8.W2.2 AC6 "retomada após
+  reload" is NOT delivered in real/Supabase mode (the default) because skill
+  runs are never persisted to the `skill_runs` table — on reload the run and
+  its proposal disappear from the UI. Per the batch gate policy (block on any
+  P0/P1/P2), this batch is BLOCK with the smallest corrections below. No P0/P1.
+
+# ---------------------------------------------------------------------------
+gate_evidence:
+  location: "apps/academia-lendaria-ads-studio"
+  environment:
+    node: "v22.16.0"
+    supabase_cli: "2.84.2 (behind latest — matches fan-in R5, non-blocking)"
+    supabase_local: running
+  npm_test:
+    status: PASS
+    detail: "vitest run — 24 test files, 164 tests passed"
+  npm_run_lint:
+    status: PASS
+    detail: "eslint . — No issues found"
+  npm_run_typecheck:
+    status: PASS
+    detail: "tsc -b — exit 0 (catalog 30 skills / 40 edges, canonical mirror verified)"
+  npm_run_build:
+    status: PASS
+    detail: "vite build — built"
+  npm_run_build_server:
+    status: PASS
+    detail: "tsc -p tsconfig.server.json — exit 0"
+  npm_run_lint_db:
+    status: PASS
+    detail: "supabase db lint --local --level warning — No schema errors found"
+  npm_run_test_db:
+    status: PASS
+    detail: "supabase test db — Files=3, Tests=15, Result: PASS (marketing_project_rls, project_repository, skill_run_jobs)"
+  git_diff_check:
+    command: "git diff --check c8fc264..HEAD"
+    status: clean
+    exit_code: 0
+  note: >
+    Independently re-ran every gate the fan-in reported; all match. R4
+    (the earlier typecheck defect) is confirmed resolved on d6e413c.
+
+# ---------------------------------------------------------------------------
+findings:  # ordered by severity (P0 highest → P3 lowest)
+
+  - id: QA-W2B1-01
+    severity: P2
+    story: "8.W2.2"
+    ac: ["AC4", "AC5"]
+    category: concurrency-correctness
+    title: "Retry double-submit spawns a duplicate Codex run and corrupts the attempt audit"
+    evidence:
+      - "apps/academia-lendaria-ads-studio/server/jobs/supabase-skill-job-store.ts:248 — startRetry() persists via the UNGUARDED persist() (update .eq('id') only), unlike cancel() (:238-245) and claim() (:176-184) which carry a `.in('status', [...])` WHERE guard."
+      - "apps/academia-lendaria-ads-studio/server/jobs/supabase-skill-job-store.ts:180 — the atomic claim's `.or(...lease_owner.eq.${owner})` self-owner clause lets a second claim win against THIS worker's own fresh lease."
+      - "apps/academia-lendaria-ads-studio/server/app.ts:374 — POST retry has no idempotency; it calls startRetry then scheduleRun."
+      - "apps/academia-lendaria-ads-studio/src/components/project-journey.tsx:239 — retryRun() fires `void retrySkillRun(jobId)` with no in-flight guard; the Repetir button stays visible until updateRun() (after the await), so a fast double-click issues two POST /retry."
+      - "apps/academia-lendaria-ads-studio/server/local-runner-security.ts:41 — DEFAULT_LOCAL_RUNNER_LIMITS.maxConcurrency = 2, so both scheduled runs acquire a slot and execute concurrently."
+    failure_scenario: >
+      Operator double-clicks Repetir on a failed/cancelled run. Two POST
+      /retry arrive concurrently. Both readRow see a terminal job, both
+      computeSkillRunRetry succeed, both unguarded persist() flip status→queued,
+      both scheduleRun. With maxConcurrency=2 both worker.run(jobId) execute:
+      claim #1 wins (queued→running, lease=owner); claim #2 reads the now-running
+      row, and because leaseOwner===owner the recovery branch closes attempt #N
+      as `lease_expired` (falsely), starts attempt #N+1, and the self-owner
+      WHERE clause makes the guarded UPDATE match → a SECOND live Codex child
+      runs. Result: duplicate execution, a bogus `lease_expired` audit entry,
+      and the second store.complete overwrites the first proposal. AC4/AC5's
+      "retry cria tentativa auditável / recovery sem duplicar side effects" is
+      violated for the same-owner concurrent path.
+    blast_radius: >
+      Bounded: the Codex child runs `--sandbox read-only`, the proposal is only
+      written by store.complete, and no external (Meta/DB-write) side effect
+      occurs. Harm = wasted compute + corrupted attempt trail + AC violation.
+      With maxConcurrency=1 the second run no-ops at claim (job already terminal),
+      so exposure scales with configured concurrency (default 2 → reproducible).
+    smallest_correction: >
+      Guard startRetry() the same way cancel()/claim() are guarded: add
+      `.in('status', ['succeeded','failed','cancelled'])` to the persist UPDATE
+      in supabase-skill-job-store.ts so a concurrent second retry matches zero
+      rows → returns undefined → the endpoint replies 409 (already retried).
+      This closes the reachable path with one line and no behavior change on the
+      happy path. Recommended defense-in-depth: disable the Repetir button while
+      the retry request is in flight (project-journey.tsx) and reconsider the
+      self-owner clause in the claim guard for actively-leased jobs.
+    verdict: CONFIRMED
+
+  - id: QA-W2B1-02
+    severity: P2   # rises to P1 if real/Supabase mode is the intended shipping surface (default mode is real)
+    story: "8.W2.2"
+    ac: ["AC6"]
+    category: acceptance-criteria-gap
+    title: "AC6 'retomada após reload' is not delivered in real/Supabase mode — skill runs are never persisted"
+    evidence:
+      - "grep across src/ + server/ (excluding tests and the repository definition): the ONLY repository skill-run calls are `repository.listSkillRuns` (use-project-workspace.ts:117, hydration read). There is NO caller of repository.createSkillRun / updateSkillRun anywhere in the app."
+      - "apps/academia-lendaria-ads-studio/src/components/project-journey.tsx:213 — executeRun() records the run only in the Zustand cache via store.startSkillRun(...); onDone/onError (:120-131) update the run only via store.updateSkillRun. Neither writes to Supabase."
+      - "apps/academia-lendaria-ads-studio/src/stores/project-store.ts:564 — in real mode the persist storage is noopStorage(), so the cache does NOT survive reload either."
+      - "apps/academia-lendaria-ads-studio/src/hooks/use-project-workspace.ts:295 — on workspace unmount the store calls clearAll(); rehydration re-reads skillRuns from listSkillRuns (empty), so the run — including inputSnapshot.jobId and the completed proposal — is gone."
+      - "apps/academia-lendaria-ads-studio/src/components/project-journey.tsx:137 — the observeSkillRun reattach effect iterates `runs`; with no rehydrated run it never fires, so the durable skill_run_jobs journal is unreachable from the UI after reload."
+      - "apps/academia-lendaria-ads-studio/src/stores/project-store.ts:30 — defaultDemoEnabled() is false unless VITE_DEMO_AUTH==='true', so REAL mode is the default deployment."
+    test_masking: >
+      project-journey.test.tsx:41-66 ('resumes ... after reload') SEEDS the run
+      directly into the store via store.startSkillRun on the DEMO project and
+      asserts observeSkillRun is called — it validates the reattach logic given a
+      rehydrated run, not real-mode persistence. use-project-workspace.test.ts:340
+      proves skill-run round-trip only through a DIRECT repository.createSkillRun
+      that the app never invokes. Both green tests hide the real-mode gap.
+    failure_scenario: >
+      In the default (real) mode: operator runs a skill; the durable job is
+      created in skill_run_jobs and executes fine. Operator reloads the page (the
+      exact scenario AC6/the user story promise, "não perder o resultado ao
+      recarregar"). The store cache is wiped and rehydrated from Supabase, where
+      no skill_runs row was ever written → the run and its proposal vanish from
+      the UI and cannot be reattached by jobId. Only demo mode (localStorage)
+      resumes correctly.
+    blast_radius: >
+      Server-side data is intact (skill_run_jobs preserves job/steps/proposal);
+      the gap is purely the missing UI-side persistence pointer. Demo mode works.
+      This is the W2.1/W2.2 ownership seam: 8.W2.1 knowingly deferred skill-run
+      write-persistence ("skill runs continuam mutations locais de cache") and
+      8.W2.2 kept project-store untouched, so neither wires it — yet 8.W2.2's own
+      Implementation Notes ("reidratar o run pelo jobId") depend on it.
+    smallest_correction: >
+      Persist skill runs through the repository in the journey flow: on
+      executeRun(), after startSkillRun returns the jobId, write the run row via
+      repository.createSkillRun (status running, input_snapshot carrying jobId),
+      and on onDone/onError write repository.updateSkillRun (status + proposal/
+      error). Then listSkillRuns rehydrates it on reload and the existing
+      reattach-by-jobId effect resumes the stream. Because this crosses the
+      W2.1/W2.2 file ownership, do it as a small follow-up story (or an explicit
+      scope amendment) rather than an in-place hack. Until then the 8.W2.2 ACK's
+      `ac6_ui_progress_cancel_retry_resume: met` is accurate only for demo mode.
+    verdict: CONFIRMED
+
+  - id: QA-W2B1-03
+    severity: P3
+    story: "8.W2.2"
+    ac: ["AC2"]
+    category: tenancy-hardening
+    title: "resolveWorkspaceId trusts a client-supplied workspaceId without verifying the project belongs to it"
+    evidence:
+      - "apps/academia-lendaria-ads-studio/server/app.ts:232 — resolveWorkspaceId(projectId, provided) returns `provided` verbatim when present; only the fallback path derives workspace_id from marketing_projects."
+      - "apps/academia-lendaria-ads-studio/server/app.ts:295 + :298 — the resolved workspaceId is written straight into skill_run_jobs via the backend service-role client (buildApp:100/113), which BYPASSES the RLS proven by skill_run_jobs.sql."
+    failure_scenario: >
+      A caller holding the local runner token POSTs { projectId: P_in_workspaceA,
+      workspaceId: B }. The service-role insert writes a skill_run_jobs row
+      attributed to workspace B while referencing a project in A — no membership
+      or project∈workspace check runs. The pgTAP RLS test does not cover the
+      service-role path.
+    blast_radius: >
+      Low in the shipped topology: start.ts binds 127.0.0.1 by default
+      (resolveLocalBindHost), the endpoint is token-gated, and the runner is a
+      single-operator local surface. It is a latent tenant-integrity gap if the
+      runner is ever exposed (HOST override) or shared.
+    smallest_correction: >
+      Always derive workspace_id from the project (or verify provided ===
+      derived and reject a mismatch) in resolveWorkspaceId, so the tenant axis is
+      never client-asserted against a service-role writer.
+    verdict: CONFIRMED
+
+  - id: QA-W2B1-04
+    severity: P3
+    story: "8.W1.2 (pre-existing — NOT in this batch's diff)"
+    category: secret-hygiene-carryforward
+    title: "Codex child env uses a 2-key denylist, leaving other secrets in the subprocess"
+    evidence:
+      - "apps/academia-lendaria-ads-studio/server/local-runner-security.ts:24,169 — sanitizeCodexEnv strips only OPENAI_API_KEY and CODEX_API_KEY; the spawned agentic Codex child inherits the rest of process.env (e.g. SUPABASE_SERVICE_ROLE_KEY, LOCAL_SKILL_RUNNER_TOKEN, APIFY_TOKEN)."
+      - "local-runner-security.ts is NOT part of c8fc264..HEAD (git diff --stat shows no change); local-skill-runner.ts:306 (in-diff) consumes it."
+    failure_scenario: >
+      A prompt-injected SKILL.md/brief/operatorInput could have the agent read
+      process env and embed a secret in its JSON proposal (the child's legitimate
+      output channel), which is then persisted and surfaced to the operator.
+      `--sandbox read-only` limits fs/network but not the returned proposal text.
+    blast_radius: >
+      Pre-existing (W1.2), outside this batch's scope; flagged as a carry-forward
+      because W2.2 now runs this path durably/asynchronously.
+    smallest_correction: >
+      Switch sanitizeCodexEnv to an allowlist (pass only PATH/HOME/locale and any
+      var the Codex CLI genuinely needs) instead of a denylist. Track as a W1.2
+      hardening follow-up.
+    verdict: CONFIRMED
+
+  - id: QA-W2B1-05
+    severity: P3
+    story: "8.W2.1"
+    ac: ["AC2"]
+    category: ux-note
+    title: "Conflict hydration state is global — one project's OCC conflict blocks the whole workspace"
+    evidence:
+      - "apps/academia-lendaria-ads-studio/src/stores/project-store.ts:530 flagConflict sets the single hydration.status; project-hydration-boundary.tsx:84 blocks ALL children on 'conflict'."
+    failure_scenario: >
+      An autosave conflict on project A shows the conflict screen for the entire
+      workspace, temporarily blocking access to unrelated projects until
+      resolveConflict runs.
+    blast_radius: "Cosmetic/UX; AC2 explicitly lists conflict as a boundary state, so this is acceptable-as-designed. Note only, no fix required for this gate."
+    verdict: PLAUSIBLE
+
+# ---------------------------------------------------------------------------
+ac_verdicts:
+  story_8_W2_1:
+    AC1_zustand_cache_supabase_sot: PASS   # real mode uses noopStorage; mutations go through controller→repository
+    AC2_hydration_states_no_fixture_flash: PASS  # boundary blocks idle/loading/error/offline/conflict; real mode boots idle → no flash
+    AC3_autosave_group_preserve_falsy_reconcile_conflict: PASS  # debounce grouping + flush; setPath preserves 0/false/null; conflict flag + explicit resolveConflict (tested)
+    AC4_fixtures_only_when_demo_flag: PASS  # defaultDemoEnabled/initialCollections gate; resetDemo is an explicit test-only util (documented)
+    AC5_project_brief_artifacts_plans_weeks_roundtrip: PASS  # repository round-trip proven for projects/brief/artifacts/campaignPlans/weeklyPanels (+skillRuns at repo level)
+    AC6_component_and_e2e_tests: CONCERNS  # strong component/unit coverage; NO E2E Playwright (story acknowledges; AC text mentions E2E)
+  story_8_W2_2:
+    AC1_202_after_durable_persist: PASS  # skillJobStore.create awaited before 202; execution detached from HTTP
+    AC2_supabase_journal_workspace_project_hash: PASS  # migration + RLS + pgTAP green; skillHash = sha256(SKILL.md); proposal only via complete
+    AC3_sse_snapshot_progress_done_error_polling: PASS  # SSE and polling read the same projection; transport-error → polling fallback (tested)
+    AC4_cancel_and_auditable_retry: CONCERNS  # cancel correct; retry auditable but has the QA-W2B1-01 concurrency defect
+    AC5_recovery_without_duplicate_side_effects: CONCERNS  # cross-process atomic claim is correct; same-owner concurrent run (double-retry) duplicates — QA-W2B1-01
+    AC6_ui_progress_cancel_retry_resume: BLOCK  # progress/cancel/retry work; reload-resume fails in real/default mode — QA-W2B1-02
+
+# ---------------------------------------------------------------------------
+proved_or_challenged:
+  w2_1_roundtrip_all_collections: "PROVEN at repository level for projects, briefs, artifacts, campaign plans, weekly panels, skill runs (use-project-workspace.test.ts round-trips); skill-run round-trip is repo-only and NOT wired by the UI (see QA-W2B1-02)."
+  demo_vs_real_isolation_no_flash: "PROVEN — real mode initialCollections empty, boundary blocks until ready/empty; fixtures gated by demoEnabled; no fixture render during hydration."
+  autosave_preserves_0_false_na: "PROVEN — setPath sets falsy values unconditionally; store + hook tests assert false and not_applicable survive a debounced flush and a new-session round-trip."
+  conflict_never_overwrites: "PROVEN — flush catches RevisionConflictError → flagConflict (no write); resolveConflict reloads the highest server revision (no overwrite); tested (use-project-workspace.test.ts:302)."
+  w2_2_202_only_after_durable_persist: "PROVEN — app.ts awaits skillJobStore.create before replying 202."
+  supabase_vs_inmemory_fallback: "PROVEN — Supabase store when backend creds present, durable in-memory fake otherwise; both satisfy the same interface; NFR9 boot-without-DB preserved."
+  service_role_workspaceid_trust: "CHALLENGED — client-provided workspaceId is trusted without project∈workspace verification against a service-role (RLS-bypassing) writer (QA-W2B1-03); mitigated by loopback + token."
+  cancel_retry_recovery_no_duplicate: "CHALLENGED — cross-process recovery is duplicate-safe (atomic claim), but same-owner concurrent retry duplicates execution (QA-W2B1-01)."
+  sse_polling_convergence: "PROVEN — both transports emit the same SkillRunJobView projection; late subscribers get a snapshot; SSE transport error degrades to polling."
+  reload_resume: "CHALLENGED — works in demo mode only; real/default mode loses the run on reload (QA-W2B1-02)."
+  token_env_codex_hardening: "PROVEN for token (constant-time, fail-closed ephemeral, redacted logs) and process control (SIGTERM→SIGKILL, temp cleanup in finally, read-only sandbox, canonical-path guard); env sanitization is a 2-key denylist (QA-W2B1-04, pre-existing W1.2)."
+
+residual_notes:
+  - "Supabase CLI local is 2.84.2 (behind latest) — same non-blocking note as the fan-in R5."
+  - "No tracked files were modified during this gate; only untracked dirs (.aiox/, .claude/worktrees/, .codegraph/, design-qa-evidence/) plus this report exist. No commit/push/PR/merge performed."
+
+next_action: >
+  Return to @dev for QA-W2B1-01 (guard startRetry) and QA-W2B1-02 (wire
+  skill-run repository persistence, likely a small follow-up story crossing the
+  W2.1/W2.2 seam). Re-issue the 8.W2.2 sdc-complete.ack with AC6 scoped to demo
+  mode until QA-W2B1-02 is closed. QA-W2B1-03/04 are P3 hardening follow-ups.
+  Do NOT promote (push/PR/merge — @devops-exclusive) until QA-W2B1-01 and
+  QA-W2B1-02 are resolved and re-gated.

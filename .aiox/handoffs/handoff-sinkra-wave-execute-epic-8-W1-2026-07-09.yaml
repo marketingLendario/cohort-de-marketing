@@ -1,0 +1,35 @@
+handoff:
+  schema: sinkra-wave-handoff-v1
+  from: sinkra-wave-execute
+  to: "@devops"
+  date: "2026-07-09T23:52:09Z"
+  epic: epic-8
+  wave: W1
+  mode: local-fan-in
+  target_branch: rafaelscosta
+  base_commit: "05d57771f21d9406c4fa7a353a5ad8b4801be303"
+  fan_in_report: ".aiox/waves/epic-8-wave-1/fan-in-batch-1.yaml"
+  stories:
+    - story_id: "8.W1.1"
+      branch: "wave/8-w1/story-8.W1.1"
+      commit: "63e7dbc1c09ef92135502614f2872d0042c7474c"
+      ack_path: ".claude/worktrees/story-8.W1.1/.sdc-ack/8.W1.1/sdc-complete.ack"
+    - story_id: "8.W1.2"
+      branch: "wave/8-w1/story-8.W1.2"
+      commit: "29dd6208226ed947cf8efbf6ab34811593b34365"
+      ack_path: ".claude/worktrees/story-8.W1.2/.sdc-ack/8.W1.2/sdc-complete.ack"
+    - story_id: "8.W1.3"
+      branch: "wave/8-w1/story-8.W1.3"
+      commit: "6322295cc6566da7fdf21d18bbe862835e177eb7"
+      ack_path: ".claude/worktrees/story-8.W1.3/.sdc-ack/8.W1.3/sdc-complete.ack"
+  merge_sequence:
+    - "63e7dbc1c09ef92135502614f2872d0042c7474c"
+    - "29dd6208226ed947cf8efbf6ab34811593b34365"
+    - "6322295cc6566da7fdf21d18bbe862835e177eb7"
+  instructions: |
+    Validar os tres ACKs e o fan-in report.
+    Confirmar que HEAD ainda e o base_commit e que nao ha mudancas tracked pendentes.
+    Cherry-pick dos tres commits na ordem declarada.
+    Nao fazer push, PR ou merge remoto.
+    Rodar npm test, lint, typecheck, build, build:server, lint:db e test:db no app.
+    Registrar resultado e SHA final no handoff/runtime.

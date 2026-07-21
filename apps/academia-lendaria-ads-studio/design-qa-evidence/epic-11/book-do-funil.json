@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-11T09:45:26.472Z",
+  "scenarios": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshot": "book-do-funil-desktop.png",
+      "layout": {
+        "horizontalOverflow": false,
+        "versionButtons": 2,
+        "markerVisible": true
+      },
+      "consoleErrors": []
+    },
+    {
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "book-do-funil-mobile.png",
+      "layout": {
+        "horizontalOverflow": false,
+        "versionButtons": 2,
+        "markerVisible": true
+      },
+      "consoleErrors": []
+    }
+  ]
+}

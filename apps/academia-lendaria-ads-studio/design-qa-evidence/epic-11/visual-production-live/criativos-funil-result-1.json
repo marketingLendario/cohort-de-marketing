@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "criativos-funil",
+  "jobId": "b9ec411e-3fa1-46c9-a5a5-8a11e645ae13",
+  "skillRunId": "b5d2a736-732e-4e1f-9fda-14536e9973c5",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "5e927b2fe7c0f51cef7c443375186ad01b4ee45111181a0fd1cdba8f1fea1ffd",
+  "proposal": {
+    "fields": [
+      {
+        "key": "projectSlug",
+        "value": "epic-11-document-pack-cli"
+      },
+      {
+        "key": "network",
+        "value": "Meta Ads"
+      },
+      {
+        "key": "formats",
+        "value": "4:5, 9:16, 1:1"
+      },
+      {
+        "key": "pieceType",
+        "value": "roteiro curto + banner estático"
+      },
+      {
+        "key": "scope",
+        "value": "uma única amostra piloto"
+      },
+      {
+        "key": "voice",
+        "value": "marca"
+      },
+      {
+        "key": "archetype",
+        "value": "dark_editorial"
+      },
+      {
+        "key": "cta",
+        "value": "Saiba mais"
+      },
+      {
+        "key": "competitorPageId",
+        "value": "PENDENTE"
+      },
+      {
+        "key": "competitorPublicUrl",
+        "value": "PENDENTE"
+      },
+      {
+        "key": "trends",
+        "value": "não utilizadas por decisão explícita"
+      },
+      {
+        "key": "publicationStatus",
+        "value": "bloqueada até revisão humana e preenchimento da URL/page_id"
+      },
+      {
+        "key": "mediaSnapshotHash",
+        "value": "2e7942db6cc57b4c4f931d76221d1347108ceb6e2b28703715e86e003867e0b0"
+      }
+    ],
+    "summary": "Amostra piloto proposta para revisão humana: roteiro curto e banner estático dark editorial nos formatos 4:5, 9:16 e 1:1.",
+    "warnings": [
+      "A URL do snapshot é apenas uma mídia de referência, não uma página pública verificável do concorrente.",
+      "A amostra não contém prova social, antes/depois, preço, desconto, credencial profissional ou promessa clínica.",
+      "Nenhum lote adicional foi criado.",
+      "Não houve publicação, pausa, escala ou alteração de campanha na Meta."
+    ],
+    "artifacts": [
+      {
+        "path": "projetos/epic-11-document-pack-cli/criativos/piloto-pare-de-recomecar.md",
+        "title": "Amostra piloto · Pare de recomeçar toda segunda-feira",
+        "format": "markdown",
+        "content": "# Amostra piloto · Pare de recomeçar toda segunda-feira\n\n**Rede:** Meta Ads\n**Arquétipo:** dark editorial\n**Voz:** marca\n**CTA:** Saiba mais\n**Status:** proposta para revisão humana; não publicar\n\n## Roteiro curto\n\n**Duração sugerida:** 20–25 segundos\n\n**Hook, 0–3s**\n\nPare de recomeçar toda segunda-feira.\n\n**Desenvolvimento, 3–16s**\n\nSe você já tentou várias dietas e sente que volta sempre ao mesmo ponto, talvez esteja faltando uma etapa importante: aprender a manter a rotina.\n\nO Método Consistência 90 organiza o processo em três fases: Desinflamar, Reprogramar e Manter.\n\nA terceira fase foi criada para ajudar você a continuar depois do começo.\n\n**CTA, 16–25s**\n\nConheça o Método Consistência 90 e veja se ele combina com o seu momento.\nToque em “Saiba mais”.\n\n**Notas:** não usar antes/depois, depoimento de paciente, preço, desconto, promessa clínica ou credencial não fornecida. Prova social: **[SEM PROVA AINDA]**.\n\n## Banner estático\n\n**Design comum:** fundo `#0A0A0C`; superfície `#131316`; texto `#FAFAFA`; destaque `#C9B298`; confiança `#30B0C7`; display Newsreader; corpo Hanken Grotesk; borda dourada fina; raio 4px; alto contraste.\n\n### 4:5 · 1080 × 1350\n\n**Kicker:** MÉTODO CONSISTÊNCIA 90\n\n**Hook:** Pare de recomeçar toda segunda-feira.\n\n**Sub:** Um ciclo de três fases para construir uma rotina sustentável de emagrecimento em 90 dias, sem dieta restritiva.\n\n**CTA:** Saiba mais\n\n**Rodapé:** Academia Fit\n\n### 9:16 · 1080 × 1920\n\n**Kicker:** MÉTODO CONSISTÊNCIA 90\n\n**Hook:** Pare de recomeçar toda segunda-feira.\n\n**Sub:** Conheça o ciclo de três fases para uma rotina sustentável de emagrecimento.\n\n**CTA:** Saiba mais\n\n**Rodapé:** Academia Fit\n\n**Safe area:** reservar aproximadamente 320px livres na base. Nenhum texto, CTA ou informação essencial nessa faixa.\n\n### 1:1 · 1080 × 1080\n\n**Kicker:** MÉTODO CONSISTÊNCIA 90\n\n**Hook:** Pare de recomeçar toda segunda-feira.\n\n**Sub:** Três fases para organizar uma rotina sustentável de emagrecimento.\n\n**CTA:** Saiba mais\n\n**Rodapé:** Academia Fit\n\n## Origem e limites\n\n- Referências offline: dossiê FitFlow, swipe file e transcript literal fornecido.\n- O transcript em inglês foi usado somente como referência estrutural de busca e repetição; nenhuma fala foi traduzida ou atribuída à marca.\n- `page_id` e URL pública verificável do concorrente: **PENDENTES**.\n- Tendências: não utilizadas, conforme decisão explícita do operador.\n",
+        "artifactType": "creatives"
+      },
+      {
+        "path": "media/criativos-funil/snapshot-2e7942db6cc57b4c.json",
+        "title": "Mídia e transcrição — criativos-funil",
+        "format": "json",
+        "content": "{\n  \"schemaVersion\": \"1.0.0\",\n  \"skillId\": \"criativos-funil\",\n  \"items\": [\n    {\n      \"id\": \"competitor-audio-reference\",\n      \"role\": \"competitor-ad\",\n      \"media\": {\n        \"mediaId\": \"media_b670602fa00934ca\",\n        \"origin\": \"url\",\n        \"sourceLabel\": \"https://media.w3.org/2010/05/sintel/trailer.mp4\",\n        \"mimeType\": \"video/mp4\",\n        \"mediaKind\": \"video\",\n        \"byteSize\": 4372373,\n        \"sha256\": \"b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254\",\n        \"fetchedAt\": \"2026-07-12T02:40:29.867Z\"\n      },\n      \"transcription\": {\n        \"status\": \"transcribed\",\n        \"engine\": \"openai-whisper\",\n        \"language\": \"en\",\n        \"transcript\": \"What brings you to the land of the gatekeepers?\\nI'm searching for someone.\\nI've been alone for as long as I can remember.\\nI'm searching for someone.\",\n        \"charCount\": 148,\n        \"mediaSha256\": \"b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254\",\n        \"failure\": null,\n        \"producedAt\": \"2026-07-12T02:40:35.314Z\"\n      }\n    }\n  ],\n  \"contentHash\": \"2e7942db6cc57b4c4f931d76221d1347108ceb6e2b28703715e86e003867e0b0\"\n}\n",
+        "artifactType": "mediaSnapshot"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "decision-dad45979229a7bf2-1",
+        "digest": "dad45979229a7bf2903bf3a9748692da9b628fd8d0a46621660e2c77b49801c1",
+        "prompt": "Qual é o page_id ou URL pública verificável da página concorrente para liberar uma próxima etapa de validação?"
+      },
+      {
+        "id": "decision-71003f61f95b0530-1",
+        "digest": "71003f61f95b0530976857fce09e6c8ad39ba37c1a017a29fcc0641523ca8950",
+        "prompt": "Você aprova o roteiro e os três conceitos de banner para geração dos arquivos visuais finais em outro run?"
+      },
+      {
+        "id": "decision-5b0d7d15ea4197ec-1",
+        "digest": "5b0d7d15ea4197ec7dc8c6750c94fb51f9e3401079ad0bb849b11a6f9711e52c",
+        "prompt": "Deseja manter “Saiba mais” ou usar “Começar meu ciclo de 90 dias” como CTA?"
+      }
+    ],
+    "questions": [
+      "Qual é o page_id ou URL pública verificável da página concorrente para liberar uma próxima etapa de validação?",
+      "Você aprova o roteiro e os três conceitos de banner para geração dos arquivos visuais finais em outro run?",
+      "Deseja manter “Saiba mais” ou usar “Começar meu ciclo de 90 dias” como CTA?"
+    ],
+    "resultMarkdown": "Publicação bloqueada até revisão humana e preenchimento da URL/page_id do concorrente. A modelagem usou somente os materiais offline fornecidos."
+  }
+}

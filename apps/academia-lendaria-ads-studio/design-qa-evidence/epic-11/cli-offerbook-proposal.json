@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "offerbook",
+  "jobId": "b7a2d834-36de-46f3-9f72-63256934b0f8",
+  "skillRunId": "d9b2d149-7fbc-4600-843b-aba0cc3c8ed9",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "ea6bd738f3475448bc83c9525ef8a57472d43bd955ba2c35dba6326c91cc4b1b",
+  "proposal": {
+    "fields": [
+      {
+        "key": "projectId",
+        "value": "82000000-0000-0000-0000-000000000031"
+      },
+      {
+        "key": "produto",
+        "value": "A Máquina de Receita com IA"
+      },
+      {
+        "key": "status",
+        "value": "BLOQUEADO_AGUARDANDO_ELICITACAO"
+      },
+      {
+        "key": "inputsEssenciais",
+        "value": "Nenhum artefato-fonte foi fornecido em context.artifacts."
+      },
+      {
+        "key": "regraAplicada",
+        "value": "Offerbook sem briefing aprovado e sem pesquisa real de avatar vira ficção."
+      }
+    ],
+    "summary": "Gate duro não liberado. Não é possível materializar o Offerbook sem pesquisa real de avatar, dossiê de concorrente, Perfil do Projeto completo e briefing aprovado pelo dono da oferta. Produzir os três arquivos agora exigiria inventar dados e violaria a skill canônica.",
+    "warnings": [
+      "`briefing-swipe-file.md` não foi fornecido; ele é recomendado e sua ausência reduz a base de referência da copy.",
+      "O briefing informa objeções e um resumo de avatar, mas não apresenta pesquisa real com N, percentuais e citações literais; isso não atende ao gate de Avatar e Análise de Cliente.",
+      "Preço, garantia, bônus entregáveis e prova/autoridade não estão confirmados. Nenhum deles pode ser inventado.",
+      "O campo `artifacts.offerbook: true` declara existência, mas nenhum Offerbook-fonte foi anexado em `context.artifacts`; essa indicação isolada não substitui o conteúdo verificável.",
+      "Nenhum arquivo foi criado ou editado; nenhuma campanha da Meta foi alterada."
+    ],
+    "artifacts": [],
+    "questions": [
+      "Anexe ou informe o conteúdo e a origem do `relatorio-avatar.md`, incluindo N da amostra, percentuais e citações literais. Se ele não existe, deseja interromper este fluxo para executar `/avatar-funil`?",
+      "Anexe ou informe o conteúdo de pelo menos um `dossie-{concorrente}.md`. Se nenhum existe, deseja interromper este fluxo para executar `/espiao-do-concorrente [nome]`?",
+      "Confirme o Perfil do Projeto: situação de partida (`rodando`, `do-zero`, `sem-projeto` ou `afiliado`); tipo (`especialista`, `físico/varejo-local`, `saas-app`, `serviço` ou `b2b`); quem opera (`dono` ou `agência`); nicho regulado (`não`, `saúde/médico`, `jurídico`, `psico` ou `financeiro`); voz (`pessoa` ou `marca`); ticket (`baixo`, `médio`, `alto (5k+)` ou `premium`). Informe também preço/ancoragem, garantia, bônus confirmados, autoridade/credenciais comprováveis e aprove explicitamente o briefing para virar Offerbook."
+    ],
+    "resultMarkdown": ""
+  }
+}

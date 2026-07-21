@@ -1,0 +1,19 @@
+status:
+  branch: codex/epic-10-real-creative-factory
+  modifiedFiles:
+    - .agents/skills/avatar-funil/scripts/gerar_pdf.sh
+    - .agents/skills/espiao-do-concorrente/SKILL.md
+    - .agents/skills/status-funil/SKILL.md
+    - .agents/skills/trend-hunting/SKILL.md
+    - .claude/skills/espiao-do-concorrente/SKILL.md
+  modifiedFilesTotalCount: 135
+  recentCommits:
+    - 'docs: organize Aula 3 traffic materials'
+    - 'feat: ship Marketing Studio traffic workflow [Epic 9] (#1)'
+  currentEpic: null
+  currentStory: null
+  lastUpdate: '2026-07-16T18:37:39.833Z'
+  isGitRepo: true
+timestamp: 1784227059836
+ttl: 60
+gitFingerprint: 1783750606528.0732:1784210604820.7505

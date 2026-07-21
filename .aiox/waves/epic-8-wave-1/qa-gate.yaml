@@ -1,0 +1,136 @@
+schema: sinkra-wave-qa-gate-v1
+epic: epic-8
+wave: W1
+batch: 1
+reviewed_by: "@qa (child quality gate independente)"
+reviewed_at: "2026-07-09T00:00:00Z"
+branch: rafaelscosta
+head_reviewed: "4dfa684428960e881558209b18ec6bee1d15ae1f"
+base_commit: "05d57771f21d9406c4fa7a353a5ad8b4801be303"
+mode: read-only-review
+
+verdict: PASS
+
+# ---------------------------------------------------------------------------
+# Gates reexecutados (runtime, nesta sessão) — apps/academia-lendaria-ads-studio
+# ---------------------------------------------------------------------------
+gates:
+  npm_test:
+    status: passed
+    detail: "vitest run — 19 test files / 113 tests passed"
+  npm_typecheck:
+    status: passed
+    detail: "tsc -b — no errors; skill-catalog regenerado (30 skills, mirror verificado), sem drift"
+  npm_lint:
+    status: passed
+    detail: "eslint . — No issues found"
+  npm_test_db:
+    status: passed
+    detail: "supabase test db — Files=2 (marketing_project_rls.sql + project_repository.sql), Tests=10, Result: PASS"
+  npm_lint_db:
+    status: passed
+    detail: "supabase db lint --local --level warning — No schema errors found"
+  diff_check:
+    status: passed
+    detail: "git diff --check 05d5777..HEAD — exit 0, sem whitespace/conflict markers"
+  tracked_tree:
+    status: clean
+    detail: "Nenhum arquivo tracked alterado durante o review; só untracked (.aiox/, .claude/worktrees/, .codegraph/, design-qa-evidence/)"
+
+# ---------------------------------------------------------------------------
+# Verificação de AC contra a implementação (não apenas o Dev Agent Record)
+# ---------------------------------------------------------------------------
+acceptance_criteria:
+  story_8_W1_1:
+    verdict: met
+    evidence:
+      AC1: "Interface ProjectRepository cobre os 6 grupos (projetos, brief revisions, artefatos, skill runs, campaign plans, weekly panels) — project-repository.ts:455-486."
+      AC2: "Mappers snake<->camel explícitos e isolados (rowTo*/,*Insert) — project-repository.ts:198-449. Cliente é @/lib/supabase (anon key + JWT), service_role ausente do código e do bundle (supabase.ts:20-44)."
+      AC3: "OCC por unique(project_id,revision)/unique(campaign_id,revision)/unique(campaign_id,week_start,revision); 23505 -> RevisionConflictError; revisão concorrente não sobrescrita (migration 225123:60,117,132; toRepositoryError:93-106; pgTAP teste 3)."
+      AC4: "Toda query filtra workspace_id + RLS private.is_workspace_member; sem filtro de segurança reimplementado no cliente (adapter 512-726; teste 'toda query carrega workspace_id'; pgTAP testes 4/5)."
+      AC5: "Migration 20260709230000 idempotente (create extension if not exists; drop trigger if exists + create). lint:db limpo."
+      AC6: "pgTAP cobre CRUD, conflito de revisão e RLS +/- (project_repository.sql). Unit cobre mappers + tradução de erro (project-repository.test.ts)."
+  story_8_W1_2:
+    verdict: met
+    evidence:
+      AC1: "resolveLocalBindHost -> 127.0.0.1 default; start.ts:13 usa o resolver; bind público exige HOST explícito (local-runner-security.ts:67-70; teste AC1)."
+      AC2: "Header x-local-runner-token exigido; 401 ausente / 403 inválido; timingSafeEqualStrings (SHA-256 + timingSafeEqual, sem vazar comprimento) — local-runner-security.ts:95-131; app.ts:159-167; testes 401/403/sucesso."
+      AC3: "vite.config.ts lê token via loadEnv sem prefixo VITE_ e injeta no proxyReq server-side (não entra em import.meta.env/bundle); redact do header no logger Fastify (vite.config.ts:15-38; app.ts:99-104). Teste prova token ausente de stdout/stderr."
+      AC4: "sanitizeCodexEnv remove OPENAI_API_KEY e CODEX_API_KEY em cópia rasa sem mutar process.env; env sanitizado passado ao spawn (local-runner-security.ts:169-175; local-skill-runner.ts:231). Teste valida ausência das chaves no filho."
+      AC5: "createConcurrencyLimiter (429 fail-fast), bodyLimit por rota (413), timeout com SIGTERM->SIGKILL após killGraceMs, cleanup de temp no finally (local-skill-runner.ts:113-148,240-242; app.ts:151,174-180). Testes 429/413/release."
+      AC6: "Testes: 401, 403, sucesso autorizado, 429, 413, ausência de segredo em logs, sanitização de env, loopback default, primitivas unitárias."
+  story_8_W1_3:
+    verdict: met
+    evidence:
+      AC1: "artifact-write.v1.schema.json descreve projectSlug, relativePath, format, content, expectedHash, runId, onConflict; schemaVersion const 1.0.0; additionalProperties false."
+      AC2: "assertValidSlug (regex + maxLen), assertValidRelativePath (rejeita absoluto/'..'/byte nulo), resolveSafeTarget (containment sob realpath + recusa de symlink em ancestral e no alvo) — artifact-materializer.ts:108-248. Testes: slug inválido, traversal, absoluto, symlink ancestral, symlink alvo."
+      AC3: "temp .{basename}.{uuid}.tmp com flag 'wx' + rename; falha faz rm do temp e canônico intacto (artifact-materializer.ts:342-355). Teste de rollback (dir read-only) confirma canônico intacto e zero .tmp."
+      AC4: "sha256 + hashBefore/hashAfter + ArtifactAuditEvent serializável (roundtrip JSON) — artifact-materializer.ts:104-366; teste de auditoria."
+      AC5: "mesmo hash -> unchanged (no-op); divergente + onConflict reject (default) -> conflict sem tocar canônico; overwrite substitui atomicamente (artifact-materializer.ts:315-340). Testes idempotência/conflito/overwrite."
+      AC6: "20 testes: markdown, JSON/YAML válido e inválido, idempotência, conflito, traversal, absoluto, symlink (2 vetores), rollback, expectedHash match/mismatch, slug inválido, schemaVersion."
+
+# ---------------------------------------------------------------------------
+# Findings — nenhum P0/P1/P2. Riscos residuais P3/operacionais.
+# ---------------------------------------------------------------------------
+findings: []
+
+residual_risks:
+  - id: P3-1
+    severity: P3
+    category: correctness
+    file: "apps/academia-lendaria-ads-studio/src/lib/project-repository.ts:578-588"
+    note: >-
+      getActiveBrief usa .maybeSingle() sem garantia no schema de uma única revisão
+      'active' por projeto (não há índice único parcial). Se duas revisões ficarem
+      'active', maybeSingle lança e o erro é mapeado para not_found (mensagem
+      enganosa, sem risco de dado). Invariante hoje mantida em nível de aplicação.
+  - id: P3-2
+    severity: P3
+    category: test-coverage
+    file: "apps/academia-lendaria-ads-studio/src/lib/project-repository.ts"
+    note: >-
+      Adapter TS validado via mappers puros + fake client + pgTAP contra RLS real;
+      não há teste de integração ponta-a-ponta do adapter TS contra o Supabase
+      local. Deferido para W2.1 (hidratação da UI via repository) — reconhecido no
+      Dev Agent Record.
+  - id: P3-3
+    severity: P3
+    category: operational
+    file: "apps/academia-lendaria-ads-studio/server/app.ts:192-194"
+    note: >-
+      O slot de concorrência é liberado no finally quando run() lança por timeout,
+      enquanto o processo filho ainda pode estar sendo encerrado (SIGKILL após
+      killGraceMs). Sob timeout há janela breve de sub-contagem de concorrência.
+      Não é falha de segurança; contabilidade imprecisa apenas no caminho de timeout.
+  - id: P3-4
+    severity: P3
+    category: robustness
+    file: "apps/academia-lendaria-ads-studio/server/local-skill-runner.ts:113-147"
+    note: >-
+      defaultCodexExecutor faz child.stdin.end(prompt) mesmo quando o spawn falha
+      (ENOENT); um EPIPE em stdin pode emitir erro não tratado. Não exercitado nos
+      testes (executor injetado nos testes). Robustez apenas no caminho de erro real
+      do CLI.
+  - id: P3-5
+    severity: P3
+    category: operational
+    file: "apps/academia-lendaria-ads-studio (toolchain)"
+    note: >-
+      Supabase CLI local em v2.84.2 (mais recente v2.109.1) — não bloqueante; já
+      registrado no fan-in-result.yaml.
+  - id: P3-6
+    severity: P3
+    category: scope
+    file: "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
+    note: >-
+      Materializador é módulo standalone sem wiring de servidor — as ACs cobrem
+      apenas o comportamento do materializador (por design da story). Exposição/
+      consumo via endpoint fica para wave posterior.
+
+recommendation: >-
+  PASS. Os 5 gates exigidos (npm test, typecheck, lint, test:db, lint:db) foram
+  reexecutados nesta sessão e passaram; diff limpo; nenhum arquivo tracked alterado.
+  Todos os ACs das três stories foram comprovados contra a implementação (não só
+  contra o Dev Agent Record). Nenhum finding P0/P1/P2. Apenas riscos residuais
+  P3/operacionais listados acima. Convergência para main/remoto (push/PR) permanece
+  fora de escopo e requer @devops com autorização explícita.

@@ -1,0 +1,49 @@
+{
+  "schema_version": "epic-state-v1",
+  "epic_id": "12",
+  "title": "Campanhas confiáveis: readiness, preflight e recuperação",
+  "status": "ReadyForExecution",
+  "implementationAuthorized": true,
+  "accountable": "Pedro Valério",
+  "architecture": "docs/architecture/ADR-002-campaign-readiness-gate.md",
+  "waves": [
+    {
+      "wave_id": "W1",
+      "status": "ready",
+      "build_dependencies": [],
+      "parallel_groups": [["12.W1.1"]],
+      "stories": [{ "story_id": "12.W1.1", "status": "Ready", "depends_on": [], "ids_verdict": "ADAPT" }]
+    },
+    {
+      "wave_id": "W2",
+      "status": "planned",
+      "build_dependencies": ["W1"],
+      "parallel_groups": [["12.W2.1"]],
+      "stories": [{ "story_id": "12.W2.1", "status": "Draft", "depends_on": ["12.W1.1"], "ids_verdict": "ADAPT" }]
+    },
+    {
+      "wave_id": "W3",
+      "status": "planned",
+      "build_dependencies": ["W2"],
+      "parallel_groups": [["12.W3.1"]],
+      "stories": [{ "story_id": "12.W3.1", "status": "Draft", "depends_on": ["12.W1.1", "12.W2.1"], "ids_verdict": "ADAPT" }]
+    },
+    {
+      "wave_id": "W4",
+      "status": "done",
+      "build_dependencies": ["W3"],
+      "parallel_groups": [["12.W4.2"], ["12.W4.1"]],
+      "stories": [
+        { "story_id": "12.W4.2", "status": "Done", "depends_on": ["12.W3.1"], "ids_verdict": "ADAPT" },
+        { "story_id": "12.W4.1", "status": "Done", "depends_on": ["12.W3.1", "12.W4.2"], "ids_verdict": "ADAPT" }
+      ]
+    },
+    {
+      "wave_id": "W5",
+      "status": "ready",
+      "build_dependencies": ["W4"],
+      "parallel_groups": [["12.W5.1"]],
+      "stories": [{ "story_id": "12.W5.1", "status": "Ready", "depends_on": ["12.W4.1", "12.W4.2"], "ids_verdict": "CREATE" }]
+    }
+  ]
+}

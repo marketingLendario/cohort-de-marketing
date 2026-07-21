@@ -1,0 +1,43 @@
+handoff:
+  from: "sinkra-wave-execute"
+  to: "@devops"
+  date: "2026-07-17"
+  epic: "epic-12"
+  wave: "W5"
+  mode: default
+  accountable: "Pedro Valério"
+  story_branches:
+    - branch: "wave/12-w5/story-12.W5.1"
+      story: "12.W5.1"
+      status: "Done"
+      head_sha: "5a16f389ef50285d990bdb4fd1397334503c3a75"
+      qg_verdict: "PASS"
+      qg_score: 93
+      qg_agent: "@po"
+      release_gate: "docs/qa/epic-12-release-gate.yaml (verdict: PASS)"
+      sdc_ack: ".sdc-ack/12.W5.1/sdc-complete.ack (status: passed, commit 5a16f38)"
+      conflicts: []
+  fan_in_report: ".aiox/waves/epic-12-wave-W5/fan-in-batch-0.yaml"
+  merge_sequence:
+    - "wave/12-w5/story-12.W5.1"
+  epic_context: |
+    A branch wave/12-w5/story-12.W5.1 contém a pilha LINEAR completa do
+    EPIC-12 (10 commits, W1.1 → W5.1, 66 arquivos vs origin/main). As waves
+    W1-W4 nunca foram mergeadas em main individualmente — este merge fecha o
+    épico inteiro. epic-12-state.json já registra o épico como Done
+    (closed 2026-07-17) e o release gate final (piloto E2E integrado, 8/8,
+    Codex real, zero mutação na Meta) está em docs/qa/.
+  evidence:
+    pilot_suite: "8/8 PASS (.last-run.json passed; execução real do Codex CLI)"
+    gate_tools: "test 434 · typecheck · lint · build · build:server · git diff --check · test:db 75 · lint:db · playwright gate 8/8 desktop+mobile · evidence:privacy — todos PASS"
+    privacy: "meta-mutation-requests: [] · unexpectedConsoleErrors: [] · unexpectedFailedResponses: []"
+  instructions: |
+    1. Operar do REPO ROOT (nunca com cwd dentro de .claude/worktrees/ — anti-thrash).
+    2. Revisar o fan-in report (zero conflitos, branch única, stack linear).
+    3. Merge wave/12-w5/story-12.W5.1 → main (ou abrir PR da branch, a critério
+       do fluxo do repositório; a branch referencia o épico completo).
+    4. git push origin main (autoridade exclusiva @devops).
+    5. Após merge confirmado: rodar Stage 7 wave-final-sync
+       (node .claude/skills/sinkra-wave-execute/scripts/wave-final-sync.js
+       --wave "epic-12-W5" --pr <n>) e só então teardown/GC dos worktrees
+       story-12.* (confirmed-merge gate).

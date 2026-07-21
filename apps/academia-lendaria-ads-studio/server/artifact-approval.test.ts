@@ -8,6 +8,7 @@ import { buildApp } from './app.js';
 import { LOCAL_RUNNER_TOKEN_HEADER } from './local-runner-security.js';
 import {
   ArtifactApprovalError,
+  approvalRecordForBrowser,
   computeProposalHash,
   createArtifactApprovalService,
   createInMemoryArtifactApprovalStore,
@@ -51,6 +52,7 @@ function fakeGateway(initial?: Partial<ApprovalRunState>) {
     workspaceId: WORKSPACE_ID,
     projectId: PROJECT_ID,
     projectSlug: SLUG,
+    skillId: 'offerbook',
     status: 'needs_review',
     proposalRevision: 1,
     proposalHash: computeProposalHash([ARTIFACT]),
@@ -147,6 +149,70 @@ describe('artifact approval saga', () => {
     expect(record.auditEvent?.proposalHash).toBe(record.proposalHash);
     expect(runs.state.proposalHash).toBe(record.proposalHash);
     expect(runs.state.status).toBe('done');
+  });
+
+  it('journals a deterministic binary derivative and repairs it without deriving again', async () => {
+    const store = createInMemoryArtifactApprovalStore();
+    const runs = fakeGateway({ skillId: 'offerbook' });
+    const docx = Buffer.from('PK\u0003\u0004deterministic-offerbook');
+    const deriveArtifacts = vi.fn(async () => [{
+      artifactType: 'offerbook',
+      title: 'Offerbook DOCX',
+      path: 'offerbook.docx',
+      format: 'docx' as const,
+      content: docx,
+      derivedFrom: 'offerbook.md',
+    }]);
+    let failOnce = true;
+    const service = createArtifactApprovalService({
+      store,
+      runs: runs.gateway,
+      projectsRoot,
+      deriveArtifacts,
+      faults: {
+        beforeRename() {
+          if (!failOnce) return;
+          failOnce = false;
+          throw new Error('crash before binary rename');
+        },
+      },
+    });
+
+    await expect(service.decide({
+      skillRunId: RUN_ID,
+      decision: 'approve',
+      expectedProposalHash: computeProposalHash([ARTIFACT]),
+      expectedProposalRevision: 1,
+      idempotencyKey: idempotencyKey('approve-derived'),
+      artifacts: [ARTIFACT],
+    })).rejects.toMatchObject({ code: 'write-failed' });
+
+    const stuck = await store.getByKey(WORKSPACE_ID, idempotencyKey('approve-derived'));
+    expect(stuck?.state).toBe('materializing');
+    expect(stuck?.plan).toHaveLength(2);
+    expect(stuck?.plan[1]).toMatchObject({
+      path: 'offerbook.docx',
+      format: 'docx',
+      contentEncoding: 'base64',
+      derivedFrom: 'offerbook.md',
+      contentHash: createHash('sha256').update(docx).digest('hex'),
+    });
+
+    const repaired = await service.repair(stuck!.id);
+    expect(repaired.state).toBe('done');
+    expect(deriveArtifacts).toHaveBeenCalledTimes(1);
+    expect(await readFile(resolve(projectsRoot, SLUG, 'offerbook.docx'))).toEqual(docx);
+    expect(runs.finalizeApprovalCalls[0].artifacts[1]).toMatchObject({
+      path: 'offerbook.docx',
+      format: 'docx',
+      content: null,
+      contentHash: createHash('sha256').update(docx).digest('hex'),
+    });
+    expect(repaired.auditEvent?.files.map((file) => file.path)).toEqual(['offerbook.md', 'offerbook.docx']);
+    const browserRecord = approvalRecordForBrowser(repaired);
+    expect(browserRecord.plan[1].content).toBe('');
+    expect(browserRecord.plan[1].contentHash).toBe(repaired.plan[1].contentHash);
+    expect(repaired.plan[1].content).toBe(docx.toString('base64'));
   });
 
   it('normaliza um path prefixado pelo projeto antes de planejar, hashear e materializar', async () => {

@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "1.0.0",
+  "adapterVersion": "1.0.1",
+  "skillId": "trend-hunting",
+  "projectId": "epic-11-w2-1-live",
+  "mode": "network",
+  "query": "marketing de performance tendências 2026",
+  "fingerprint": "51e746b8a9a632c9a8020ca502d49d3521553925956a6eca5724e9888498f555",
+  "collectedAt": "2026-07-11T14:03:40.301Z",
+  "frozenAt": "2026-07-11T14:03:40.301Z",
+  "sources": [
+    {
+      "sourceId": "google-search-live",
+      "provider": "apify",
+      "kind": "google-search",
+      "target": "marketing de performance tendências 2026",
+      "status": "completed",
+      "startedAt": "2026-07-11T14:03:23.338Z",
+      "completedAt": "2026-07-11T14:03:40.261Z",
+      "itemCount": 1,
+      "items": [
+        {
+          "sourceItemId": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+          "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+          "publishedAt": null,
+          "author": null,
+          "text": "{\"#debug\":{\"requestId\":\"HqcNWvtQK8ehaG1\",\"url\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"loadedUrl\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"method\":\"GET\",\"retryCount\":0,\"errorMessages\":[],\"statusCode\":200},\"#error\":false,\"searchQuery\":{\"term\":\"marketing de performance tendências 2026\",\"url\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"device\":\"DESKTOP\",\"page\":1,\"type\":\"SEARCH\",\"domain\":\"google.com.br\",\"countryCode\":\"BR\",\"languageCode\":null,\"locationUule\":null,\"resultsPerPage\":10},\"url\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"hasNextPage\":true,\"serpProviderCode\":\"L\",\"resultsTotal\":null,\"relatedQueries\":[{\"title\":\"Tendencias 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhEEAE\"},{\"title\":\"Tendências 2026 moda\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tend%C3%AAncias+2026+moda&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhCEAE\"},{\"title\":\"Wgsn tendencias 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Wgsn+tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhHEAE\"},{\"title\":\"Tendencias futuras do marketing\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+futuras+do+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhDEAE\"},{\"title\":\"Temas atuais sobre marketing\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Temas+atuais+sobre+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhBEAE\"},{\"title\":\"Meta ads 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+ads+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhAEAE\"},{\"title\":\"Meta update 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+update+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhFEAE\"},{\"title\":\"Panoramas rd station 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Panoramas+rd+station+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhGEAE\"},{\"title\":\"Tendencias 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhEEAE\"},{\"title\":\"Tendências 2026 moda\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tend%C3%AAncias+2026+moda&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhCEAE\"},{\"title\":\"Wgsn tendencias 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Wgsn+tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhHEAE\"},{\"title\":\"Tendencias futuras do marketing\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+futuras+do+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhDEAE\"},{\"title\":\"Temas atuais sobre marketing\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Temas+atuais+sobre+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhBEAE\"},{\"title\":\"Meta ads 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+ads+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhAEAE\"},{\"title\":\"Meta update 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+update+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhFEAE\"},{\"title\":\"Panoramas rd station 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Panoramas+rd+station+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhGEAE\"}],\"paidResults\":[],\"paidProducts\":[],\"organicResults\":[{\"title\":\"Marketing Digital em 2026: Tendências e Estratégias para ...\",\"websiteTitle\":\"Agência Redstack\",\"url\":\"https://www.redstack.com.br/post/marketing-digital-em-2026-estrat%C3%A9gias-para-potencializar-sua-presen%C3%A7a-online\",\"displayedUrl\":\"https://www.redstack.com.br › post › marketing-digital-...\",\"description\":\"10 de ago. de 2025 — O marketing de desempenho, ou performance marketing, é essencial para validar o retorno sobre investimento em tempo real. Em 2026, espera-se ...\",\"emphasizedKeywords\":[\"validar o retorno sobre investimento em tempo real\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":1},{\"title\":\"10 tendências de marketing para 2026\",\"websiteTitle\":\"Kantar\",\"url\":\"https://www.kantar.com/brazil/inspiration/marcas/10-tendencias-de-marketing-para-2026\",\"displayedUrl\":\"https://www.kantar.com › brazil › inspiration › marcas\",\"description\":\"10 tendências de marketing para 2026 · 1. Agentes de IA em escala · 2. Conexão humana via seleção por máquina · 3. Dados sintéticos, audiências ampliadas · 4.\",\"emphasizedKeywords\":[\"1. Agentes de IA em escala\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":2},{\"title\":\"As 5 Tendências do Marketing que Vão Definir quem ...\",\"websiteTitle\":\"Inout Digital\",\"url\":\"https://inoutdigital.com.br/blog/as-5-tendencias-do-marketing/\",\"displayedUrl\":\"https://inoutdigital.com.br › Inout Digital\",\"description\":\"19 de jan. de 2026 — 5 tendências do marketing de 2026 · 1. Inteligência Artificial aplicada ao marketing real · 2. Automação como base da operação (não como ...\",\"emphasizedKeywords\":[\"1. Inteligência Artificial aplicada ao marketing real\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":3},{\"title\":\"The 7 Performance Marketing Trends That Will Define 2026\",\"websiteTitle\":\"LinkedIn · Soleo\",\"url\":\"https://www.linkedin.com/pulse/7-performance-marketing-trends-define-2026-soleo-communications-2cx6c\",\"displayedUrl\":\"LinkedIn › Soleo\",\"description\":\"The 7 Performance Marketing Trends That Will Define 2026 · 1. Consumers Increasingly Begin their Journey Using AI Search · 2. Consumers Prefer ...\",\"emphasizedKeywords\":[\"1. Consumers Increasingly Begin their Journey Using AI Search\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":4},{\"title\":\"Tendências de Marketing Digital para 2026\",\"websiteTitle\":\"Vitamina. Agência de Marketing Digital\",\"url\":\"https://www.avitamina.pt/tendencias-de-marketing-digital-para-2026/\",\"displayedUrl\":\"https://www.avitamina.pt › tendencias-de-marketing-dig...\",\"description\":\"Tendências de Marketing Digital para 2026 · 1. Inteligência Artificial com propósito · 2. O Search está a mudar · 3. Conteúdo cocriado com a comunidade · 4.\",\"emphasizedKeywords\":[\"1. Inteligência Artificial com propósito\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":5},{\"title\":\"AS 3 GRANDES TENDÊNCIAS DE MARKETING DIGITAL ...\",\"websiteTitle\":\"Instagram · terradorafael\",\"url\":\"https://www.instagram.com/reel/DQvB-o3jjwO/\",\"displayedUrl\":\"Instagram › terradorafael\",\"description\":\"Em 2026, as marcas que crescem combinam cinco frentes que trabalham juntas: busca por IA, SEO, posicionamento de marca, conteúdo e performance.\",\"emphasizedKeywords\":[],\"siteLinks\":[],\"productInfo\":{},\"likes\":\"Mais de 70 marcações \\\"Gostei\\\"\",\"lastUpdated\":\"há 8 meses\",\"channelName\":\"reel\",\"reelLength\":\"2:47\",\"type\":\"organic\",\"position\":6},{\"title\":\"Key Performance Marketing Trends for 2026 Shaped ...\",\"websiteTitle\":\"M+C Saatchi Performance\",\"url\":\"https://www.mcsaatchiperformance.com/news/performance-marketing-trends-2026/\",\"displayedUrl\":\"https://www.mcsaatchiperformance.com › ...\",\"description\":\"2 de dez. de 2025 — In 2026 and beyond, programmatic advertising is expected to grow further due to data privacy issues and infrastructure changes, along with ...\",\"emphasizedKeywords\":[\"programmatic advertising is expected to grow\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":7},{\"title\":\"Marketing Trends: tendências para 2026 que você precisa ...\",\"websiteTitle\":\"HubSpot\",\"url\":\"https://br.hubspot.com/blog/marketing/marketing-trends\",\"displayedUrl\":\"https://br.hubspot.com › Blog/marketing\",\"description\":\"20 de abr. de 2026 — 1. Verbalizar quem você é antes de automatizar · 2. Orientar: personalização em escala baseada em dados unificados · 3. Amplificação além do ...\",\"emphasizedKeywords\":[\"1. Verbalizar quem você é antes de automatizar\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":8}],\"suggestedResults\":[],\"peopleAlsoAsk\":[{\"answer\":\"Em 2026, marcas visionárias abandonarão mensagens performáticas e investirão em inovação inclusiva, programas culturalmente fluentes e representação autêntica interna e externamente. Em um cenário de resistência, as marcas devem agir com clareza e firmeza em relação aos valores que defendem.\",\"question\":\"Quais são as tendências de marketing para 2026?\",\"title\":\"10 tendências de marketing para 2026 - Kantar\",\"url\":\"https://www.kantar.com/brazil/inspiration/marcas/10-tendencias-de-marketing-para-2026#:~:text=Em%202026%2C%20marcas%20vision%C3%A1rias%20abandonar%C3%A3o,rela%C3%A7%C3%A3o%20aos%20valores%20que%20defendem.\",\"date\":null},{\"answer\":null,\"question\":\"Quais são as principais tendências para 2026?\",\"title\":null,\"url\":null,\"date\":null},{\"answer\":\"Agora, vamos ao calendário:\\nContent Experience 2026. O Content Experience 2026 é um evento presencial focado em marketing de conteúdo, comunicação e estratégia. ... CMO Summit 2026. ... Gramado Summit 2026. ... Conexão Social Media 2026. ... Startup Summit 2026. ... Web Summit Rio 2026. ... Hotmart Fire 2026.\",\"question\":\"Quais são os maiores eventos de marketing em 2026?\",\"title\":\"Eventos de marketing no Brasil para ficar de olho em 2026\",\"url\":\"https://uplevelmarketingdigital.com.br/marketing-digital/eventos-de-marketing-no-brasil-para-ficar-de-olho-em-2026/\",\"date\":null},{\"answer\":null,\"question\":\"O que vai estar em alta em 2026?\",\"title\":null,\"url\":null,\"date\":null}],\"aiOverview\":{\"type\":\"live\",\"content\":\"As principais tendências do marketing de performance são marcadas pela convergência entre Inteligência Artificial, experiência do usuário e otimização de dados unificados. O foco sai da simples otimização de canais isolados para uma orquestração de jornada focada em clareza, automação e geração de autoridade.As principais frentes que estão ditando o mercado incluem:Busca via IA e Agentes Autônomos: Consumidores utilizam ferramentas de IA para pesquisar e filtrar produtos antes de entrar em contato com a empresa. O SEO foca na presença dentro dos resultados de IAs (como ChatGPT e Gemini) e na clareza extrema de dados, preços e benefícios.Automação Baseada em Jornada: A automação deixou de ser apenas uma sequência de e-mails, tornando-se uma orquestração integrada que acompanha o cliente em tempo real, independentemente da plataforma.Dashboards de Dados Unificados: Há uma exigência por métricas claras que centralizem tráfego orgânico, pago, social e offline para a mensuração precisa de KPIs como o Retorno sobre o Investimento em Anúncios (ROAS).Founder-led Marketing (Marcas Humanizadas): Devido à desconfiança com conteúdos superficiais, o uso de porta-vozes e a autoridade dos donos e fundadores têm papel crucial no aumento da conversão e na construção de confiança.Conteúdo Profundo e Autoridade: Há um crescimento na busca por vídeos mais longos e educativos em plataformas como o YouTube, que geram maior credibilidade e engajamento a longo prazo.Para saber mais sobre a implementação de painéis e métricas, confira as dicas e metodologias detalhadas pela Reportei.Para saber mais sobre a implementação de painéis e métricas, confira as dicas e metodologias detalhadas pela Reportei.Se você quiser detalhar melhor o seu negócio, me diga:Qual é o nicho ou setor da sua empresa (ex: e-commerce, serviços B2B, infoprodutos)?Qual é o seu principal canal de tráfego hoje?A sua maior dor é gerar novos leads ou aumentar a taxa de conversão?Eu posso recomendar estratégias exatas para o seu cenário.Se você quiser detalhar melhor o seu negócio, me diga:Eu posso recomendar estratégias exatas para o seu cenário.\",\"sources\":[{\"url\":\"https://www.youtube.com/watch?v=yTioxdB_Lxc&t=261\",\"title\":\"Marketing Trends for 2026\",\"description\":\"22 de dez. de 2025 — o terceira tendência que eu entendo que vai ser muito forte já tá começando a ser é são os porta-vozes de marca qual que é a ideia...\"},{\"url\":\"https://www.mcsaatchiperformance.com/news/performance-marketing-trends-2026/\",\"title\":\"Key Performance Marketing Trends for 2026 Shaped by The ...\",\"description\":\"2 de dez. de 2025 — Heading Into the Convergence Era of Performance Marketing. If 2025 was the year of acceleration, 2026 will be the year of converge...\"},{\"url\":\"https://www.youtube.com/watch?v=N2XVUQ4YW6Q&t=27\",\"title\":\"6 Performance Marketing Trends That Will Dominate 2026\",\"description\":\"12 de fev. de 2026 — so that's why in this video I'm going to talk about the performance marketing industry shifts that we need to be aware. and ready ...\"}]},\"customData\":null,\"htmlSnapshotUrl\":\"https://api.apify.com/v2/key-value-stores/P6lusegHVQ4W2RIm8/records/HqcNWvtQK8ehaG1-0.html?signature=CC0Ct8nviTJGlfTyvCjL\"}",
+          "metrics": {
+            "views": null,
+            "likes": null,
+            "comments": null,
+            "shares": null
+          },
+          "literal": {
+            "#debug": {
+              "requestId": "HqcNWvtQK8ehaG1",
+              "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+              "loadedUrl": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+              "method": "GET",
+              "retryCount": 0,
+              "errorMessages": [],
+              "statusCode": 200
+            },
+            "#error": false,
+            "searchQuery": {
+              "term": "marketing de performance tendências 2026",
+              "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+              "device": "DESKTOP",
+              "page": 1,
+              "type": "SEARCH",
+              "domain": "google.com.br",
+              "countryCode": "BR",
+              "languageCode": null,
+              "locationUule": null,
+              "resultsPerPage": 10
+            },
+            "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+            "hasNextPage": true,
+            "serpProviderCode": "L",
+            "resultsTotal": null,
+            "relatedQueries": [
+              {
+                "title": "Tendencias 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhEEAE"
+              },
+              {
+                "title": "Tendências 2026 moda",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tend%C3%AAncias+2026+moda&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhCEAE"
+              },
+              {
+                "title": "Wgsn tendencias 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Wgsn+tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhHEAE"
+              },
+              {
+                "title": "Tendencias futuras do marketing",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+futuras+do+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhDEAE"
+              },
+              {
+                "title": "Temas atuais sobre marketing",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Temas+atuais+sobre+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhBEAE"
+              },
+              {
+                "title": "Meta ads 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+ads+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhAEAE"
+              },
+              {
+                "title": "Meta update 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+update+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhFEAE"
+              },
+              {
+                "title": "Panoramas rd station 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Panoramas+rd+station+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhGEAE"
+              },
+              {
+                "title": "Tendencias 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhEEAE"
+              },
+              {
+                "title": "Tendências 2026 moda",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tend%C3%AAncias+2026+moda&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhCEAE"
+              },
+              {
+                "title": "Wgsn tendencias 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Wgsn+tendencias+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhHEAE"
+              },
+              {
+                "title": "Tendencias futuras do marketing",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+futuras+do+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhDEAE"
+              },
+              {
+                "title": "Temas atuais sobre marketing",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Temas+atuais+sobre+marketing&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhBEAE"
+              },
+              {
+                "title": "Meta ads 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+ads+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhAEAE"
+              },
+              {
+                "title": "Meta update 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Meta+update+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhFEAE"
+              },
+              {
+                "title": "Panoramas rd station 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Panoramas+rd+station+2026&sa=X&ved=2ahUKEwicrdmU5cqVAxXIU1UIHQ7JNpcQ1QJ6BAhGEAE"
+              }
+            ],
+            "paidResults": [],
+            "paidProducts": [],
+            "organicResults": [
+              {
+                "title": "Marketing Digital em 2026: Tendências e Estratégias para ...",
+                "websiteTitle": "Agência Redstack",
+                "url": "https://www.redstack.com.br/post/marketing-digital-em-2026-estrat%C3%A9gias-para-potencializar-sua-presen%C3%A7a-online",
+                "displayedUrl": "https://www.redstack.com.br › post › marketing-digital-...",
+                "description": "10 de ago. de 2025 — O marketing de desempenho, ou performance marketing, é essencial para validar o retorno sobre investimento em tempo real. Em 2026, espera-se ...",
+                "emphasizedKeywords": [
+                  "validar o retorno sobre investimento em tempo real"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 1
+              },
+              {
+                "title": "10 tendências de marketing para 2026",
+                "websiteTitle": "Kantar",
+                "url": "https://www.kantar.com/brazil/inspiration/marcas/10-tendencias-de-marketing-para-2026",
+                "displayedUrl": "https://www.kantar.com › brazil › inspiration › marcas",
+                "description": "10 tendências de marketing para 2026 · 1. Agentes de IA em escala · 2. Conexão humana via seleção por máquina · 3. Dados sintéticos, audiências ampliadas · 4.",
+                "emphasizedKeywords": [
+                  "1. Agentes de IA em escala"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 2
+              },
+              {
+                "title": "As 5 Tendências do Marketing que Vão Definir quem ...",
+                "websiteTitle": "Inout Digital",
+                "url": "https://inoutdigital.com.br/blog/as-5-tendencias-do-marketing/",
+                "displayedUrl": "https://inoutdigital.com.br › Inout Digital",
+                "description": "19 de jan. de 2026 — 5 tendências do marketing de 2026 · 1. Inteligência Artificial aplicada ao marketing real · 2. Automação como base da operação (não como ...",
+                "emphasizedKeywords": [
+                  "1. Inteligência Artificial aplicada ao marketing real"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 3
+              },
+              {
+                "title": "The 7 Performance Marketing Trends That Will Define 2026",
+                "websiteTitle": "LinkedIn · Soleo",
+                "url": "https://www.linkedin.com/pulse/7-performance-marketing-trends-define-2026-soleo-communications-2cx6c",
+                "displayedUrl": "LinkedIn › Soleo",
+                "description": "The 7 Performance Marketing Trends That Will Define 2026 · 1. Consumers Increasingly Begin their Journey Using AI Search · 2. Consumers Prefer ...",
+                "emphasizedKeywords": [
+                  "1. Consumers Increasingly Begin their Journey Using AI Search"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 4
+              },
+              {
+                "title": "Tendências de Marketing Digital para 2026",
+                "websiteTitle": "Vitamina. Agência de Marketing Digital",
+                "url": "https://www.avitamina.pt/tendencias-de-marketing-digital-para-2026/",
+                "displayedUrl": "https://www.avitamina.pt › tendencias-de-marketing-dig...",
+                "description": "Tendências de Marketing Digital para 2026 · 1. Inteligência Artificial com propósito · 2. O Search está a mudar · 3. Conteúdo cocriado com a comunidade · 4.",
+                "emphasizedKeywords": [
+                  "1. Inteligência Artificial com propósito"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 5
+              },
+              {
+                "title": "AS 3 GRANDES TENDÊNCIAS DE MARKETING DIGITAL ...",
+                "websiteTitle": "Instagram · terradorafael",
+                "url": "https://www.instagram.com/reel/DQvB-o3jjwO/",
+                "displayedUrl": "Instagram › terradorafael",
+                "description": "Em 2026, as marcas que crescem combinam cinco frentes que trabalham juntas: busca por IA, SEO, posicionamento de marca, conteúdo e performance.",
+                "emphasizedKeywords": [],
+                "siteLinks": [],
+                "productInfo": {},
+                "likes": "Mais de 70 marcações \"Gostei\"",
+                "lastUpdated": "há 8 meses",
+                "channelName": "reel",
+                "reelLength": "2:47",
+                "type": "organic",
+                "position": 6
+              },
+              {
+                "title": "Key Performance Marketing Trends for 2026 Shaped ...",
+                "websiteTitle": "M+C Saatchi Performance",
+                "url": "https://www.mcsaatchiperformance.com/news/performance-marketing-trends-2026/",
+                "displayedUrl": "https://www.mcsaatchiperformance.com › ...",
+                "description": "2 de dez. de 2025 — In 2026 and beyond, programmatic advertising is expected to grow further due to data privacy issues and infrastructure changes, along with ...",
+                "emphasizedKeywords": [
+                  "programmatic advertising is expected to grow"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 7
+              },
+              {
+                "title": "Marketing Trends: tendências para 2026 que você precisa ...",
+                "websiteTitle": "HubSpot",
+                "url": "https://br.hubspot.com/blog/marketing/marketing-trends",
+                "displayedUrl": "https://br.hubspot.com › Blog/marketing",
+                "description": "20 de abr. de 2026 — 1. Verbalizar quem você é antes de automatizar · 2. Orientar: personalização em escala baseada em dados unificados · 3. Amplificação além do ...",
+                "emphasizedKeywords": [
+                  "1. Verbalizar quem você é antes de automatizar"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 8
+              }
+            ],
+            "suggestedResults": [],
+            "peopleAlsoAsk": [
+              {
+                "answer": "Em 2026, marcas visionárias abandonarão mensagens performáticas e investirão em inovação inclusiva, programas culturalmente fluentes e representação autêntica interna e externamente. Em um cenário de resistência, as marcas devem agir com clareza e firmeza em relação aos valores que defendem.",
+                "question": "Quais são as tendências de marketing para 2026?",
+                "title": "10 tendências de marketing para 2026 - Kantar",
+                "url": "https://www.kantar.com/brazil/inspiration/marcas/10-tendencias-de-marketing-para-2026#:~:text=Em%202026%2C%20marcas%20vision%C3%A1rias%20abandonar%C3%A3o,rela%C3%A7%C3%A3o%20aos%20valores%20que%20defendem.",
+                "date": null
+              },
+              {
+                "answer": null,
+                "question": "Quais são as principais tendências para 2026?",
+                "title": null,
+                "url": null,
+                "date": null
+              },
+              {
+                "answer": "Agora, vamos ao calendário:\nContent Experience 2026. O Content Experience 2026 é um evento presencial focado em marketing de conteúdo, comunicação e estratégia. ... CMO Summit 2026. ... Gramado Summit 2026. ... Conexão Social Media 2026. ... Startup Summit 2026. ... Web Summit Rio 2026. ... Hotmart Fire 2026.",
+                "question": "Quais são os maiores eventos de marketing em 2026?",
+                "title": "Eventos de marketing no Brasil para ficar de olho em 2026",
+                "url": "https://uplevelmarketingdigital.com.br/marketing-digital/eventos-de-marketing-no-brasil-para-ficar-de-olho-em-2026/",
+                "date": null
+              },
+              {
+                "answer": null,
+                "question": "O que vai estar em alta em 2026?",
+                "title": null,
+                "url": null,
+                "date": null
+              }
+            ],
+            "aiOverview": {
+              "type": "live",
+              "content": "As principais tendências do marketing de performance são marcadas pela convergência entre Inteligência Artificial, experiência do usuário e otimização de dados unificados. O foco sai da simples otimização de canais isolados para uma orquestração de jornada focada em clareza, automação e geração de autoridade.As principais frentes que estão ditando o mercado incluem:Busca via IA e Agentes Autônomos: Consumidores utilizam ferramentas de IA para pesquisar e filtrar produtos antes de entrar em contato com a empresa. O SEO foca na presença dentro dos resultados de IAs (como ChatGPT e Gemini) e na clareza extrema de dados, preços e benefícios.Automação Baseada em Jornada: A automação deixou de ser apenas uma sequência de e-mails, tornando-se uma orquestração integrada que acompanha o cliente em tempo real, independentemente da plataforma.Dashboards de Dados Unificados: Há uma exigência por métricas claras que centralizem tráfego orgânico, pago, social e offline para a mensuração precisa de KPIs como o Retorno sobre o Investimento em Anúncios (ROAS).Founder-led Marketing (Marcas Humanizadas): Devido à desconfiança com conteúdos superficiais, o uso de porta-vozes e a autoridade dos donos e fundadores têm papel crucial no aumento da conversão e na construção de confiança.Conteúdo Profundo e Autoridade: Há um crescimento na busca por vídeos mais longos e educativos em plataformas como o YouTube, que geram maior credibilidade e engajamento a longo prazo.Para saber mais sobre a implementação de painéis e métricas, confira as dicas e metodologias detalhadas pela Reportei.Para saber mais sobre a implementação de painéis e métricas, confira as dicas e metodologias detalhadas pela Reportei.Se você quiser detalhar melhor o seu negócio, me diga:Qual é o nicho ou setor da sua empresa (ex: e-commerce, serviços B2B, infoprodutos)?Qual é o seu principal canal de tráfego hoje?A sua maior dor é gerar novos leads ou aumentar a taxa de conversão?Eu posso recomendar estratégias exatas para o seu cenário.Se você quiser detalhar melhor o seu negócio, me diga:Eu posso recomendar estratégias exatas para o seu cenário.",
+              "sources": [
+                {
+                  "url": "https://www.youtube.com/watch?v=yTioxdB_Lxc&t=261",
+                  "title": "Marketing Trends for 2026",
+                  "description": "22 de dez. de 2025 — o terceira tendência que eu entendo que vai ser muito forte já tá começando a ser é são os porta-vozes de marca qual que é a ideia..."
+                },
+                {
+                  "url": "https://www.mcsaatchiperformance.com/news/performance-marketing-trends-2026/",
+                  "title": "Key Performance Marketing Trends for 2026 Shaped by The ...",
+                  "description": "2 de dez. de 2025 — Heading Into the Convergence Era of Performance Marketing. If 2025 was the year of acceleration, 2026 will be the year of converge..."
+                },
+                {
+                  "url": "https://www.youtube.com/watch?v=N2XVUQ4YW6Q&t=27",
+                  "title": "6 Performance Marketing Trends That Will Dominate 2026",
+                  "description": "12 de fev. de 2026 — so that's why in this video I'm going to talk about the performance marketing industry shifts that we need to be aware. and ready ..."
+                }
+              ]
+            },
+            "customData": null,
+            "htmlSnapshotUrl": "https://api.apify.com/v2/key-value-stores/P6lusegHVQ4W2RIm8/records/HqcNWvtQK8ehaG1-0.html?signature=CC0Ct8nviTJGlfTyvCjL"
+          }
+        }
+      ],
+      "failure": null
+    }
+  ],
+  "quota": {
+    "maxBillableCalls": 1,
+    "attemptedBillableCalls": 1,
+    "completedBillableCalls": 1,
+    "maxItemsPerSource": 3
+  },
+  "failures": [],
+  "contentHash": "745231ad5e4f9b20beff925c5bba52e01676d8fa51278739e9df05f5466880cc"
+}

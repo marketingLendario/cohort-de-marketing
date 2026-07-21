@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "skillId": "trend-hunting",
+  "projectId": "epic-11-w2-1-live",
+  "mode": "network",
+  "query": "marketing de performance tendências 2026",
+  "fingerprint": "0eb52f05efb9851a551e3af771d538b4885da1751b71012e4126a8b975244d26",
+  "collectedAt": "2026-07-11T14:02:10.232Z",
+  "frozenAt": "2026-07-11T14:02:10.232Z",
+  "sources": [
+    {
+      "sourceId": "google-search-live",
+      "provider": "apify",
+      "kind": "google-search",
+      "target": "marketing de performance tendências 2026",
+      "status": "failed",
+      "startedAt": "2026-07-11T14:02:09.279Z",
+      "completedAt": "2026-07-11T14:02:10.193Z",
+      "itemCount": 0,
+      "items": [],
+      "failure": "HTTP 400: {\n  \"error\": {\n    \"type\": \"invalid-input\",\n    \"message\": \"Input is not valid: Field input.languageCode must be equal to one of the allowed values: \\\"\\\", \\\"af\\\", \\\"sq\\\", \\\"sm\\\", \\\"ar\\\", \\\"az\\\", \\\"eu\\\", \\\"be\\\", \\\"bn\\\", \\\"bh\\\", \\\"bs\\\", \\\"bg\\\", \\\"ca\\\", \\\"zh-CN\\\", \\\"zh-TW\\\", \\\"hr\\\", \\\"cs\\\", \\\"da\\\", \\\"nl\\\", \\\"en\\\", \\\"eo\\\", \\\"et\\\", \\\"fo\\\", \\\"fi\\\", \\\"fr\\\", \\\"fy\\\", \\\"gl\\\", \\\"ka\\\", \\\"de\\\", \\\"el\\\", \\\"gu\\\","
+    }
+  ],
+  "quota": {
+    "maxBillableCalls": 1,
+    "attemptedBillableCalls": 1,
+    "completedBillableCalls": 0,
+    "maxItemsPerSource": 3
+  },
+  "failures": [
+    {
+      "sourceId": "google-search-live",
+      "reason": "HTTP 400: {\n  \"error\": {\n    \"type\": \"invalid-input\",\n    \"message\": \"Input is not valid: Field input.languageCode must be equal to one of the allowed values: \\\"\\\", \\\"af\\\", \\\"sq\\\", \\\"sm\\\", \\\"ar\\\", \\\"az\\\", \\\"eu\\\", \\\"be\\\", \\\"bn\\\", \\\"bh\\\", \\\"bs\\\", \\\"bg\\\", \\\"ca\\\", \\\"zh-CN\\\", \\\"zh-TW\\\", \\\"hr\\\", \\\"cs\\\", \\\"da\\\", \\\"nl\\\", \\\"en\\\", \\\"eo\\\", \\\"et\\\", \\\"fo\\\", \\\"fi\\\", \\\"fr\\\", \\\"fy\\\", \\\"gl\\\", \\\"ka\\\", \\\"de\\\", \\\"el\\\", \\\"gu\\\","
+    }
+  ],
+  "contentHash": "91388b520c476c3ac7abe055b6103f3f9276a213ce7f5fbcf59dab8ae1aa89fa"
+}

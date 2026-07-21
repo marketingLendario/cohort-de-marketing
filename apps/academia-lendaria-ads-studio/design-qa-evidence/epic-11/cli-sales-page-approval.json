@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillRunId": "37a30a3a-8b30-40f4-a81e-7808d6c41b73",
+  "status": "done",
+  "approval": {
+    "state": "done",
+    "outcome": "written",
+    "proposalHash": "db0445c21218e19270c9e140b7f61a4005412b114e156dd5de47b10d2c3213de",
+    "proposalRevision": 1,
+    "files": [
+      {
+        "path": "pagina/pagina-vendas.md",
+        "format": "markdown",
+        "contentHash": "5223910f649006372ec71d0d28dc9e170b0c6cd205459d111e2a7288383c8da4"
+      },
+      {
+        "path": "pagina/index.html",
+        "format": "html",
+        "contentHash": "47a2a17d00812aeb8481f4ae9fd967bc38f53aca1f70ee49558417a297d31a1e"
+      },
+      {
+        "path": "pagina/pagina-vendas.r1.md",
+        "format": "markdown",
+        "contentHash": "5223910f649006372ec71d0d28dc9e170b0c6cd205459d111e2a7288383c8da4"
+      },
+      {
+        "path": "pagina/index.r1.html",
+        "format": "html",
+        "contentHash": "47a2a17d00812aeb8481f4ae9fd967bc38f53aca1f70ee49558417a297d31a1e"
+      },
+      {
+        "path": "pagina/index.pdf",
+        "format": "pdf",
+        "contentHash": "872314fe1cadbcdc6b374ca8cffee9011fd25c581084204f8c5a35cd798944f9"
+      },
+      {
+        "path": "pagina/index.r1.pdf",
+        "format": "pdf",
+        "contentHash": "872314fe1cadbcdc6b374ca8cffee9011fd25c581084204f8c5a35cd798944f9"
+      },
+      {
+        "path": "book-do-funil.json",
+        "format": "json",
+        "contentHash": "d226de48bac474165dc92b7995511aaba576a70aef94d3bd6acb4f54d235a26e"
+      },
+      {
+        "path": "index.html",
+        "format": "html",
+        "contentHash": "e63b8fbbf4e52531975c4fd8c2c83b043713aa4f3c11e988ae1c61d88caa225c"
+      }
+    ]
+  }
+}

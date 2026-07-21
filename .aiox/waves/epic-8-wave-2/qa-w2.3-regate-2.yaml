@@ -1,0 +1,74 @@
+story: "8.W2.3"
+base_commit: "278d671470db295fbada8f725c75cb37f593f83f"
+reviewed_head: "278d671470db295fbada8f725c75cb37f593f83f + complete uncommitted worktree diff"
+reviewed_at: "2026-07-10T09:28:09-03:00"
+verdict: BLOCK
+
+findings:
+  p0: []
+  p1:
+    - id: W23-RG2-P1-01
+      severity: P1
+      category: security / filesystem boundary / tenant isolation
+      title: "Slug de projeto em symlink permite leitura e escrita fora de projetos/{slug}"
+      evidence:
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
+          lines: "256-260"
+          detail: "resolveSafeTarget aceita projetosRoot/{slug} como symlink, chama realpath e transforma o destino externo na nova realProjectRoot; walkRejectingSymlinks começa depois desse ponto."
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-materializer.ts"
+          lines: "287-312"
+          detail: "resolveSafeReadTarget repete o mesmo realpath do slug, permitindo que o plan leia conteúdo externo no diff."
+      reproduced: "Confirmed with a temporary symlink: materializeArtifact(projectSlug: slug, relativePath: escaped.md) returned written and wrote outside/{escaped.md} outside projectsRoot."
+      impact: "A boundary documentada como escrita/leitura apenas em projetos/{slug}/ pode ser redirecionada por um symlink plantado no diretório do slug; aprovação pode exfiltrar conteúdo no plan e sobrescrever arquivos arbitrários no approve."
+      required_fix: "Reject the slug directory itself when lstat(projectRoot) is a symlink, while retaining only the explicitly intended projectsRoot mount/link behavior; cover both plan/read and materialize/write with regression tests."
+  p2: []
+  p3:
+    - id: W23-RG2-P3-01
+      severity: P3
+      category: idempotency / test coverage
+      title: "O caminho real do adapter Supabase após 23505 não tem regressão automatizada"
+      evidence:
+        - file: "apps/academia-lendaria-ads-studio/server/artifact-approval.ts"
+          lines: "999-1007"
+          detail: "create() relê por chave e depois por identidade semântica após UNIQUE_VIOLATION e retorna a linha existente."
+      observed: "A read-back exata após 23505 foi exercitada por harness read-only e retornou o mesmo id; os testes versionados cobrem a semântica no store in-memory, mas não o adapter Supabase nem a corrida 23505."
+      impact: "A implementação observada é correta para os cenários exercitados, mas uma regressão na cadeia Supabase poderia reabrir duplicação ou conflito sem teste específico."
+
+previous_findings_resolution:
+  W23-RG-P1-01: "CLOSED: outbox sem grants/policies para anon/authenticated, grant apenas service_role, FKs compostas project/workspace/run e pgTAP de privilégios e referências cross-tenant."
+  W23-RG-P1-02: "CLOSED: gateway faz CAS needs_review -> done antes do upsert; replay done exige hash, workspace, projeto e revisão idênticos; hash divergente não faz upsert."
+  W23-RG-P2-01: "CLOSED: canonicalizeRelativeArtifactPath compartilhada normaliza slash/backslash/segmentos '.', rejeita traversal e duplicatas antes de hash/plano/outbox/materialização; recovery multi-arquivo passou."
+  W23-RG-P2-02: "CLOSED: reuso lexical e semântico compara tenant, projeto, run, decisão, hash, revisão e plano canônico; conflito retorna idempotency-conflict sem efeito."
+  create_23505_existing_row_race: "RECHECKED: após 23505 o adapter relê por idempotency_key e, se necessário, por workspace/run/revision; o serviço valida a identidade completa antes de retomar. Harness read-only confirmou o replay pelo mesmo id."
+
+tests_observed:
+  - command: "npx vitest run server/artifact-approval.test.ts src/lib/artifact-approval.test.ts src/components/artifact-approval-review.test.tsx"
+    result: "PASS — 43 tests / 3 files"
+  - command: "npm test"
+    result: "PASS — 224 tests / 28 files"
+  - command: "npx eslint <changed files>"
+    result: "PASS"
+  - command: "npm run lint"
+    result: "PASS"
+  - command: "npx tsc --noEmit -p tsconfig.json"
+    result: "PASS"
+  - command: "npx tsc --noEmit -p tsconfig.server.json"
+    result: "PASS"
+  - command: "supabase db reset --local --yes"
+    result: "PASS — fresh local reset applied all migrations"
+  - command: "supabase db lint --local --level warning"
+    result: "PASS — no schema errors"
+  - command: "supabase test db"
+    result: "PASS — 4 files / 26 pgTAP tests"
+  - command: "git diff --check 278d671470db295fbada8f725c75cb37f593f83f"
+    result: "PASS"
+  - command: "read-only symlink-root reproduction"
+    result: "FAIL — materializer wrote escaped.md through projectsRoot/slug symlink"
+
+residual_risks:
+  - "repairAll continua sem claim/lease; concorrência pode repetir trabalho idempotente, embora não tenha sido observada divergência de dados."
+  - "O adapter Supabase usa upsert por artifact id e mantém histórico por path; supersessão histórica por path segue fora desta story."
+
+next_action:
+  required: "Fix W23-RG2-P1-01, add plan/materialize regressions for a symlink at the slug root, then rerun the full gate including fresh db reset and pgTAP."
+  reason: "The four prior BLOCK findings are resolved, but the current filesystem boundary still permits an external read/write through a valid project slug symlink; therefore SHIP is not allowed."

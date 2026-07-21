@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sinkra-hub/templates/meta-axiomas-scores-v1.json",
+  "title": "META_AXIOMAS Scores v1",
+  "description": "Output template para tsk02_scorar_meta_axiomas (leaf_validar_qualidade). 10 dimensões + weighted_overall + verdade_veto_check.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdade", "weighted_overall", "verdade_veto_check"],
+  "properties": {
+    "verdade": { "$ref": "#/$defs/axioma_score" },
+    "completude": { "$ref": "#/$defs/axioma_score" },
+    "consistencia": { "$ref": "#/$defs/axioma_score" },
+    "intencionalidade": { "$ref": "#/$defs/axioma_score" },
+    "rastreabilidade": { "$ref": "#/$defs/axioma_score" },
+    "auditabilidade": { "$ref": "#/$defs/axioma_score" },
+    "executabilidade": { "$ref": "#/$defs/axioma_score" },
+    "manutenabilidade": { "$ref": "#/$defs/axioma_score" },
+    "extensibilidade": { "$ref": "#/$defs/axioma_score" },
+    "compreensibilidade": { "$ref": "#/$defs/axioma_score" },
+    "weighted_overall": { "type": "number", "minimum": 0, "maximum": 10 },
+    "verdade_veto_check": {
+      "type": "object",
+      "required": ["score", "threshold", "verdict"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 10 },
+        "threshold": { "type": "number", "const": 7.0 },
+        "verdict": { "type": "string", "enum": ["PASS", "VETO_HARD"] },
+        "comment": { "type": "string" }
+      }
+    },
+    "scored_at": { "type": "string", "format": "date-time" },
+    "branch_id": { "type": "string" }
+  },
+  "$defs": {
+    "axioma_score": {
+      "type": "object",
+      "required": ["score", "evidence", "rationale"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 10 },
+        "evidence": { "type": "string" },
+        "rationale": { "type": "string" },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

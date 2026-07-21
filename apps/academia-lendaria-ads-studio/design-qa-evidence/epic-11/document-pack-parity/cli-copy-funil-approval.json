@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillRunId": "049c9ee8-7b86-49ab-9483-a7b74a787517",
+  "status": "done",
+  "approval": {
+    "state": "done",
+    "outcome": "written",
+    "proposalHash": "605a67459e75bd42399fd2d820a405c41cfc0150898ece959771471032bc45e3",
+    "proposalRevision": 1,
+    "files": [
+      {
+        "path": "copy.md",
+        "format": "markdown",
+        "contentHash": "fc9ce07cfff62d5ee76455682ac9eb1bb9a0914b3777b4be5096486642f52739"
+      },
+      {
+        "path": "copy.html",
+        "format": "html",
+        "contentHash": "67b35e655cf2a7404a1d433c8e46713778df884e9fea68ee83ff751f1cd52efe"
+      },
+      {
+        "path": "copy.r1.md",
+        "format": "markdown",
+        "contentHash": "fc9ce07cfff62d5ee76455682ac9eb1bb9a0914b3777b4be5096486642f52739"
+      },
+      {
+        "path": "copy.r1.html",
+        "format": "html",
+        "contentHash": "67b35e655cf2a7404a1d433c8e46713778df884e9fea68ee83ff751f1cd52efe"
+      },
+      {
+        "path": "copy.pdf",
+        "format": "pdf",
+        "contentHash": "37f1f8e4936bd782e826f908529bc8dcad51aa5b31f8a8dba83229935f07ace0"
+      },
+      {
+        "path": "copy.r1.pdf",
+        "format": "pdf",
+        "contentHash": "37f1f8e4936bd782e826f908529bc8dcad51aa5b31f8a8dba83229935f07ace0"
+      },
+      {
+        "path": "book-do-funil.json",
+        "format": "json",
+        "contentHash": "0d06be139b96c34ef39dc57c46f6598f5f2f2bfd4ed3cf663aa8ffc1b134b753"
+      },
+      {
+        "path": "index.html",
+        "format": "html",
+        "contentHash": "9cc555d92cc04f4ab4af7d4356b20c959eca63bcd2c5edc6192b7aa828e176ba"
+      }
+    ]
+  }
+}

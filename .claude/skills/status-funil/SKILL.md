@@ -37,7 +37,7 @@ ls projetos/{slug}/avatar.md \
    projetos/{slug}/emails/ \
    projetos/{slug}/conteudo/ \
    projetos/{slug}/recuperacao.md \
-   projetos/{slug}/back-end.md \
+   projetos/{slug}/backend-funil.md \
    projetos/{slug}/cro.md 2>/dev/null
 ```
 
@@ -61,7 +61,7 @@ A ordem segue a **ordem canônica N12 do `/metodo-funil`** (design antes de copy
 | 7 | E-mails | `emails/` | `/email-funil` |
 | 8 | Conteúdo | `conteudo/` | `/conteudo-funil` |
 | 9 | Recuperação | `recuperacao.md` | `/recuperacao-funil` |
-| 10 | Back-end | `back-end.md` | `/backend-funil` |
+| 10 | Back-end | `backend-funil.md` | `/backend-funil` |
 | 11 | CRO / teste | `cro.md` | `/cro-funil` |
 
 > As peças de formato alternativo (`vsl.md`, `advertorial.md`, `quiz.md`, `webinario.md`, `lancamento.md`, `whatsapp.md`, `criativos/`, `mockups/`) entram conforme o `/metodo-funil` prescrever — se existirem, liste-as também.
@@ -109,7 +109,7 @@ Funil: {slug}   ({N}/11 peças)
 [ ] 7. E-mails         emails/
 [ ] 8. Conteúdo        conteudo/
 [ ] 9. Recuperação     recuperacao.md
-[ ] 10. Back-end       back-end.md
+[ ] 10. Back-end       backend-funil.md
 [ ] 11. CRO            cro.md
 
 Próximo passo: rode /pagina-vendas-funil — monta a página de vendas com a copy + o DESIGN.md.
@@ -125,7 +125,6 @@ Sempre termine com a linha **"Próximo passo:"** apontando a skill da primeira p
 
 **NUNCA:** inventar que uma peça existe sem checar o arquivo · alterar qualquer peça · pular a descoberta do projeto ativo.
 
-## Entrega padrão (texto completo em `.claude/skills/_shared/entrega-padrao.md` — LEIA-o ao fechar a entrega)
+## Entrega read-only (exceção explícita ao padrão de artefatos)
 
-Esta skill só LÊ o projeto, mas a entrega do checklist segue o padrão: abra o resultado renderizado (detecte o SO — macOS `open` · Windows `start ""` · Linux `xdg-open`; se não abrir sozinho, ex. Codex, imprima o caminho + como abrir) e envie na conversa; nunca encerre entregando só o caminho. Feche SEMPRE apontando UM próximo comando (a primeira lacuna do checklist, pela ordem canônica do mapa). Ferramentas: check antes de usar (Chrome pro PDF, fallback imprimir em PDF — `_shared/nunca-travar.md`).
-
+Esta utility devolve o checklist como **resultado efêmero estruturado** no painel, no CLI ou na conversa. Não gera HTML/PDF, não cria arquivo de proposta, não entra em revisão de artefato e não atualiza Book, banco ou filesystem. Feche SEMPRE apontando UM próximo comando (a primeira lacuna do checklist, pela ordem canônica do mapa).

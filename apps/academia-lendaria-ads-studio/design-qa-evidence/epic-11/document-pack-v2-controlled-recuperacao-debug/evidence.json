@@ -1,0 +1,278 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T01:56:20.904Z",
+  "lane": {
+    "type": "controlled-contract",
+    "runner": "deterministic-local-fixture",
+    "codexRealEquivalent": false,
+    "reasoningEffort": "controlled",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "A geracao textual e controlada e nao substitui a lane separada com Codex CLI real."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "recuperacao-funil"
+    ],
+    "catalogHash": "f79ba048099f98419f276a7562b98a8cdb5889d35d57dec2e153acacedfc0359"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "recuperacao-funil",
+      "contractGroup": "message-collection",
+      "contractHash": "20fc0da3a3233a7c6288aa2be1bf9233c3fc63c80990c50104d3f3435214eb75",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "recuperacao.html",
+          "recuperacao.md",
+          "recuperacao.pdf",
+          "recuperacao/item-1.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 481,
+            "hash": "38f501fbd1579cc012e5b5a8e5ac210daa9fa490d7c5bf3cd52d1207f16c8a72",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3672,
+            "hash": "3ccd0a7fbe8df9271379eb3ae27f57f904e570825484bd3ec0cc11f0e47fe1ec",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/v1/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "recuperacao.html",
+          "recuperacao.md",
+          "recuperacao.pdf",
+          "recuperacao/item-1.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 479,
+            "hash": "fbdbfa6e55b162c03e02707e9a65e6da7e450b1f2dff27471252aa964cfff78f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3670,
+            "hash": "628424e14d8bcecfb76a2a034de2d50f7ba276d4baad3d0addeb5db602f2000e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/v1/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

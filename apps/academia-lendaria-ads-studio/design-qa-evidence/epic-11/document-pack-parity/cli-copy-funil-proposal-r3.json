@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "copy-funil",
+  "jobId": "d901634c-4491-4ff9-a6ff-9df3643c3b3f",
+  "skillRunId": "7faa06e2-b1e8-4d6f-92a7-5a6320ebfb56",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "2ee064debb78130817e028c58ef5d5995cd72cf1340e9e6ab8bb55364a71a85c",
+  "proposal": {
+    "fields": [
+      {
+        "key": "q1_nivel_consciencia",
+        "value": "2 — Consciente do problema"
+      },
+      {
+        "key": "q2_sofisticacao",
+        "value": "4 — Cético"
+      },
+      {
+        "key": "q3_ticket",
+        "value": "1 — Baixo (R$ 497)"
+      },
+      {
+        "key": "q4_trafego",
+        "value": "1 — Frio"
+      },
+      {
+        "key": "q5_peca_principal",
+        "value": "5 — Landing Page"
+      },
+      {
+        "key": "fluxo_recomendado",
+        "value": "Lançamento Completo, por enquadramento padrão para ticket baixo com tráfego frio"
+      },
+      {
+        "key": "provas",
+        "value": "Nenhum ativo de prova fornecido; será necessário usar [SEM PROVA AINDA]"
+      },
+      {
+        "key": "status",
+        "value": "Bloqueado por gate humano"
+      }
+    ],
+    "summary": "O pack final de copy não foi gerado porque o Offerbook fornecido mantém a copy bloqueada até aprovações humanas e regularização de compliance.",
+    "warnings": [
+      "Nicho regulado de saúde: a copy deverá usar linguagem de possibilidade e não poderá prometer perda de peso, cura, resultado garantido ou prazo individual.",
+      "Não serão criados depoimentos, cases, credenciais, números de eficácia ou outras provas ausentes.",
+      "Mesmo após a liberação dos pré-requisitos, a Big Idea e os mecanismos exigirão aprovação humana antes da Fase 3; headlines e bullets também exigirão aprovação antes da finalização."
+    ],
+    "artifacts": [],
+    "questions": [
+      "O dono da oferta aprovou formalmente o Offerbook final, campo a campo?",
+      "Quem é o responsável técnico, qual é o conselho profissional aplicável e qual é o número de registro?",
+      "O responsável técnico e o jurídico/compliance autorizaram a elaboração desta fundação de copy, ainda como proposta para revisão humana? Informar objetivamente o status de cada aprovação."
+    ],
+    "resultMarkdown": ""
+  }
+}

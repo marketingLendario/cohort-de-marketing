@@ -1,0 +1,392 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T01:13:30.920Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "medium",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "email-funil"
+    ],
+    "catalogHash": "70c509255167f47761e2649dcb038eac45bb56938a0ab416062820efaccf290f"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "email-funil",
+      "contractGroup": "message-collection",
+      "contractHash": "93f5de2036b78702aaf70d46846da11aa2a32b4c961f45917e28886f43fe2158",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "emails/index.html",
+          "emails/trilha-convite-email-1.html",
+          "emails/trilha-nutricao-email-1.html",
+          "emails/trilha-venda-email-1.html",
+          "emails/trilhas.html",
+          "emails/trilhas.md",
+          "emails/trilhas.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 475,
+            "hash": "10182a68dc069931281e19b8aa969f9938f08cdf72e8fa943daca0a089afaf75",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/index.html",
+            "format": "html",
+            "bytes": 2233,
+            "hash": "a4d9d95d2b7d1056b3595c71ed895fdbe9eaa0aa4aaa54db917fc8972c7181e6",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-convite-email-1.html",
+            "format": "html",
+            "bytes": 2770,
+            "hash": "6f7295b4effcad28d84d49c27f82558c0db385b1c215eb27451f3f47e59e48ae",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-nutricao-email-1.html",
+            "format": "html",
+            "bytes": 2791,
+            "hash": "5c8050995d2724a1dbd7ebcc2edbacc250f6335cb80303c8543b1f42895ae09a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-venda-email-1.html",
+            "format": "html",
+            "bytes": 2846,
+            "hash": "80237b0555aa6ac61147babdbc934dba0baea80fc6dad8cefcfa57f8fddecc28",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.html",
+            "format": "html",
+            "bytes": 3177,
+            "hash": "5eb8583f7ba329896c17d947270350f3ec4c2a9d76dc96951902d8b2e1bbeff1",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.md",
+            "format": "markdown",
+            "bytes": 1768,
+            "hash": "d4ae6d3ca2fedebcd3be9dec936273b1a3b45f6bf64e60cafcc01594261cb066",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 132476,
+            "hash": "028b602cdea4139a822ab02bc4c1309de72e59ec6247d0ce7c635edca460e9b2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/index.html",
+            "format": "html",
+            "bytes": 2233,
+            "hash": "a4d9d95d2b7d1056b3595c71ed895fdbe9eaa0aa4aaa54db917fc8972c7181e6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-convite-email-1.html",
+            "format": "html",
+            "bytes": 2770,
+            "hash": "6f7295b4effcad28d84d49c27f82558c0db385b1c215eb27451f3f47e59e48ae",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-nutricao-email-1.html",
+            "format": "html",
+            "bytes": 2791,
+            "hash": "5c8050995d2724a1dbd7ebcc2edbacc250f6335cb80303c8543b1f42895ae09a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-venda-email-1.html",
+            "format": "html",
+            "bytes": 2846,
+            "hash": "80237b0555aa6ac61147babdbc934dba0baea80fc6dad8cefcfa57f8fddecc28",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.html",
+            "format": "html",
+            "bytes": 3177,
+            "hash": "5eb8583f7ba329896c17d947270350f3ec4c2a9d76dc96951902d8b2e1bbeff1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.md",
+            "format": "markdown",
+            "bytes": 1768,
+            "hash": "d4ae6d3ca2fedebcd3be9dec936273b1a3b45f6bf64e60cafcc01594261cb066",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 132476,
+            "hash": "028b602cdea4139a822ab02bc4c1309de72e59ec6247d0ce7c635edca460e9b2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3653,
+            "hash": "9b4ff5c1ac2ecde88c2ffd9d2fe8ac17d456160dd8116623029d7d6172966ee6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "emails/index.html",
+          "emails/trilha-convite-email-1.html",
+          "emails/trilha-nutricao-email-1.html",
+          "emails/trilha-venda-email-1.html",
+          "emails/trilhas.html",
+          "emails/trilhas.md",
+          "emails/trilhas.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 473,
+            "hash": "6690be3b5bfde4bb4170832348560d725c6aba96796464a294ee797c40414cf4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/index.html",
+            "format": "html",
+            "bytes": 1665,
+            "hash": "73892ef5d2bf0bfcf636b48a461b750782e36dae774fea06a6618819f9ead998",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-convite-email-1.html",
+            "format": "html",
+            "bytes": 3192,
+            "hash": "eb8d30c5af046d30a62999e992038ff072bc0848cf2d9131fd10a8d5372e8785",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-nutricao-email-1.html",
+            "format": "html",
+            "bytes": 3259,
+            "hash": "334cb9f5df34316c23e50b18625e43d57424ae6a411cccac5dba0e4e9bc8f0c4",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-venda-email-1.html",
+            "format": "html",
+            "bytes": 3302,
+            "hash": "51e11a55a48ce15dca21f5227b2ce014b353e2a82d346d41efab101bad60a09b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.html",
+            "format": "html",
+            "bytes": 3331,
+            "hash": "d52539e34899c1dbb74f50aa7b79213846787423982f332f11c2ca2788e02f22",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.md",
+            "format": "markdown",
+            "bytes": 2405,
+            "hash": "e055fae5ec822cd89f68a32266ed86079f3a57518c79b91772a30147dbb3bdb9",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 131618,
+            "hash": "bdfe4439a67ffbdbbf13ca860f9ed1a13e9fbd4771ea560b748ed60e036c50ed",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/index.html",
+            "format": "html",
+            "bytes": 1665,
+            "hash": "73892ef5d2bf0bfcf636b48a461b750782e36dae774fea06a6618819f9ead998",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-convite-email-1.html",
+            "format": "html",
+            "bytes": 3192,
+            "hash": "eb8d30c5af046d30a62999e992038ff072bc0848cf2d9131fd10a8d5372e8785",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-nutricao-email-1.html",
+            "format": "html",
+            "bytes": 3259,
+            "hash": "334cb9f5df34316c23e50b18625e43d57424ae6a411cccac5dba0e4e9bc8f0c4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-venda-email-1.html",
+            "format": "html",
+            "bytes": 3302,
+            "hash": "51e11a55a48ce15dca21f5227b2ce014b353e2a82d346d41efab101bad60a09b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.html",
+            "format": "html",
+            "bytes": 3331,
+            "hash": "d52539e34899c1dbb74f50aa7b79213846787423982f332f11c2ca2788e02f22",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.md",
+            "format": "markdown",
+            "bytes": 2405,
+            "hash": "e055fae5ec822cd89f68a32266ed86079f3a57518c79b91772a30147dbb3bdb9",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 131618,
+            "hash": "bdfe4439a67ffbdbbf13ca860f9ed1a13e9fbd4771ea560b748ed60e036c50ed",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3651,
+            "hash": "67a594a34d21a79964348ae8aa842922d4e228108b55e371d1e67b47e4c5ddf6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

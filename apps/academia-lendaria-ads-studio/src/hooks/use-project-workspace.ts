@@ -112,6 +112,7 @@ export interface ProjectWorkspaceController {
    * repository + cache em modo real; só cache em modo demo.
    */
   persistSkillRunUpdate: (runId: string, patch: UpdateSkillRunInput) => Promise<void>;
+  supersedeSkillRun: (parentRunId: string, continuationRunId: string) => Promise<void>;
   /** Persiste uma revisão do plano de campanha e atualiza o cache autoritativo. */
   persistCampaignPlan: (plan: CampaignPlanRevision) => Promise<CampaignPlanRevision>;
   /** Persiste uma revisão do painel semanal e atualiza o cache autoritativo. */
@@ -423,6 +424,15 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
     if (!destroyed) store.getState().upsertSkillRun(run);
   }
 
+  async function supersedeSkillRun(parentRunId: string, continuationRunId: string): Promise<void> {
+    if (demoEnabled) {
+      store.getState().updateSkillRun(parentRunId, { status: 'cancelled', error: `Continuação registrada no run ${continuationRunId}.` });
+      return;
+    }
+    const run = await repository.supersedeSkillRun(workspaceId, parentRunId, continuationRunId);
+    if (!destroyed) store.getState().upsertSkillRun(run);
+  }
+
   async function persistCampaignPlan(plan: CampaignPlanRevision): Promise<CampaignPlanRevision> {
     if (demoEnabled) return plan;
     const latest = await repository.getLatestCampaignPlan(workspaceId, plan.campaignId);
@@ -562,6 +572,7 @@ export function createProjectWorkspaceController(deps: ProjectWorkspaceDeps): Pr
     resolveConflict,
     persistSkillRunStart,
     persistSkillRunUpdate,
+    supersedeSkillRun,
     persistCampaignPlan,
     persistWeeklyPanel,
     persistArtifact,
@@ -581,6 +592,7 @@ export interface UseProjectWorkspaceResult {
   persistSkillRunStart: (input: PersistSkillRunStartInput) => Promise<SkillRun>;
   /** Persiste uma transição do skill run (repo+cache real; cache no demo). */
   persistSkillRunUpdate: (runId: string, patch: UpdateSkillRunInput) => Promise<void>;
+  supersedeSkillRun: (parentRunId: string, continuationRunId: string) => Promise<void>;
   retry: () => void;
   resolveConflict: () => void;
 }
@@ -625,6 +637,11 @@ export function useProjectWorkspace(workspaceId: string | null): UseProjectWorks
     return controllerRef.current.persistSkillRunUpdate(runId, patch);
   }, []);
 
+  const supersedeSkillRun = useCallback(async (parentRunId: string, continuationRunId: string): Promise<void> => {
+    if (!controllerRef.current) throw new Error('Workspace ainda não hidratado.');
+    return controllerRef.current.supersedeSkillRun(parentRunId, continuationRunId);
+  }, []);
+
   const retry = useCallback(() => {
     void controllerRef.current?.retry();
   }, []);
@@ -642,6 +659,7 @@ export function useProjectWorkspace(workspaceId: string | null): UseProjectWorks
     importProjectBrief,
     persistSkillRunStart,
     persistSkillRunUpdate,
+    supersedeSkillRun,
     retry,
     resolveConflict,
   };

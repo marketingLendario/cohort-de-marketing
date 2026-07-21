@@ -2,6 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Button, Icon } from '@/lib/lendaria-ds';
 import { skillCatalog } from '@/generated/skill-catalog';
+import {
+  executionParityForSkill,
+  panelActionLabel,
+  SKILL_ADAPTER_GAP_LABELS,
+  SKILL_PARITY_DESCRIPTIONS,
+  SKILL_PARITY_LABELS,
+  capabilityGapLabel,
+} from '@/lib/skill-execution-parity';
 import { evaluateProjectSkills, nextProjectAction, type SkillEvaluation } from '@/lib/readiness';
 import { activeBriefFor, useProjectStore } from '@/stores/project-store';
 import { buildTrafficPanelContext } from '@/lib/traffic-panel';
@@ -11,7 +19,10 @@ import type { ProjectArtifact, SkillRun } from '@/lib/project-domain';
 import { useOptionalProjectWorkspaceActions } from '@/components/project-hydration-boundary';
 import { toCacheRunPatch, type PersistSkillRunStartInput } from '@/hooks/use-project-workspace';
 import type { UpdateSkillRunInput } from '@/lib/project-repository';
+import { appendElicitationHistory, buildElicitationContinuation, pendingElicitationQuestions } from '@/lib/skill-elicitation';
 import { ArtifactApprovalReview } from '@/components/artifact-approval-review';
+import { VisualProductionReview } from '@/components/visual-production-review';
+import { promotionArtifact } from '@/lib/creative-factory-runtime';
 import {
   buildInvalidations,
   decideArtifactApproval,
@@ -108,6 +119,24 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
   const [executing, setExecuting] = useState(false);
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [operatorInput, setOperatorInput] = useState('');
+  const [researchMode, setResearchMode] = useState<'network' | 'offline' | 'hybrid'>('network');
+  const [researchSource, setResearchSource] = useState<'google-search' | 'instagram-profile' | 'instagram-hashtag' | 'tiktok-profile' | 'tiktok-hashtag' | 'meta-ad-library' | 'public-url'>('google-search');
+  const [researchTarget, setResearchTarget] = useState('');
+  const [researchMaterial, setResearchMaterial] = useState('');
+  const [researchSourceLabel, setResearchSourceLabel] = useState('');
+  const [mediaUrl, setMediaUrl] = useState('');
+  const [mediaTranscript, setMediaTranscript] = useState('');
+  const [mediaLanguage, setMediaLanguage] = useState<'pt' | 'en' | 'es'>('pt');
+  const [brandInputMode, setBrandInputMode] = useState<'none' | 'url' | 'moodboard'>('none');
+  const [brandSourceUrl, setBrandSourceUrl] = useState('');
+  const [moodboardImages, setMoodboardImages] = useState<string[]>([]);
+  const [visualFormats, setVisualFormats] = useState<Array<'feed' | 'story' | 'square'>>(['feed', 'story', 'square']);
+  const [visualVariants, setVisualVariants] = useState(1);
+  const [visualTitle, setVisualTitle] = useState('');
+  const [visualDescription, setVisualDescription] = useState('');
+  const [visualCta, setVisualCta] = useState('Saiba mais');
+  const [visualLinkDescription, setVisualLinkDescription] = useState('');
+  const [elicitationAnswers, setElicitationAnswers] = useState<string[]>([]);
   // jobId com retry em voo — desabilita o botão Repetir (guard visual). O guard
   // duro (síncrono, contra double-click) vive em `retryInFlightRef`.
   const [retryingJobId, setRetryingJobId] = useState<string | null>(null);
@@ -214,14 +243,33 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
     ?? next
     ?? evaluations[0];
   const selectedSkill = skillCatalog.skills.find((skill) => skill.id === selectedEvaluation?.skillId);
+  const selectedParity = selectedEvaluation ? executionParityForSkill(selectedEvaluation.skillId) : null;
 
   // Latest run of the selected skill (guarded so the hooks below stay above the
   // early return — rules of hooks). Drives the two-phase approval review.
   const latestRunForSelected = selectedEvaluation
-    ? [...runs]
-        .filter((run) => run.skillId === selectedEvaluation.skillId)
-        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0]
+    ? (() => {
+        const skillRuns = runs.filter((run) => run.skillId === selectedEvaluation.skillId);
+        const supersededCheckpoints = new Set(
+          skillRuns
+            .map((run) => run.inputSnapshot?.elicitationParentRunId)
+            .filter((runId): runId is string => typeof runId === 'string' && runId.length > 0),
+        );
+        return skillRuns
+          .filter((run) => !supersededCheckpoints.has(run.id))
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.updatedAt.localeCompare(a.updatedAt))[0];
+      })()
     : undefined;
+  const selectedProposal = latestRunForSelected && isSkillProposal(latestRunForSelected.proposal)
+    ? latestRunForSelected.proposal
+    : null;
+  const pendingQuestions = latestRunForSelected?.status === 'needs_review' && selectedProposal
+    ? pendingElicitationQuestions(selectedProposal.questions)
+    : [];
+
+  useEffect(() => {
+    setElicitationAnswers([]);
+  }, [latestRunForSelected?.id]);
 
   const [approvalPlan, setApprovalPlan] = useState<ApprovalPlan | null>(null);
   const [approvalPlanLoading, setApprovalPlanLoading] = useState(false);
@@ -240,6 +288,10 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
     }
     const run = latestRunForSelected;
     if (!run || !isSkillProposal(run.proposal)) {
+      setApprovalPlan(null);
+      return;
+    }
+    if (pendingElicitationQuestions(run.proposal.questions).length > 0) {
       setApprovalPlan(null);
       return;
     }
@@ -294,6 +346,10 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
   const briefWorkspaceId = brief.workspaceId;
   const briefData = brief.data as unknown as Record<string, unknown>;
   const activeSkill = selectedSkill;
+  const isExternalResearchSelected = ['avatar-funil', 'espiao-do-concorrente', 'trend-hunting', 'conteudo-funil', 'criativos-funil'].includes(selectedEvaluation.skillId);
+  const isMediaIntakeSelected = ['conteudo-funil', 'criativos-funil'].includes(selectedEvaluation.skillId);
+  const isBrandDesignSelected = selectedEvaluation.skillId === 'design-md';
+  const isVisualProductionSelected = ['criativos-funil', 'mockup-produto-funil'].includes(selectedEvaluation.skillId);
 
   const selectedState = stateFor(selectedEvaluation);
   const sectionId = selectedEvaluation.missingFields[0]?.split('.')[0] ?? 'project';
@@ -303,7 +359,8 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
 
   // Two-phase approval review data (AC1): the exact artifacts the human approves
   // + the downstream artifacts this decision would invalidate (client graph).
-  const reviewProposal = latestRun && isSkillProposal(latestRun.proposal) ? latestRun.proposal : null;
+  const reviewProposal = selectedProposal;
+  const hasVisualBatch = reviewProposal?.artifacts.some((artifact) => artifact.artifactType === 'creativeFactoryBatch') ?? false;
   const reviewArtifacts: ApprovalArtifactInput[] = reviewProposal
     ? resolveApprovalArtifacts(reviewProposal, {
         artifactType: activeSkill.primaryArtifacts[0] ?? activeSkill.id,
@@ -313,32 +370,122 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
     : [];
   const invalidations = latestRun ? buildInvalidations(latestRun.skillId, artifacts) : [];
 
-  async function executeRun() {
+  async function executeRun(customOperatorInput?: string, elicitationParentRunId?: string) {
     setRuntimeError(null);
     setExecuting(true);
     try {
       const confirmedArtifacts = artifacts.filter((artifact) => artifact.verification === 'confirmed');
+      const artifactContext = [
+        ...confirmedArtifacts.map((artifact) => ({
+          artifactType: artifact.artifactType,
+          title: artifact.title,
+          path: artifact.path,
+          content: artifact.content,
+        })),
+        ...(elicitationParentRunId && reviewProposal ? reviewProposal.artifacts.map((artifact) => ({
+          artifactType: artifact.artifactType,
+          title: artifact.title,
+          path: artifact.path,
+          content: artifact.content,
+        })) : []),
+      ].filter((artifact, index, collection) => collection.findIndex((candidate) => candidate.artifactType === artifact.artifactType && candidate.path === artifact.path) === index);
       const workflowBlock = trafficWorkflowBlockReason(selectedEvaluation.skillId, confirmedArtifacts);
       if (workflowBlock) {
         setRuntimeError(workflowBlock);
         return;
       }
       const trafficPanel = buildTrafficPanelContext(confirmedArtifacts);
+      const shouldCollectExternalResearch = isExternalResearchSelected && !elicitationParentRunId;
+      if (shouldCollectExternalResearch && researchMode !== 'offline' && !researchTarget.trim()) {
+        setRuntimeError('Informe o alvo da coleta externa.');
+        return;
+      }
+      if (shouldCollectExternalResearch && researchMode !== 'network' && !researchMaterial.trim()) {
+        setRuntimeError('Cole o material que será analisado no modo offline ou híbrido.');
+        return;
+      }
+      const researchProvider = researchSource === 'meta-ad-library'
+        ? 'meta'
+        : researchSource === 'public-url'
+          ? 'public-url'
+          : 'apify';
+      const externalResearch = shouldCollectExternalResearch
+        ? {
+            mode: researchMode,
+            query: researchTarget.trim() || undefined,
+            pastedMaterial: researchMode === 'network' ? undefined : researchMaterial.trim(),
+            pastedSourceLabel: researchMode === 'network' ? undefined : researchSourceLabel.trim() || 'Material fornecido no painel',
+            sources: researchMode === 'offline' ? [] : [{
+              id: `${researchSource}-primary`,
+              provider: researchProvider,
+              kind: researchSource,
+              target: researchTarget.trim(),
+              limit: 10,
+            }],
+            maxBillableCalls: researchMode === 'offline' ? 0 : 1,
+          }
+        : undefined;
+      if (isVisualProductionSelected && (!visualTitle.trim() || !visualDescription.trim() || !visualCta.trim())) {
+        setRuntimeError('Informe o título, o briefing e o CTA da peça visual.');
+        return;
+      }
+      if (isVisualProductionSelected && visualFormats.length === 0) {
+        setRuntimeError('Selecione ao menos um formato visual.');
+        return;
+      }
+      const visualProduction = isVisualProductionSelected ? {
+        formats: visualFormats,
+        archetypes: selectedEvaluation.skillId === 'mockup-produto-funil'
+          ? ['mockup_product']
+          : ['dark_editorial', 'light_clean', 'didactic_compare'],
+        variants: visualVariants,
+        items: [{ id: 'visual-1', title: visualTitle.trim(), description: visualDescription.trim() }],
+        cta: visualCta.trim(),
+        ...(visualLinkDescription.trim() ? { linkDescription: visualLinkDescription.trim() } : {}),
+        personas: [],
+        likenessAuthorizations: [],
+      } : undefined;
+      const mediaIntake = isMediaIntakeSelected && mediaUrl.trim() ? {
+        items: [{
+          id: 'media-primary',
+          role: selectedEvaluation.skillId === 'criativos-funil' ? 'competitor-ad' : 'reference-content',
+          source: { origin: 'url', url: mediaUrl.trim() },
+          pastedTranscript: mediaTranscript.trim() || undefined,
+          language: mediaLanguage,
+        }],
+      } : undefined;
+      if (isBrandDesignSelected && brandInputMode === 'url' && !brandSourceUrl.trim()) {
+        setRuntimeError('Informe a URL pública da marca.');
+        return;
+      }
+      if (isBrandDesignSelected && brandInputMode === 'moodboard' && moodboardImages.length === 0) {
+        setRuntimeError('Selecione ao menos uma imagem para o moodboard.');
+        return;
+      }
+      if (isBrandDesignSelected && brandInputMode === 'none'
+        && (selectedEvaluation.missingFields.length > 0 || selectedEvaluation.missingAlternatives.length > 0)) {
+        setRuntimeError('Escolha uma URL pública ou um moodboard, ou complete a referência visual no briefing.');
+        return;
+      }
+      const brandDesign = isBrandDesignSelected && brandInputMode !== 'none'
+        ? brandInputMode === 'url'
+          ? { mode: 'url', url: brandSourceUrl.trim(), maxBytes: 1_000_000 }
+          : { mode: 'moodboard', images: moodboardImages.map((data) => ({ kind: 'base64', data })), maxImageBytes: 2 * 1024 * 1024 }
+        : undefined;
       // Persist + 202 first (AC1): we get a durable jobId before the long run.
       const start = await startSkillRun(selectedEvaluation.skillId, {
         workspaceId: briefWorkspaceId,
         projectId,
         brief: briefData,
         context: {
-          artifacts: confirmedArtifacts.map((artifact) => ({
-            artifactType: artifact.artifactType,
-            title: artifact.title,
-            path: artifact.path,
-            content: artifact.content,
-          })),
+          artifacts: artifactContext,
           trafficPanel,
+          ...(externalResearch ? { externalResearch } : {}),
+          ...(mediaIntake ? { mediaIntake } : {}),
+          ...(brandDesign ? { brandDesign } : {}),
+          ...(visualProduction ? { visualProduction } : {}),
         },
-        operatorInput: operatorInput.trim() || undefined,
+        operatorInput: customOperatorInput?.trim() || operatorInput.trim() || undefined,
       });
       // Pointer durável da UI (QA-W2B1-02): grava o skill run pelo repository
       // carregando o jobId, ANTES de reatar. Se o pointer falhar, o job de
@@ -352,6 +499,8 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
             briefRevisionId,
             artifactIds: confirmedArtifacts.map((artifact) => artifact.id),
             jobId: start.jobId,
+            ...(elicitationParentRunId ? { elicitationParentRunId } : {}),
+            ...(elicitationParentRunId && customOperatorInput ? { elicitationHistory: customOperatorInput } : {}),
           },
         });
       } catch {
@@ -362,12 +511,34 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
         }
         throw new Error('Não foi possível registrar a execução para retomada. A execução foi cancelada; tente de novo.');
       }
+      if (elicitationParentRunId) {
+        if (workspaceActions) await workspaceActions.supersedeSkillRun(elicitationParentRunId, run.id);
+        else updateRun(elicitationParentRunId, { status: 'cancelled', error: `Continuação registrada no run ${run.id}.` });
+      }
       attach(run.id, start.jobId);
+      setElicitationAnswers([]);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Falha ao executar a skill.';
       setRuntimeError(message);
     } finally {
       setExecuting(false);
+    }
+  }
+
+  async function continueElicitation() {
+    if (!latestRun || !reviewProposal || pendingQuestions.length === 0) return;
+    try {
+      const round = buildElicitationContinuation({
+        skillId: latestRun.skillId,
+        priorSummary: reviewProposal.summary,
+        questions: pendingQuestions,
+        answers: pendingQuestions.map((_, index) => elicitationAnswers[index] ?? ''),
+      });
+      const continuation = appendElicitationHistory(latestRun.inputSnapshot.elicitationHistory, round);
+      setRuntimeError(null);
+      await executeRun(continuation, latestRun.id);
+    } catch (error) {
+      setRuntimeError(error instanceof Error ? error.message : 'Falha ao continuar a elicitação.');
     }
   }
 
@@ -452,7 +623,7 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
             source: 'skill_run',
             skillRunId: run.id,
             ...(entry.contentHash ? { hash: entry.contentHash } : {}),
-            content: entry.content,
+            ...(entry.contentEncoding === 'base64' ? {} : { content: entry.content }),
             createdAt: now,
             updatedAt: now,
           }, false);
@@ -560,7 +731,7 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
     <div className="asx-page cms-page cms-journey-page">
       <div className="asx-page-head">
         <div>
-          <div className="asx-page-head__eyebrow">Jornada · 30 skills</div>
+          <div className="asx-page-head__eyebrow">Jornada · {skillCatalog.skills.length} skills</div>
           <h1 className="asx-page-head__title">Mapa do <em>trabalho</em></h1>
         </div>
         <div className="cms-segmented" aria-label="Visualização">
@@ -633,6 +804,31 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
           <h2>{selectedSkill.title}</h2>
           <p>{selectedSkill.description}</p>
 
+          {selectedParity ? (
+            <div className={`cms-skill-parity is-${selectedParity.parity}`}>
+              <Icon name={selectedParity.parity === 'full_e2e' ? 'check-circle' : 'info-circle'} size={15} />
+              <div>
+                <strong>{SKILL_PARITY_LABELS[selectedParity.parity]}</strong>
+                <span>{SKILL_PARITY_DESCRIPTIONS[selectedParity.parity]}</span>
+              </div>
+            </div>
+          ) : null}
+
+          {selectedParity && selectedParity.missingCapabilities.length > 0 ? (
+            <div className="cms-detail-block cms-parity-gaps">
+              <strong>Para equivalência completa</strong>
+              {selectedParity.parity === 'partial' ? (
+                <ul>
+                  {selectedParity.missingCapabilities.map((capability) => (
+                    <li key={capability}>{capabilityGapLabel(capability)}</li>
+                  ))}
+                </ul>
+              ) : (
+                <span>{SKILL_ADAPTER_GAP_LABELS[selectedParity.adapter]}</span>
+              )}
+            </div>
+          ) : null}
+
           {selectedSkill.guard ? (
             <div className="cms-skill-guard">
               <Icon name="shield-check" size={15} />
@@ -692,7 +888,53 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
             </div>
           ) : null}
 
-          {latestRun?.status === 'needs_review' && reviewProposal && reviewArtifacts.length ? (
+          {latestRun?.status === 'needs_review' && reviewProposal && pendingQuestions.length > 0 ? (
+            <section className="cms-elicitation" aria-label="Perguntas pendentes da skill">
+              <div>
+                <strong>Decisões necessárias</strong>
+                <span>{reviewProposal.summary}</span>
+              </div>
+              {pendingQuestions.map((question, index) => (
+                <label key={question}>
+                  <span>{question}</span>
+                  <textarea
+                    value={elicitationAnswers[index] ?? ''}
+                    onChange={(event) => setElicitationAnswers((current) => {
+                      const next = [...current];
+                      next[index] = event.target.value;
+                      return next;
+                    })}
+                  />
+                </label>
+              ))}
+              <Button onClick={() => void continueElicitation()} disabled={executing}>
+                <Icon name={executing ? 'refresh-double' : 'nav-arrow-right'} size={13} />
+                {executing ? 'Continuando...' : 'Continuar com respostas'}
+              </Button>
+            </section>
+          ) : null}
+
+          {latestRun?.status === 'needs_review' && reviewProposal && hasVisualBatch && pendingQuestions.length === 0 ? (
+            <VisualProductionReview
+              proposal={reviewProposal}
+              projectId={projectId}
+              skillRunId={latestRun.id}
+              artifactType={activeSkill.primaryArtifacts[0] ?? activeSkill.id}
+              artifactTitle={`${activeSkill.title} aprovado`}
+              onPromoted={(response) => {
+                addArtifact(promotionArtifact({
+                  workspaceId: briefWorkspaceId,
+                  projectId,
+                  response,
+                  artifactType: activeSkill.primaryArtifacts[0] ?? activeSkill.id,
+                  title: `${activeSkill.title} aprovado`,
+                }));
+                updateRun(latestRun.id, { status: 'done' });
+              }}
+            />
+          ) : null}
+
+          {latestRun?.status === 'needs_review' && reviewProposal && reviewArtifacts.length && pendingQuestions.length === 0 && !hasVisualBatch ? (
             <ArtifactApprovalReview
               proposalSummary={reviewProposal.summary}
               artifacts={reviewArtifacts}
@@ -713,27 +955,119 @@ export function ProjectJourney({ projectId }: { projectId: string }) {
 
           {runtimeError ? <div className="cms-inline-error cms-runtime-error">{runtimeError}</div> : null}
 
-          <div className="cms-skill-detail__actions">
-            {selectedEvaluation.action === 'fill_field' ? (
+          {pendingQuestions.length === 0 ? <div className="cms-skill-detail__actions">
+            {selectedEvaluation.action === 'fill_field' && !isExternalResearchSelected && !isVisualProductionSelected && !isBrandDesignSelected ? (
               <Link to="/projects/$projectId/briefing/$sectionId" params={{ projectId, sectionId }} className="al-btn al-btn--primary">
                 Completar briefing <Icon name="nav-arrow-right" size={13} />
               </Link>
-            ) : selectedEvaluation.action === 'open_artifact' || selectedEvaluation.action === 'open_result' ? (
+            ) : (selectedEvaluation.action === 'open_artifact' || selectedEvaluation.action === 'open_result') && !isExternalResearchSelected && !isVisualProductionSelected && !isBrandDesignSelected ? (
               <Link to="/projects/$projectId/artifacts" params={{ projectId }} className="al-btn al-btn--primary">
                 Abrir artefatos <Icon name="nav-arrow-right" size={13} />
               </Link>
             ) : (
               <>
+                {isExternalResearchSelected ? (
+                  <section className="cms-research-input" aria-label="Fontes da pesquisa">
+                    <div className="cms-research-input__heading">
+                      <strong>Fontes da pesquisa</strong>
+                      <span>A coleta fica congelada antes da análise.</span>
+                    </div>
+                    <div className="cms-segmented" role="group" aria-label="Modo da pesquisa">
+                      {([
+                        ['network', 'Rede'],
+                        ['offline', 'Material colado'],
+                        ['hybrid', 'Híbrido'],
+                      ] as const).map(([mode, label]) => (
+                        <button key={mode} type="button" className={researchMode === mode ? 'is-active' : ''} onClick={() => setResearchMode(mode)}>{label}</button>
+                      ))}
+                    </div>
+                    {researchMode !== 'offline' ? (
+                      <div className="cms-research-input__grid">
+                        <label>
+                          <span>Fonte</span>
+                          <select value={researchSource} onChange={(event) => setResearchSource(event.target.value as typeof researchSource)}>
+                            <option value="google-search">Busca pública</option>
+                            <option value="instagram-profile">Perfil do Instagram</option>
+                            <option value="instagram-hashtag">Hashtag do Instagram</option>
+                            <option value="tiktok-profile">Perfil do TikTok</option>
+                            <option value="tiktok-hashtag">Hashtag do TikTok</option>
+                            <option value="meta-ad-library">Meta Ad Library</option>
+                            <option value="public-url">URL pública</option>
+                          </select>
+                        </label>
+                        <label>
+                          <span>Alvo</span>
+                          <input value={researchTarget} onChange={(event) => setResearchTarget(event.target.value)} placeholder="Tema, @perfil, hashtag ou URL" />
+                        </label>
+                      </div>
+                    ) : null}
+                    {researchMode !== 'network' ? (
+                      <>
+                        <label>
+                          <span>Origem do material</span>
+                          <input value={researchSourceLabel} onChange={(event) => setResearchSourceLabel(event.target.value)} placeholder="Ex.: reviews enviados pelo cliente" />
+                        </label>
+                        <label>
+                          <span>Material literal</span>
+                          <textarea value={researchMaterial} onChange={(event) => setResearchMaterial(event.target.value)} placeholder="Cole reviews, comentários, transcrições ou textos, sem reescrever." />
+                        </label>
+                      </>
+                    ) : null}
+                  </section>
+                ) : null}
+                {isMediaIntakeSelected ? (
+                  <section className="cms-research-input" aria-label="Mídia de referência">
+                    <div className="cms-research-input__heading"><strong>Mídia de referência</strong><span>O arquivo fica local; o Codex recebe somente hash e transcript.</span></div>
+                    <label><span>URL pública do áudio ou vídeo</span><input type="url" value={mediaUrl} onChange={(event) => setMediaUrl(event.target.value)} placeholder="https://.../video.mp4" /></label>
+                    <label><span>Idioma da mídia</span><select value={mediaLanguage} onChange={(event) => setMediaLanguage(event.target.value as 'pt' | 'en' | 'es')}><option value="pt">Português</option><option value="en">Inglês</option><option value="es">Espanhol</option></select></label>
+                    <label><span>Transcript literal (opcional)</span><textarea value={mediaTranscript} onChange={(event) => setMediaTranscript(event.target.value)} placeholder="Cole a fala real quando não houver transcritor local." /></label>
+                  </section>
+                ) : null}
+                {isBrandDesignSelected ? (
+                  <section className="cms-research-input" aria-label="Referência da marca">
+                    <div className="cms-research-input__heading"><strong>Referência da marca</strong><span>Escolha a origem visual que será congelada antes da geração.</span></div>
+                    <div className="cms-segmented" role="group" aria-label="Modo da referência visual">
+                      {([['none', 'Briefing atual'], ['url', 'URL pública'], ['moodboard', 'Moodboard']] as const).map(([mode, label]) => (
+                        <button key={mode} type="button" className={brandInputMode === mode ? 'is-active' : ''} onClick={() => setBrandInputMode(mode)}>{label}</button>
+                      ))}
+                    </div>
+                    {brandInputMode === 'url' ? <label><span>URL pública da marca</span><input type="url" value={brandSourceUrl} onChange={(event) => setBrandSourceUrl(event.target.value)} placeholder="https://marca.com.br" /></label> : null}
+                    {brandInputMode === 'moodboard' ? <label><span>Imagens do moodboard (até 5)</span><input type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={(event) => {
+                      const files = [...(event.target.files ?? [])].slice(0, 5).filter((file) => file.size <= 2 * 1024 * 1024);
+                      Promise.all(files.map((file) => new Promise<string>((resolveFile, rejectFile) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolveFile(String(reader.result).split(',').at(-1) ?? '');
+                        reader.onerror = () => rejectFile(reader.error ?? new Error('Falha lendo imagem.'));
+                        reader.readAsDataURL(file);
+                      }))).then(setMoodboardImages).catch(() => setRuntimeError('Não foi possível ler as imagens do moodboard.'));
+                    }} /></label> : null}
+                    {brandInputMode === 'moodboard' && moodboardImages.length > 0 ? <small>{moodboardImages.length} imagem(ns) pronta(s) para análise local.</small> : null}
+                  </section>
+                ) : null}
+                {isVisualProductionSelected ? (
+                  <section className="cms-research-input cms-visual-input" aria-label="Configuração da produção visual">
+                    <div className="cms-research-input__heading"><strong>Produção visual</strong><span>As imagens ficam em revisão até você selecionar.</span></div>
+                    <fieldset><legend>Formatos</legend><div className="cms-visual-formats">{([
+                      ['feed', '4:5'], ['story', '9:16'], ['square', '1:1'],
+                    ] as const).map(([format, label]) => <label key={format}><input type="checkbox" checked={visualFormats.includes(format)} onChange={() => setVisualFormats((current) => current.includes(format) ? current.filter((item) => item !== format) : [...current, format])} /><span>{label}</span></label>)}</div></fieldset>
+                    <label><span>Título da peça</span><input value={visualTitle} onChange={(event) => setVisualTitle(event.target.value)} placeholder="Headline ou nome do produto" /></label>
+                    <label><span>Briefing visual e copy</span><textarea value={visualDescription} onChange={(event) => setVisualDescription(event.target.value)} placeholder="Descreva o conteúdo, a promessa permitida e o que deve aparecer." /></label>
+                    <label><span>CTA</span><input value={visualCta} maxLength={80} onChange={(event) => setVisualCta(event.target.value)} /></label>
+                    <label><span>Descrição do link</span><input value={visualLinkDescription} maxLength={180} onChange={(event) => setVisualLinkDescription(event.target.value)} placeholder="Opcional" /></label>
+                    <label><span>Variações por direção</span><select value={visualVariants} onChange={(event) => setVisualVariants(Number(event.target.value))}><option value={1}>1</option><option value={2}>2</option><option value={3}>3</option></select></label>
+                    <p className="cms-visual-consent-note"><Icon name="lock" size={12} /> Pessoas reais ficam desativadas sem foto e autorização verificadas.</p>
+                  </section>
+                ) : null}
                 <label className="cms-operator-input">
                   <span>Contexto adicional</span>
                   <textarea value={operatorInput} onChange={(event) => setOperatorInput(event.target.value)} placeholder="Opcional: decisão, material ou pedido específico para esta execução." />
                 </label>
                 <Button onClick={() => void executeRun()} disabled={executing || latestRun?.status === 'running' || latestRun?.status === 'needs_review'}>
-                  <Icon name={executing ? 'refresh-double' : 'play'} size={13} /> {executing ? 'Executando...' : 'Executar skill'}
+                  <Icon name={executing ? 'refresh-double' : 'play'} size={13} /> {executing ? 'Executando...' : panelActionLabel(selectedParity?.parity ?? 'proposal_only')}
                 </Button>
               </>
             )}
-          </div>
+          </div> : null}
         </aside>
       </div>
     </div>

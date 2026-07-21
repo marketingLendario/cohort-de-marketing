@@ -1,0 +1,55 @@
+{
+  "epic": "12",
+  "wave": 1,
+  "generated": "2026-07-16T17:33:03.090Z",
+  "total_stories": 1,
+  "total_batches": 1,
+  "estimated_effort_raw": "2h",
+  "calibration_multiplier": 0.3,
+  "estimated_effort_calibrated": "0.6h",
+  "calibration_source": "default",
+  "decomposition_candidates": [],
+  "external_dependencies": [],
+  "build_dependencies": [],
+  "dag_order": [
+    "12.W1.1"
+  ],
+  "batches": [
+    {
+      "batch": 0,
+      "parallel": true,
+      "stories": [
+        {
+          "id": "12.W1.1",
+          "title": "# STORY-12.W1.1 — Contrato de readiness e preflight de campanha",
+          "status": "Ready",
+          "executor": "@dev",
+          "quality_gate": "@architect",
+          "quality_gate_tools": [
+            "npm --prefix apps/academia-lendaria-ads-studio test",
+            "npm --prefix apps/academia-lendaria-ads-studio run typecheck",
+            "npm --prefix apps/academia-lendaria-ads-studio run lint",
+            "npm --prefix apps/academia-lendaria-ads-studio run build",
+            "npm --prefix apps/academia-lendaria-ads-studio run build:server",
+            "git diff --check"
+          ],
+          "repo_target": "/Users/rafaelcosta/Projects/cohort-de-marketing",
+          "effort_raw": "2h",
+          "effort_calibrated": "0.6h",
+          "depends_on": [],
+          "tasks": 0,
+          "file": "docs/stories/epic-12/STORY-12.W1.1-readiness-contract-and-preflight.md",
+          "spawn": {
+            "description": "Execute Story 12.W1.1 full cycle",
+            "name": "story-12.W1.1",
+            "subagent_type": "sinkra-full-cycle",
+            "isolation": "worktree",
+            "run_in_background": true,
+            "model": "sonnet",
+            "prompt": "Execute Story 12.W1.1 — complete lifecycle. Story file: docs/stories/epic-12/STORY-12.W1.1-readiness-contract-and-preflight.md. Executor: @dev. Quality Gate: @architect."
+          }
+        }
+      ]
+    }
+  ]
+}

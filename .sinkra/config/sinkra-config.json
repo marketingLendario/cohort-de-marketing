@@ -1,0 +1,78 @@
+{
+  "$schema": "../schemas/sinkra-config.schema.json",
+  "schema_version": "1.0.0",
+  "meta": {
+    "description": "Config SOT — knobs invariantes sintonizáveis do sistema .sinkra (caps, pesos, thresholds, zonas). Policies/contracts referenciam chaves daqui via $ref; mudar 1 valor propaga. NÃO contém topology (infrastructure-map.json), framework (core-config.yaml), nem harness (.claude/settings.json) — só KNOBS.",
+    "owner": "codeowners",
+    "evaluator_frozen": true,
+    "last_reviewed": "2026-06-14",
+    "source": "RQ-F (budget) + RQ-E (corpus governance) + RQ-C (dedup) + RQ-A/B (digest gate) + RQ-K (naming). Founder sign-off 2026-06-14 (br-synapse-context-20260612).",
+    "resolution_order_ref": ".sinkra/config/skill-defaults.json#/resolution_order (.sinkra/config/ > .env > infrastructure-map.json; a formalizar em config-resolver.js)"
+  },
+
+  "corpus_constraints": {
+    "description": "RQ-E/RQ-F — budget do tier quente de rules (.claude/rules/*.md always-injected). Regra-mãe: camada estática <=10% da janela, ABSOLUTA (não escala 200K->1M).",
+    "max_injected_tokens": 25000,
+    "soft_cap_tokens": 20000,
+    "ideal_target_tokens": 15000,
+    "max_total_rules": 25,
+    "max_chars_per_rule": 10000,
+    "proportion_of_window_max": 0.10,
+    "scaling_policy": "absolute"
+  },
+
+  "admission_policy": {
+    "description": "RQ-E — watermark 3-zonas sobre corpus_constraints.max_injected_tokens (eviction-on-write).",
+    "zones": {
+      "green": { "max_ratio": 0.80, "action": "admit" },
+      "yellow": { "max_ratio": 1.00, "action": "admit_after_consolidation", "create_new": "codeowners" },
+      "red": { "action": "block_until_eviction", "create_new": "human_gated" }
+    }
+  },
+
+  "demotion_policy": {
+    "description": "RQ-E — score multi-fator de demoção (hot->warm->cold->archive). overlap alto roteia p/ merge, não demote. PI-1: evaluator-frozen, digest propõe/humano executa.",
+    "scoring_weights": { "domain_scope": 0.40, "recency": 0.20, "frequency": 0.20, "semantic_overlap": 0.20 },
+    "overlap_routes_to": "merge",
+    "tier_ladder": ["hot", "warm", "cold", "archive"],
+    "reversible": true
+  },
+
+  "dedup": {
+    "description": "RQ-C — engine dedup 3-cascata (exact name -> Jaccard tags -> TF-IDF cosine). Reusado por knowledge E rule corpus.",
+    "jaccard_tags": 0.70,
+    "tfidf_cosine": 0.85
+  },
+
+  "digest_thresholds": {
+    "description": "RQ-A/RQ-B — gate de evaluation do digest (event_process ev_digest).",
+    "anti_pattern_min_occurrences": 3,
+    "promotion_confidence_min": 0.85,
+    "leaf_completeness_min": 0.6,
+    "leaf_completeness_ideal": 0.95,
+    "verdade_veto_min": 7.0,
+    "compliance_score_min": 70
+  },
+
+  "knowledge_naming": {
+    "description": "RQ-K — esquema canônico de id de knowledge record. id = espelho estável; frontmatter = SOT. Reclassificar = id novo + legacy_id (nunca edita token).",
+    "scheme": "KR_{CAT}_{ORIGEM?}_{NNN}",
+    "class_prefix": "KR",
+    "categories": ["HE", "FW", "AL", "CO", "ME", "CS"],
+    "origin_bearing_categories": ["HE"],
+    "case": "UPPER",
+    "nnn_scope": "global_per_category",
+    "nnn_digits": 3,
+    "legacy_id_policy": "permanent",
+    "anti_dead_knowledge_invariant": "admissão exige domain_id (entrada no MOC) + keywords[] (rota de pull)"
+  },
+
+  "injection_tiers": {
+    "description": "RQ-L — escada de tiers de injeção (push-pointer/pull-payload). Corpo não-HE NUNCA em L0/L1.",
+    "L0": { "nature": "always-injected body", "types": ["CO_first_principle", "HE_constitutional"] },
+    "L1": { "nature": "always-injected pointer", "types": ["HE_promoted", "domain_MOC_pointers"] },
+    "L2": { "nature": "on-demand pull (relevance-gated)", "types": ["FW", "AL", "CO_niche"] },
+    "L3": { "nature": "COLD progressive (pull on-execution)", "types": ["ME", "AL_procedural"] },
+    "L4": { "nature": "query-time pull (never injected)", "types": ["CS"] }
+  }
+}

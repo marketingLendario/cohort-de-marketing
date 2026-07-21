@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T18:40:45.290Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "design-md"
+    ],
+    "catalogHash": "c403ff10bd2397810155f69ebbffb06ea597c54be4bb10f99796c2e6c187e965"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "design-md",
+      "contractGroup": "brand-system",
+      "contractHash": "7f9fe686a213c16acf55179aa7d7f57a44b96fec07750e0bbd89e544014013cb",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "DESIGN.md",
+          "book-do-funil.json",
+          "index.html",
+          "preview.html",
+          "tokens.json"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 464,
+            "hash": "0aa416468ccc484ada7136453ec87a175e5e0395d79afd1417f8597780d2a13a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN-v1.md",
+            "format": "markdown",
+            "bytes": 14419,
+            "hash": "e3d1ba0bf3912ef47375ab4817351fdb83579385e0f0124a3e73a7542b8e6aa0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN.md",
+            "format": "markdown",
+            "bytes": 14419,
+            "hash": "e3d1ba0bf3912ef47375ab4817351fdb83579385e0f0124a3e73a7542b8e6aa0",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3634,
+            "hash": "f075d397e27395b0d7fc35a2a6305bc999805123f795397580d21ded78552c55",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview-v1.html",
+            "format": "html",
+            "bytes": 3954,
+            "hash": "2842159df3f9b6cd95012233833832214dd00bde54a354e4207ca02dc6e2dddc",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview.html",
+            "format": "html",
+            "bytes": 3954,
+            "hash": "2842159df3f9b6cd95012233833832214dd00bde54a354e4207ca02dc6e2dddc",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens-v1.json",
+            "format": "json",
+            "bytes": 5453,
+            "hash": "782be49e4c5483c22f161ec7b2d8da9d8d174a2efaae42bb52a4cd493a1c3abd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens.json",
+            "format": "json",
+            "bytes": 5453,
+            "hash": "782be49e4c5483c22f161ec7b2d8da9d8d174a2efaae42bb52a4cd493a1c3abd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "DESIGN.md",
+          "book-do-funil.json",
+          "index.html",
+          "preview.html",
+          "tokens.json"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 462,
+            "hash": "08e487b7749380bcc2500a0742c7855c3b22830d2b6dde3ace43d5da95871760",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN-v1.md",
+            "format": "markdown",
+            "bytes": 7976,
+            "hash": "662bb6cb54df72eca88aac7281185c03636efe35e106f21dfedb6052ca1394ee",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "DESIGN.md",
+            "format": "markdown",
+            "bytes": 7976,
+            "hash": "662bb6cb54df72eca88aac7281185c03636efe35e106f21dfedb6052ca1394ee",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3632,
+            "hash": "244d7f0679fda19d908ef1adf98e33f8605acdcfb4fe20b9db6fa20d67e23a07",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview-v1.html",
+            "format": "html",
+            "bytes": 3342,
+            "hash": "31d63a2f8efcc2f459013b93897787bfb6745bf4660fb04864d70a87a7f4f3c6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "preview.html",
+            "format": "html",
+            "bytes": 3342,
+            "hash": "31d63a2f8efcc2f459013b93897787bfb6745bf4660fb04864d70a87a7f4f3c6",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/design-md/snapshot-f15731a44116efd4.json",
+            "format": "json",
+            "bytes": 1062,
+            "hash": "1dbee7e1e95bfe40526193a4cfcd697f1e572d1984e4ccac70674d7deddd3448",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens-v1.json",
+            "format": "json",
+            "bytes": 2471,
+            "hash": "8de20ee0d5a4a4a49c3760140eb9f739ab03f2c9756bda971c9cf2e755408cfb",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "tokens.json",
+            "format": "json",
+            "bytes": 2471,
+            "hash": "8de20ee0d5a4a4a49c3760140eb9f739ab03f2c9756bda971c9cf2e755408cfb",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

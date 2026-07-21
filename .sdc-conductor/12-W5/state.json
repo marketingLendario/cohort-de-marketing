@@ -1,0 +1,17 @@
+{
+  "wave_id": "12-W5",
+  "ts_updated": "2026-07-16T23:50:15.891Z",
+  "stories": {
+    "12.W5.1": {
+      "pty_id": "pty-1784245814835-2",
+      "story_path": "docs/stories/epic-12/STORY-12.W5.1-integrated-e2e-and-pedro-pilot.md",
+      "status": "spawned",
+      "decision_count": 0,
+      "cb_state": {
+        "invocationCount": 0,
+        "maxInvocations": 3,
+        "tripped": false
+      }
+    }
+  }
+}

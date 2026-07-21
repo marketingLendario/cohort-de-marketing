@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T22:07:32.651Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "avatar-funil"
+    ],
+    "catalogHash": "3105148c3eaaa49372d4e8a1367e2b91ddcb25f2dee640a579b46f10e23a2e26"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "avatar-funil",
+      "contractGroup": "owner-document",
+      "contractHash": "3ec720a278241a352e5ebf7a1ac0a8731e96b8aa2e54565e64057be118375d2e",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "relatorio-avatar.html",
+          "relatorio-avatar.md",
+          "relatorio-avatar.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 478,
+            "hash": "31d86996d8cf90626465c383812e6b9b9a746f53dd41c4a18cbc7f68d50a4ae3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3656,
+            "hash": "65de49cbd8b4868b8ac173a0d70a147594c662e4e96d91fbd5cc98d4962ac741",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.html",
+            "format": "html",
+            "bytes": 6930,
+            "hash": "cb2bc47799e8ec9cceccb6bd40f93f1bf5e768be859ab6700c9978869cb72300",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.md",
+            "format": "markdown",
+            "bytes": 3674,
+            "hash": "07554cc8f7dee900f1a64ce0120eece2241f9454bc081996c12081b1805f3b61",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.pdf",
+            "format": "pdf",
+            "bytes": 112793,
+            "hash": "5ee6d14fd43f7ddd1030785fd65fe93d18178208a55e175e00b451b99fc9ed41",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.html",
+            "format": "html",
+            "bytes": 6930,
+            "hash": "cb2bc47799e8ec9cceccb6bd40f93f1bf5e768be859ab6700c9978869cb72300",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.md",
+            "format": "markdown",
+            "bytes": 3674,
+            "hash": "07554cc8f7dee900f1a64ce0120eece2241f9454bc081996c12081b1805f3b61",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.pdf",
+            "format": "pdf",
+            "bytes": 112793,
+            "hash": "5ee6d14fd43f7ddd1030785fd65fe93d18178208a55e175e00b451b99fc9ed41",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "relatorio-avatar.html",
+          "relatorio-avatar.md",
+          "relatorio-avatar.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 476,
+            "hash": "e31fdc2c73a8725803b5c428ac5a6dea84455d62251d87668d87b67d19892f04",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3654,
+            "hash": "6c19378e8de7a5ac3790727d5ae694b1a4fc7cad2e77ff12c9c92b4cebcbb810",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.html",
+            "format": "html",
+            "bytes": 12136,
+            "hash": "82a931f75d0a8ebfadb433c8f7ac80120e0c062f6a933eb9fbe3fe2c801a189c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.md",
+            "format": "markdown",
+            "bytes": 11476,
+            "hash": "0734682c27183fe5cddb15adb295fb45d0156f86e4849c910fda63adc8dfa795",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.pdf",
+            "format": "pdf",
+            "bytes": 289179,
+            "hash": "77083a211cdff2916ce5fe4d9d4fd3b3f6676a1de0acea7bc55a7d2737877627",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.html",
+            "format": "html",
+            "bytes": 12136,
+            "hash": "82a931f75d0a8ebfadb433c8f7ac80120e0c062f6a933eb9fbe3fe2c801a189c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.md",
+            "format": "markdown",
+            "bytes": 11476,
+            "hash": "0734682c27183fe5cddb15adb295fb45d0156f86e4849c910fda63adc8dfa795",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.pdf",
+            "format": "pdf",
+            "bytes": 289179,
+            "hash": "77083a211cdff2916ce5fe4d9d4fd3b3f6676a1de0acea7bc55a7d2737877627",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/avatar-funil/sources-29161978881f40a1.json",
+            "format": "json",
+            "bytes": 1573,
+            "hash": "85c9e6ca54b182542dab018c00e0e62f2c78ea55aef81b19df658978a80567a1",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

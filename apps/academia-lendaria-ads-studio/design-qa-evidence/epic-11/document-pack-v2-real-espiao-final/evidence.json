@@ -1,0 +1,295 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T22:24:22.679Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "espiao-do-concorrente"
+    ],
+    "catalogHash": "49018508a1dd22224dccd2b7ce41e3abf0eca1d01275df5c289e8d7a70f121a7"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "espiao-do-concorrente",
+      "contractGroup": "dynamic-library",
+      "contractHash": "8b86570b91ce35f797736bc80b2389a67b9cef36c20c147de124b777b152dd31",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "espiao/dossie-marca-referencia.html",
+          "espiao/dossie-marca-referencia.md",
+          "espiao/dossie-marca-referencia.pdf",
+          "espiao/index.html",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 494,
+            "hash": "6cbceab76282ad1745231edbc31b7752da61cece7aa02660a92534ba1a5789d2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-marca-referencia.html",
+            "format": "html",
+            "bytes": 8792,
+            "hash": "3d6fcb2e1e916bd1ac5f09dd6998af68b42ef57282394cafcc86f98a1050a081",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-marca-referencia.md",
+            "format": "markdown",
+            "bytes": 7410,
+            "hash": "56660e39b2a59d5bdb01bf3c68edb8a0cc69bd5881c75e00da8b7511127c4b09",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-marca-referencia.pdf",
+            "format": "pdf",
+            "bytes": 145515,
+            "hash": "620cc048ec451b82eb080df0747df67f9434060db42e3af854693c2a89c523a2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/index.html",
+            "format": "html",
+            "bytes": 1164,
+            "hash": "993754594175e2b542ae54b4bb9af5adfb84ce1d96a5a0b9aba2c95a5ac30f05",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-marca-referencia.html",
+            "format": "html",
+            "bytes": 8792,
+            "hash": "3d6fcb2e1e916bd1ac5f09dd6998af68b42ef57282394cafcc86f98a1050a081",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-marca-referencia.md",
+            "format": "markdown",
+            "bytes": 7410,
+            "hash": "56660e39b2a59d5bdb01bf3c68edb8a0cc69bd5881c75e00da8b7511127c4b09",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-marca-referencia.pdf",
+            "format": "pdf",
+            "bytes": 145515,
+            "hash": "620cc048ec451b82eb080df0747df67f9434060db42e3af854693c2a89c523a2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/index.html",
+            "format": "html",
+            "bytes": 1164,
+            "hash": "993754594175e2b542ae54b4bb9af5adfb84ce1d96a5a0b9aba2c95a5ac30f05",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3701,
+            "hash": "93b22ad2d0d7710173ed2ce3302ff62d8abdeab079db10da87d91290bb1966de",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/espiao-do-concorrente/sources-871435f5d3e0a5d0.json",
+            "format": "json",
+            "bytes": 1556,
+            "hash": "d0581f597aac100949d6365f7f8ae79395a4395b1ac5c2f4ed2342e97c6b0794",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "espiao/dossie-marca-referencia.html",
+          "espiao/dossie-marca-referencia.md",
+          "espiao/dossie-marca-referencia.pdf",
+          "espiao/index.html",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 492,
+            "hash": "bd347c35bd56cac96969d64b56f97e43e8f7fd5ee60c963cb04b909dc9060d0e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-marca-referencia.html",
+            "format": "html",
+            "bytes": 9594,
+            "hash": "79e147b952babd83527e5829abb99d8edb0d5f530c279ef3f51eb022cbc4cf67",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-marca-referencia.md",
+            "format": "markdown",
+            "bytes": 6910,
+            "hash": "e9038f6ac3b05d5bd532d4e365b116ccb0d1b162525824dc8484a9be5f2ed8d0",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-marca-referencia.pdf",
+            "format": "pdf",
+            "bytes": 168623,
+            "hash": "852471f2d6872978753fb436aa52b90384f05e8a906715daacb4e07357136a59",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/index.html",
+            "format": "html",
+            "bytes": 1541,
+            "hash": "e578220e694b4f292e4cb44891ef4652625ba955d0e2177ceb23b895ae7a31a5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-marca-referencia.html",
+            "format": "html",
+            "bytes": 9594,
+            "hash": "79e147b952babd83527e5829abb99d8edb0d5f530c279ef3f51eb022cbc4cf67",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-marca-referencia.md",
+            "format": "markdown",
+            "bytes": 6910,
+            "hash": "e9038f6ac3b05d5bd532d4e365b116ccb0d1b162525824dc8484a9be5f2ed8d0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-marca-referencia.pdf",
+            "format": "pdf",
+            "bytes": 168623,
+            "hash": "852471f2d6872978753fb436aa52b90384f05e8a906715daacb4e07357136a59",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/index.html",
+            "format": "html",
+            "bytes": 1541,
+            "hash": "e578220e694b4f292e4cb44891ef4652625ba955d0e2177ceb23b895ae7a31a5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3699,
+            "hash": "0f8c69eaa775fe19a10182fdd092a5a45034fbfa0605fe8b1d526383f53510e2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/espiao-do-concorrente/sources-d8e454bd828acd47.json",
+            "format": "json",
+            "bytes": 1591,
+            "hash": "8c424a5054b2c000b93d3439a4aa8f4997155ab262e1a6e6937d5930d7aae612",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

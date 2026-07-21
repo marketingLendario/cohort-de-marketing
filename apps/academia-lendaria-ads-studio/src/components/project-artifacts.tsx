@@ -8,6 +8,7 @@ const FORMAT_ICONS: Record<ProjectArtifact['format'], string> = {
   markdown: 'page-edit',
   html: 'www',
   pdf: 'page',
+  docx: 'page',
   image: 'media-image',
   json: 'code-brackets',
   yaml: 'code-brackets',

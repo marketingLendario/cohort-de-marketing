@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "criativos-funil",
+  "jobId": "71ecb93b-4ddd-43e2-81f3-1a7892f1b689",
+  "skillRunId": "55c8a214-72f2-42c6-9f3f-deab6e3cefd0",
+  "status": "needs_review",
+  "model": "codex-cli-default+codex-cli-image-gen",
+  "skillHash": "8c141e07bb4be31befbdf84105b53407029314460455402793ac3609d601ff2c",
+  "proposal": {
+    "fields": [
+      {
+        "key": "projectSlug",
+        "value": "epic-11-document-pack-cli"
+      },
+      {
+        "key": "network",
+        "value": "Meta Ads"
+      },
+      {
+        "key": "formats",
+        "value": "4:5, 9:16, 1:1"
+      },
+      {
+        "key": "pieceType",
+        "value": "Roteiro de vídeo e banners estáticos"
+      },
+      {
+        "key": "cta",
+        "value": "Saiba mais"
+      },
+      {
+        "key": "approvalStatus",
+        "value": "Copy, roteiro e direção visual aprovados para o gate visual; publicação não autorizada"
+      },
+      {
+        "key": "mediaSnapshotHash",
+        "value": "cdc851bd6ca9f3c27b0d602edafea7b58100f1a799bec06a600f6cbaccab6c75"
+      },
+      {
+        "key": "batchId",
+        "value": "71ecb93b-4ddd-43e2-81f3-1a7892f1b689"
+      },
+      {
+        "key": "generatedItems",
+        "value": "1"
+      }
+    ],
+    "summary": "Proposta final de um criativo piloto para Meta Ads, com roteiro e especificações de banners nos formatos 4:5, 9:16 e 1:1. Publicação permanece bloqueada. 1 peça(s) visual(is) pronta(s) para seleção.",
+    "warnings": [
+      "Não existe page_id ou URL pública verificável do concorrente nesta fixture; a proposta usa somente o dossiê, o swipe file e o transcript literal fornecidos offline.",
+      "Nenhum HTML, PNG, PDF ou arquivo foi gerado ou editado nesta execução.",
+      "Por se tratar de nicho regulado de saúde, foram excluídos antes/depois, depoimentos de pacientes, preço, desconto e promessa garantida.",
+      "A prova social permanece marcada como [SEM PROVA AINDA].",
+      "Não houve coleta ao vivo, publicação, pausa ou alteração de campanhas na Meta."
+    ],
+    "artifacts": [
+      {
+        "path": "projetos/epic-11-document-pack-cli/criativos/piloto-pare-de-recomecar.md",
+        "title": "Proposta de criativo piloto: Pare de recomeçar toda segunda-feira",
+        "format": "markdown",
+        "content": "Proposta não gravada em arquivo. Conteúdo integral disponível em resultMarkdown.",
+        "artifactType": "creatives"
+      },
+      {
+        "path": "media/criativos-funil/snapshot-cdc851bd6ca9f3c2.json",
+        "title": "Mídia e transcrição — criativos-funil",
+        "format": "json",
+        "content": "{\n  \"schemaVersion\": \"1.0.0\",\n  \"skillId\": \"criativos-funil\",\n  \"items\": [\n    {\n      \"id\": \"competitor-audio-reference\",\n      \"role\": \"competitor-ad\",\n      \"media\": {\n        \"mediaId\": \"media_b670602fa00934ca\",\n        \"origin\": \"url\",\n        \"sourceLabel\": \"https://media.w3.org/2010/05/sintel/trailer.mp4\",\n        \"mimeType\": \"video/mp4\",\n        \"mediaKind\": \"video\",\n        \"byteSize\": 4372373,\n        \"sha256\": \"b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254\",\n        \"fetchedAt\": \"2026-07-12T02:41:44.905Z\"\n      },\n      \"transcription\": {\n        \"status\": \"transcribed\",\n        \"engine\": \"openai-whisper\",\n        \"language\": \"en\",\n        \"transcript\": \"What brings you to the land of the gatekeepers?\\nI'm searching for someone.\\nI've been alone for as long as I can remember.\\nI'm searching for someone.\",\n        \"charCount\": 148,\n        \"mediaSha256\": \"b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254\",\n        \"failure\": null,\n        \"producedAt\": \"2026-07-12T02:41:48.957Z\"\n      }\n    }\n  ],\n  \"contentHash\": \"cdc851bd6ca9f3c27b0d602edafea7b58100f1a799bec06a600f6cbaccab6c75\"\n}\n",
+        "artifactType": "mediaSnapshot"
+      },
+      {
+        "path": "criativos/factory/criativos-funil-82000000-0000-0000-0000-000000000112/71ecb93b-4ddd-43e2-81f3-1a7892f1b689/manifest.json",
+        "title": "Galeria de criativos",
+        "format": "json",
+        "content": "{\n  \"schemaVersion\": \"1.0.0\",\n  \"batchId\": \"71ecb93b-4ddd-43e2-81f3-1a7892f1b689\",\n  \"projectId\": \"82000000-0000-0000-0000-000000000112\",\n  \"campaignId\": \"criativos-funil-82000000-0000-0000-0000-000000000112\",\n  \"productionSkillId\": \"criativos-funil\",\n  \"status\": \"ready_for_review\",\n  \"createdAt\": \"2026-07-12T02:44:19.893Z\",\n  \"items\": [\n    {\n      \"id\": \"creative-pilot-dark-editorial-0\",\n      \"status\": \"ready\",\n      \"archetype\": \"dark_editorial\",\n      \"headline\": \"Pare de recomeçar toda segunda-feira\",\n      \"caption\": \"Roteiro e banner piloto para Meta Ads, com voz acolhedora e direta, sem promessa clínica ou resultado garantido.\\n\\n# Criativo piloto: Pare de recomeçar toda segunda-feira\\n\\n**Rede:** Meta Ads\\n**Tipo:** roteiro de vídeo e banners estáticos\\n**Voz:** marca\\n**Arquétipo:** dark editorial\\n**CTA:** Saiba mais\\n**Status:** proposta para revisão humana; não publicar\\n\\n## Roteiro\\n\\n**Duração sugerida:** 20 a 25 segundos\\n\\n**Hook, 0 a 3s**\\n\\nPare de recomeçar toda segunda-feira.\\n\\n**Desenvolvimento, 3 a 16s**\\n\\nSe você já tentou várias dietas e sente que volta sempre ao mesmo ponto, talvez esteja faltando uma etapa importante: aprender a manter a rotina.\\n\\nO Método Consistência 90 organiza o processo em três fases: Desinflamar, Reprogramar e Manter.\\n\\nA terceira fase foi criada para ajudar você a continuar depois do começo.\\n\\n**CTA, 16 a 25s**\\n\\nConheça o Método Consistência 90 e veja se ele combina com o seu momento.\\n\\nToque em “Saiba mais”.\\n\\n**Nota de prova:** [SEM PROVA AINDA]\\n\\n## Banners estáticos\\n\\n### Feed 4:5, 1080 × 1350\\n\\n- Kicker: MÉTODO CONSISTÊNCIA 90\\n- Hook: Pare de recomeçar toda segunda-feira.\\n- Sub: Um ciclo de três fases para construir uma rotina sustentável de emagrecimento em 90 dias, sem dieta restritiva.\\n- CTA: Saiba mais\\n- Rodapé: Academia Fit\\n\\n### Stories/Reels 9:16, 1080 × 1920\\n\\n- Kicker: MÉTODO CONSISTÊNCIA 90\\n- Hook: Pare de recomeçar toda segunda-feira.\\n- Sub: Conheça o ciclo de três fases para uma rotina sustentável de emagrecimento.\\n- CTA: Saiba mais\\n- Rodapé: Academia Fit\\n- Safe area: manter aproximadamente 320px livres na base; nenhum texto, CTA ou informação essencial nessa faixa.\\n\\n### Quadrado 1:1, 1080 × 1080\\n\\n- Kicker: MÉTODO CONSISTÊNCIA 90\\n- Hook: Pare de recomeçar toda segunda-feira.\\n- Sub: Três fases para organizar uma rotina sustentável de emagrecimento.\\n- CTA: Saiba mais\\n- Rodapé: Academia Fit\\n\\n## Direção visual\\n\\n- Fundo: #0A0A0C\\n- Superfície elevada: #131316\\n- Texto: #FAFAFA\\n- Destaque: #C9B298\\n- Confiança: #30B0C7\\n- Display: Newsreader\\n- Corpo: Hanken Grotesk\\n- Borda: dourada fina\\n- Raio: 4px\\n- Alto contraste\\n\\nA referência de mídia foi tratada somente como material estrutural offline. Nenhuma fala foi traduzida ou atribuída à Academia Fit.\\n\\nSnapshot literal de mídia:\\n{\\n  \\\"schemaVersion\\\": \\\"1.0.0\\\",\\n  \\\"skillId\\\": \\\"criativos-funil\\\",\\n  \\\"items\\\": [\\n    {\\n      \\\"id\\\": \\\"competitor-audio-reference\\\",\\n      \\\"role\\\": \\\"competitor-ad\\\",\\n      \\\"media\\\": {\\n        \\\"mediaId\\\": \\\"media_b670602fa00934ca\\\",\\n        \\\"origin\\\": \\\"url\\\",\\n        \\\"sourceLabel\\\": \\\"https://media.w3.org/2010/05/sintel/trailer.mp4\\\",\\n        \\\"mimeType\\\": \\\"video/mp4\\\",\\n        \\\"mediaKind\\\": \\\"video\\\",\\n        \\\"byteSize\\\": 4372373,\\n        \\\"sha256\\\": \\\"b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254\\\",\\n        \\\"fetchedAt\\\": \\\"2026-07-12T02:41:44.905Z\\\"\\n      },\\n      \\\"transcription\\\": {\\n        \\\"status\\\": \\\"transcribed\\\",\\n        \\\"engine\\\": \\\"openai-whisper\\\",\\n        \\\"language\\\": \\\"en\\\",\\n        \\\"transcript\\\": \\\"What brings you to the land of the gatekeepers?\\\\nI'm searching for someone.\\\\nI've been alone for as long as I can remember.\\\\nI'm searching for someone.\\\",\\n        \\\"charCount\\\": 148,\\n        \\\"mediaSha256\\\": \\\"b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254\\\",\\n        \\\"failure\\\": null,\\n        \\\"producedAt\\\": \\\"2026-07-12T02:41:48.957Z\\\"\\n      }\\n    }\\n  ],\\n  \\\"contentHash\\\": \\\"cdc851bd6ca9f3c27b0d602edafea7b58100f1a799bec06a600f6cbaccab6c75\\\"\\n}\",\n      \"linkDescription\": \"Saiba mais\",\n      \"cta\": \"Saiba mais\",\n      \"promptSanitized\": \"brand=academia-fit; archetype=dark_editorial; headline=Pare de recomeçar toda segunda-feira; formats=feed,story,square\",\n      \"promptSha256\": \"f44aac014701c00d0d1528bc157c7e0ee84157bc1c83c206732f36e47a1111f4\",\n      \"gate\": {\n        \"checks\": {\n          \"gold_coverage\": {\n            \"value_pct\": 15.522,\n            \"min\": 0,\n            \"max\": 100,\n            \"pass\": true\n          },\n          \"dark_first\": {\n            \"dark_pct\": 79.01,\n            \"pass\": true\n          },\n          \"neon_violation\": {\n            \"purple_blue_sat_pct\": 0,\n            \"pass\": true\n          },\n          \"richness\": {\n            \"edge_variance\": 7.117,\n            \"pass\": true\n          },\n          \"contrast_proxy\": {\n            \"value\": 14.922,\n            \"pass\": true\n          }\n        },\n        \"ai_slop_score\": 0,\n        \"brand_adherence_pct\": 100,\n        \"verdict\": \"pass\",\n        \"reasons\": [\n          \"OK: respeita o brand-pack em todas as checagens objetivas\"\n        ]\n      },\n      \"review\": {\n        \"logo\": \"sem sidecar de logo\",\n        \"logo_ok\": true,\n        \"edge_bleed\": true,\n        \"verdict\": \"pass\",\n        \"reasons\": [],\n        \"needs_human_eye\": true\n      },\n      \"assets\": [\n        {\n          \"id\": \"creative-pilot-dark-editorial-0-feed\",\n          \"format\": \"feed\",\n          \"width\": 1080,\n          \"height\": 1350,\n          \"sha256\": \"c0699d04e1cabad7bc07a2fe9deaf48a18af5278fec79de2926907f4e5f78db3\",\n          \"bytes\": 2302362\n        },\n        {\n          \"id\": \"creative-pilot-dark-editorial-0-story\",\n          \"format\": \"story\",\n          \"width\": 1080,\n          \"height\": 1920,\n          \"sha256\": \"1c5c4ed444bce291f0a3942212b9414b1b4fb1f86c2134ab7fc4c66090dda2a0\",\n          \"bytes\": 2993812\n        },\n        {\n          \"id\": \"creative-pilot-dark-editorial-0-square\",\n          \"format\": \"square\",\n          \"width\": 1080,\n          \"height\": 1080,\n          \"sha256\": \"e014efe5da2bafc48e2e1eb0ea5454e67fa78e134b698b8f87269e0deb553482\",\n          \"bytes\": 1904051\n        }\n      ]\n    }\n  ]\n}",
+        "artifactType": "creativeFactoryBatch"
+      }
+    ],
+    "decisions": [],
+    "questions": [],
+    "resultMarkdown": "# Criativo piloto: Pare de recomeçar toda segunda-feira\n\n**Rede:** Meta Ads\n**Tipo:** roteiro de vídeo e banners estáticos\n**Voz:** marca\n**Arquétipo:** dark editorial\n**CTA:** Saiba mais\n**Status:** proposta para revisão humana; não publicar\n\n## Roteiro\n\n**Duração sugerida:** 20 a 25 segundos\n\n**Hook, 0 a 3s**\n\nPare de recomeçar toda segunda-feira.\n\n**Desenvolvimento, 3 a 16s**\n\nSe você já tentou várias dietas e sente que volta sempre ao mesmo ponto, talvez esteja faltando uma etapa importante: aprender a manter a rotina.\n\nO Método Consistência 90 organiza o processo em três fases: Desinflamar, Reprogramar e Manter.\n\nA terceira fase foi criada para ajudar você a continuar depois do começo.\n\n**CTA, 16 a 25s**\n\nConheça o Método Consistência 90 e veja se ele combina com o seu momento.\n\nToque em “Saiba mais”.\n\n**Nota de prova:** [SEM PROVA AINDA]\n\n## Banners estáticos\n\n### Feed 4:5, 1080 × 1350\n\n- Kicker: MÉTODO CONSISTÊNCIA 90\n- Hook: Pare de recomeçar toda segunda-feira.\n- Sub: Um ciclo de três fases para construir uma rotina sustentável de emagrecimento em 90 dias, sem dieta restritiva.\n- CTA: Saiba mais\n- Rodapé: Academia Fit\n\n### Stories/Reels 9:16, 1080 × 1920\n\n- Kicker: MÉTODO CONSISTÊNCIA 90\n- Hook: Pare de recomeçar toda segunda-feira.\n- Sub: Conheça o ciclo de três fases para uma rotina sustentável de emagrecimento.\n- CTA: Saiba mais\n- Rodapé: Academia Fit\n- Safe area: manter aproximadamente 320px livres na base; nenhum texto, CTA ou informação essencial nessa faixa.\n\n### Quadrado 1:1, 1080 × 1080\n\n- Kicker: MÉTODO CONSISTÊNCIA 90\n- Hook: Pare de recomeçar toda segunda-feira.\n- Sub: Três fases para organizar uma rotina sustentável de emagrecimento.\n- CTA: Saiba mais\n- Rodapé: Academia Fit\n\n## Direção visual\n\n- Fundo: #0A0A0C\n- Superfície elevada: #131316\n- Texto: #FAFAFA\n- Destaque: #C9B298\n- Confiança: #30B0C7\n- Display: Newsreader\n- Corpo: Hanken Grotesk\n- Borda: dourada fina\n- Raio: 4px\n- Alto contraste\n\nA referência de mídia foi tratada somente como material estrutural offline. Nenhuma fala foi traduzida ou atribuída à Academia Fit.\n\n## Produção visual\n\n1 peça(s) PNG passaram pelo pipeline e aguardam seleção humana."
+  }
+}

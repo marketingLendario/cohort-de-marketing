@@ -172,6 +172,8 @@ export function observeSkillRun(
   options: ObserveSkillRunOptions = {},
 ): () => void {
   let closed = false;
+  let settled = false;
+  let pollingStarted = false;
   let source: EventSourceLike | undefined;
   let pollTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -182,6 +184,8 @@ export function observeSkillRun(
   };
 
   const settleTerminal = (view: SkillRunView) => {
+    if (settled) return;
+    settled = true;
     if (view.status === 'succeeded' && view.proposal && view.skillHash && view.model) {
       handlers.onDone?.({ jobId: view.jobId, proposal: view.proposal, skillHash: view.skillHash, model: view.model });
     } else if (view.error || view.status === 'cancelled') {
@@ -197,6 +201,8 @@ export function observeSkillRun(
   };
 
   const startPolling = () => {
+    if (pollingStarted) return;
+    pollingStarted = true;
     const loop = async () => {
       if (closed) return;
       try {
@@ -253,14 +259,20 @@ export function observeSkillRun(
   });
   source.addEventListener('done', (event) => {
     const payload = parse<SkillRunDonePayload>(event.data);
-    if (payload) handlers.onDone?.(payload);
+    if (payload && !settled) {
+      settled = true;
+      handlers.onDone?.(payload);
+    }
     stop();
   });
   source.addEventListener('error', (event) => {
     // A server-sent `error` frame carries data; a transport error does not.
     if (event.data) {
       const payload = parse<{ status: SkillRunStatus; error: SkillRunError }>(event.data);
-      if (payload) handlers.onError?.(payload.error, payload.status);
+      if (payload && !settled) {
+        settled = true;
+        handlers.onError?.(payload.error, payload.status);
+      }
       stop();
     } else if (!closed) {
       // Transport dropped — degrade to polling (AC3 fallback).
@@ -270,21 +282,9 @@ export function observeSkillRun(
     }
   });
 
-  // Reconcile once immediately as well as subscribing. A terminal SSE snapshot
-  // can race a very fast reload/proxy connection; the durable projection makes
-  // the attach deterministic without replacing live SSE progress.
-  void getSkillRunView(jobId)
-    .then((view) => {
-      if (closed) return;
-      handlers.onSnapshot?.(view);
-      if (isTerminalSkillRun(view.status)) {
-        settleTerminal(view);
-        stop();
-      }
-    })
-    .catch(() => {
-      // SSE remains active; its transport error handler owns polling fallback.
-    });
+  // SSE carries low-latency progress; polling is a reconciliation watchdog.
+  // A proxy may keep a socket nominally open while dropping the terminal frame.
+  startPolling();
 
   return stop;
 }

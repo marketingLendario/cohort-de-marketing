@@ -1,0 +1,11 @@
+{
+  "epicId": "10",
+  "title": "Creative Factory real no Marketing Studio",
+  "status": "ImplementedLocalReleaseBlocked",
+  "stories": [
+    { "id": "10.W1.1", "status": "DoneLocalReleaseBlocked" },
+    { "id": "10.W1.2", "status": "Done" },
+    { "id": "10.W2.1", "status": "Done" },
+    { "id": "10.W3.1", "status": "Done" }
+  ]
+}

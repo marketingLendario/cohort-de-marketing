@@ -391,12 +391,77 @@ async function selectSkill(page, title) {
   throw new Error(`A seleção da skill ${title} não estabilizou.`);
 }
 
-async function waitReview(page) {
-  await page.getByTestId('artifact-approval-review').waitFor({ state: 'visible', timeout: 10 * 60 * 1000 });
-}
-
 function normalizeText(value) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function elicitationAnswer(question, mode = 'confirmed') {
+  if (mode === 'unconfirmed') {
+    return 'Resposta literal do operador: false. O item não foi confirmado; registre false, mantenha status CRITICO e não libere a campanha.';
+  }
+  const normalized = normalizeText(question);
+  if (normalized.includes('insumos_a2') || normalized.includes('dois angulos exatos')) {
+    return 'insumos_a2.angulos: [{ nome: "Pare de operar aquisição no escuro", nivel_consciencia: "consciente_do_problema" }, { nome: "A rotina semanal que transforma números em decisão", nivel_consciencia: "consciente_da_solucao" }].';
+  }
+  if (normalized.includes('pare de operar aquisicao no escuro') && normalized.includes('hook')) {
+    return 'Finalistas escolhidos pelo operador: “Pare de chamar de intuição o que é falta de leitura” e “Você abre o gerenciador e ainda não sabe qual decisão tomar”.';
+  }
+  if (normalized.includes('rotina semanal que transforma numeros em decisao') && normalized.includes('hook')) {
+    return 'Finalistas escolhidos pelo operador: “Pare de colecionar dashboards e escolha uma decisão por semana” e “E se a sua reunião semanal terminasse com uma única alavanca?”.';
+  }
+  if (normalized.includes('capi') || normalized.includes('conversions api')) return 'O Events Manager mostra literalmente CAPI: Ativo.';
+  if (normalized.includes('event_id') || normalized.includes('conversao de teste')) return 'A compra aparece exatamente uma vez com event_id real-project-purchase-001.';
+  if (normalized.includes('dominio')) return 'O domínio aparece literalmente como Verificado.';
+  if (normalized.includes('pagamento')) return 'O meio de pagamento aparece como Aprovado, sem erro ou rejeição.';
+  if (normalized.includes('pixel helper')) return 'O Pixel Helper mostra PageView e ViewContent com indicador verde.';
+  if (normalized.includes('gerenciador de anuncios') || normalized.includes('conta de anuncios')) return 'A conta aparece literalmente como Ativa e sem revisão pendente.';
+  if (normalized.includes('business manager') || /\bbm\b/.test(normalized)) return 'O Business Manager aparece Ativo, sem restrição ou bloqueio.';
+  if (normalized.includes('metrica') || normalized.includes('ctr') || normalized.includes('roas')) return 'Dados literais: gasto R$630; impressões 41.800; cliques 334; compras 12; CPA R$52,50; ROAS 3,1x. CTR, alcance, frequência, CPM e janela não foram fornecidos.';
+  if (normalized.includes('preco') || normalized.includes('ticket')) return 'Preço exato confirmado pelo operador: R$ 4.888.';
+  if (normalized.includes('url') || normalized.includes('destino') || normalized.includes('cta')) return 'URL confirmada: https://academialendaria.com/maquina-de-receita-com-ia';
+  if (normalized.includes('angulo') || normalized.includes('finalista')) return 'Finalistas confirmados: A) “Você chama de intuição o que é falta de leitura”, reels 9:16; B) “Uma decisão por semana baseada nos números certos”, feed.';
+  if (normalized.includes('alavanca') || normalized.includes('hipotese') || normalized.includes('revers')) return 'Alavanca: testar somente o primeiro hook. Sucesso: melhora confirmada na próxima leitura literal. Reversão: voltar ao hook anterior se a leitura não melhorar. Não executar automaticamente.';
+  if (normalized.includes('orcamento') || normalized.includes('campanha') || normalized.includes('public')) return 'Vendas, Conversão, público amplo/frio com Advantage+, posicionamento automático e R$30/dia por 7 dias. Não publicar.';
+  return 'Confirmação literal do operador: use somente os dados já fornecidos, preserve lacunas e mantenha a decisão humana explícita.';
+}
+
+async function waitReview(page, admin, projectId, title, skillId, mode = 'confirmed') {
+  const review = page.getByTestId('artifact-approval-review');
+  const elicitation = page.locator('section.cms-elicitation');
+  for (let round = 0; round < 12; round += 1) {
+    if (await review.isVisible().catch(() => false)) return;
+    if (!await elicitation.isVisible().catch(() => false)) {
+      await reloadAndProve(page, `${title} hidratado para decisão humana`);
+      await selectSkill(page, title);
+      if (await review.isVisible().catch(() => false)) return;
+    }
+    if (!await elicitation.isVisible().catch(() => false)) {
+      await page.waitForTimeout(500);
+      continue;
+    }
+    const checkpoint = await queryLatest(admin, 'skill_runs', [['project_id', projectId], ['skill_id', skillId]]);
+    assert.equal(checkpoint?.status, 'needs_review', `${title}: checkpoint não persistiu em needs_review.`);
+    const labels = elicitation.locator('label');
+    for (let index = 0; index < await labels.count(); index += 1) {
+      const label = labels.nth(index);
+      const question = await label.locator('span').innerText();
+      await label.locator('textarea').fill(elicitationAnswer(question, mode));
+    }
+    await elicitation.getByRole('button', { name: 'Continuar com respostas', exact: true }).click();
+    const successor = await waitForLatestSkillRun(
+      admin,
+      projectId,
+      skillId,
+      (run) => run.id !== checkpoint.id
+        && run.input_snapshot?.elicitationParentRunId === checkpoint.id
+        && ['needs_review', 'failed', 'cancelled', 'done'].includes(run.status),
+      10 * 60 * 1000,
+    );
+    assert.equal(successor.status, 'needs_review', `${title}: continuação terminou em ${successor.status}: ${successor.error ?? 'sem diagnóstico'}`);
+    await reloadAndProve(page, `${title} continuado após checkpoint ${round + 1}`);
+    await selectSkill(page, title);
+  }
+  throw new Error(`${title}: excedeu 12 checkpoints sem chegar à revisão de artefatos.`);
 }
 
 function escapePattern(value) {
@@ -538,7 +603,7 @@ async function approveCurrent(page, admin, projectId, projectSlug, title, operat
   assert.equal(terminalJob.status, 'succeeded', `${skillId} falhou: ${JSON.stringify(terminalJob.error)}`);
   await reloadAndProve(page, `${title} pronto para revisão`);
   await selectSkill(page, title);
-  await waitReview(page);
+  await waitReview(page, admin, projectId, title, skillId);
   const review = page.getByTestId('artifact-approval-review');
   if (skillId === 'briefista') {
     await review.getByRole('button', { name: 'Editar', exact: true }).click();
@@ -770,7 +835,11 @@ try {
   await page.getByRole('button', { name: 'Nova campanha', exact: true }).click();
   await page.getByLabel('Nome da campanha', { exact: true }).fill(campaignName);
   await page.getByRole('button', { name: 'Criar campanha', exact: true }).click();
-  await page.getByRole('heading', { name: /Operação de tráfego/i }).waitFor({ timeout: 30_000 });
+  await page.waitForURL(/\/campaigns\/[0-9a-f-]{36}\/foundations$/i, { timeout: 30_000 });
+  await page.getByRole('heading', { name: 'Fundamentos herdados', exact: true }).waitFor({ timeout: 30_000 }).catch(async (error) => {
+    const visibleState = (await page.locator('main').innerText()).slice(0, 2_000);
+    throw new Error(`A campanha não hidratou os fundamentos em ${page.url()}:\n${visibleState}\n${error.message}`);
+  });
   const campaignId = new URL(page.url()).pathname.split('/')[4];
   assert.match(campaignId, /^[0-9a-f-]{36}$/i, 'A UI não retornou um campaignId persistido.');
   const createdCampaign = await queryLatest(admin, 'ads_campaigns', [['id', campaignId]]);
@@ -809,7 +878,7 @@ try {
   await waitForLatestJob(admin, importedProjectId, 'zelador', (job) => job.status === 'succeeded');
   await reloadAndProve(page, 'Zelador crítico pronto para revisão');
   await selectSkill(page, 'Zelador');
-  await waitReview(page);
+  await waitReview(page, admin, importedProjectId, 'Zelador', 'zelador', 'unconfirmed');
   const refusalReview = page.getByTestId('artifact-approval-review');
   const refusalText = await refusalReview.innerText();
   await refusalReview.getByRole('button', { name: 'Rejeitar', exact: true }).click();

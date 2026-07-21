@@ -1,0 +1,354 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T01:43:44.878Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "low",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "whatsapp-funil"
+    ],
+    "catalogHash": "9eab09712e8cf1473c73ffb103fa1e74d5247b2795bc00e62fba261cbfedaa83"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "whatsapp-funil",
+      "contractGroup": "message-collection",
+      "contractHash": "6e19347f5c7dcc78f93601ad8aa4fdc4d74ba2a8d374d68609740a7367e2ab9d",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "whatsapp.html",
+          "whatsapp.md",
+          "whatsapp.pdf",
+          "whatsapp/confirmacao-lead.html",
+          "whatsapp/index.html",
+          "whatsapp/recuperacao-checkout.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 491,
+            "hash": "6fea4f803c3312cdf0054092da2bea9a16cb974932bf20ec50c12e1fed082b1d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3686,
+            "hash": "4a60f5a93a7fe2562229f174cb614fd657845924ce20f83aa6edd0fd660db095",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.html",
+            "format": "html",
+            "bytes": 2267,
+            "hash": "c19992ed6a1cf98f16fb67904d22f21e259b5b15725540718c11977d7df3340e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.md",
+            "format": "markdown",
+            "bytes": 2100,
+            "hash": "31291820204b6eed7c28e287d292016ef7bfaa67063aadad5a7dbebbae333e8e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 134928,
+            "hash": "e8cf4630048a151c8bf573b0f85b49d011da91da8b8f39cf7cbf72cfc32087a2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.html",
+            "format": "html",
+            "bytes": 2267,
+            "hash": "c19992ed6a1cf98f16fb67904d22f21e259b5b15725540718c11977d7df3340e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.md",
+            "format": "markdown",
+            "bytes": 2100,
+            "hash": "31291820204b6eed7c28e287d292016ef7bfaa67063aadad5a7dbebbae333e8e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 134928,
+            "hash": "e8cf4630048a151c8bf573b0f85b49d011da91da8b8f39cf7cbf72cfc32087a2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/confirmacao-lead.html",
+            "format": "html",
+            "bytes": 1740,
+            "hash": "fadf086b69128726a14b5c38c3aa66ed731efdb1c032699c32ff78288ddad8e5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/index.html",
+            "format": "html",
+            "bytes": 1140,
+            "hash": "4f55f272d288901bc8e5324dea169c5c941b0607c41ba2ce7aef3b5bf20db27b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/recuperacao-checkout.html",
+            "format": "html",
+            "bytes": 1736,
+            "hash": "ddc847b622beb2f1c811a542a96ca58f3eb9de84a5cf3f21182aaab44e67703d",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/confirmacao-lead.html",
+            "format": "html",
+            "bytes": 1740,
+            "hash": "fadf086b69128726a14b5c38c3aa66ed731efdb1c032699c32ff78288ddad8e5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/index.html",
+            "format": "html",
+            "bytes": 1140,
+            "hash": "4f55f272d288901bc8e5324dea169c5c941b0607c41ba2ce7aef3b5bf20db27b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/recuperacao-checkout.html",
+            "format": "html",
+            "bytes": 1736,
+            "hash": "ddc847b622beb2f1c811a542a96ca58f3eb9de84a5cf3f21182aaab44e67703d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "whatsapp.html",
+          "whatsapp.md",
+          "whatsapp.pdf",
+          "whatsapp/confirmacao-lead.html",
+          "whatsapp/index.html",
+          "whatsapp/recuperacao-checkout.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 489,
+            "hash": "7eab6f103f9c38532417564c7674338fa5e39def0da49854aed1f0cce502ba39",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3684,
+            "hash": "6f7a000a69781af70f5762732047913ce038f156c7d5fe15b61508713eef2743",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.html",
+            "format": "html",
+            "bytes": 2482,
+            "hash": "276c1a19c488df729c40aa46e6c1bb2c246a6b89eaa9036ce99379479b0555da",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.md",
+            "format": "markdown",
+            "bytes": 2182,
+            "hash": "3564c188b122872ec4efacca5e763dd8fb100536b9fdfa63558506a18fdb4060",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 126099,
+            "hash": "f8ed887b4107e8f32439befaf9bbd67f0e94b71996706e2092841ce229816fc6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.html",
+            "format": "html",
+            "bytes": 2482,
+            "hash": "276c1a19c488df729c40aa46e6c1bb2c246a6b89eaa9036ce99379479b0555da",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.md",
+            "format": "markdown",
+            "bytes": 2182,
+            "hash": "3564c188b122872ec4efacca5e763dd8fb100536b9fdfa63558506a18fdb4060",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 126099,
+            "hash": "f8ed887b4107e8f32439befaf9bbd67f0e94b71996706e2092841ce229816fc6",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/confirmacao-lead.html",
+            "format": "html",
+            "bytes": 1201,
+            "hash": "ac9d9ec4329b8b1a61e9ac0da9226eadd816e2e9f172b56d2ec478342eed5d87",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/index.html",
+            "format": "html",
+            "bytes": 1339,
+            "hash": "e5ad4e2f10dbc51d4905bdb137a620e2865683dceee212477d4a812187667766",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/recuperacao-checkout.html",
+            "format": "html",
+            "bytes": 1198,
+            "hash": "252e9ef619e1d01b36d35501cdd0cb25d5102a52c193b9e36e587d2054ab8e1a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/confirmacao-lead.html",
+            "format": "html",
+            "bytes": 1201,
+            "hash": "ac9d9ec4329b8b1a61e9ac0da9226eadd816e2e9f172b56d2ec478342eed5d87",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/index.html",
+            "format": "html",
+            "bytes": 1339,
+            "hash": "e5ad4e2f10dbc51d4905bdb137a620e2865683dceee212477d4a812187667766",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/recuperacao-checkout.html",
+            "format": "html",
+            "bytes": 1198,
+            "hash": "252e9ef619e1d01b36d35501cdd0cb25d5102a52c193b9e36e587d2054ab8e1a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

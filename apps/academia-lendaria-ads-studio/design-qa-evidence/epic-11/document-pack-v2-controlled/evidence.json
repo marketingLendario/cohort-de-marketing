@@ -1,0 +1,3517 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T16:58:01.886Z",
+  "lane": {
+    "type": "controlled-contract",
+    "runner": "deterministic-local-fixture",
+    "codexRealEquivalent": false,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "A geracao textual e controlada e nao substitui a lane separada com Codex CLI real."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 13,
+    "contractIds": [
+      "metodo-funil",
+      "vsl-funil",
+      "advertorial-funil",
+      "lancamento-funil",
+      "webinario-funil",
+      "quiz-funil",
+      "email-funil",
+      "whatsapp-funil",
+      "recuperacao-funil",
+      "backend-funil",
+      "cro-funil",
+      "swipe-file",
+      "bonus-funil"
+    ],
+    "catalogHash": "1eb6c577e1d133302b5df9e228d03a490416b84038195ad6f1cf9f177ee4add9"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "metodo-funil",
+      "contractGroup": "owner-document",
+      "contractHash": "4581c542eb7001e4df4781abd5fdaaf9593962760bcbca56938b6f96d046da5d",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "funil.html",
+          "funil.md",
+          "funil.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 476,
+            "hash": "b07112f654e475fed69f90cce6da444e09c0dddd91f961cae38cbdd2e76bfa4d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3663,
+            "hash": "fa8ffc2eb4adc7a4392e1fa63ff074faee86ab96d57c4ca5b503c0fe98c7380d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "funil.html",
+          "funil.md",
+          "funil.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 474,
+            "hash": "867f2531185137fc9785e974103ab75ad80a4266a6f1994a0846de580d238de5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "59f4352c62370222bd4e89d6a95c1c4f47dcbbccc03477bd97541e32b1cf3db9",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.md",
+            "format": "markdown",
+            "bytes": 125,
+            "hash": "0c8962467435563954869ac0962ab08185e60aeed859f7127a3c29707dfef789",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "funil.pdf",
+            "format": "pdf",
+            "bytes": 27303,
+            "hash": "355c119d5bbe35658607a1620f81ca8bfdf6660d8e77e48579e9bd4911015e60",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3661,
+            "hash": "74b5c717d87f296a22af2671e526d968404df85a57cfab8d889d8b6df8d1b971",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "vsl-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "9aad4ce3dcc95ab6cd500e90a264f353e2be4559cb0ef44f19a180af899cc4c7",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/vsl-roteiro.html",
+          "pagina/vsl.html",
+          "vsl.html",
+          "vsl.md",
+          "vsl.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 729,
+            "hash": "698620aae4df4c4c64a66d241cc227532b3d95e38b03ddc864ac18441dd5ae89",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4130,
+            "hash": "98acb1c3febde8d673fde2c3262cff68c0c22932cece0ff6fb31f74d96b532d3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro-v1.html",
+            "format": "html",
+            "bytes": 585,
+            "hash": "57633c4ba769829fed88f94a3d2485a277d4015d7a7a6919384a46c456319079",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro.html",
+            "format": "html",
+            "bytes": 585,
+            "hash": "57633c4ba769829fed88f94a3d2485a277d4015d7a7a6919384a46c456319079",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-v1.html",
+            "format": "html",
+            "bytes": 556,
+            "hash": "057b2c0417eebbd899b2acf40bc494b45514037dfa0d5cc4f9f0305449e806cf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl.html",
+            "format": "html",
+            "bytes": 556,
+            "hash": "057b2c0417eebbd899b2acf40bc494b45514037dfa0d5cc4f9f0305449e806cf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "44477a87a5057c7b0273f851f0976cd0b5220e08e95f5e768adf3cfb2bd02cb7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "de538aa7e3bdc29fd87ee38ce3f39313d9b9f39beb8a477af685fdc478060483",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.pdf",
+            "format": "pdf",
+            "bytes": 26737,
+            "hash": "4bb279e46c295ba02bc0ad8b5c630e85ccd77a8aabbea31bcac5f7ed85327b0c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "44477a87a5057c7b0273f851f0976cd0b5220e08e95f5e768adf3cfb2bd02cb7",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "de538aa7e3bdc29fd87ee38ce3f39313d9b9f39beb8a477af685fdc478060483",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.pdf",
+            "format": "pdf",
+            "bytes": 26737,
+            "hash": "4bb279e46c295ba02bc0ad8b5c630e85ccd77a8aabbea31bcac5f7ed85327b0c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/vsl-roteiro.html",
+          "pagina/vsl.html",
+          "vsl.html",
+          "vsl.md",
+          "vsl.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 727,
+            "hash": "26ad3cd0f767cc1db9cfa4a5da2a1653773f2f33d1129e860533c5249252dd40",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4128,
+            "hash": "319677d133c67cde7474203e5735fa6cacf7abf76267fbb1a284c5157f70b5ef",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro-v1.html",
+            "format": "html",
+            "bytes": 585,
+            "hash": "57633c4ba769829fed88f94a3d2485a277d4015d7a7a6919384a46c456319079",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-roteiro.html",
+            "format": "html",
+            "bytes": 585,
+            "hash": "57633c4ba769829fed88f94a3d2485a277d4015d7a7a6919384a46c456319079",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl-v1.html",
+            "format": "html",
+            "bytes": 556,
+            "hash": "057b2c0417eebbd899b2acf40bc494b45514037dfa0d5cc4f9f0305449e806cf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/vsl.html",
+            "format": "html",
+            "bytes": 556,
+            "hash": "057b2c0417eebbd899b2acf40bc494b45514037dfa0d5cc4f9f0305449e806cf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "44477a87a5057c7b0273f851f0976cd0b5220e08e95f5e768adf3cfb2bd02cb7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "de538aa7e3bdc29fd87ee38ce3f39313d9b9f39beb8a477af685fdc478060483",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl-v1.pdf",
+            "format": "pdf",
+            "bytes": 26737,
+            "hash": "4bb279e46c295ba02bc0ad8b5c630e85ccd77a8aabbea31bcac5f7ed85327b0c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "44477a87a5057c7b0273f851f0976cd0b5220e08e95f5e768adf3cfb2bd02cb7",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "de538aa7e3bdc29fd87ee38ce3f39313d9b9f39beb8a477af685fdc478060483",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "vsl.pdf",
+            "format": "pdf",
+            "bytes": 26737,
+            "hash": "4bb279e46c295ba02bc0ad8b5c630e85ccd77a8aabbea31bcac5f7ed85327b0c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "advertorial-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "965e2128a170a1e9343901d6c5883f4b4980bb91d4fb5c4c890d5c91ec9c32a9",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "advertorial.html",
+          "advertorial.md",
+          "advertorial.pdf",
+          "book-do-funil.json",
+          "index.html",
+          "pagina/advertorial.html"
+        ],
+        "files": [
+          {
+            "path": "advertorial-v1.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "3ddff2cb44d3e532a1ce9ee8f5a5afce93a0f9db1df738cd7c0ecd450ef34c30",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial-v1.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "1fe134b12572339342251045e913e4306480e3bbe72b695e105810051c05ef81",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial-v1.pdf",
+            "format": "pdf",
+            "bytes": 27997,
+            "hash": "93ae628c140e9a0999f95c5eec39a8dfc0718b670f555b90d4173c37f09f8171",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "3ddff2cb44d3e532a1ce9ee8f5a5afce93a0f9db1df738cd7c0ecd450ef34c30",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "1fe134b12572339342251045e913e4306480e3bbe72b695e105810051c05ef81",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial.pdf",
+            "format": "pdf",
+            "bytes": 27997,
+            "hash": "93ae628c140e9a0999f95c5eec39a8dfc0718b670f555b90d4173c37f09f8171",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1019,
+            "hash": "118a3ef354dcda1fc1ed8c2e00f9318ee1b5ff65e9a8512af592cff57d4b9010",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4604,
+            "hash": "8184e7814a8806ed8c569a81adf2b474abe01f9b8ccfa3201425e143dddc699b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/advertorial-v1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "9fefee03e1e19acca8f8596c5ea6874c2c07f99462d5b3da7a030ac449aac012",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/advertorial.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "9fefee03e1e19acca8f8596c5ea6874c2c07f99462d5b3da7a030ac449aac012",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "advertorial.html",
+          "advertorial.md",
+          "advertorial.pdf",
+          "book-do-funil.json",
+          "index.html",
+          "pagina/advertorial.html"
+        ],
+        "files": [
+          {
+            "path": "advertorial-v1.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "3ddff2cb44d3e532a1ce9ee8f5a5afce93a0f9db1df738cd7c0ecd450ef34c30",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial-v1.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "1fe134b12572339342251045e913e4306480e3bbe72b695e105810051c05ef81",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial-v1.pdf",
+            "format": "pdf",
+            "bytes": 27997,
+            "hash": "93ae628c140e9a0999f95c5eec39a8dfc0718b670f555b90d4173c37f09f8171",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "3ddff2cb44d3e532a1ce9ee8f5a5afce93a0f9db1df738cd7c0ecd450ef34c30",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "1fe134b12572339342251045e913e4306480e3bbe72b695e105810051c05ef81",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "advertorial.pdf",
+            "format": "pdf",
+            "bytes": 27997,
+            "hash": "93ae628c140e9a0999f95c5eec39a8dfc0718b670f555b90d4173c37f09f8171",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1017,
+            "hash": "af1ec8dee5be40800709c1128c842cb2c69b153445647780996229b6834006de",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4602,
+            "hash": "adc375fe845a6219ff68e2ddeb9b03b610e4a7ab2dc17d56a5f61c7d66156f6e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/advertorial-v1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "9fefee03e1e19acca8f8596c5ea6874c2c07f99462d5b3da7a030ac449aac012",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/advertorial.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "9fefee03e1e19acca8f8596c5ea6874c2c07f99462d5b3da7a030ac449aac012",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "lancamento-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "941914be7e9aa410b4626d2b1a70735932bf70ff8ab97d3cf9da345722e478a5",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "lancamento.html",
+          "lancamento.md",
+          "lancamento.pdf",
+          "pagina/plc-1-roteiro.html",
+          "pagina/plc-2-roteiro.html",
+          "pagina/plc-3-roteiro.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1297,
+            "hash": "701d1368d1371f33d18ae179225f225798f96d777fa4aad35c5cc7f2c703a2d7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 5054,
+            "hash": "bc9f14077efeef52ef429433d8fecd9f334a05665d96cf016541061fee764331",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.html",
+            "format": "html",
+            "bytes": 555,
+            "hash": "0e5da648f08a9bd05481e3c9ef6a3d8af7122f64875724be91091ac23d429660",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "926cc4ed8251c35cddf290e4a39ac008b8d66056fa8e1206821d7515c9f6b481",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.pdf",
+            "format": "pdf",
+            "bytes": 27863,
+            "hash": "93486f0c76c88cf55d6f966df488e2ef7ba999cb3378d72c10c6d9d2780f05e7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.html",
+            "format": "html",
+            "bytes": 555,
+            "hash": "0e5da648f08a9bd05481e3c9ef6a3d8af7122f64875724be91091ac23d429660",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "926cc4ed8251c35cddf290e4a39ac008b8d66056fa8e1206821d7515c9f6b481",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.pdf",
+            "format": "pdf",
+            "bytes": 27863,
+            "hash": "93486f0c76c88cf55d6f966df488e2ef7ba999cb3378d72c10c6d9d2780f05e7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro-v1.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro-v1.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro-v1.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "lancamento.html",
+          "lancamento.md",
+          "lancamento.pdf",
+          "pagina/plc-1-roteiro.html",
+          "pagina/plc-2-roteiro.html",
+          "pagina/plc-3-roteiro.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1295,
+            "hash": "67f663a879a737dbe9a6b705469d8072421ac2e27ea6a2232ed12b5b81e02d2e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 5052,
+            "hash": "cc4c99dd123098cc05988e8d99c957e3793b5ea2b3d8e124229c942e5ee49601",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.html",
+            "format": "html",
+            "bytes": 555,
+            "hash": "0e5da648f08a9bd05481e3c9ef6a3d8af7122f64875724be91091ac23d429660",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "926cc4ed8251c35cddf290e4a39ac008b8d66056fa8e1206821d7515c9f6b481",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento-v1.pdf",
+            "format": "pdf",
+            "bytes": 27863,
+            "hash": "93486f0c76c88cf55d6f966df488e2ef7ba999cb3378d72c10c6d9d2780f05e7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.html",
+            "format": "html",
+            "bytes": 555,
+            "hash": "0e5da648f08a9bd05481e3c9ef6a3d8af7122f64875724be91091ac23d429660",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "926cc4ed8251c35cddf290e4a39ac008b8d66056fa8e1206821d7515c9f6b481",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "lancamento.pdf",
+            "format": "pdf",
+            "bytes": 27863,
+            "hash": "93486f0c76c88cf55d6f966df488e2ef7ba999cb3378d72c10c6d9d2780f05e7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro-v1.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-1-roteiro.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro-v1.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-2-roteiro.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro-v1.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/plc-3-roteiro.html",
+            "format": "html",
+            "bytes": 599,
+            "hash": "aa2a9805424e89bcfcdbb92cec904158ae36fb800621af6d9d39750d107c6945",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "webinario-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "c6fde3f0d1f1c647db9e48b286a2fd3139fa297b98628a2d3e7d7dc26713405a",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/agendamento.html",
+          "pagina/obrigado.html",
+          "pagina/oferta.html",
+          "pagina/registro.html",
+          "pagina/webinario-roteiro.html",
+          "webinario.html",
+          "webinario.md",
+          "webinario.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1571,
+            "hash": "6a9503ce85d25476e66615fa7d6b94e171589f2b410eae85091fb4b85d683b86",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 5496,
+            "hash": "86d55e19ab4b0523a50fb49aa05601b398e4dc5fe4c2250395da208916c2f7aa",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/agendamento-v1.html",
+            "format": "html",
+            "bytes": 582,
+            "hash": "37397004be4859f6430267b919490b84152cdadd7447ca788e5b3abf0bb95e8c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/agendamento.html",
+            "format": "html",
+            "bytes": 582,
+            "hash": "37397004be4859f6430267b919490b84152cdadd7447ca788e5b3abf0bb95e8c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado-v1.html",
+            "format": "html",
+            "bytes": 579,
+            "hash": "12476eda3e5fee7c927e630fa05cc4df1d8e4f8c6a44c17ed9858a025e1a00f1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado.html",
+            "format": "html",
+            "bytes": 579,
+            "hash": "12476eda3e5fee7c927e630fa05cc4df1d8e4f8c6a44c17ed9858a025e1a00f1",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta-v1.html",
+            "format": "html",
+            "bytes": 577,
+            "hash": "bae0e03d0237bcfa2a1baddb8091067dd57dddb64cd40c401a63bf33469fbe80",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta.html",
+            "format": "html",
+            "bytes": 577,
+            "hash": "bae0e03d0237bcfa2a1baddb8091067dd57dddb64cd40c401a63bf33469fbe80",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro-v1.html",
+            "format": "html",
+            "bytes": 576,
+            "hash": "79909390f57d79f1ccbb12b140169820cbe77dc30b47156777e6b71dde7bfd03",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro.html",
+            "format": "html",
+            "bytes": 576,
+            "hash": "79909390f57d79f1ccbb12b140169820cbe77dc30b47156777e6b71dde7bfd03",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro-v1.html",
+            "format": "html",
+            "bytes": 597,
+            "hash": "c14255b7cf26d83118362bb0249a2a060b71919c29036f196ae337fc7a62b0b2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro.html",
+            "format": "html",
+            "bytes": 597,
+            "hash": "c14255b7cf26d83118362bb0249a2a060b71919c29036f196ae337fc7a62b0b2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.html",
+            "format": "html",
+            "bytes": 553,
+            "hash": "10c78e5ba7f6be05717e45196b2e9e07c81ce26af1b241b3ebea6fab2f6e541c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.md",
+            "format": "markdown",
+            "bytes": 132,
+            "hash": "795b28ec93503d4fb05f74dd0241dff02b12256f999ef1de094a25b6f5132302",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.pdf",
+            "format": "pdf",
+            "bytes": 28004,
+            "hash": "1f9ea90889bff484269dcb6d029da067b5d4cdd509e476f81d7e70d65409acbd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.html",
+            "format": "html",
+            "bytes": 553,
+            "hash": "10c78e5ba7f6be05717e45196b2e9e07c81ce26af1b241b3ebea6fab2f6e541c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.md",
+            "format": "markdown",
+            "bytes": 132,
+            "hash": "795b28ec93503d4fb05f74dd0241dff02b12256f999ef1de094a25b6f5132302",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.pdf",
+            "format": "pdf",
+            "bytes": 28004,
+            "hash": "1f9ea90889bff484269dcb6d029da067b5d4cdd509e476f81d7e70d65409acbd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/agendamento.html",
+          "pagina/obrigado.html",
+          "pagina/oferta.html",
+          "pagina/registro.html",
+          "pagina/webinario-roteiro.html",
+          "webinario.html",
+          "webinario.md",
+          "webinario.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1569,
+            "hash": "617024eaf433962af8c5544397bbaecf32573ba39c1d41e8d3fdbdfc90ef7f48",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 5494,
+            "hash": "8d9fe003bed91fbc4090ce8682ceee4df1f208965ddc23e797a557859e4e23b0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/agendamento-v1.html",
+            "format": "html",
+            "bytes": 582,
+            "hash": "37397004be4859f6430267b919490b84152cdadd7447ca788e5b3abf0bb95e8c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/agendamento.html",
+            "format": "html",
+            "bytes": 582,
+            "hash": "37397004be4859f6430267b919490b84152cdadd7447ca788e5b3abf0bb95e8c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado-v1.html",
+            "format": "html",
+            "bytes": 579,
+            "hash": "12476eda3e5fee7c927e630fa05cc4df1d8e4f8c6a44c17ed9858a025e1a00f1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/obrigado.html",
+            "format": "html",
+            "bytes": 579,
+            "hash": "12476eda3e5fee7c927e630fa05cc4df1d8e4f8c6a44c17ed9858a025e1a00f1",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta-v1.html",
+            "format": "html",
+            "bytes": 577,
+            "hash": "bae0e03d0237bcfa2a1baddb8091067dd57dddb64cd40c401a63bf33469fbe80",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/oferta.html",
+            "format": "html",
+            "bytes": 577,
+            "hash": "bae0e03d0237bcfa2a1baddb8091067dd57dddb64cd40c401a63bf33469fbe80",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro-v1.html",
+            "format": "html",
+            "bytes": 576,
+            "hash": "79909390f57d79f1ccbb12b140169820cbe77dc30b47156777e6b71dde7bfd03",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/registro.html",
+            "format": "html",
+            "bytes": 576,
+            "hash": "79909390f57d79f1ccbb12b140169820cbe77dc30b47156777e6b71dde7bfd03",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro-v1.html",
+            "format": "html",
+            "bytes": 597,
+            "hash": "c14255b7cf26d83118362bb0249a2a060b71919c29036f196ae337fc7a62b0b2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/webinario-roteiro.html",
+            "format": "html",
+            "bytes": 597,
+            "hash": "c14255b7cf26d83118362bb0249a2a060b71919c29036f196ae337fc7a62b0b2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.html",
+            "format": "html",
+            "bytes": 553,
+            "hash": "10c78e5ba7f6be05717e45196b2e9e07c81ce26af1b241b3ebea6fab2f6e541c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.md",
+            "format": "markdown",
+            "bytes": 132,
+            "hash": "795b28ec93503d4fb05f74dd0241dff02b12256f999ef1de094a25b6f5132302",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario-v1.pdf",
+            "format": "pdf",
+            "bytes": 28004,
+            "hash": "1f9ea90889bff484269dcb6d029da067b5d4cdd509e476f81d7e70d65409acbd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.html",
+            "format": "html",
+            "bytes": 553,
+            "hash": "10c78e5ba7f6be05717e45196b2e9e07c81ce26af1b241b3ebea6fab2f6e541c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.md",
+            "format": "markdown",
+            "bytes": 132,
+            "hash": "795b28ec93503d4fb05f74dd0241dff02b12256f999ef1de094a25b6f5132302",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "webinario.pdf",
+            "format": "pdf",
+            "bytes": 28004,
+            "hash": "1f9ea90889bff484269dcb6d029da067b5d4cdd509e476f81d7e70d65409acbd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "quiz-funil",
+      "contractGroup": "interactive-pack",
+      "contractHash": "400ef971618055efe01c0bdd7d9fa8558391a7934b0f3726424e9dc98ec53da7",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/quiz-app.html",
+          "quiz.html",
+          "quiz.md",
+          "quiz.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1836,
+            "hash": "1db821b05ed29c72576425bfcdd46d53bfd5fb1c23c684932d2372e338b74eba",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 5920,
+            "hash": "6eafe37369746b6ee2cb00688052e931ab33765f24a48de8a1d959101836e71c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app-v1.html",
+            "format": "html",
+            "bytes": 667,
+            "hash": "22bdd8ff5db4f7ff7b55dfd644ccc55cfc24632b567bcecbed321d7d5234978c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app.html",
+            "format": "html",
+            "bytes": 667,
+            "hash": "22bdd8ff5db4f7ff7b55dfd644ccc55cfc24632b567bcecbed321d7d5234978c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "e022a2c098191548a1d07c2b7deb5a3c58e9f00030a6a86b28e104f971253a67",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.md",
+            "format": "markdown",
+            "bytes": 122,
+            "hash": "a20122bbf8d6abef1ae09f96a985d48dc98866c8542dce97d64aafe655f68082",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.pdf",
+            "format": "pdf",
+            "bytes": 26267,
+            "hash": "9bdec61c96b0ad7338db5a101df3c8c5695398ef597d3073d93a69e6969bbc7e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "e022a2c098191548a1d07c2b7deb5a3c58e9f00030a6a86b28e104f971253a67",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.md",
+            "format": "markdown",
+            "bytes": 122,
+            "hash": "a20122bbf8d6abef1ae09f96a985d48dc98866c8542dce97d64aafe655f68082",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.pdf",
+            "format": "pdf",
+            "bytes": 26267,
+            "hash": "9bdec61c96b0ad7338db5a101df3c8c5695398ef597d3073d93a69e6969bbc7e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/quiz-app.html",
+          "quiz.html",
+          "quiz.md",
+          "quiz.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1834,
+            "hash": "78de3cb33d7d122deee84df88c5c1faabec49081a5be77feb327dab66788da01",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 5918,
+            "hash": "0fb0e71c4d5f57ff9a205353ce349634057c663d11eeff4c4b02d1637a189307",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app-v1.html",
+            "format": "html",
+            "bytes": 667,
+            "hash": "22bdd8ff5db4f7ff7b55dfd644ccc55cfc24632b567bcecbed321d7d5234978c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app.html",
+            "format": "html",
+            "bytes": 667,
+            "hash": "22bdd8ff5db4f7ff7b55dfd644ccc55cfc24632b567bcecbed321d7d5234978c",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "e022a2c098191548a1d07c2b7deb5a3c58e9f00030a6a86b28e104f971253a67",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.md",
+            "format": "markdown",
+            "bytes": 122,
+            "hash": "a20122bbf8d6abef1ae09f96a985d48dc98866c8542dce97d64aafe655f68082",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.pdf",
+            "format": "pdf",
+            "bytes": 26267,
+            "hash": "9bdec61c96b0ad7338db5a101df3c8c5695398ef597d3073d93a69e6969bbc7e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "e022a2c098191548a1d07c2b7deb5a3c58e9f00030a6a86b28e104f971253a67",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.md",
+            "format": "markdown",
+            "bytes": 122,
+            "hash": "a20122bbf8d6abef1ae09f96a985d48dc98866c8542dce97d64aafe655f68082",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.pdf",
+            "format": "pdf",
+            "bytes": 26267,
+            "hash": "9bdec61c96b0ad7338db5a101df3c8c5695398ef597d3073d93a69e6969bbc7e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "email-funil",
+      "contractGroup": "message-collection",
+      "contractHash": "93f5de2036b78702aaf70d46846da11aa2a32b4c961f45917e28886f43fe2158",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "emails/index.html",
+          "emails/trilha-item-1-email-mensagem-1.html",
+          "emails/trilhas.html",
+          "emails/trilhas.md",
+          "emails/trilhas.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2122,
+            "hash": "68798da8bee55b51c8834c2dae9968f084ae7f164bc8ff861efa2ddb398bcc68",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "d6e810795b8e050e507fc7c2740abf9a311d02343d1f0fe0eef6d38bbaca701a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-item-1-email-mensagem-1.html",
+            "format": "html",
+            "bytes": 670,
+            "hash": "873a724535abae3c860381989d17ce3ea32e5151044115ae195c0f4f360577a2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "821df5457cfe965aacc0c3c89bd9591d6eddc03b240e4795d3011889c2f46495",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.md",
+            "format": "markdown",
+            "bytes": 133,
+            "hash": "1b9b94c12fc40f0d491887da0ca13d2eb650c05918cc5fcc2cee186027cad888",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 27049,
+            "hash": "502c7f2bd192f201d50324d6050a2b36de34ed60410fe33233c4dfef55c72f7c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "d6e810795b8e050e507fc7c2740abf9a311d02343d1f0fe0eef6d38bbaca701a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-item-1-email-mensagem-1.html",
+            "format": "html",
+            "bytes": 670,
+            "hash": "873a724535abae3c860381989d17ce3ea32e5151044115ae195c0f4f360577a2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "821df5457cfe965aacc0c3c89bd9591d6eddc03b240e4795d3011889c2f46495",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.md",
+            "format": "markdown",
+            "bytes": 133,
+            "hash": "1b9b94c12fc40f0d491887da0ca13d2eb650c05918cc5fcc2cee186027cad888",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 27049,
+            "hash": "502c7f2bd192f201d50324d6050a2b36de34ed60410fe33233c4dfef55c72f7c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 6446,
+            "hash": "29fae49d74656e7db11ee161e6390e7bc65238c223c8a435d9fc7b7003141651",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "emails/index.html",
+          "emails/trilha-item-1-email-mensagem-1.html",
+          "emails/trilhas.html",
+          "emails/trilhas.md",
+          "emails/trilhas.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2120,
+            "hash": "e7d43aa7c7bd49b247c154d5beb41e5ea77f07ee352516856f27c3aae6975574",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "d6e810795b8e050e507fc7c2740abf9a311d02343d1f0fe0eef6d38bbaca701a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilha-item-1-email-mensagem-1.html",
+            "format": "html",
+            "bytes": 670,
+            "hash": "873a724535abae3c860381989d17ce3ea32e5151044115ae195c0f4f360577a2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "821df5457cfe965aacc0c3c89bd9591d6eddc03b240e4795d3011889c2f46495",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.md",
+            "format": "markdown",
+            "bytes": 133,
+            "hash": "1b9b94c12fc40f0d491887da0ca13d2eb650c05918cc5fcc2cee186027cad888",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 27049,
+            "hash": "502c7f2bd192f201d50324d6050a2b36de34ed60410fe33233c4dfef55c72f7c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "d6e810795b8e050e507fc7c2740abf9a311d02343d1f0fe0eef6d38bbaca701a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilha-item-1-email-mensagem-1.html",
+            "format": "html",
+            "bytes": 670,
+            "hash": "873a724535abae3c860381989d17ce3ea32e5151044115ae195c0f4f360577a2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "821df5457cfe965aacc0c3c89bd9591d6eddc03b240e4795d3011889c2f46495",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.md",
+            "format": "markdown",
+            "bytes": 133,
+            "hash": "1b9b94c12fc40f0d491887da0ca13d2eb650c05918cc5fcc2cee186027cad888",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "emails/v1/trilhas.pdf",
+            "format": "pdf",
+            "bytes": 27049,
+            "hash": "502c7f2bd192f201d50324d6050a2b36de34ed60410fe33233c4dfef55c72f7c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 6444,
+            "hash": "a98a96f1896ff4ded9da9b26a1088bd08b4a32080712ae07689723e8709f801c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "whatsapp-funil",
+      "contractGroup": "message-collection",
+      "contractHash": "6e19347f5c7dcc78f93601ad8aa4fdc4d74ba2a8d374d68609740a7367e2ab9d",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "whatsapp.html",
+          "whatsapp.md",
+          "whatsapp.pdf",
+          "whatsapp/index.html",
+          "whatsapp/item-1-mensagem-1.html",
+          "whatsapp/item-2-mensagem-2.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2423,
+            "hash": "01d9fc46347102b44d0654385b8c2eeca9fe87bd4357ba4d9a4c8278e664ecdd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 6935,
+            "hash": "d0b4497cb8238d5171135c16d443569d2fe6dd942fbf9e9d94ff5ba1b092db39",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.html",
+            "format": "html",
+            "bytes": 551,
+            "hash": "019e2cfbbeb08e42a0f286e7280f050f665cbfe66b482569f15bde298a69d037",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.md",
+            "format": "markdown",
+            "bytes": 130,
+            "hash": "b93dd2064f87f5476c0991b5e9ddb9d94ef10676568001741ade2a2febaf50d5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 28282,
+            "hash": "f74a6266c028a720112a48ea8aaab5e904e6c87e6dc0a290b1949bf0b026e7d3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.html",
+            "format": "html",
+            "bytes": 551,
+            "hash": "019e2cfbbeb08e42a0f286e7280f050f665cbfe66b482569f15bde298a69d037",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.md",
+            "format": "markdown",
+            "bytes": 130,
+            "hash": "b93dd2064f87f5476c0991b5e9ddb9d94ef10676568001741ade2a2febaf50d5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 28282,
+            "hash": "f74a6266c028a720112a48ea8aaab5e904e6c87e6dc0a290b1949bf0b026e7d3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/index.html",
+            "format": "html",
+            "bytes": 515,
+            "hash": "54a898776f55bbde9353a736e654eb9738613d3276f092784efba53353f931c4",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/item-1-mensagem-1.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/item-2-mensagem-2.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/index.html",
+            "format": "html",
+            "bytes": 515,
+            "hash": "54a898776f55bbde9353a736e654eb9738613d3276f092784efba53353f931c4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/item-1-mensagem-1.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/item-2-mensagem-2.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "whatsapp.html",
+          "whatsapp.md",
+          "whatsapp.pdf",
+          "whatsapp/index.html",
+          "whatsapp/item-1-mensagem-1.html",
+          "whatsapp/item-2-mensagem-2.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2421,
+            "hash": "161043409ba8143cc0770f31e8675e40b9e2a3e6c6409779ad8f47b0d1f9752c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 6933,
+            "hash": "e4bd3bfeb24ae07bfb66f2b3d43155cc02bf0531ea399255482a575a4daa7735",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.html",
+            "format": "html",
+            "bytes": 551,
+            "hash": "019e2cfbbeb08e42a0f286e7280f050f665cbfe66b482569f15bde298a69d037",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.md",
+            "format": "markdown",
+            "bytes": 130,
+            "hash": "b93dd2064f87f5476c0991b5e9ddb9d94ef10676568001741ade2a2febaf50d5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 28282,
+            "hash": "f74a6266c028a720112a48ea8aaab5e904e6c87e6dc0a290b1949bf0b026e7d3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.html",
+            "format": "html",
+            "bytes": 551,
+            "hash": "019e2cfbbeb08e42a0f286e7280f050f665cbfe66b482569f15bde298a69d037",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.md",
+            "format": "markdown",
+            "bytes": 130,
+            "hash": "b93dd2064f87f5476c0991b5e9ddb9d94ef10676568001741ade2a2febaf50d5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp.pdf",
+            "format": "pdf",
+            "bytes": 28282,
+            "hash": "f74a6266c028a720112a48ea8aaab5e904e6c87e6dc0a290b1949bf0b026e7d3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/index.html",
+            "format": "html",
+            "bytes": 515,
+            "hash": "54a898776f55bbde9353a736e654eb9738613d3276f092784efba53353f931c4",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/item-1-mensagem-1.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/item-2-mensagem-2.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/index.html",
+            "format": "html",
+            "bytes": 515,
+            "hash": "54a898776f55bbde9353a736e654eb9738613d3276f092784efba53353f931c4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/item-1-mensagem-1.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "whatsapp/v1/item-2-mensagem-2.html",
+            "format": "html",
+            "bytes": 676,
+            "hash": "93ae2dab2cf0817e67d3d2ad39bf2737515437ed95756560ed779430caa35894",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "recuperacao-funil",
+      "contractGroup": "message-collection",
+      "contractHash": "20fc0da3a3233a7c6288aa2be1bf9233c3fc63c80990c50104d3f3435214eb75",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "recuperacao.html",
+          "recuperacao.md",
+          "recuperacao.pdf",
+          "recuperacao/item-1.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2711,
+            "hash": "d9b3d203f63bdca7e1812458495d52c3cf82aed4ac3b893ff3ecaa67d4b9a106",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 7404,
+            "hash": "1392f041fd072b4675a748fae9262bda1b38918c8ee72fb24069e73541eb6456",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/v1/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "recuperacao.html",
+          "recuperacao.md",
+          "recuperacao.pdf",
+          "recuperacao/item-1.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2709,
+            "hash": "553a11fd05f5e043ec22c0ae1846931769e401002059f8011cc2809c4e778462",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 7402,
+            "hash": "3838643a163507cacfe189c34ff79b571328592dc73e0c39e9304f38ea4b7371",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "recuperacao/v1/item-1.html",
+            "format": "html",
+            "bytes": 588,
+            "hash": "7115e336fe22920921e88f26a1cbd6935be9fee32e631654a4f4ea9e20a2cd1b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.html",
+            "format": "html",
+            "bytes": 557,
+            "hash": "2791e6ecaed227b2efeae79865f0d21738dc94d7e9ea6c90d8988d1bc6255386",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "324b7198a7575e51ac4a14a519685a073b06b033d9dfa4b26526897ffb41b034",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/recuperacao.pdf",
+            "format": "pdf",
+            "bytes": 27669,
+            "hash": "625ea84ad272e84792575bd3cf5441be29d61612db63a83556caeb5181ec6d4e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "backend-funil",
+      "contractGroup": "funnel-page-pack",
+      "contractHash": "69e98654b174ed6c7f5a2dea09d387a2ee4617a7709cba438dc5bb561babbd5f",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "backend-funil.html",
+          "backend-funil.md",
+          "backend-funil.pdf",
+          "book-do-funil.json",
+          "index.html",
+          "pagina/downsell.html",
+          "pagina/upsell.html"
+        ],
+        "files": [
+          {
+            "path": "backend-funil-v1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "54fb2343f117a8f3b7957d07f600c46cbb5e0df32d20e6e9ea9e30bba39e71de",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "83e0ebd733fcd5f61096b9f70e020e1c0d0c3a7e42fbf154ec5dcdcc76a2656f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 27751,
+            "hash": "cf411df9160aab29ddb23930d99b95569eaf801437fa50685eda6759b62371fa",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "54fb2343f117a8f3b7957d07f600c46cbb5e0df32d20e6e9ea9e30bba39e71de",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "83e0ebd733fcd5f61096b9f70e020e1c0d0c3a7e42fbf154ec5dcdcc76a2656f",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.pdf",
+            "format": "pdf",
+            "bytes": 27751,
+            "hash": "cf411df9160aab29ddb23930d99b95569eaf801437fa50685eda6759b62371fa",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2996,
+            "hash": "fcae87a9b4ec152fb220fe1edc420bf9bcf6474a4f60d45751b9a83c78d05935",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 7861,
+            "hash": "ecc708e437fb11d54ec27f81d184c1a8206fb631dc7bb44c61f520a0aa470bb3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell-v1.html",
+            "format": "html",
+            "bytes": 573,
+            "hash": "bc4aba03f7942b62b00f150262517dfc47bf1d1351e7137bb022ea1397a1e25e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell.html",
+            "format": "html",
+            "bytes": 573,
+            "hash": "bc4aba03f7942b62b00f150262517dfc47bf1d1351e7137bb022ea1397a1e25e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell-v1.html",
+            "format": "html",
+            "bytes": 571,
+            "hash": "a296f04d3fc4565ca6865561816a4f8de94606a4ae420e888cdde44e6d6daa4d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell.html",
+            "format": "html",
+            "bytes": 571,
+            "hash": "a296f04d3fc4565ca6865561816a4f8de94606a4ae420e888cdde44e6d6daa4d",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "backend-funil.html",
+          "backend-funil.md",
+          "backend-funil.pdf",
+          "book-do-funil.json",
+          "index.html",
+          "pagina/downsell.html",
+          "pagina/upsell.html"
+        ],
+        "files": [
+          {
+            "path": "backend-funil-v1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "54fb2343f117a8f3b7957d07f600c46cbb5e0df32d20e6e9ea9e30bba39e71de",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "83e0ebd733fcd5f61096b9f70e020e1c0d0c3a7e42fbf154ec5dcdcc76a2656f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil-v1.pdf",
+            "format": "pdf",
+            "bytes": 27751,
+            "hash": "cf411df9160aab29ddb23930d99b95569eaf801437fa50685eda6759b62371fa",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "54fb2343f117a8f3b7957d07f600c46cbb5e0df32d20e6e9ea9e30bba39e71de",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "83e0ebd733fcd5f61096b9f70e020e1c0d0c3a7e42fbf154ec5dcdcc76a2656f",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "backend-funil.pdf",
+            "format": "pdf",
+            "bytes": 27751,
+            "hash": "cf411df9160aab29ddb23930d99b95569eaf801437fa50685eda6759b62371fa",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 2994,
+            "hash": "20f5a57336f81ccd5c2556c7b872a961a40749db106c44279c7fbe6eae56da7e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 7859,
+            "hash": "18fe53d8ddc3103d5b235a3a2ea1dfd428f6c9ac7401e17e8e319499f1885065",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell-v1.html",
+            "format": "html",
+            "bytes": 573,
+            "hash": "bc4aba03f7942b62b00f150262517dfc47bf1d1351e7137bb022ea1397a1e25e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/downsell.html",
+            "format": "html",
+            "bytes": 573,
+            "hash": "bc4aba03f7942b62b00f150262517dfc47bf1d1351e7137bb022ea1397a1e25e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell-v1.html",
+            "format": "html",
+            "bytes": 571,
+            "hash": "a296f04d3fc4565ca6865561816a4f8de94606a4ae420e888cdde44e6d6daa4d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/upsell.html",
+            "format": "html",
+            "bytes": 571,
+            "hash": "a296f04d3fc4565ca6865561816a4f8de94606a4ae420e888cdde44e6d6daa4d",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "cro-funil",
+      "contractGroup": "owner-document",
+      "contractHash": "f0bef05a14a62b867a8f6a4ef269917ead7286a5515999fc0fadd3dac4db0aef",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "cro.html",
+          "cro.md",
+          "cro.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 3252,
+            "hash": "30cad7a676052bc80838bbdc5be25b40cd759ae4b00396024777669bcf853598",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "a9026a265ec7135e5f1efee0a27d8d4ffeb8dfa7c04982a4406d14e3bb60d465",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "9174aab537dbba2de142c21ba2eaca786440e775649d26f61fc713cc7a434eb5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.pdf",
+            "format": "pdf",
+            "bytes": 26468,
+            "hash": "3310689ea05bb596a7fcbdeccf507cf1a95c3d4a48281625fbae5454a5201b26",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "a9026a265ec7135e5f1efee0a27d8d4ffeb8dfa7c04982a4406d14e3bb60d465",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "9174aab537dbba2de142c21ba2eaca786440e775649d26f61fc713cc7a434eb5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.pdf",
+            "format": "pdf",
+            "bytes": 26468,
+            "hash": "3310689ea05bb596a7fcbdeccf507cf1a95c3d4a48281625fbae5454a5201b26",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 8266,
+            "hash": "e51f885e99fb6745ccdffb601e276540d6a02a71aac7a068103e554408db8518",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "cro.html",
+          "cro.md",
+          "cro.pdf",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 3250,
+            "hash": "cb837da08a69816f9cd2c9fe8a4a106eaba462a600d3ef712dc688473fd36c7f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "a9026a265ec7135e5f1efee0a27d8d4ffeb8dfa7c04982a4406d14e3bb60d465",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "9174aab537dbba2de142c21ba2eaca786440e775649d26f61fc713cc7a434eb5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro-v1.pdf",
+            "format": "pdf",
+            "bytes": 26468,
+            "hash": "3310689ea05bb596a7fcbdeccf507cf1a95c3d4a48281625fbae5454a5201b26",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.html",
+            "format": "html",
+            "bytes": 541,
+            "hash": "a9026a265ec7135e5f1efee0a27d8d4ffeb8dfa7c04982a4406d14e3bb60d465",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.md",
+            "format": "markdown",
+            "bytes": 120,
+            "hash": "9174aab537dbba2de142c21ba2eaca786440e775649d26f61fc713cc7a434eb5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "cro.pdf",
+            "format": "pdf",
+            "bytes": 26468,
+            "hash": "3310689ea05bb596a7fcbdeccf507cf1a95c3d4a48281625fbae5454a5201b26",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 8264,
+            "hash": "bf73b338b0f03a78b6d3e42205139716a0c1292a4146473a661b286dc7db5c99",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "swipe-file",
+      "contractGroup": "dynamic-library",
+      "contractHash": "3611d769a52857d7fb5de455295327bf2fc1b9af5c70e765a5dcd718f5d13d00",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "briefing-swipe-file.html",
+          "briefing-swipe-file.md",
+          "briefing-swipe-file.pdf",
+          "index.html",
+          "swipe-file-index.html",
+          "swipe-file-index.md",
+          "swipe-file-index.pdf",
+          "swipe-file/gancho/problema/padrao-1.html",
+          "swipe-file/gancho/problema/padrao-1.md"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 3530,
+            "hash": "f2fbd9373c4fe27a0a67297f1dc0322f247f252942a167f7a85f35c7568cc73c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "797396f7d81072f9db5d04f12ea5264d1e08a1425aa931d1a3485e0cae8c5927",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 137,
+            "hash": "a630a4bf6fa83392514c9f5d96db67d1c8e895d56cc641a3c7bb19669781c4a5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 27310,
+            "hash": "09deeeb8fab30ab0c878e7743e0cdd0935085134f7eadeb1dca59728046d88c7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 8771,
+            "hash": "86d028894644742f0be335edc8b1d54619715ef44c6f33338a5b84861471ec20",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.html",
+            "format": "html",
+            "bytes": 507,
+            "hash": "047594556a6108badc1156f2b759d2f8eacba0ca5970b854bfc18e463721a5e4",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "af4cac386843e3e22e4a2c0b87ddd94a2923f54e109bf4d6e503dfe4f2cd2195",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 23959,
+            "hash": "6140258eb14315b64242ae110a0a7415ba9a924f65a44594710c7f128c68f659",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/padrao-1.html",
+            "format": "html",
+            "bytes": 584,
+            "hash": "8096225592f96bdca9e051a905afea3c98640fe4285cf50146a9768165b92c44",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/padrao-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "34b2d2b99739306ac5c601d811c98d761b010dd057ed48065a967b158accb73f",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/v1/padrao-1.html",
+            "format": "html",
+            "bytes": 584,
+            "hash": "8096225592f96bdca9e051a905afea3c98640fe4285cf50146a9768165b92c44",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/v1/padrao-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "34b2d2b99739306ac5c601d811c98d761b010dd057ed48065a967b158accb73f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "797396f7d81072f9db5d04f12ea5264d1e08a1425aa931d1a3485e0cae8c5927",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 137,
+            "hash": "a630a4bf6fa83392514c9f5d96db67d1c8e895d56cc641a3c7bb19669781c4a5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 27310,
+            "hash": "09deeeb8fab30ab0c878e7743e0cdd0935085134f7eadeb1dca59728046d88c7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.html",
+            "format": "html",
+            "bytes": 507,
+            "hash": "047594556a6108badc1156f2b759d2f8eacba0ca5970b854bfc18e463721a5e4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "af4cac386843e3e22e4a2c0b87ddd94a2923f54e109bf4d6e503dfe4f2cd2195",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 23959,
+            "hash": "6140258eb14315b64242ae110a0a7415ba9a924f65a44594710c7f128c68f659",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "briefing-swipe-file.html",
+          "briefing-swipe-file.md",
+          "briefing-swipe-file.pdf",
+          "index.html",
+          "swipe-file-index.html",
+          "swipe-file-index.md",
+          "swipe-file-index.pdf",
+          "swipe-file/gancho/problema/padrao-1.html",
+          "swipe-file/gancho/problema/padrao-1.md"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 3528,
+            "hash": "c84f3fa5aadadc4bd05e075918108c47109db24fc88f5d46efe313ba2ec125d2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "797396f7d81072f9db5d04f12ea5264d1e08a1425aa931d1a3485e0cae8c5927",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 137,
+            "hash": "a630a4bf6fa83392514c9f5d96db67d1c8e895d56cc641a3c7bb19669781c4a5",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 27310,
+            "hash": "09deeeb8fab30ab0c878e7743e0cdd0935085134f7eadeb1dca59728046d88c7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 8769,
+            "hash": "7db6e7980be0a451f44069693035960c2fea5417141e6543915a30368d661a77",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.html",
+            "format": "html",
+            "bytes": 507,
+            "hash": "047594556a6108badc1156f2b759d2f8eacba0ca5970b854bfc18e463721a5e4",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "af4cac386843e3e22e4a2c0b87ddd94a2923f54e109bf4d6e503dfe4f2cd2195",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 23959,
+            "hash": "9f07b3890b45c4e20709a8ab607cbdcb36e1f7a914ec98e5979396374e2c7ca3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/padrao-1.html",
+            "format": "html",
+            "bytes": 584,
+            "hash": "8096225592f96bdca9e051a905afea3c98640fe4285cf50146a9768165b92c44",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/padrao-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "34b2d2b99739306ac5c601d811c98d761b010dd057ed48065a967b158accb73f",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/v1/padrao-1.html",
+            "format": "html",
+            "bytes": 584,
+            "hash": "8096225592f96bdca9e051a905afea3c98640fe4285cf50146a9768165b92c44",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "swipe-file/gancho/problema/v1/padrao-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "34b2d2b99739306ac5c601d811c98d761b010dd057ed48065a967b158accb73f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.html",
+            "format": "html",
+            "bytes": 543,
+            "hash": "797396f7d81072f9db5d04f12ea5264d1e08a1425aa931d1a3485e0cae8c5927",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.md",
+            "format": "markdown",
+            "bytes": 137,
+            "hash": "a630a4bf6fa83392514c9f5d96db67d1c8e895d56cc641a3c7bb19669781c4a5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/briefing-swipe-file.pdf",
+            "format": "pdf",
+            "bytes": 27310,
+            "hash": "09deeeb8fab30ab0c878e7743e0cdd0935085134f7eadeb1dca59728046d88c7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.html",
+            "format": "html",
+            "bytes": 507,
+            "hash": "047594556a6108badc1156f2b759d2f8eacba0ca5970b854bfc18e463721a5e4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.md",
+            "format": "markdown",
+            "bytes": 134,
+            "hash": "af4cac386843e3e22e4a2c0b87ddd94a2923f54e109bf4d6e503dfe4f2cd2195",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "v1/swipe-file-index.pdf",
+            "format": "pdf",
+            "bytes": 23959,
+            "hash": "9f07b3890b45c4e20709a8ab607cbdcb36e1f7a914ec98e5979396374e2c7ca3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "bonus-funil",
+      "contractGroup": "dynamic-library",
+      "contractHash": "3b81bcfbd58a48e7c912a018fc037ea8cada9bbcc20ea3c90ad55832bf10550b",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "bonus/checklist-de-execucao/item-1.html",
+          "bonus/checklist-de-execucao/item-1.md",
+          "bonus/checklist-de-execucao/item-1.pdf",
+          "bonus/index.html",
+          "book-do-funil.json",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "bonus/checklist-de-execucao/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/v1/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 3813,
+            "hash": "dc64c2d50dcafaf3db5ca4476f010fd358402aff9b0c605bde6d39195cc7d7ce",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 9224,
+            "hash": "dc47ff1b6a119e1ac343d2227ffb4a659f9c263a7096f61a0673a2b096d3c169",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "bonus/checklist-de-execucao/item-1.html",
+          "bonus/checklist-de-execucao/item-1.md",
+          "bonus/checklist-de-execucao/item-1.pdf",
+          "bonus/index.html",
+          "book-do-funil.json",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "bonus/checklist-de-execucao/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/v1/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 3811,
+            "hash": "ac743cd041eee1ba1f2e9fb9edd2d6228ebffb3e8ae11ad903b04868ad9aaf4f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 9222,
+            "hash": "17ff0b7bea94dcef88a9aa34fa8a9b76ea834153ead2b5a56d292ce8fed73ed8",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

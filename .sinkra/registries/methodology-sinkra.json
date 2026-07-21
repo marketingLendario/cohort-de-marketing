@@ -1,0 +1,54 @@
+{
+  "$schema": "methodology-sinkra-v1",
+  "schema_version": "1.0.0",
+  "description": "Base metodológica + consultive + educative para agents do /sinkra-pipeline V5",
+  "status_marker": "PLACEHOLDER_V5_METODOLOGIA_PENDING",
+  "status_marker_detail": {
+    "phase": "PLACEHOLDER",
+    "blocker": "V5-METODOLOGIA-AS-INPUT decisões 1-6 pendentes (Epic V6 — Pedro Sprint 3.2+)",
+    "consumers_warning": "Agents que consomem este arquivo (sinkra-chief Phase 0 + leaf agents) DEVEM checar status_marker. SE PLACEHOLDER → operar com defaults sem methodology context enrichment.",
+    "ref_decisions": ".claude/skills/sinkra-pipeline/data/V5-METODOLOGIA-SINKRA-AS-INPUT.md (6 decisions PAUSED)",
+    "promotion_to_active": "Quando decisions 1-6 resolvidas + content materializado, mudar status_marker → ACTIVE"
+  },
+  "status": "PLACEHOLDER — V5-METODOLOGIA-AS-INPUT decisões 1-6 pendentes",
+  "created_at": "2026-06-05T00:00:00Z",
+  "last_updated": "2026-06-05T00:00:00Z",
+  "canonical_schemas_ref": ".claude/skills/sinkra-pipeline/data/sinkra-output-v5-schema.json",
+  "decision_records_ref": ".claude/skills/sinkra-pipeline/data/V5-DECISIONS-LOG.md",
+  "methodology_concepts": [
+    {
+      "id": "squad",
+      "definition": "Unidade organizacional de execução V5 (substitui BU como primário)",
+      "composition": "Human(s) + Agent(s) + Worker(s) + Clone(s)",
+      "scenarios": ["solo", "small_team", "medium", "enterprise"],
+      "anti_patterns": ["empreendedor_solo_declara_0_squads"]
+    },
+    {
+      "id": "bu",
+      "definition": "Unidade de negócio — APENAS edge case multi-empresa/multi-mercado",
+      "when_use": "Founder com 2 empresas OR unidades não comunicantes",
+      "scenarios": ["multi_company", "multi_business_separated"]
+    },
+    {
+      "id": "executor_types",
+      "canonical": ["Human", "Agent", "Worker", "Clone"],
+      "decision_tree_ref": "phase03 4-perguntas (eliminada Q2 — agora inline em cada task V5)"
+    },
+    {
+      "id": "lifecycle_5_state",
+      "states": ["DRAFT", "REVIEW", "ACTIVE", "DEPRECATED", "ARCHIVED"],
+      "per_entity_type": ["root entities never die"]
+    }
+  ],
+  "case_scenarios": [
+    {
+      "id": "cs_empreendedor_solo",
+      "trigger": "company.size.employees == 1",
+      "consultive_response": "Mesmo sozinho você tem SQUADS VIRTUAIS — vamos estruturar (1 humano + N agents + N clones + N workers)",
+      "educational_examples": ["accountable de todas tasks = founder", "executor varia por task (humano OR agente OR worker)"]
+    }
+  ],
+  "anti_patterns": [],
+  "best_practices": [],
+  "consultive_hints": {}
+}

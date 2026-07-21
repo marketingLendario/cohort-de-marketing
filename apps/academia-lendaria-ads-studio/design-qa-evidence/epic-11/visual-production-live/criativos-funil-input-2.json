@@ -1,0 +1,155 @@
+{
+  "workspaceId": "81000000-0000-0000-0000-000000000111",
+  "projectId": "82000000-0000-0000-0000-000000000112",
+  "brief": {
+    "schemaVersion": "1.0.0",
+    "meta": {
+      "createdAt": "2026-07-12T02:40:28.717Z",
+      "updatedAt": "2026-07-12T02:40:28.717Z",
+      "completionStatus": "ready_for_document_pack_parity"
+    },
+    "project": {
+      "slug": "epic-11-document-pack-cli",
+      "name": "Epic 11 · Document pack · CLI",
+      "currentStage": "producao-funil",
+      "startingPoint": "do-zero",
+      "offerType": "especialista",
+      "operator": "dono",
+      "regulatedNiche": "saude",
+      "voice": "marca",
+      "ticketRange": "baixo",
+      "ownerName": "Academia Fit"
+    },
+    "market": {
+      "niche": "emagrecimento sustentável para mulheres 35+",
+      "productCategory": "programa digital de saúde e hábitos",
+      "targetAudience": "Mulheres com 35 anos ou mais que vivem o efeito sanfona e buscam consistência sem dieta restritiva.",
+      "researchMode": "rede",
+      "awarenessLevel": "consciente_do_problema",
+      "marketSophistication": "alto",
+      "trafficTemperature": "frio",
+      "trafficSource": "pago",
+      "avatarSummary": "Mulher 35+, com rotina cheia, que já tentou dietas e desconfia de promessas rápidas.",
+      "dominantPain": "Perder peso e recuperar tudo por não conseguir sustentar a rotina."
+    },
+    "offer": {
+      "name": "Método Consistência 90",
+      "promise": "Construir uma rotina sustentável de emagrecimento em 90 dias sem dieta restritiva.",
+      "uniqueMechanism": "Ciclo de 3 Fases: Desinflamar, Reprogramar e Manter.",
+      "problemMechanism": "Dietas isoladas ignoram a manutenção de hábitos e alimentam o ciclo de recomeços.",
+      "solutionMechanism": "O Ciclo de 3 Fases combina início simples, repetição guiada e manutenção obrigatória.",
+      "exactPrice": 497,
+      "guarantee": "30 dias de garantia, com devolução integral conforme os termos da oferta.",
+      "bonuses": [
+        "Checklist semanal anti-sanfona",
+        "E-book Anti-Sanfona",
+        "Workbook Fase 1"
+      ],
+      "deliverables": [
+        "Programa em vídeo de 90 dias",
+        "Plano prático",
+        "Comunidade Consistência"
+      ],
+      "proofAssets": []
+    },
+    "funnel": {
+      "recommendedFormat": "quiz de diagnóstico seguido de página de vendas",
+      "closingDestination": "checkout",
+      "segmentationAxis": "perfil de decisão: emocional, racional ou pragmático",
+      "captureMoment": "antes do resultado do quiz"
+    },
+    "brand": {
+      "designMode": "existing-design-md",
+      "approvedDirection": "dark premium com ouro e azul água"
+    },
+    "channels": {
+      "primaryCtaText": "Começar meu ciclo de 90 dias",
+      "primaryCtaUrl": "https://fixture.local/academia-fit/checkout"
+    },
+    "data": {
+      "dataSourceNotes": "Fixture de paridade baseada exclusivamente nos arquivos reais de projetos/academia-fit."
+    }
+  },
+  "context": {
+    "artifacts": [
+      {
+        "artifactType": "copy",
+        "title": "Fundação de copy confirmada",
+        "path": "copy.md",
+        "content": "# copy.md — Fonte única de mensagem\n\n## Diagnóstico (Schwartz)\n- Nível: **4** (consciente do problema)\n- Big Idea: **Emagrecer sem recomeçar toda segunda-feira**\n\n## Mecanismo do problema\nDietas atacam o peso na balança, não o ciclo hábito + inflamação + menopausa.\n\n## Mecanismo da solução\nCiclo de 3 Fases com Fase 3 obrigatória (Manter).\n\n## Headlines (banco)\n1. Como perder 8kg em 90 dias sem contar caloria\n2. Se você tem 35 anos ou mais, precisa entender isso antes de emagrecer de novo\n3. O erro que 9 em 10 mulheres cometem na dieta\n4. Pare de recomeçar toda segunda-feira\n5. Emagrecer é como subir montanha — os acidentes acontecem na descida\n6. Demorei anos para entender minha relação com a comida\n7. Comer bem não precisa ser complicado (Apify @emagrecerdevez)\n8. 15 minutos por dia podem mudar mais do que você imagina\n9. O que ninguém te conta sobre menopausa e peso\n10. Protocolo de 3 fases para quem já viveu efeito sanfona\n\n## Bullets\n- Fase 1 desinflama em 7 dias sem cortar grupos alimentares\n- Cardápio com ingredientes de mercado comum\n- Ritual de 12 minutos para dias sem tempo\n- Comunidade de mulheres 35+ no mesmo ciclo\n- Protocolo de manutenção para não voltar ao peso antigo\n- Checklist semanal pronto (não precisa pensar no que fazer)\n- Aulas em vídeo curtas (máx. 15 min)\n- Suporte em comunidade 7 dias por semana\n- Plano para social e restaurante\n- Garantia 30 dias\n\n## Objeções\n- \"Não tenho tempo\" → ritual 12 min\n- \"Já tentei de tudo\" → Fase 3 Manter é diferente\n- \"É caro\" → R$ 5,52/dia por 90 dias\n"
+      },
+      {
+        "artifactType": "design",
+        "title": "Design System Academia Fit",
+        "path": "DESIGN.md",
+        "content": "---\nname: Academia Fit\nversion: 1.0\ncolors:\n  primary: \"#C9B298\"\n  secondary: \"#30B0C7\"\n  surface: \"#0A0A0C\"\n  surface-elevated: \"#131316\"\n  text: \"#FAFAFA\"\n  text-muted: \"#A3A3A3\"\n  accent-warm: \"#FF9500\"\ntypography:\n  display: Newsreader\n  body: Hanken Grotesk\n  scale:\n    h1: 2.5rem\n    h2: 1.5rem\n    body: 1rem\n    small: 0.875rem\nspacing:\n  unit: 8px\n  card-padding: 16px\n  section-gap: 32px\nradius:\n  control: 2px\n  card: 4px\n  panel: 6px\ncomponents:\n  button-primary: \"bg primary, text on-deep, padding 10px 20px, radius 2px, caps tracked\"\n  card: \"bg surface-elevated, border 1px hairline gold, radius 4px\"\n---\n\n# Design System — Academia Fit\n\n## Princípios\n\n- Dark premium: fundo #0A0A0C, texto #FAFAFA\n- Ouro como sinal de ação (#C9B298) — regra dos 8%\n- Água para destaques de confiança (#30B0C7)\n- Sem gradientes exagerados em CTAs\n\n## Tokens\n\nVer `tokens.json` para consumo programático.\n\n## Preview\n\nAbra `preview.html` no navegador via servidor HTTP local.\n"
+      },
+      {
+        "artifactType": "competitorDossier",
+        "title": "Dossiê FitFlow",
+        "path": "espiao/dossie-fitflow.md",
+        "content": "# Dossiê: FitFlow Academy\n\nData: 07/07/2026\nModo: Meta Ad Library (roteiro) + Apify Instagram/TikTok nicho + análise\n\n## Resumo executivo\n\nFitFlow vende programa 12 semanas para mulheres 30+. Força: prova social e hook de erro comum. Brecha principal: **zero narrativa de manutenção** após o programa.\n\n## Anúncios e hooks (padrão do nicho — @emagrecerdevez Apify)\n\n| Métrica | Hook / padrão |\n|---------|---------------|\n| @emagrecerdevez | 4142 likes | \"Vitamina B12: você está recebendo o suficiente? 😱💊 Fundamental para energia,...\" |\n| @emagrecerdevez | 2069 likes | \"🌏🧬 Um anúncio que pode mudar a história da medicina.  A possibilidade de tra...\" |\n| @emagrecerdevez | 1447 likes | \"Sal de ouro!! Receita no vídeo!!! Salva para fazer essa semana!!!  S1ga nossa p...\" |\n| @emagrecerdevez | 1232 likes | \"🧬 A ciência confirma: sua mãe está sempre com você! As células dela perman...\" |\n| @emagrecerdevez | 1193 likes | \"🍞 De Pão a Torrada: O Processo  ➡️ Quando o pão é aquecido e transformado em...\" |\n| @emagrecerdevez | 1014 likes | \"💖✨ Se você está tentando secar, perder gordura e conquistar um corpo mais def...\" |\n| @emagrecerdevez | 402 likes | \"Muitas pessoas os ignoram… mas estes são alguns dos alimentos mais completos di...\" |\n| @emagrecerdevez | 402 likes | \"As embalagens plásticas podem causar danos à saúde e ao meio ambiente. Danos ...\" |\n\n## Hook vencedor modelado\n\"Descobri o erro que 9 em 10 mulheres cometem na dieta\" — Score 8/10\n\n## Brechas para Academia Fit\n- Não fala de Fase 3 (manutenção permanente)\n- Preço só na call (fricção)\n- Ignora menopausa 35+ (oportunidade TikTok 5,2M plays)\n- Não endereça efeito sanfona com verbatim do cliente\n\n## Oportunidade de posicionamento\nCiclo de 3 Fases com **Manter** como diferencial vs programas de 30 dias.\n"
+      },
+      {
+        "artifactType": "funnel",
+        "title": "Mapa de execução do funil",
+        "path": "funil.md",
+        "content": "# Mapa de Execução — N12 · Academia Fit\n\nData: 07/07/2026\nProjeto: academia-fit · Nicho: emagrecimento sustentável · Mulheres 35+\n\n## Diagnóstico de consciência (Schwartz)\n\n| Campo | Valor |\n|-------|-------|\n| Nível | **4** — consciente do problema |\n| Dor dominante | Efeito sanfona: \"Já tentei de tudo, perco 3kg e volto tudo\" |\n| Ticket | Baixo (R$ 497 entrada) |\n| Destino | Venda direta (checkout) |\n| Funil prescrito | **Quiz de diagnóstico** → página de resultado segmentada → nutrição → venda |\n\n## Por que quiz e não VSL fria\n\nPúblico nível 4 já sabe que tem problema, mas não confia em mais uma dieta. O quiz nomeia o perfil (Emocional / Racional / Pragmático) e personaliza a oferta antes do pitch.\n\n## Ordem N12 adaptada (25 skills)\n\n| # | Peça | Skill | Status |\n|---|------|-------|--------|\n| 1 | Pesquisa avatar | avatar-funil | ✓ |\n| 2 | Dossiê concorrente | espiao-do-concorrente | ✓ |\n| 3 | Tendências | trend-hunting | ✓ |\n| 4 | Swipe file | swipe-file | ✓ |\n| 5 | Offerbook | offerbook | ✓ |\n| 6 | Design | design-md | ✓ |\n| 7 | Diagnóstico funil | metodo-funil | ✓ |\n| 8 | Copy fundação | copy-funil | ✓ |\n| 9 | Quiz | quiz-funil | ✓ |\n| 10 | Página vendas | pagina-vendas-funil | ✓ |\n| 11 | E-mails | email-funil | ✓ |\n| 12 | Conteúdo orgânico | conteudo-funil | ✓ |\n| 13 | Criativos pagos | criativos-funil | ✓ |\n| 14 | VSL (paralelo escala) | vsl-funil | ✓ |\n| 15 | Advertorial (topo frio) | advertorial-funil | ✓ |\n| 16 | Lançamento PLF | lancamento-funil | ✓ |\n| 17 | Webinário | webinario-funil | ✓ |\n| 18 | WhatsApp | whatsapp-funil | ✓ |\n| 19 | Bônus | bonus-funil | ✓ |\n| 20 | Mockups | mockup-produto-funil | ✓ |\n| 21 | Recuperação | recuperacao-funil | ✓ |\n| 22 | Back-end | backend-funil | ✓ |\n| 23 | CRO | cro-funil | ✓ |\n| 24 | Status | status-funil | ✓ |\n\n## Plano de aquisição\n\n1. **Tráfego pago:** criativos modelados em @emagrecerdevez (Apify) → quiz\n2. **Orgânico:** Reels semanais (roteiros em conteudo/)\n3. **Recuperação:** cascata carrinho + WhatsApp\n4. **Escala:** VSL paralela para público nível 3 após validar quiz\n\n## Você está aqui\n\nFunil montado. Próximo passo operacional: **tráfego no quiz + teste A/B headline** (cro.md).\n\n## KPIs alvo (antes de escalar)\n\n| Etapa | Meta |\n|-------|------|\n| Quiz → lead | 35% |\n| Lead → checkout | 12% |\n| Checkout → compra | 25% |\n"
+      },
+      {
+        "artifactType": "offerbook",
+        "title": "Offerbook confirmado",
+        "path": "offerbook.md",
+        "content": "# Offerbook — Método Consistência 90\n\n## Perfil do Projeto\n- Situação de partida: do-zero\n- Tipo de oferta: especialista\n- Quem opera: dono\n- Nicho regulado: saúde/médico (linguagem de possibilidade)\n- Voz: marca\n- Ticket: baixo\n- Destino do fechamento: venda-direta\n\n## Bloco 1 — História da transformação\nMaria, 42 anos, mãe e analista. Perdeu 8kg em 90 dias sem dieta restritiva. O turning point foi parar de recomeçar toda segunda-feira.\n\n## Bloco 2 — Mecanismo Único\n**Ciclo de 3 Fases:** Desinflamar (7 dias) → Reprogramar (60 dias) → Manter (23 dias + protocolo vitalício)\n\n## Bloco 3 — Prova\nDepoimentos de mulheres 35+; antes/depois honesto (sem promessa de resultado garantido)\n\n## Bloco 4 — Oferta principal\nPrograma Método Consistência 90 — acesso 12 meses\n\n## Bloco 5 — Stack de valor\n| Item | Valor percebido |\n|------|-----------------|\n| Programa 90 dias (vídeo + plano) | R$ 1.997 |\n| Comunidade Consistência | R$ 497 |\n| Checklist semanal anti-sanfona | R$ 197 |\n| E-book Anti-Sanfona | R$ 97 |\n| Workbook Fase 1 | R$ 147 |\n| **Total ancorado** | **R$ 2.935** |\n| **Investimento hoje** | **R$ 497** |\n\n## Bloco 6 — Bônus confirmados\n1. Checklist semanal (entregue)\n2. E-book Anti-Sanfona (entregue)\n3. Workbook Fase 1 (entregue)\n\n## Bloco 7 — Garantia\n30 dias — devolução integral se aplicar o método e não ver progresso mensurável\n\n## Bloco 8 — Escassez\nTurma limitada a 50 vagas por trimestre (turma jul/2026)\n"
+      },
+      {
+        "artifactType": "avatar",
+        "title": "Pesquisa de avatar",
+        "path": "relatorio-avatar.md",
+        "content": "# Pesquisa de Avatar: Emagrecimento sustentável — Mulheres 35+\n\nData: 07/07/2026\nModo de coleta: Rede (Apify Instagram + TikTok + Gshow + Reddit)\nAmostra: 47 trechos de 4 frentes — completa\n\n## Resumo executivo\n\nPúblico feminino 35+ busca emagrecimento sem efeito sanfona. Dor número 1: ciclo de perda e ganho repetido. Frase-mestre: \"Já tentei de tudo, perco 3kg e volto tudo.\" Segunda dor confirmada em rede: relação tóxica com comida (Gshow, jan/2026).\n\n## Fontes consultadas\n\n| Frente | Fonte | Trechos |\n|--------|-------|---------|\n| Reviews | Reclame Aqui, Google | 8 |\n| Comunidades | Reddit r/loseit, r/fitness40plus | 12 |\n| Redes | Apify @emagrecerdevez, TikTok #menopausa, Gshow | 27 |\n\n## Roteiro de coleta (coletor_dor.py)\n\n| Label | URL |\n|-------|-----|\n| reclame_aqui | https://www.google.com/search?q=emagrecimento+sustent%C3%A1vel+mulheres+35%2B+reclame+aqui |\n| google_reviews | https://www.google.com/search?q=emagrecimento+sustent%C3%A1vel+mulheres+35%2B+avalia%C3%A7%C3%B5es+problema+reclama%C3%A7%C3%A3o |\n| capterra | https://www.google.com/search?q=site%3Acapterra.com.br+emagrecimento+sustent%C3%A1vel+mulheres+35%2B |\n| reddit | https://www.google.com/search?q=site%3Areddit.com+emagrecimento+sustent%C3%A1vel+mulheres+35%2B+problema |\n\n## 1. Dores ranqueadas\n\n| # | Tema | Citação verbatim | Fonte | Score |\n|---|------|------------------|-------|-------|\n| 1 | Efeito sanfona | \"Já tentei de tudo, perco 3kg e volto tudo\" | Instagram comunidade | 9/10 |\n| 2 | Relação com comida | \"A minha relação com a comida é meio tóxica... demorei anos para conseguir lidar\" | Gshow, 08/01/2026 | 9/10 |\n| 3 | Menopausa e peso | \"Belly fat won't budge no matter what I try\" | Reddit r/fitness40plus | 8/10 |\n| 4 | Falta de tempo | \"Trabalho o dia inteiro, não consigo cozinhar dieta\" | Reddit r/loseit | 7/10 |\n| 5 | Desconfiança | \"Já gastei demais em programa que não funcionou\" | Reclame Aqui | 7/10 |\n\n## 2. O vácuo\n\nDor em comunidade sem oferta clara: **manutenção pós-21 dias** — aparece em threads de recaída, ausente em reviews de programas de 30 dias.\n\n## 3. Avatar (7 dimensões)\n\n1. **Demografia:** Mulher, 35–48 anos, classe B/C, Brasil\n2. **Psicografia:** Medo de falhar de novo; quer autoestima e energia\n3. **Comportamento:** Já tentou 3+ dietas; abandona na segunda semana\n4. **Voz:** \"cansei\", \"sanfona\", \"não aguento mais\"; não usa \"regime\"\n5. **Objeções:** Tempo, dinheiro gasto, não tenho disciplina\n6. **Contexto:** Instagram/TikTok à noite, cansada, 3 min de atenção\n7. **Decisão:** Emocional primeiro; precisa prova social forte\n\n## 4. Focus group sintético\n\nMensagem testada: \"Como perder 8kg em 90 dias sem recomeçar toda segunda-feira\"\n\n| Persona | Nota | Refino |\n|---------|------|--------|\n| Racional | 7/10 | Quer ver estudo ou protocolo em 3 fases |\n| Emocional | 9/10 | Ressoa \"sem recomeçar\" |\n| Pragmático | 8/10 | Pergunta quantos minutos por dia |\n\nVeredito: pronta para mídia com prova social no quiz.\n\n## 5. Três jogadas recomendadas\n\n1. Rodar quiz com hook menopausa 35+ (dado TikTok 5,2M plays)\n2. Carrossel confissão usando verbatim Gshow\n3. Espionar FitFlow e posicionar Fase 3 Manutenção\n"
+      },
+      {
+        "artifactType": "swipeBrief",
+        "title": "Briefing de swipe file",
+        "path": "swipe/briefing-swipe-file.md",
+        "content": "# Briefing Swipe File\n\n## Padrões Apify\n| @emagrecerdevez | 4142 likes | \"Vitamina B12: você está recebendo o suficiente? 😱💊 Fundamental para energia,...\" |\n| @emagrecerdevez | 2069 likes | \"🌏🧬 Um anúncio que pode mudar a história da medicina.  A possibilidade de tra...\" |\n| @emagrecerdevez | 1447 likes | \"Sal de ouro!! Receita no vídeo!!! Salva para fazer essa semana!!!  S1ga nossa p...\" |\n| @emagrecerdevez | 1232 likes | \"🧬 A ciência confirma: sua mãe está sempre com você! As células dela perman...\" |\n| @emagrecerdevez | 1193 likes | \"🍞 De Pão a Torrada: O Processo  ➡️ Quando o pão é aquecido e transformado em...\" |\n| @emagrecerdevez | 1014 likes | \"💖✨ Se você está tentando secar, perder gordura e conquistar um corpo mais def...\" |\n| @emagrecerdevez | 402 likes | \"Muitas pessoas os ignoram… mas estes são alguns dos alimentos mais completos di...\" |\n| @emagrecerdevez | 402 likes | \"As embalagens plásticas podem causar danos à saúde e ao meio ambiente. Danos ...\" |\n\n## Para copy\nHook confissão + número + CTA quiz\n"
+      }
+    ],
+    "mediaIntake": {
+      "items": [
+        {
+          "id": "competitor-audio-reference",
+          "role": "competitor-ad",
+          "source": {
+            "origin": "url",
+            "url": "https://media.w3.org/2010/05/sintel/trailer.mp4"
+          },
+          "language": "en"
+        }
+      ]
+    },
+    "visualProduction": {
+      "formats": [
+        "feed",
+        "story",
+        "square"
+      ],
+      "variants": 1,
+      "personas": [],
+      "likenessAuthorizations": [],
+      "cta": "Saiba mais",
+      "archetypes": [
+        "dark_editorial"
+      ],
+      "items": [
+        {
+          "id": "creative-pilot",
+          "title": "Pare de recomeçar toda segunda-feira",
+          "description": "Roteiro e banner piloto para Meta Ads, com voz acolhedora e direta, sem promessa clínica ou resultado garantido."
+        }
+      ]
+    }
+  },
+  "operatorInput": "Continuação auditável de criativos-funil.\n\n1. Qual é o page_id ou URL pública verificável da página concorrente para liberar uma próxima etapa de validação?\nResposta: Não existe page_id ou URL pública do concorrente nesta fixture. Trate o dossiê e o swipe confirmados como material offline fornecido; não afirme coleta ao vivo e mantenha publicação bloqueada.\n\n2. Você aprova o roteiro e os três conceitos de banner para geração dos arquivos visuais finais em outro run?\nResposta: Sim, aprovo explicitamente a copy, o roteiro e a direção visual desta amostra piloto para seguir ao gate visual. Isso não autoriza publicação.\n\n3. Deseja manter “Saiba mais” ou usar “Começar meu ciclo de 90 dias” como CTA?\nResposta: Use apenas os artefatos confirmados. Esta é uma peça piloto para revisão humana; marque qualquer fato ausente como pendente.\n\nNão repita perguntas respondidas. Produza a proposta final se todos os gates estiverem satisfeitos.",
+  "elicitationParentRunId": "b5d2a736-732e-4e1f-9fda-14536e9973c5"
+}

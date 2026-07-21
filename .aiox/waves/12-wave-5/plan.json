@@ -1,0 +1,80 @@
+{
+  "epic": "12",
+  "wave": 5,
+  "generated": "2026-07-16T23:50:13.628Z",
+  "total_stories": 1,
+  "total_batches": 1,
+  "estimated_effort_raw": "2h",
+  "calibration_multiplier": 0.3,
+  "estimated_effort_calibrated": "0.6h",
+  "calibration_source": "default",
+  "decomposition_candidates": [],
+  "external_dependencies": [
+    {
+      "from": "12.W5.1",
+      "dep": "12.W4.1"
+    },
+    {
+      "from": "12.W5.1",
+      "dep": "12.W4.2"
+    }
+  ],
+  "build_dependencies": [
+    {
+      "from": "12.W5.1",
+      "needs": "12.W4.1"
+    },
+    {
+      "from": "12.W5.1",
+      "needs": "12.W4.2"
+    }
+  ],
+  "dag_order": [
+    "12.W5.1"
+  ],
+  "batches": [
+    {
+      "batch": 0,
+      "parallel": true,
+      "stories": [
+        {
+          "id": "12.W5.1",
+          "title": "# STORY-12.W5.1 — E2E integrado, piloto de Pedro e release gate",
+          "status": "Ready",
+          "executor": "@qa",
+          "quality_gate": "@po",
+          "quality_gate_tools": [
+            "npm --prefix apps/academia-lendaria-ads-studio test",
+            "npm --prefix apps/academia-lendaria-ads-studio run typecheck",
+            "npm --prefix apps/academia-lendaria-ads-studio run lint",
+            "npm --prefix apps/academia-lendaria-ads-studio run build",
+            "npm --prefix apps/academia-lendaria-ads-studio run build:server",
+            "git diff --check",
+            "npm --prefix apps/academia-lendaria-ads-studio run test:db",
+            "npm --prefix apps/academia-lendaria-ads-studio run lint:db",
+            "cd apps/academia-lendaria-ads-studio && npx playwright test e2e/campaign-readiness-gate.spec.ts --config=playwright.config.ts --project=desktop --project=mobile",
+            "npm --prefix apps/academia-lendaria-ads-studio run evidence:privacy -- docs/qa/evidence/epic-12-campaign-readiness.json"
+          ],
+          "repo_target": "/Users/rafaelcosta/Projects/cohort-de-marketing",
+          "effort_raw": "2h",
+          "effort_calibrated": "0.6h",
+          "depends_on": [
+            "12.W4.1",
+            "12.W4.2"
+          ],
+          "tasks": 0,
+          "file": "docs/stories/epic-12/STORY-12.W5.1-integrated-e2e-and-pedro-pilot.md",
+          "spawn": {
+            "description": "Execute Story 12.W5.1 full cycle",
+            "name": "story-12.W5.1",
+            "subagent_type": "sinkra-full-cycle",
+            "isolation": "worktree",
+            "run_in_background": true,
+            "model": "sonnet",
+            "prompt": "Execute Story 12.W5.1 — complete lifecycle. Story file: docs/stories/epic-12/STORY-12.W5.1-integrated-e2e-and-pedro-pilot.md. Executor: @qa. Quality Gate: @po."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -45,6 +45,7 @@ export const skillCatalog = {
       ],
       "outputs": [
         "avatar.md",
+        "relatorio-avatar.md",
         "relatorio-avatar.html",
         "relatorio-avatar.pdf",
         "pesquisa-avatar-*/"
@@ -78,9 +79,10 @@ export const skillCatalog = {
         "avatar-funil (recomendado)"
       ],
       "outputs": [
-        "espiao/dossie-{concorrente}.md",
-        "espiao/dossie-{concorrente}.html",
-        "espiao/dossie-{concorrente}.pdf"
+        "espiao/index.html",
+        "espiao/dossie-*.md",
+        "espiao/dossie-*.html",
+        "espiao/dossie-*.pdf"
       ],
       "primaryArtifacts": [
         "competitorDossier"
@@ -111,9 +113,14 @@ export const skillCatalog = {
         "espiao-do-concorrente"
       ],
       "outputs": [
-        "trends-{data}.md",
-        "trends-{data}.html",
-        "variacoes-{data}.md"
+        "trends/index.html",
+        "trends/briefing-media-buyer.md",
+        "trends/trends-*.md",
+        "trends/trends-*.html",
+        "trends/trends-*.pdf",
+        "trends/variacoes-teste-*.md",
+        "trends/variacoes-teste-*.html",
+        "trends/variacoes-teste-*.pdf"
       ],
       "primaryArtifacts": [
         "trendReport"
@@ -145,9 +152,14 @@ export const skillCatalog = {
         "trend-hunting"
       ],
       "outputs": [
-        "swipe/briefing-swipe-file.md",
-        "swipe/briefing-swipe-file.html",
-        "swipe-file-index.html"
+        "swipe-file-index.md",
+        "swipe-file-index.html",
+        "swipe-file-index.pdf",
+        "briefing-swipe-file.md",
+        "briefing-swipe-file.html",
+        "briefing-swipe-file.pdf",
+        "swipe-file/*/*/*.md",
+        "swipe-file/*/*/*.html"
       ],
       "primaryArtifacts": [
         "swipeBrief"
@@ -284,7 +296,9 @@ export const skillCatalog = {
         "offerbook"
       ],
       "outputs": [
-        "copy.md"
+        "copy.md",
+        "copy.html",
+        "copy.pdf"
       ],
       "primaryArtifacts": [
         "copy"
@@ -316,8 +330,10 @@ export const skillCatalog = {
       ],
       "outputs": [
         "vsl.md",
-        "pagina/vsl-roteiro.html",
-        "pagina/vsl.html"
+        "vsl.html",
+        "vsl.pdf",
+        "pagina/vsl.html",
+        "pagina/vsl-roteiro.html"
       ],
       "primaryArtifacts": [
         "vsl"
@@ -350,6 +366,8 @@ export const skillCatalog = {
       ],
       "outputs": [
         "advertorial.md",
+        "advertorial.html",
+        "advertorial.pdf",
         "pagina/advertorial.html"
       ],
       "primaryArtifacts": [
@@ -382,7 +400,11 @@ export const skillCatalog = {
       ],
       "outputs": [
         "lancamento.md",
-        "lancamento.html"
+        "lancamento.html",
+        "lancamento.pdf",
+        "pagina/plc-1-roteiro.html",
+        "pagina/plc-2-roteiro.html",
+        "pagina/plc-3-roteiro.html"
       ],
       "primaryArtifacts": [
         "launch"
@@ -414,8 +436,13 @@ export const skillCatalog = {
       ],
       "outputs": [
         "webinario.md",
+        "webinario.html",
+        "webinario.pdf",
         "pagina/registro.html",
-        "pagina/roteiro-webinario.html"
+        "pagina/obrigado.html",
+        "pagina/webinario-roteiro.html",
+        "pagina/oferta.html",
+        "pagina/agendamento.html"
       ],
       "primaryArtifacts": [
         "webinar"
@@ -447,8 +474,9 @@ export const skillCatalog = {
       ],
       "outputs": [
         "quiz.md",
-        "pagina/quiz.html",
-        "pagina/resultado-*.html"
+        "quiz.html",
+        "quiz.pdf",
+        "pagina/quiz-app.html"
       ],
       "primaryArtifacts": [
         "quiz"
@@ -481,7 +509,8 @@ export const skillCatalog = {
       ],
       "outputs": [
         "pagina/index.html",
-        "pagina/pagina-vendas.md"
+        "pagina/pagina-vendas.md",
+        "pagina/index.pdf"
       ],
       "primaryArtifacts": [
         "salesPage"
@@ -513,7 +542,12 @@ export const skillCatalog = {
       ],
       "outputs": [
         "conteudo/roteiros.md",
-        "conteudo/carrosseis.html"
+        "conteudo/roteiros.html",
+        "conteudo/roteiros.pdf",
+        "carrossel/lote.html",
+        "carrossel/index.html",
+        "carrossel/v*/slides/*.png",
+        "carrossel/v*/*.zip"
       ],
       "primaryArtifacts": [
         "content"
@@ -577,9 +611,11 @@ export const skillCatalog = {
         "DESIGN.md"
       ],
       "outputs": [
-        "emails/nutricao.html",
-        "emails/venda.html",
-        "emails/recuperacao.html"
+        "emails/index.html",
+        "emails/trilhas.md",
+        "emails/trilhas.html",
+        "emails/trilhas.pdf",
+        "emails/trilha-*-email-*.html"
       ],
       "primaryArtifacts": [
         "emails"
@@ -611,7 +647,10 @@ export const skillCatalog = {
       ],
       "outputs": [
         "whatsapp.md",
-        "whatsapp/sequencia.md"
+        "whatsapp.html",
+        "whatsapp.pdf",
+        "whatsapp/index.html",
+        "whatsapp/*-*.html"
       ],
       "primaryArtifacts": [
         "whatsapp"
@@ -674,9 +713,10 @@ export const skillCatalog = {
         "DESIGN.md"
       ],
       "outputs": [
-        "bonus/checklist.md",
-        "bonus/ebook.html",
-        "bonus/workbook.pdf"
+        "bonus/index.html",
+        "bonus/*/*.md",
+        "bonus/*/*.html",
+        "bonus/*/*.pdf"
       ],
       "primaryArtifacts": [
         "bonuses"
@@ -708,7 +748,9 @@ export const skillCatalog = {
       ],
       "outputs": [
         "recuperacao.md",
-        "recuperacao.html"
+        "recuperacao.html",
+        "recuperacao.pdf",
+        "recuperacao/*.html"
       ],
       "primaryArtifacts": [
         "recovery"
@@ -739,7 +781,9 @@ export const skillCatalog = {
         "offerbook"
       ],
       "outputs": [
-        "back-end.md",
+        "backend-funil.md",
+        "backend-funil.html",
+        "backend-funil.pdf",
         "pagina/upsell.html",
         "pagina/downsell.html"
       ],
@@ -750,7 +794,7 @@ export const skillCatalog = {
         "cro-funil"
       ],
       "guard": "Lucro está no back-end.",
-      "artifactSummary": "back-end.md",
+      "artifactSummary": "backend-funil.md",
       "execution": {
         "mode": "local_skill",
         "requiresHumanReview": true
@@ -772,7 +816,8 @@ export const skillCatalog = {
       ],
       "outputs": [
         "cro.md",
-        "cro.html"
+        "cro.html",
+        "cro.pdf"
       ],
       "primaryArtifacts": [
         "cro"
@@ -969,6 +1014,41 @@ export const skillCatalog = {
       "execution": {
         "mode": "local_skill",
         "requiresHumanReview": true
+      }
+    },
+    {
+      "id": "ads-creative-factory",
+      "title": "Creative Factory",
+      "command": "/ads-creative-factory",
+      "description": "Produz lotes reais de imagens e legendas a partir dos finalistas curados, com arquétipos, formatos e gate visual.",
+      "phase": "Trafego",
+      "phaseColor": "#c9b298",
+      "order": 31,
+      "kind": "traffic",
+      "level": "Aula 3",
+      "skillPath": ".claude/skills/ads-creative-factory/SKILL.md",
+      "prerequisites": [
+        "briefista",
+        "estruturador",
+        "curadoria humana"
+      ],
+      "outputs": [
+        "criativos/factory/*/final/manifest.json",
+        "criativos/factory/*/final/legendas.md",
+        "criativos/factory/*/final/**/*.png"
+      ],
+      "primaryArtifacts": [
+        "creativeFactoryBatch"
+      ],
+      "feeds": [
+        "subida manual"
+      ],
+      "guard": "Gera propostas; somente itens aprovados pelo operador entram no pacote final.",
+      "artifactSummary": "Lote de imagens e legendas",
+      "execution": {
+        "mode": "local_skill",
+        "requiresHumanReview": true,
+        "mirrorTree": true
       }
     }
   ],
@@ -1172,6 +1252,11 @@ export const skillCatalog = {
       "from": "diagnosticador",
       "to": "estruturador",
       "type": "feedback"
+    },
+    {
+      "from": "estruturador",
+      "to": "ads-creative-factory",
+      "type": "dependency"
     }
   ]
 } as const;
@@ -1298,6 +1383,9 @@ export const skillUnlockRules = {
     "trafficDiagnosis": [
       "squad-trafego/diagnosis.json",
       "PAINEL-DA-SEMANA.yaml"
+    ],
+    "creativeFactoryBatch": [
+      "criativos/factory/*/final/manifest.json"
     ]
   },
   "skills": {
@@ -2212,6 +2300,1312 @@ export const skillUnlockRules = {
         "trafficCampaignPlan"
       ],
       "panelHint": "Recomenda uma alavanca com sucesso e reversao; nunca executa."
+    },
+    "ads-creative-factory": {
+      "type": "traffic",
+      "command": "/ads-creative-factory",
+      "primaryArtifacts": [
+        "creativeFactoryBatch"
+      ],
+      "requiredFields": [
+        "project.slug",
+        "channels.primaryCtaUrl",
+        "channels.adFormats"
+      ],
+      "recommendedFields": [
+        "project.voice",
+        "brand.brandAssets"
+      ],
+      "requiredArtifacts": [
+        "trafficCreativeBattery",
+        "trafficCampaignPlan"
+      ],
+      "recommendedArtifacts": [
+        "design",
+        "copy"
+      ],
+      "panelHint": "Gera imagens e legendas somente dos finalistas curados e exige aprovacao humana."
     }
   }
+} as const;
+export const skillExecutionMatrix = {
+  "schemaVersion": "1.0.0",
+  "skills": [
+    {
+      "id": "comecar",
+      "family": "environment",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "environment-bootstrap",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/environment-bootstrap/service.test.ts",
+        "server/skill-cli.test.ts",
+        "src/components/system-readiness.test.tsx",
+        "e2e/story-9-w1-onboarding.mjs",
+        "e2e/epic-11-setup-status-parity.mjs",
+        "design-qa-evidence/epic-11/setup-status-parity/evidence.json"
+      ]
+    },
+    {
+      "id": "avatar-funil",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "design-qa-evidence/epic-11/external-research-live/evidence.json",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-avatar-final/evidence.json"
+      ]
+    },
+    {
+      "id": "espiao-do-concorrente",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-espiao-final/evidence.json"
+      ]
+    },
+    {
+      "id": "trend-hunting",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "design-qa-evidence/epic-11/external-research-live/evidence.json",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-trend-final4/evidence.json"
+      ]
+    },
+    {
+      "id": "swipe-file",
+      "family": "research",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-swipe-final2/evidence.json"
+      ]
+    },
+    {
+      "id": "offerbook",
+      "family": "document",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/approval.integration.test.ts",
+        "server/document-pack/renderers.integration.test.ts",
+        "e2e/epic-11-book-visual.mjs",
+        "e2e/epic-11-document-pack-parity.mjs",
+        "src/components/project-journey.test.tsx"
+      ]
+    },
+    {
+      "id": "design-md",
+      "family": "brand",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "brand-design",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/brand-design/preview.test.ts",
+        "e2e/epic-11-visual-production.mjs",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/visual-production-live/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-design-url-final2/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-design-moodboard-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "metodo-funil",
+      "family": "document",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-metodo/evidence.json"
+      ]
+    },
+    {
+      "id": "copy-funil",
+      "family": "document",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/approval.integration.test.ts",
+        "e2e/epic-11-document-pack-parity.mjs",
+        "src/components/project-journey.test.tsx"
+      ]
+    },
+    {
+      "id": "vsl-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-vsl-final/evidence.json"
+      ]
+    },
+    {
+      "id": "advertorial-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-advertorial-final/evidence.json"
+      ]
+    },
+    {
+      "id": "lancamento-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-lancamento-final2/evidence.json"
+      ]
+    },
+    {
+      "id": "webinario-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-webinario-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "quiz-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-quiz-final/evidence.json"
+      ]
+    },
+    {
+      "id": "pagina-vendas-funil",
+      "family": "funnel-piece",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/approval.integration.test.ts",
+        "server/document-pack/sales-page-validator.test.ts",
+        "e2e/epic-11-sales-page-production.mjs",
+        "e2e/epic-11-cli-panel-handoff.mjs",
+        "e2e/epic-11-document-pack-parity.mjs",
+        "design-qa-evidence/epic-11/cli-sales-page-real-evidence.json",
+        "src/components/project-journey.test.tsx"
+      ]
+    },
+    {
+      "id": "conteudo-funil",
+      "family": "acquisition",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/external-research/parity.integration.test.ts",
+        "server/external-research/transcription.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-external-research-visual.mjs",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-real-content-media-final5/evidence.json"
+      ]
+    },
+    {
+      "id": "criativos-funil",
+      "family": "visual",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "visual-production",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/visual-production/runner.test.ts",
+        "src/components/visual-production-review.test.tsx",
+        "e2e/epic-11-visual-production.mjs",
+        "design-qa-evidence/epic-11/visual-production-live/evidence.json"
+      ]
+    },
+    {
+      "id": "email-funil",
+      "family": "communication",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-email-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "whatsapp-funil",
+      "family": "communication",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-whatsapp-final3/evidence.json"
+      ]
+    },
+    {
+      "id": "mockup-produto-funil",
+      "family": "visual",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "visual-production",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/visual-production/runner.test.ts",
+        "server/creative-factory/creative-factory.test.ts",
+        "src/components/visual-production-review.test.tsx",
+        "e2e/epic-11-visual-production.mjs",
+        "design-qa-evidence/epic-11/visual-production-live/evidence.json"
+      ]
+    },
+    {
+      "id": "bonus-funil",
+      "family": "support",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-bonus-final/evidence.json"
+      ]
+    },
+    {
+      "id": "recuperacao-funil",
+      "family": "backend",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-recuperacao-final4/evidence.json"
+      ]
+    },
+    {
+      "id": "backend-funil",
+      "family": "backend",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-backend-final2/evidence.json"
+      ]
+    },
+    {
+      "id": "cro-funil",
+      "family": "optimization",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "document-pack",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/document-pack/contracts-catalog.test.ts",
+        "server/document-pack/semantic-validators.test.ts",
+        "e2e/epic-11-document-pack-v2.mjs",
+        "design-qa-evidence/epic-11/document-pack-v2-controlled/evidence.json",
+        "design-qa-evidence/epic-11/document-pack-v2-real-cro-final/evidence.json"
+      ]
+    },
+    {
+      "id": "status-funil",
+      "family": "utility",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "project-status",
+      "missingCapabilities": [],
+      "evidence": [
+        "server/project-status/service.test.ts",
+        "server/project-status/status.test.ts",
+        "server/skill-cli.test.ts",
+        "src/lib/project-status.test.ts",
+        "src/components/project-overview.tsx",
+        "e2e/epic-11-setup-status-parity.mjs",
+        "design-qa-evidence/epic-11/setup-status-parity/evidence.json"
+      ]
+    },
+    {
+      "id": "zelador",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "briefista",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "estruturador",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "leitor-de-metricas",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "diagnosticador",
+      "family": "traffic",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "traffic-workflow",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/traffic-squad.spec.ts",
+        "e2e/story-9-w2-real-project.mjs"
+      ]
+    },
+    {
+      "id": "ads-creative-factory",
+      "family": "traffic-creative",
+      "panelMode": "specialized",
+      "parity": "full_e2e",
+      "adapter": "creative-factory",
+      "missingCapabilities": [],
+      "evidence": [
+        "e2e/epic-10-field-validation.mjs",
+        "server/creative-factory/creative-factory.test.ts"
+      ]
+    }
+  ]
+} as const;
+export const documentPackContracts = {
+  "schemaVersion": "2.0.0",
+  "contracts": [
+    {
+      "skillId": "design-md",
+      "contractGroup": "brand-system",
+      "requiredTextOutputs": [
+        {
+          "path": "DESIGN.md",
+          "format": "markdown"
+        },
+        {
+          "path": "tokens.json",
+          "format": "json"
+        },
+        {
+          "path": "preview.html",
+          "format": "html"
+        }
+      ],
+      "derivedOutputs": [],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "preview.html",
+        "title": "Identidade visual",
+        "phase": "Oferta e Fundação"
+      }
+    },
+    {
+      "skillId": "avatar-funil",
+      "contractGroup": "owner-document",
+      "requiredTextOutputs": [
+        {
+          "path": "relatorio-avatar.md",
+          "format": "markdown"
+        },
+        {
+          "path": "relatorio-avatar.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "relatorio-avatar.pdf",
+          "format": "pdf",
+          "sourcePath": "relatorio-avatar.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "relatorio-avatar.html",
+        "title": "Pesquisa de avatar",
+        "phase": "Pesquisa"
+      }
+    },
+    {
+      "skillId": "espiao-do-concorrente",
+      "contractGroup": "dynamic-library",
+      "requiredTextOutputs": [
+        {
+          "path": "espiao/index.html",
+          "format": "html",
+          "validationProfile": "collection-index-v1"
+        }
+      ],
+      "requiredCollections": [
+        {
+          "pathPattern": "espiao/dossie-*.md",
+          "format": "markdown",
+          "minItems": 1
+        },
+        {
+          "pathPattern": "espiao/dossie-*.html",
+          "format": "html",
+          "minItems": 1,
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "derivedOutputs": [],
+      "derivedCollectionOutputs": [
+        {
+          "sourcePattern": "espiao/dossie-*.html",
+          "outputExtension": ".pdf",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "espiao/index.html",
+        "title": "Dossiês de concorrentes",
+        "phase": "Pesquisa"
+      }
+    },
+    {
+      "skillId": "trend-hunting",
+      "contractGroup": "dynamic-library",
+      "requiredTextOutputs": [
+        {
+          "path": "trends/index.html",
+          "format": "html",
+          "validationProfile": "collection-index-v1"
+        },
+        {
+          "path": "trends/briefing-media-buyer.md",
+          "format": "markdown"
+        }
+      ],
+      "requiredCollections": [
+        {
+          "pathPattern": "trends/trends-*.md",
+          "format": "markdown",
+          "minItems": 1
+        },
+        {
+          "pathPattern": "trends/trends-*.html",
+          "format": "html",
+          "minItems": 1,
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "pathPattern": "trends/variacoes-teste-*.md",
+          "format": "markdown",
+          "minItems": 1
+        },
+        {
+          "pathPattern": "trends/variacoes-teste-*.html",
+          "format": "html",
+          "minItems": 1,
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "derivedOutputs": [],
+      "derivedCollectionOutputs": [
+        {
+          "sourcePattern": "trends/trends-*.html",
+          "outputExtension": ".pdf",
+          "renderer": "chromium-pdf"
+        },
+        {
+          "sourcePattern": "trends/variacoes-teste-*.html",
+          "outputExtension": ".pdf",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "trends/index.html",
+        "title": "Radar de tendências",
+        "phase": "Pesquisa"
+      }
+    },
+    {
+      "skillId": "offerbook",
+      "contractGroup": "owner-document",
+      "requiredTextOutputs": [
+        {
+          "path": "offerbook.md",
+          "format": "markdown"
+        },
+        {
+          "path": "offerbook.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "briefing-offerbook.md",
+          "format": "markdown"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "offerbook.docx",
+          "format": "docx",
+          "sourcePath": "offerbook.md",
+          "renderer": "offerbook-docx"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "offerbook.html",
+        "title": "Offerbook",
+        "phase": "Oferta e Fundação"
+      }
+    },
+    {
+      "skillId": "copy-funil",
+      "contractGroup": "owner-document",
+      "requiredTextOutputs": [
+        {
+          "path": "copy.md",
+          "format": "markdown"
+        },
+        {
+          "path": "copy.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "copy.pdf",
+          "format": "pdf",
+          "sourcePath": "copy.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "copy.html",
+        "title": "Fundação da copy",
+        "phase": "Oferta e Fundação"
+      }
+    },
+    {
+      "skillId": "pagina-vendas-funil",
+      "contractGroup": "funnel-page-pack",
+      "requiredTextOutputs": [
+        {
+          "path": "pagina/pagina-vendas.md",
+          "format": "markdown"
+        },
+        {
+          "path": "pagina/index.html",
+          "format": "html",
+          "validationProfile": "sales-page-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "pagina/index.pdf",
+          "format": "pdf",
+          "sourcePath": "pagina/index.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "pagina/index.html",
+        "title": "Página de vendas",
+        "phase": "Peças do funil"
+      }
+    },
+    {
+      "skillId": "metodo-funil",
+      "contractGroup": "owner-document",
+      "requiredTextOutputs": [
+        {
+          "path": "funil.md",
+          "format": "markdown"
+        },
+        {
+          "path": "funil.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "funil.pdf",
+          "format": "pdf",
+          "sourcePath": "funil.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "funil.html",
+        "title": "Mapa de execução do funil",
+        "phase": "Oferta e Fundação"
+      }
+    },
+    {
+      "skillId": "vsl-funil",
+      "contractGroup": "funnel-page-pack",
+      "requiredTextOutputs": [
+        {
+          "path": "vsl.md",
+          "format": "markdown"
+        },
+        {
+          "path": "vsl.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "pagina/vsl.html",
+          "format": "html"
+        },
+        {
+          "path": "pagina/vsl-roteiro.html",
+          "format": "html",
+          "validationProfile": "video-script-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "vsl.pdf",
+          "format": "pdf",
+          "sourcePath": "vsl.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "vsl.html",
+        "title": "Funil VSL",
+        "phase": "Peças do funil"
+      }
+    },
+    {
+      "skillId": "advertorial-funil",
+      "contractGroup": "funnel-page-pack",
+      "requiredTextOutputs": [
+        {
+          "path": "advertorial.md",
+          "format": "markdown"
+        },
+        {
+          "path": "advertorial.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "pagina/advertorial.html",
+          "format": "html"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "advertorial.pdf",
+          "format": "pdf",
+          "sourcePath": "advertorial.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "advertorial.html",
+        "title": "Advertorial",
+        "phase": "Peças do funil"
+      }
+    },
+    {
+      "skillId": "lancamento-funil",
+      "contractGroup": "funnel-page-pack",
+      "requiredTextOutputs": [
+        {
+          "path": "lancamento.md",
+          "format": "markdown"
+        },
+        {
+          "path": "lancamento.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "pagina/plc-1-roteiro.html",
+          "format": "html",
+          "validationProfile": "video-script-v1"
+        },
+        {
+          "path": "pagina/plc-2-roteiro.html",
+          "format": "html",
+          "validationProfile": "video-script-v1"
+        },
+        {
+          "path": "pagina/plc-3-roteiro.html",
+          "format": "html",
+          "validationProfile": "video-script-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "lancamento.pdf",
+          "format": "pdf",
+          "sourcePath": "lancamento.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "lancamento.html",
+        "title": "Lançamento",
+        "phase": "Peças do funil"
+      }
+    },
+    {
+      "skillId": "webinario-funil",
+      "contractGroup": "funnel-page-pack",
+      "requiredTextOutputs": [
+        {
+          "path": "webinario.md",
+          "format": "markdown"
+        },
+        {
+          "path": "webinario.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "pagina/registro.html",
+          "format": "html",
+          "validationProfile": "lead-page-v1"
+        },
+        {
+          "path": "pagina/obrigado.html",
+          "format": "html"
+        },
+        {
+          "path": "pagina/webinario-roteiro.html",
+          "format": "html",
+          "validationProfile": "video-script-v1"
+        }
+      ],
+      "optionalTextOutputs": [
+        {
+          "path": "pagina/oferta.html",
+          "format": "html"
+        },
+        {
+          "path": "pagina/agendamento.html",
+          "format": "html"
+        }
+      ],
+      "requiredAnyOf": [
+        [
+          "pagina/oferta.html",
+          "pagina/agendamento.html"
+        ]
+      ],
+      "derivedOutputs": [
+        {
+          "path": "webinario.pdf",
+          "format": "pdf",
+          "sourcePath": "webinario.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "webinario.html",
+        "title": "Webinário",
+        "phase": "Peças do funil"
+      }
+    },
+    {
+      "skillId": "quiz-funil",
+      "contractGroup": "interactive-pack",
+      "requiredTextOutputs": [
+        {
+          "path": "quiz.md",
+          "format": "markdown"
+        },
+        {
+          "path": "quiz.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "pagina/quiz-app.html",
+          "format": "html",
+          "validationProfile": "quiz-app-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "quiz.pdf",
+          "format": "pdf",
+          "sourcePath": "quiz.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "quiz.html",
+        "title": "Quiz de diagnóstico",
+        "phase": "Peças do funil"
+      }
+    },
+    {
+      "skillId": "email-funil",
+      "contractGroup": "message-collection",
+      "requiredTextOutputs": [
+        {
+          "path": "emails/index.html",
+          "format": "html",
+          "validationProfile": "collection-index-v1"
+        },
+        {
+          "path": "emails/trilhas.md",
+          "format": "markdown"
+        },
+        {
+          "path": "emails/trilhas.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "requiredCollections": [
+        {
+          "pathPattern": "emails/trilha-*-email-*.html",
+          "format": "html",
+          "minItems": 1,
+          "validationProfile": "message-copy-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "emails/trilhas.pdf",
+          "format": "pdf",
+          "sourcePath": "emails/trilhas.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "emails/index.html",
+        "title": "Trilhas de e-mail",
+        "phase": "Próximas peças"
+      }
+    },
+    {
+      "skillId": "conteudo-funil",
+      "contractGroup": "dynamic-library",
+      "requiredTextOutputs": [
+        {
+          "path": "conteudo/roteiros.md",
+          "format": "markdown"
+        },
+        {
+          "path": "conteudo/roteiros.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "carrossel/lote.html",
+          "format": "html"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "conteudo/roteiros.pdf",
+          "format": "pdf",
+          "sourcePath": "conteudo/roteiros.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "carouselOutputs": [
+        {
+          "sourcePath": "carrossel/lote.html",
+          "galleryPath": "carrossel/index.html",
+          "versionRoot": "carrossel"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "carrossel/index.html",
+        "title": "Conteúdo e carrosséis",
+        "phase": "Próximas peças"
+      }
+    },
+    {
+      "skillId": "whatsapp-funil",
+      "contractGroup": "message-collection",
+      "requiredTextOutputs": [
+        {
+          "path": "whatsapp.md",
+          "format": "markdown"
+        },
+        {
+          "path": "whatsapp.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        },
+        {
+          "path": "whatsapp/index.html",
+          "format": "html",
+          "validationProfile": "collection-index-v1"
+        }
+      ],
+      "requiredCollections": [
+        {
+          "pathPattern": "whatsapp/*-*.html",
+          "format": "html",
+          "minItems": 2,
+          "validationProfile": "message-copy-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "whatsapp.pdf",
+          "format": "pdf",
+          "sourcePath": "whatsapp.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "whatsapp/index.html",
+        "title": "Sequências de WhatsApp",
+        "phase": "Próximas peças"
+      }
+    },
+    {
+      "skillId": "recuperacao-funil",
+      "contractGroup": "message-collection",
+      "requiredTextOutputs": [
+        {
+          "path": "recuperacao.md",
+          "format": "markdown"
+        },
+        {
+          "path": "recuperacao.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "requiredCollections": [
+        {
+          "pathPattern": "recuperacao/*.html",
+          "format": "html",
+          "minItems": 1
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "recuperacao.pdf",
+          "format": "pdf",
+          "sourcePath": "recuperacao.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "recuperacao.html",
+        "title": "Recuperação",
+        "phase": "Próximas peças"
+      }
+    },
+    {
+      "skillId": "backend-funil",
+      "contractGroup": "funnel-page-pack",
+      "requiredTextOutputs": [
+        {
+          "path": "backend-funil.md",
+          "format": "markdown"
+        },
+        {
+          "path": "backend-funil.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "optionalTextOutputs": [
+        {
+          "path": "pagina/upsell.html",
+          "format": "html"
+        },
+        {
+          "path": "pagina/downsell.html",
+          "format": "html"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "backend-funil.pdf",
+          "format": "pdf",
+          "sourcePath": "backend-funil.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "backend-funil.html",
+        "title": "Back-end do funil",
+        "phase": "Próximas peças"
+      }
+    },
+    {
+      "skillId": "cro-funil",
+      "contractGroup": "owner-document",
+      "requiredTextOutputs": [
+        {
+          "path": "cro.md",
+          "format": "markdown"
+        },
+        {
+          "path": "cro.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "cro.pdf",
+          "format": "pdf",
+          "sourcePath": "cro.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "v-suffix",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "cro.html",
+        "title": "Plano de CRO",
+        "phase": "Próximas peças"
+      }
+    },
+    {
+      "skillId": "swipe-file",
+      "contractGroup": "dynamic-library",
+      "requiredTextOutputs": [
+        {
+          "path": "swipe-file-index.md",
+          "format": "markdown"
+        },
+        {
+          "path": "swipe-file-index.html",
+          "format": "html",
+          "validationProfile": "collection-index-v1"
+        },
+        {
+          "path": "briefing-swipe-file.md",
+          "format": "markdown"
+        },
+        {
+          "path": "briefing-swipe-file.html",
+          "format": "html",
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "requiredCollections": [
+        {
+          "pathPattern": "swipe-file/*/*/*.md",
+          "format": "markdown",
+          "minItems": 1
+        },
+        {
+          "pathPattern": "swipe-file/*/*/*.html",
+          "format": "html",
+          "minItems": 1
+        }
+      ],
+      "derivedOutputs": [
+        {
+          "path": "swipe-file-index.pdf",
+          "format": "pdf",
+          "sourcePath": "swipe-file-index.html",
+          "renderer": "chromium-pdf"
+        },
+        {
+          "path": "briefing-swipe-file.pdf",
+          "format": "pdf",
+          "sourcePath": "briefing-swipe-file.html",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "swipe-file-index.html",
+        "title": "Swipe file",
+        "phase": "Pesquisa"
+      }
+    },
+    {
+      "skillId": "bonus-funil",
+      "contractGroup": "dynamic-library",
+      "requiredTextOutputs": [
+        {
+          "path": "bonus/index.html",
+          "format": "html",
+          "validationProfile": "collection-index-v1"
+        }
+      ],
+      "requiredCollections": [
+        {
+          "pathPattern": "bonus/*/*.md",
+          "format": "markdown",
+          "minItems": 1
+        },
+        {
+          "pathPattern": "bonus/*/*.html",
+          "format": "html",
+          "minItems": 1,
+          "validationProfile": "owner-document-v1"
+        }
+      ],
+      "derivedOutputs": [],
+      "derivedCollectionOutputs": [
+        {
+          "sourcePattern": "bonus/*/*.html",
+          "outputExtension": ".pdf",
+          "renderer": "chromium-pdf"
+        }
+      ],
+      "versioning": "version-directory",
+      "reconcileBook": true,
+      "bookEntry": {
+        "path": "bonus/index.html",
+        "title": "Bônus da oferta",
+        "phase": "Próximas peças"
+      }
+    }
+  ]
 } as const;

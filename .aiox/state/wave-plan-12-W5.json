@@ -1,0 +1,70 @@
+{
+  "schema_version": "wave-plan-v1",
+  "epic_id": "12",
+  "wave_id": "W5",
+  "generated_at": "2026-07-17T01:32:23.390Z",
+  "origin_sync": "behind",
+  "parallel_groups": [
+    [
+      "12.W5.1"
+    ]
+  ],
+  "stories": [
+    {
+      "story_id": "12.W5.1",
+      "path": "docs/stories/epic-12/STORY-12.W5.1-integrated-e2e-and-pedro-pilot.md",
+      "status": "Ready",
+      "origin_sha": null,
+      "parallel_group": 0,
+      "worktree": {
+        "path": ".claude/worktrees/story-12.W5.1",
+        "branch": "wave/12-w5/story-12.W5.1",
+        "state": "committed"
+      }
+    }
+  ],
+  "orphaned_worktrees": [],
+  "cross_epic_dispatch_check": {
+    "check": "ev_cross_epic_dispatch_check",
+    "status": "skipped",
+    "reason": "graphs-absent",
+    "wave_id": "12.W5",
+    "file_set_size": 1,
+    "logical": {
+      "ok": false,
+      "warn": true,
+      "block": false,
+      "mode": "WARN",
+      "api": "checkLogicalConflict",
+      "reason": "graphs-absent",
+      "hint": "run `node .claude/skills/sinkra-wave-execute/scripts/build-cross-epic-graph.js` first (W2.1)",
+      "wave": "12.W5",
+      "scope": {
+        "epic": "12",
+        "wave": "W5",
+        "scoped": true
+      },
+      "satisfied": null,
+      "unsatisfied": [],
+      "unresolved": []
+    },
+    "physical": {
+      "ok": false,
+      "warn": true,
+      "block": false,
+      "mode": "WARN",
+      "api": "checkPhysicalConflict",
+      "reason": "graphs-absent",
+      "hint": "run `node .claude/skills/sinkra-wave-execute/scripts/build-cross-epic-graph.js` first (W2.1)",
+      "basis": "file_ownership_overlap",
+      "candidates": [
+        "exclusive"
+      ],
+      "overlaps": [],
+      "domain_overlaps": []
+    },
+    "proposals": [],
+    "impact_notifications": []
+  },
+  "daemon": null
+}

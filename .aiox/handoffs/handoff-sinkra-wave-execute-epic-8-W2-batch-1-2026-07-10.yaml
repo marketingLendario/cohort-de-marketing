@@ -1,0 +1,28 @@
+handoff:
+  schema: sinkra-wave-handoff-v1
+  from: sinkra-wave-execute
+  to: "@devops"
+  date: "2026-07-10T00:57:10Z"
+  epic: epic-8
+  wave: W2
+  batch: 1
+  mode: local-fan-in
+  target_branch: rafaelscosta
+  base_commit: "c8fc264eed6283e7ddb6d3072926ffabad60273d"
+  fan_in_report: ".aiox/waves/epic-8-wave-2/fan-in-batch-1.yaml"
+  stories:
+    - story_id: "8.W2.1"
+      commit: "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0"
+      ack_path: ".claude/worktrees/story-8.W2.1/.sdc-ack/8.W2.1/sdc-complete.ack"
+    - story_id: "8.W2.2"
+      commit: "54782376b04df4723171e972e2cc8bde9bbbc145"
+      ack_path: ".claude/worktrees/story-8.W2.2/.sdc-ack/8.W2.2/sdc-complete.ack"
+  merge_sequence:
+    - "28c05a6060ff1f9715381bd4205fc06d6bf2f7d0"
+    - "54782376b04df4723171e972e2cc8bde9bbbc145"
+  instructions: |
+    Validar os dois ACKs e o fan-in report.
+    Confirmar branch/HEAD base e zero mudancas tracked pendentes.
+    Cherry-pick na ordem declarada, sem push/PR/merge remoto.
+    Rodar test, lint, typecheck, build, build:server, lint:db e test:db.
+    Registrar resultado runtime e SHA final.

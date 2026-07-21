@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "1.0.0",
+  "adapterVersion": "1.0.2",
+  "skillId": "trend-hunting",
+  "projectId": "epic-11-w2-1-live",
+  "mode": "network",
+  "query": "marketing de performance tendências 2026",
+  "fingerprint": "682a8054986862b3e3d639c0512af9a35db55ab1467cc7ea6d501f7ba07e8ac2",
+  "collectedAt": "2026-07-11T14:10:49.085Z",
+  "frozenAt": "2026-07-11T14:10:49.085Z",
+  "sources": [
+    {
+      "sourceId": "google-search-live",
+      "provider": "apify",
+      "kind": "google-search",
+      "target": "marketing de performance tendências 2026",
+      "status": "completed",
+      "startedAt": "2026-07-11T14:10:41.096Z",
+      "completedAt": "2026-07-11T14:10:49.044Z",
+      "itemCount": 1,
+      "items": [
+        {
+          "sourceItemId": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+          "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+          "publishedAt": null,
+          "author": null,
+          "text": "{\"#debug\":{\"requestId\":\"HqcNWvtQK8ehaG1\",\"url\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"loadedUrl\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"method\":\"GET\",\"retryCount\":0,\"errorMessages\":[],\"statusCode\":200},\"#error\":false,\"searchQuery\":{\"term\":\"marketing de performance tendências 2026\",\"url\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"device\":\"DESKTOP\",\"page\":1,\"type\":\"SEARCH\",\"domain\":\"google.com.br\",\"countryCode\":\"BR\",\"languageCode\":null,\"locationUule\":null,\"resultsPerPage\":10},\"url\":\"http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026\",\"hasNextPage\":true,\"serpProviderCode\":\"L\",\"resultsTotal\":null,\"relatedQueries\":[{\"title\":\"Nuevas tendencias de marketing 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Nuevas+tendencias+de+marketing+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAg9EAE\"},{\"title\":\"Tendencias para vender 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+para+vender+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhDEAE\"},{\"title\":\"Cyberclick tendencias 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Cyberclick+tendencias+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhEEAE\"},{\"title\":\"Tendencias retail 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+retail+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhFEAE\"},{\"title\":\"Tendencias en marketing digital 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+marketing+digital+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhGEAE\"},{\"title\":\"Tendencias en branding 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+branding+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhCEAE\"},{\"title\":\"Marketing en 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Marketing+en+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhHEAE\"},{\"title\":\"Tendencia de mercado 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencia+de+mercado+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhBEAE\"},{\"title\":\"Nuevas tendencias de marketing 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Nuevas+tendencias+de+marketing+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAg9EAE\"},{\"title\":\"Tendencias para vender 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+para+vender+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhDEAE\"},{\"title\":\"Cyberclick tendencias 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Cyberclick+tendencias+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhEEAE\"},{\"title\":\"Tendencias retail 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+retail+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhFEAE\"},{\"title\":\"Tendencias en marketing digital 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+marketing+digital+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhGEAE\"},{\"title\":\"Tendencias en branding 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+branding+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhCEAE\"},{\"title\":\"Marketing en 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Marketing+en+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhHEAE\"},{\"title\":\"Tendencia de mercado 2026\",\"url\":\"https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencia+de+mercado+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhBEAE\"}],\"paidResults\":[],\"paidProducts\":[],\"organicResults\":[{\"title\":\"20 tendencias de marketing para 2026: cómo sobrevivir a ...\",\"websiteTitle\":\"DDigitals\",\"url\":\"https://ddigitals.net/blog/marketing-digital/tendencias-de-marketing-para-2026/\",\"displayedUrl\":\"https://ddigitals.net › Blog\",\"description\":\"4 de jan. de 2026 — 1. La era de la IA Agéntica (Marketing A2A) · 2. Del SEO al GEO (Generative Engine Optimization) · 3. Hiperpersonalización predictiva · 4. Búsqueda ...\",\"emphasizedKeywords\":[\"1. La era de la IA Agéntica (Marketing A2A\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":1},{\"title\":\"El Futuro del Performance Marketing en 2026: Tendencias ...\",\"websiteTitle\":\"ibo.pe\",\"url\":\"https://ibo.pe/blog/el-futuro-del-performance-marketing-en-2026-tendencias-y-estrategias-clave/\",\"displayedUrl\":\"https://ibo.pe › blog › el-futuro-d...\",\"description\":\"Tendencias Clave que Impulsarán el Performance Marketing en 2026 · Inteligencia Artificial (IA) y Machine Learning: La IA dejará de ser una novedad para ...\",\"emphasizedKeywords\":[\"Inteligencia Artificial (IA) y Machine Learning\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":2},{\"title\":\"Tendencias de Marketing 2026: 26 Palancas que ...\",\"websiteTitle\":\"DAC group\",\"url\":\"https://www.dacgroup.com/es/descubre/blog/strategy/tendencias-de-marketing-2026-26-palancas-que-redefinen-el-performance/\",\"displayedUrl\":\"https://www.dacgroup.com › blog\",\"description\":\"5 de dez. de 2025 — Descubre 26 estrategias clave para impulsar el rendimiento de tu marketing en 2026. Desde sistemas impulsados por IA y nuevos caminos de ...\",\"emphasizedKeywords\":[\"Descubre 26 estrategias clave para impulsar el rendimiento de tu marketing en 2026\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":3},{\"title\":\"10 tendências de marketing para 2026\",\"websiteTitle\":\"Kantar\",\"url\":\"https://www.kantar.com/brazil/inspiration/marcas/10-tendencias-de-marketing-para-2026\",\"displayedUrl\":\"https://www.kantar.com › brazil › inspiration › marcas\",\"description\":\"10 tendências de marketing para 2026 · 1. Agentes de IA em escala · 2. Conexão humana via seleção por máquina · 3. Dados sintéticos, audiências ampliadas · 4.\",\"emphasizedKeywords\":[\"1. Agentes de IA em escala\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":4},{\"title\":\"10 Tendencias de Marketing para el 2026 El 2026 no va solo ...\",\"websiteTitle\":\"Instagram · marketerslatam\",\"url\":\"https://www.instagram.com/reel/DSbLwUnDRkj/\",\"displayedUrl\":\"Instagram › marketerslatam\",\"description\":\"3 TENDENCIAS DE MARKETING PARA LA SEGUNDA MITAD DEL 2026 ¡Desliza! INTELIGENCIA ARTIFICIAL APLICADA. Menos generación, más predicción. El ...\",\"emphasizedKeywords\":[],\"siteLinks\":[],\"productInfo\":{},\"likes\":\"Mais de 100 marcações \\\"Gostei\\\"\",\"lastUpdated\":\"há 6 meses\",\"channelName\":\"reel\",\"reelLength\":\"1:36\",\"type\":\"organic\",\"position\":5},{\"title\":\"Estratégias de Marketing Digital de Alta Performance em ...\",\"websiteTitle\":\"Agência Redstack\",\"url\":\"https://www.redstack.com.br/post/estrat%C3%A9gias-de-marketing-digital-de-alta-performance-em-2026\",\"displayedUrl\":\"https://www.redstack.com.br › post › estratégias-de-mar...\",\"description\":\"26 de ago. de 2025 — Em 2026, a tendência é adotar métricas centradas em ROI em marketing digital e em indicadores de performance reais, como custo por aquisição ...\",\"emphasizedKeywords\":[\"Em 2026, a tendência é adotar métricas centradas em ROI em marketing digital\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":6},{\"title\":\"Principales tendencias y predicciones de marketing digital ...\",\"websiteTitle\":\"Google Business Profile\",\"url\":\"https://business.google.com/es/think/consumer-insights/tendencias-marketing-digital-2026/\",\"displayedUrl\":\"https://business.google.com › ten...\",\"description\":\"9 de dez. de 2025 — Expertos de Google comparten predicciones clave para 2026. Prepárate para los grandes cambios en IA, en el comportamiento de los clientes y ...\",\"emphasizedKeywords\":[\"Expertos de Google comparten predicciones clave para 2026\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":7},{\"title\":\"Seis tendencias de marketing digital para el 2026\",\"websiteTitle\":\"ESAN Graduate School Of Business\",\"url\":\"https://www.esan.edu.pe/conexion-esan/seis-tendencias-de-marketing-digital-para-el-2026\",\"displayedUrl\":\"https://www.esan.edu.pe › seis-te...\",\"description\":\"Creatividad impulsada por IA. · Campañas de 360 grados. · Colaboraciones con microinfluencers. · Marketing para asistentes de voz. · Inversión en owned data engines ...\",\"emphasizedKeywords\":[\"Creatividad impulsada por IA\"],\"siteLinks\":[],\"productInfo\":{},\"type\":\"organic\",\"position\":8}],\"suggestedResults\":[],\"peopleAlsoAsk\":[{\"answer\":null,\"question\":\"Quais são as tendências do marketing para 2026?\",\"title\":null,\"url\":null,\"date\":null},{\"answer\":\"Agora, vamos ao calendário:\\nContent Experience 2026. O Content Experience 2026 é um evento presencial focado em marketing de conteúdo, comunicação e estratégia. ... CMO Summit 2026. ... Gramado Summit 2026. ... Conexão Social Media 2026. ... Startup Summit 2026. ... Web Summit Rio 2026. ... Hotmart Fire 2026.\",\"question\":\"Quais são os maiores eventos de marketing em 2026?\",\"title\":null,\"url\":null,\"date\":null},{\"answer\":null,\"question\":\"Quais são as trends de 2026?\",\"title\":null,\"url\":null,\"date\":null},{\"answer\":\"As tendências de verão 2026 apontam para uma nova era na moda, beleza e comportamento: menos digital, mais conexão emocional. A estética da temporada busca uma conexão emocional e o toque real, longe do excesso digital e mais perto do que sentimos de verdade.\",\"question\":\"Quais são as tendências de maior para 2026?\",\"title\":\"TENDÊNCIAS DE VERÃO 2026 - ZZ MALL\",\"url\":\"https://www.zzmall.com.br/magazzine/moda/tendencias-de-verao-2026\",\"date\":\"22 de ago. de 2025\"}],\"aiOverview\":{\"type\":\"live\",\"content\":\"O marketing de performance em 2026 foca na IA preditiva, na otimização para ferramentas de busca com IA (GEO) e no ROI rigoroso. A prioridade é a retenção do cliente e a qualidade do lead, combatendo o aumento do custo por clique (CPC) através de mensagens altamente direcionadas e do marketing liderado pelos fundadores.Inteligência Artificial Preditiva: A IA vai muito além da criação de textos; ela analisa dados em tempo real para prever intenções de compra antes mesmo de o usuário manifestar o desejo.Do SEO ao GEO (Generative Engine Optimization): O objetivo agora é garantir que sua marca seja a fonte citada nas respostas geradas por IAs como ChatGPT, Gemini e Perplexity, e não apenas o primeiro link azul no Google.Creator Economy e Founder-led Marketing: A confiança do consumidor mudou. Marcas estão investindo mais em microinfluenciadores e na imagem dos próprios fundadores (porta-vozes) para gerar identificação humana e autoridade.Métricas focadas no Ciclo de Vida (LTV) e CPA: O foco em cliques diminuiu. A prioridade é medir o Custo de Aquisição por Cliente (CPA) real e o Valor do Tempo de Vida do Cliente (LTV), garantindo que o investimento se pague no longo prazo.Para entender como estruturar o marketing do seu negócio e evitar desperdício de verba estruturando sua operação:12:28Tendências de marketing em 2026: o que mudou e ...Bruna Saint'ClairYouTube·23 de mar. de 2026Para entender como estruturar o marketing do seu negócio e evitar desperdício de verba estruturando sua operação:12:28Tendências de marketing em 2026: o que mudou e ...Bruna Saint'ClairYouTube·23 de mar. de 2026Qual é o nicho do seu negócio e qual canal de tráfego você mais utiliza hoje (ex: Google Ads, Meta Ads, LinkedIn)? Posso criar estratégias de performance específicas para o seu segmento.Qual é o nicho do seu negócio e qual canal de tráfego você mais utiliza hoje (ex: Google Ads, Meta Ads, LinkedIn)? Posso criar estratégias de performance específicas para o seu segmento.\",\"sources\":[{\"url\":\"https://www.youtube.com/watch?v=9-jQEMNWAlk\",\"title\":\"7 Marketing Trends for 2026 That Will Boost Your Business\",\"description\":\"13 de jul. de 2025 — AQUÍ : https://www.youtube.com/channel/UChFEuSBQdJCEOXM8BKa5ipg/join En este video Eduardo Paz Lloveras, lleva a cabo un profundo ...\"},{\"url\":\"https://www.youtube.com/watch?v=yTioxdB_Lxc&t=261\",\"title\":\"Marketing Trends for 2026\",\"description\":\"22 de dez. de 2025 — o terceira tendência que eu entendo que vai ser muito forte já tá começando a ser é são os porta-vozes de marca qual que é a ideia...\"},{\"url\":\"https://ddigitals.net/blog/marketing-digital/tendencias-de-marketing-para-2026/\",\"title\":\"20 tendencias de marketing para 2026: cómo sobrevivir a la IA\",\"description\":\"4 de jan. de 2026 — 1. La era de la IA Agéntica (Marketing A2A). Esta es la tendencia más disruptiva de 2026, sin duda. El marketing está comenzando a...\"}]},\"customData\":null,\"htmlSnapshotUrl\":\"https://api.apify.com/v2/key-value-stores/Csxg3fzawoHGy6KCd/records/HqcNWvtQK8ehaG1-0.html?signature=NqZKL2ZNuO1h6mvkvkGI\"}",
+          "metrics": {
+            "views": null,
+            "likes": null,
+            "comments": null,
+            "shares": null
+          },
+          "literal": {
+            "#debug": {
+              "requestId": "HqcNWvtQK8ehaG1",
+              "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+              "loadedUrl": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+              "method": "GET",
+              "retryCount": 0,
+              "errorMessages": [],
+              "statusCode": 200
+            },
+            "#error": false,
+            "searchQuery": {
+              "term": "marketing de performance tendências 2026",
+              "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+              "device": "DESKTOP",
+              "page": 1,
+              "type": "SEARCH",
+              "domain": "google.com.br",
+              "countryCode": "BR",
+              "languageCode": null,
+              "locationUule": null,
+              "resultsPerPage": 10
+            },
+            "url": "http://www.google.com.br/search?q=marketing+de+performance+tend%C3%AAncias+2026",
+            "hasNextPage": true,
+            "serpProviderCode": "L",
+            "resultsTotal": null,
+            "relatedQueries": [
+              {
+                "title": "Nuevas tendencias de marketing 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Nuevas+tendencias+de+marketing+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAg9EAE"
+              },
+              {
+                "title": "Tendencias para vender 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+para+vender+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhDEAE"
+              },
+              {
+                "title": "Cyberclick tendencias 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Cyberclick+tendencias+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhEEAE"
+              },
+              {
+                "title": "Tendencias retail 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+retail+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhFEAE"
+              },
+              {
+                "title": "Tendencias en marketing digital 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+marketing+digital+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhGEAE"
+              },
+              {
+                "title": "Tendencias en branding 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+branding+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhCEAE"
+              },
+              {
+                "title": "Marketing en 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Marketing+en+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhHEAE"
+              },
+              {
+                "title": "Tendencia de mercado 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencia+de+mercado+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhBEAE"
+              },
+              {
+                "title": "Nuevas tendencias de marketing 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Nuevas+tendencias+de+marketing+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAg9EAE"
+              },
+              {
+                "title": "Tendencias para vender 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+para+vender+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhDEAE"
+              },
+              {
+                "title": "Cyberclick tendencias 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Cyberclick+tendencias+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhEEAE"
+              },
+              {
+                "title": "Tendencias retail 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+retail+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhFEAE"
+              },
+              {
+                "title": "Tendencias en marketing digital 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+marketing+digital+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhGEAE"
+              },
+              {
+                "title": "Tendencias en branding 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencias+en+branding+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhCEAE"
+              },
+              {
+                "title": "Marketing en 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Marketing+en+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhHEAE"
+              },
+              {
+                "title": "Tendencia de mercado 2026",
+                "url": "https://www.google.com.br/search?sca_esv=1c22e5aede185c87&hl=pt-BR&q=Tendencia+de+mercado+2026&sa=X&ved=2ahUKEwjg0c3i5sqVAxWbnGoFHSfvDu0Q1QJ6BAhBEAE"
+              }
+            ],
+            "paidResults": [],
+            "paidProducts": [],
+            "organicResults": [
+              {
+                "title": "20 tendencias de marketing para 2026: cómo sobrevivir a ...",
+                "websiteTitle": "DDigitals",
+                "url": "https://ddigitals.net/blog/marketing-digital/tendencias-de-marketing-para-2026/",
+                "displayedUrl": "https://ddigitals.net › Blog",
+                "description": "4 de jan. de 2026 — 1. La era de la IA Agéntica (Marketing A2A) · 2. Del SEO al GEO (Generative Engine Optimization) · 3. Hiperpersonalización predictiva · 4. Búsqueda ...",
+                "emphasizedKeywords": [
+                  "1. La era de la IA Agéntica (Marketing A2A"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 1
+              },
+              {
+                "title": "El Futuro del Performance Marketing en 2026: Tendencias ...",
+                "websiteTitle": "ibo.pe",
+                "url": "https://ibo.pe/blog/el-futuro-del-performance-marketing-en-2026-tendencias-y-estrategias-clave/",
+                "displayedUrl": "https://ibo.pe › blog › el-futuro-d...",
+                "description": "Tendencias Clave que Impulsarán el Performance Marketing en 2026 · Inteligencia Artificial (IA) y Machine Learning: La IA dejará de ser una novedad para ...",
+                "emphasizedKeywords": [
+                  "Inteligencia Artificial (IA) y Machine Learning"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 2
+              },
+              {
+                "title": "Tendencias de Marketing 2026: 26 Palancas que ...",
+                "websiteTitle": "DAC group",
+                "url": "https://www.dacgroup.com/es/descubre/blog/strategy/tendencias-de-marketing-2026-26-palancas-que-redefinen-el-performance/",
+                "displayedUrl": "https://www.dacgroup.com › blog",
+                "description": "5 de dez. de 2025 — Descubre 26 estrategias clave para impulsar el rendimiento de tu marketing en 2026. Desde sistemas impulsados por IA y nuevos caminos de ...",
+                "emphasizedKeywords": [
+                  "Descubre 26 estrategias clave para impulsar el rendimiento de tu marketing en 2026"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 3
+              },
+              {
+                "title": "10 tendências de marketing para 2026",
+                "websiteTitle": "Kantar",
+                "url": "https://www.kantar.com/brazil/inspiration/marcas/10-tendencias-de-marketing-para-2026",
+                "displayedUrl": "https://www.kantar.com › brazil › inspiration › marcas",
+                "description": "10 tendências de marketing para 2026 · 1. Agentes de IA em escala · 2. Conexão humana via seleção por máquina · 3. Dados sintéticos, audiências ampliadas · 4.",
+                "emphasizedKeywords": [
+                  "1. Agentes de IA em escala"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 4
+              },
+              {
+                "title": "10 Tendencias de Marketing para el 2026 El 2026 no va solo ...",
+                "websiteTitle": "Instagram · marketerslatam",
+                "url": "https://www.instagram.com/reel/DSbLwUnDRkj/",
+                "displayedUrl": "Instagram › marketerslatam",
+                "description": "3 TENDENCIAS DE MARKETING PARA LA SEGUNDA MITAD DEL 2026 ¡Desliza! INTELIGENCIA ARTIFICIAL APLICADA. Menos generación, más predicción. El ...",
+                "emphasizedKeywords": [],
+                "siteLinks": [],
+                "productInfo": {},
+                "likes": "Mais de 100 marcações \"Gostei\"",
+                "lastUpdated": "há 6 meses",
+                "channelName": "reel",
+                "reelLength": "1:36",
+                "type": "organic",
+                "position": 5
+              },
+              {
+                "title": "Estratégias de Marketing Digital de Alta Performance em ...",
+                "websiteTitle": "Agência Redstack",
+                "url": "https://www.redstack.com.br/post/estrat%C3%A9gias-de-marketing-digital-de-alta-performance-em-2026",
+                "displayedUrl": "https://www.redstack.com.br › post › estratégias-de-mar...",
+                "description": "26 de ago. de 2025 — Em 2026, a tendência é adotar métricas centradas em ROI em marketing digital e em indicadores de performance reais, como custo por aquisição ...",
+                "emphasizedKeywords": [
+                  "Em 2026, a tendência é adotar métricas centradas em ROI em marketing digital"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 6
+              },
+              {
+                "title": "Principales tendencias y predicciones de marketing digital ...",
+                "websiteTitle": "Google Business Profile",
+                "url": "https://business.google.com/es/think/consumer-insights/tendencias-marketing-digital-2026/",
+                "displayedUrl": "https://business.google.com › ten...",
+                "description": "9 de dez. de 2025 — Expertos de Google comparten predicciones clave para 2026. Prepárate para los grandes cambios en IA, en el comportamiento de los clientes y ...",
+                "emphasizedKeywords": [
+                  "Expertos de Google comparten predicciones clave para 2026"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 7
+              },
+              {
+                "title": "Seis tendencias de marketing digital para el 2026",
+                "websiteTitle": "ESAN Graduate School Of Business",
+                "url": "https://www.esan.edu.pe/conexion-esan/seis-tendencias-de-marketing-digital-para-el-2026",
+                "displayedUrl": "https://www.esan.edu.pe › seis-te...",
+                "description": "Creatividad impulsada por IA. · Campañas de 360 grados. · Colaboraciones con microinfluencers. · Marketing para asistentes de voz. · Inversión en owned data engines ...",
+                "emphasizedKeywords": [
+                  "Creatividad impulsada por IA"
+                ],
+                "siteLinks": [],
+                "productInfo": {},
+                "type": "organic",
+                "position": 8
+              }
+            ],
+            "suggestedResults": [],
+            "peopleAlsoAsk": [
+              {
+                "answer": null,
+                "question": "Quais são as tendências do marketing para 2026?",
+                "title": null,
+                "url": null,
+                "date": null
+              },
+              {
+                "answer": "Agora, vamos ao calendário:\nContent Experience 2026. O Content Experience 2026 é um evento presencial focado em marketing de conteúdo, comunicação e estratégia. ... CMO Summit 2026. ... Gramado Summit 2026. ... Conexão Social Media 2026. ... Startup Summit 2026. ... Web Summit Rio 2026. ... Hotmart Fire 2026.",
+                "question": "Quais são os maiores eventos de marketing em 2026?",
+                "title": null,
+                "url": null,
+                "date": null
+              },
+              {
+                "answer": null,
+                "question": "Quais são as trends de 2026?",
+                "title": null,
+                "url": null,
+                "date": null
+              },
+              {
+                "answer": "As tendências de verão 2026 apontam para uma nova era na moda, beleza e comportamento: menos digital, mais conexão emocional. A estética da temporada busca uma conexão emocional e o toque real, longe do excesso digital e mais perto do que sentimos de verdade.",
+                "question": "Quais são as tendências de maior para 2026?",
+                "title": "TENDÊNCIAS DE VERÃO 2026 - ZZ MALL",
+                "url": "https://www.zzmall.com.br/magazzine/moda/tendencias-de-verao-2026",
+                "date": "22 de ago. de 2025"
+              }
+            ],
+            "aiOverview": {
+              "type": "live",
+              "content": "O marketing de performance em 2026 foca na IA preditiva, na otimização para ferramentas de busca com IA (GEO) e no ROI rigoroso. A prioridade é a retenção do cliente e a qualidade do lead, combatendo o aumento do custo por clique (CPC) através de mensagens altamente direcionadas e do marketing liderado pelos fundadores.Inteligência Artificial Preditiva: A IA vai muito além da criação de textos; ela analisa dados em tempo real para prever intenções de compra antes mesmo de o usuário manifestar o desejo.Do SEO ao GEO (Generative Engine Optimization): O objetivo agora é garantir que sua marca seja a fonte citada nas respostas geradas por IAs como ChatGPT, Gemini e Perplexity, e não apenas o primeiro link azul no Google.Creator Economy e Founder-led Marketing: A confiança do consumidor mudou. Marcas estão investindo mais em microinfluenciadores e na imagem dos próprios fundadores (porta-vozes) para gerar identificação humana e autoridade.Métricas focadas no Ciclo de Vida (LTV) e CPA: O foco em cliques diminuiu. A prioridade é medir o Custo de Aquisição por Cliente (CPA) real e o Valor do Tempo de Vida do Cliente (LTV), garantindo que o investimento se pague no longo prazo.Para entender como estruturar o marketing do seu negócio e evitar desperdício de verba estruturando sua operação:12:28Tendências de marketing em 2026: o que mudou e ...Bruna Saint'ClairYouTube·23 de mar. de 2026Para entender como estruturar o marketing do seu negócio e evitar desperdício de verba estruturando sua operação:12:28Tendências de marketing em 2026: o que mudou e ...Bruna Saint'ClairYouTube·23 de mar. de 2026Qual é o nicho do seu negócio e qual canal de tráfego você mais utiliza hoje (ex: Google Ads, Meta Ads, LinkedIn)? Posso criar estratégias de performance específicas para o seu segmento.Qual é o nicho do seu negócio e qual canal de tráfego você mais utiliza hoje (ex: Google Ads, Meta Ads, LinkedIn)? Posso criar estratégias de performance específicas para o seu segmento.",
+              "sources": [
+                {
+                  "url": "https://www.youtube.com/watch?v=9-jQEMNWAlk",
+                  "title": "7 Marketing Trends for 2026 That Will Boost Your Business",
+                  "description": "13 de jul. de 2025 — AQUÍ : https://www.youtube.com/channel/UChFEuSBQdJCEOXM8BKa5ipg/join En este video Eduardo Paz Lloveras, lleva a cabo un profundo ..."
+                },
+                {
+                  "url": "https://www.youtube.com/watch?v=yTioxdB_Lxc&t=261",
+                  "title": "Marketing Trends for 2026",
+                  "description": "22 de dez. de 2025 — o terceira tendência que eu entendo que vai ser muito forte já tá começando a ser é são os porta-vozes de marca qual que é a ideia..."
+                },
+                {
+                  "url": "https://ddigitals.net/blog/marketing-digital/tendencias-de-marketing-para-2026/",
+                  "title": "20 tendencias de marketing para 2026: cómo sobrevivir a la IA",
+                  "description": "4 de jan. de 2026 — 1. La era de la IA Agéntica (Marketing A2A). Esta es la tendencia más disruptiva de 2026, sin duda. El marketing está comenzando a..."
+                }
+              ]
+            },
+            "customData": null,
+            "htmlSnapshotUrl": "https://api.apify.com/v2/key-value-stores/Csxg3fzawoHGy6KCd/records/HqcNWvtQK8ehaG1-0.html?signature=NqZKL2ZNuO1h6mvkvkGI"
+          }
+        }
+      ],
+      "failure": null
+    }
+  ],
+  "quota": {
+    "maxBillableCalls": 1,
+    "attemptedBillableCalls": 1,
+    "completedBillableCalls": 1,
+    "maxItemsPerSource": 3
+  },
+  "failures": [],
+  "contentHash": "4450af55538d3de61e2db5d1e5c0beabae56d31d1d4283a83346ab5c096c6273"
+}

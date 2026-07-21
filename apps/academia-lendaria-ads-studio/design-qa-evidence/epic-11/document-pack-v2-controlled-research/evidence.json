@@ -1,0 +1,907 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-11T17:32:55.044Z",
+  "lane": {
+    "type": "controlled-contract",
+    "runner": "deterministic-local-fixture",
+    "codexRealEquivalent": false,
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "A geracao textual e controlada e nao substitui a lane separada com Codex CLI real."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 3,
+    "contractIds": [
+      "avatar-funil",
+      "espiao-do-concorrente",
+      "trend-hunting"
+    ],
+    "catalogHash": "5155c57a3c874bdb693834253371942c92b2700684dfdfac493c6bd49041e2d8"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "avatar-funil",
+      "contractGroup": "owner-document",
+      "contractHash": "3ec720a278241a352e5ebf7a1ac0a8731e96b8aa2e54565e64057be118375d2e",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "relatorio-avatar.html",
+          "relatorio-avatar.md",
+          "relatorio-avatar.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 478,
+            "hash": "2aaf7950f954169887a43b7e692ca742d78e2787a04b11ad5d5ad99a90701ea8",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3656,
+            "hash": "d2019e7a283d152347c2fd21665925512c73f3ba3e64ff8cd594db242f7bae40",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "3575fe2a3b466094f07fd2fe5a1deccee297ba8299bfc96cef45a9b11bed4d42",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "4bcb3fd1c2cbfa561444020d6ca410b6bb3c9b4412c02b2dac1804cf669591f3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.pdf",
+            "format": "pdf",
+            "bytes": 27022,
+            "hash": "7cf9f275ee05a9ec506efd48e4a076ef0cbf06587c7590136ca41ccc9a25a595",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "3575fe2a3b466094f07fd2fe5a1deccee297ba8299bfc96cef45a9b11bed4d42",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "4bcb3fd1c2cbfa561444020d6ca410b6bb3c9b4412c02b2dac1804cf669591f3",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.pdf",
+            "format": "pdf",
+            "bytes": 27022,
+            "hash": "7cf9f275ee05a9ec506efd48e4a076ef0cbf06587c7590136ca41ccc9a25a595",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/avatar-funil/sources-d68c2fd135d45fdf.json",
+            "format": "json",
+            "bytes": 1547,
+            "hash": "89df22841b22c2efb62d0a8aa217e1995d49bd2ef2871fd0e84caf8e2a95edf9",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "relatorio-avatar.html",
+          "relatorio-avatar.md",
+          "relatorio-avatar.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 476,
+            "hash": "272a194adad8ade64b76a295da74c6e239d02bc5bc823fad7ab663022e7693eb",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3654,
+            "hash": "445124467dfe38cf1ad977f1bf9cda924f135ee37c5a80ec0a8236dbe7bebfab",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "3575fe2a3b466094f07fd2fe5a1deccee297ba8299bfc96cef45a9b11bed4d42",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "4bcb3fd1c2cbfa561444020d6ca410b6bb3c9b4412c02b2dac1804cf669591f3",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar-v1.pdf",
+            "format": "pdf",
+            "bytes": 27022,
+            "hash": "7cf9f275ee05a9ec506efd48e4a076ef0cbf06587c7590136ca41ccc9a25a595",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.html",
+            "format": "html",
+            "bytes": 547,
+            "hash": "3575fe2a3b466094f07fd2fe5a1deccee297ba8299bfc96cef45a9b11bed4d42",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.md",
+            "format": "markdown",
+            "bytes": 136,
+            "hash": "4bcb3fd1c2cbfa561444020d6ca410b6bb3c9b4412c02b2dac1804cf669591f3",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "relatorio-avatar.pdf",
+            "format": "pdf",
+            "bytes": 27022,
+            "hash": "7cf9f275ee05a9ec506efd48e4a076ef0cbf06587c7590136ca41ccc9a25a595",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/avatar-funil/sources-568f855864ec70b7.json",
+            "format": "json",
+            "bytes": 1573,
+            "hash": "c0617e5857cfd96902aabb0074b2144d64b6784a110f9b50ab88061358ddc210",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "espiao-do-concorrente",
+      "contractGroup": "dynamic-library",
+      "contractHash": "8b86570b91ce35f797736bc80b2389a67b9cef36c20c147de124b777b152dd31",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "espiao/dossie-item-1.html",
+          "espiao/dossie-item-1.md",
+          "espiao/dossie-item-1.pdf",
+          "espiao/index.html",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 781,
+            "hash": "07d2b246ee6999cc1f0c56738775fa1a58ca6c9007699723cf45424033391215",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-item-1.html",
+            "format": "html",
+            "bytes": 565,
+            "hash": "1ad62cae76b1a2d748efdd39e1dabf29894b343513b5625d754e2618d5f29d4a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-item-1.md",
+            "format": "markdown",
+            "bytes": 149,
+            "hash": "38102786fc67c5a865dc62b3476e6c05baf1c812f88ed7b23bb3afa4bc7a493b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-item-1.pdf",
+            "format": "pdf",
+            "bytes": 28403,
+            "hash": "a3ed54e9af9f3a1b1d8d6331c6b8a5ae98a582af3afebc207c49095e7038961d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/index.html",
+            "format": "html",
+            "bytes": 529,
+            "hash": "163e0b8ee215a9bc36720e76217f7c6fcbf4230269aeb4a7f5fedd84b0d56a44",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-item-1.html",
+            "format": "html",
+            "bytes": 565,
+            "hash": "1ad62cae76b1a2d748efdd39e1dabf29894b343513b5625d754e2618d5f29d4a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-item-1.md",
+            "format": "markdown",
+            "bytes": 149,
+            "hash": "38102786fc67c5a865dc62b3476e6c05baf1c812f88ed7b23bb3afa4bc7a493b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-item-1.pdf",
+            "format": "pdf",
+            "bytes": 28403,
+            "hash": "a3ed54e9af9f3a1b1d8d6331c6b8a5ae98a582af3afebc207c49095e7038961d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/index.html",
+            "format": "html",
+            "bytes": 529,
+            "hash": "163e0b8ee215a9bc36720e76217f7c6fcbf4230269aeb4a7f5fedd84b0d56a44",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4166,
+            "hash": "6f41280ce21bd724881883d22b8d87a81a862881d2d2e8a34eadab0d1c62570f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/espiao-do-concorrente/sources-3b788fb869361a8c.json",
+            "format": "json",
+            "bytes": 1556,
+            "hash": "9277c47c32c4450931fcc72d88b41f33e6f34a7352f618314f9facfa9a3321bb",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "espiao/dossie-item-1.html",
+          "espiao/dossie-item-1.md",
+          "espiao/dossie-item-1.pdf",
+          "espiao/index.html",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 779,
+            "hash": "664aed131ade405fc43dab129a57c4d41de7bab3e8e571660780fca0e376286d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-item-1.html",
+            "format": "html",
+            "bytes": 565,
+            "hash": "1ad62cae76b1a2d748efdd39e1dabf29894b343513b5625d754e2618d5f29d4a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-item-1.md",
+            "format": "markdown",
+            "bytes": 149,
+            "hash": "38102786fc67c5a865dc62b3476e6c05baf1c812f88ed7b23bb3afa4bc7a493b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/dossie-item-1.pdf",
+            "format": "pdf",
+            "bytes": 28403,
+            "hash": "a3ed54e9af9f3a1b1d8d6331c6b8a5ae98a582af3afebc207c49095e7038961d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/index.html",
+            "format": "html",
+            "bytes": 529,
+            "hash": "163e0b8ee215a9bc36720e76217f7c6fcbf4230269aeb4a7f5fedd84b0d56a44",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-item-1.html",
+            "format": "html",
+            "bytes": 565,
+            "hash": "1ad62cae76b1a2d748efdd39e1dabf29894b343513b5625d754e2618d5f29d4a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-item-1.md",
+            "format": "markdown",
+            "bytes": 149,
+            "hash": "38102786fc67c5a865dc62b3476e6c05baf1c812f88ed7b23bb3afa4bc7a493b",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/dossie-item-1.pdf",
+            "format": "pdf",
+            "bytes": 28403,
+            "hash": "a3ed54e9af9f3a1b1d8d6331c6b8a5ae98a582af3afebc207c49095e7038961d",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "espiao/v1/index.html",
+            "format": "html",
+            "bytes": 529,
+            "hash": "163e0b8ee215a9bc36720e76217f7c6fcbf4230269aeb4a7f5fedd84b0d56a44",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4164,
+            "hash": "d984161688ddef4f1450dcd234611ea35de10156195b48b534fa50e4eff33ee0",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/espiao-do-concorrente/sources-a597ad2a35461e84.json",
+            "format": "json",
+            "bytes": 1591,
+            "hash": "d7dd2525f183f2b87071b3f08f4c1263cbb9e3cf3b2b64ba10f6919aa75e69aa",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    },
+    {
+      "skillId": "trend-hunting",
+      "contractGroup": "dynamic-library",
+      "contractHash": "dc85f0df47523a296103f07581c30a0cba7531188fcf644c28ff3569e1ff3471",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "trends/briefing-media-buyer.md",
+          "trends/index.html",
+          "trends/trends-item-1.html",
+          "trends/trends-item-1.md",
+          "trends/trends-item-1.pdf",
+          "trends/variacoes-teste-item-1.html",
+          "trends/variacoes-teste-item-1.md",
+          "trends/variacoes-teste-item-1.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1055,
+            "hash": "748c7836f2ca4a4b5dbad810d9e38e3b9001e5408f630b5bde3007ebdc99da2c",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4610,
+            "hash": "331e98b0a72c6d1805f01f3e4f19dfc844fbc7cb5f9c46980f159669518e82ec",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/trend-hunting/sources-245de9cd4a0fd17f.json",
+            "format": "json",
+            "bytes": 1548,
+            "hash": "401d5fd46ab24b284e2a95e49c9e8f72ba52a50eb012b8508247769adf1a118b",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 148,
+            "hash": "04eb2ec52c0f91a7f0f84982e3d2bf94cc6cdaad4c1239dee048dfc83a115bdf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/index.html",
+            "format": "html",
+            "bytes": 513,
+            "hash": "eb7299a269635c6538db3a3ab2ec4f6bfb6f68cab21d2fa4f02941d05f9bd164",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-item-1.md",
+            "format": "markdown",
+            "bytes": 141,
+            "hash": "1ec82258f5b90df41421f642626bfb2baa79f19d6d78cca176fa33bd7549c811",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 148,
+            "hash": "04eb2ec52c0f91a7f0f84982e3d2bf94cc6cdaad4c1239dee048dfc83a115bdf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/index.html",
+            "format": "html",
+            "bytes": 513,
+            "hash": "eb7299a269635c6538db3a3ab2ec4f6bfb6f68cab21d2fa4f02941d05f9bd164",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-item-1.md",
+            "format": "markdown",
+            "bytes": 141,
+            "hash": "1ec82258f5b90df41421f642626bfb2baa79f19d6d78cca176fa33bd7549c811",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-item-1.md",
+            "format": "markdown",
+            "bytes": 150,
+            "hash": "d2a251df5d67855245b3922ca5f9e373a6861570a6e4a920c68eef0f68b9a50e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-item-1.md",
+            "format": "markdown",
+            "bytes": 150,
+            "hash": "d2a251df5d67855245b3922ca5f9e373a6861570a6e4a920c68eef0f68b9a50e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "trends/briefing-media-buyer.md",
+          "trends/index.html",
+          "trends/trends-item-1.html",
+          "trends/trends-item-1.md",
+          "trends/trends-item-1.pdf",
+          "trends/variacoes-teste-item-1.html",
+          "trends/variacoes-teste-item-1.md",
+          "trends/variacoes-teste-item-1.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 1053,
+            "hash": "cde896b76a73e2be0da3d6522c5a66737d3bb989573bf028fc9cb13703e3f7c1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 4608,
+            "hash": "1729b27befaba66087b863aef5d3ae5c2643b118cb89c27ed4f6cc9d61136516",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "research/trend-hunting/sources-061d570507c75b74.json",
+            "format": "json",
+            "bytes": 1575,
+            "hash": "7223410201affefb5bbb8f358c02d2fdfe2829d2fede912461f6fc56514aae26",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 148,
+            "hash": "04eb2ec52c0f91a7f0f84982e3d2bf94cc6cdaad4c1239dee048dfc83a115bdf",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/index.html",
+            "format": "html",
+            "bytes": 513,
+            "hash": "eb7299a269635c6538db3a3ab2ec4f6bfb6f68cab21d2fa4f02941d05f9bd164",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-item-1.md",
+            "format": "markdown",
+            "bytes": 141,
+            "hash": "1ec82258f5b90df41421f642626bfb2baa79f19d6d78cca176fa33bd7549c811",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/trends-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/briefing-media-buyer.md",
+            "format": "markdown",
+            "bytes": 148,
+            "hash": "04eb2ec52c0f91a7f0f84982e3d2bf94cc6cdaad4c1239dee048dfc83a115bdf",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/index.html",
+            "format": "html",
+            "bytes": 513,
+            "hash": "eb7299a269635c6538db3a3ab2ec4f6bfb6f68cab21d2fa4f02941d05f9bd164",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-item-1.md",
+            "format": "markdown",
+            "bytes": 141,
+            "hash": "1ec82258f5b90df41421f642626bfb2baa79f19d6d78cca176fa33bd7549c811",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/trends-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-item-1.md",
+            "format": "markdown",
+            "bytes": 150,
+            "hash": "d2a251df5d67855245b3922ca5f9e373a6861570a6e4a920c68eef0f68b9a50e",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/v1/variacoes-teste-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-item-1.html",
+            "format": "html",
+            "bytes": 549,
+            "hash": "63f2f95af749a3c68e3fa3c67fd79c9b9ab1cb10e2157391b4110fc0b366f24a",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-item-1.md",
+            "format": "markdown",
+            "bytes": 150,
+            "hash": "d2a251df5d67855245b3922ca5f9e373a6861570a6e4a920c68eef0f68b9a50e",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "trends/variacoes-teste-item-1.pdf",
+            "format": "pdf",
+            "bytes": 27202,
+            "hash": "87087af28c320f74f9012e9e027c1ad76bf81be5df9fee1e3a230727d25ce64f",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

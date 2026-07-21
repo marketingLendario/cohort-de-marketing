@@ -1,0 +1,68 @@
+# .sinkra/methodology/v5/entity-contracts.yaml — Self-hosting reference contract (V5 framework)
+# STORY-181.W1.7 (ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY D-B SUPERSEDED 2026-06-15). LOCAL governance artifact.
+
+schema_version: "1.0"
+created_at: "2026-06-15"
+source_adr: "docs/architecture/sinkra-hub/ADR-SINKRA-SQUAD-CREATOR-ONTOLOGY.md"
+
+d_b_status: superseded_2026-06-15
+d_b_note: >-
+  ADR D-B ("dois stems separados": hub-stem vs self-model) foi SUPERSEDED em 2026-06-15 pela
+  unificacao em sp_sinkra_hub_stem. entity_skill / entity_task / entity_leaf NAO sao homonimos
+  em sentidos diferentes — sao a MESMA entidade-schema universal; a distincao correta e
+  entidade-schema (o tipo universal) vs entidade-instanciada (as N instancias mapeadas).
+  Este contrato reflete o grafo UNIFICADO (um unico stem), nao dois stems.
+
+stem_ref:
+  process_id: sp_sinkra_hub_stem
+  scope: company
+  path: ".sinkra/state/br-sinkra-hub-stem-20260612/sinkra-output.json"
+  schema_version: "5.1.0"
+  entity_types_count: 25
+  branches_count: 20
+
+# AC-4 verification note — REALIDADE on-disk (Reality-First / No-Invention)
+ac4_verification_note: >-
+  A premissa de AC-3/AC-4 (os 4 sinkra-leaf-* apontam para branch_sinkra_squad_creator_lifecycle)
+  esta INCORRETA. Verificacao on-disk (T2) confirma que os 4 sinkra-leaf-* skills carregam
+  target_v5_leaf apontando para leafs de branch_processo_sinkra_lifecycle (o lifecycle da
+  Metodologia/Processo SINKRA — o proprio /sinkra-pipeline V5), NAO de branch_sinkra_squad_creator_lifecycle.
+  branch_sinkra_squad_creator_lifecycle.leafs = [leaf_mapear, leaf_resolver_executor, leaf_gerar],
+  materializados pelas skills W3 (sinkra-squad-creator-mapear / -resolver-executor / -gerar), que
+  ainda NAO carregam frontmatter target_v5_leaf (serao construidas em W3.2/W3.3/W3.4). A
+  self_hosting_evidence abaixo reflete a REALIDADE verificada (a clausula "Informacao faltante" de
+  AC-4 mandata a verificacao on-disk e a correcao da premissa).
+
+self_hosting_evidence:
+  branch_ref: branch_processo_sinkra_lifecycle
+  note: >-
+    Os 4 leaf-skills do /sinkra-pipeline sao instancias materializadas (entidade-instanciada) dos
+    4 leafs do branch_processo_sinkra_lifecycle (entidade-schema) dentro do stem unificado —
+    evidencia de self-hosting do framework (o pipeline V5 esta mapeado como branch no proprio stem).
+  leaf_skills:
+    - skill_path: ".claude/skills/sinkra-leaf-descobrir/SKILL.md"
+      target_v5_leaf: leaf_descobrir
+      leaf_in_branch: branch_processo_sinkra_lifecycle
+      verified_on_disk: true
+    - skill_path: ".claude/skills/sinkra-leaf-definir-tasks/SKILL.md"
+      target_v5_leaf: leaf_definir_tasks
+      leaf_in_branch: branch_processo_sinkra_lifecycle
+      verified_on_disk: true
+    - skill_path: ".claude/skills/sinkra-leaf-validar-qualidade/SKILL.md"
+      target_v5_leaf: leaf_validar_qualidade
+      leaf_in_branch: branch_processo_sinkra_lifecycle
+      verified_on_disk: true
+    - skill_path: ".claude/skills/sinkra-leaf-consolidar-output/SKILL.md"
+      target_v5_leaf: leaf_consolidar_output
+      leaf_in_branch: branch_processo_sinkra_lifecycle
+      verified_on_disk: true
+
+squad_creator_branch:
+  branch_ref: branch_sinkra_squad_creator_lifecycle
+  leafs: [leaf_mapear, leaf_resolver_executor, leaf_gerar]
+  materialization_status: pending_w3
+  note: >-
+    Os leafs deste branch serao materializados pelas skills W3 (sinkra-squad-creator-mapear,
+    -resolver-executor, -gerar). Quando criadas, devem carregar target_v5_leaf apontando para
+    estes leaf IDs. Em W1.7 ainda nao existem com esse frontmatter — por isso nao figuram em
+    self_hosting_evidence (a evidencia nao pode ser inventada — VC-2).

@@ -143,6 +143,18 @@ describe('skill-runtime client', () => {
     expect(source.closed).toBe(true);
   });
 
+  it('observeSkillRun keeps reconciling while SSE stays open but drops the terminal frame', async () => {
+    const source = new FakeEventSource();
+    const onDone = vi.fn();
+    fetchMock.mockResolvedValueOnce(jsonResponse(view({ status: 'running' })));
+    fetchMock.mockResolvedValueOnce(jsonResponse(SUCCEEDED));
+
+    observeSkillRun('job-1', { onDone }, { eventSourceFactory: () => source, pollIntervalMs: 1 });
+
+    await vi.waitFor(() => expect(onDone).toHaveBeenCalledOnce());
+    expect(source.closed).toBe(true);
+  });
+
   it('observeSkillRun falls back to polling when EventSource is unavailable (AC3)', async () => {
     fetchMock.mockResolvedValueOnce(jsonResponse(view({ status: 'running' })));
     fetchMock.mockResolvedValueOnce(jsonResponse(SUCCEEDED));

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Icon } from '@/lib/lendaria-ds';
 import {
   fetchSystemReadiness,
+  recoverSystemReadiness,
   UNAVAILABLE_READINESS,
   type SystemReadinessSnapshot,
   type SystemReadinessStatus,
@@ -66,6 +67,11 @@ const FRIENDLY_CHECKS: Record<string, { label: string; recovery: string }> = {
     label: 'Ações do Marketing Studio',
     recovery: 'Feche e abra novamente o Marketing Studio pelo mesmo atalho usado no início.',
   },
+  os: { label: 'Compatibilidade do computador', recovery: 'O Studio continuará com recursos reduzidos neste sistema.' },
+  git: { label: 'Histórico protegido do projeto', recovery: 'Instale o Git e escolha “Verificar novamente”.' },
+  python: { label: 'Criação de documentos', recovery: 'Instale o Python para liberar todas as exportações.' },
+  apify: { label: 'Pesquisa em fontes externas', recovery: 'Configure seu acesso de pesquisa para liberar coletas externas.' },
+  'skill-mirror': { label: 'Etapas do painel e dos comandos', recovery: 'Autorize o Studio a realinhar a cópia local das etapas.' },
   'readiness-api': {
     label: 'Verificação do Marketing Studio',
     recovery: 'Aguarde alguns segundos e escolha “Verificar novamente”. Se continuar, feche e abra o Marketing Studio.',
@@ -95,6 +101,8 @@ export function SystemReadiness() {
   const [snapshot, setSnapshot] = useState<SystemReadinessSnapshot>(UNAVAILABLE_READINESS);
   const [open, setOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [recovering, setRecovering] = useState<string | null>(null);
+  const [apifyToken, setApifyToken] = useState('');
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
@@ -144,6 +152,20 @@ export function SystemReadiness() {
   }, [open]);
 
   const label = STATUS_LABELS[snapshot.status];
+
+  async function recover(actionId: 'sync-skill-mirror' | 'git-pull-fast-forward' | 'configure-apify') {
+    if (!snapshot.diagnosisHash) return;
+    if (!window.confirm('Autoriza o Marketing Studio a aplicar esta correção local agora?')) return;
+    setRecovering(actionId);
+    try {
+      setSnapshot(await recoverSystemReadiness({ actionId, expectedDiagnosisHash: snapshot.diagnosisHash, ...(actionId === 'configure-apify' ? { value: apifyToken } : {}) }));
+      if (actionId === 'configure-apify') setApifyToken('');
+    } catch {
+      await refresh();
+    } finally {
+      setRecovering(null);
+    }
+  }
 
   return (
     <div className="cms-system-readiness" ref={rootRef}>
@@ -201,6 +223,18 @@ export function SystemReadiness() {
                   <strong>{copy.label}</strong>
                   <span>{copy.detail}</span>
                   {check.status !== 'ready' ? <p>{copy.recovery}</p> : null}
+                  {check.recoveryActionId === 'configure-apify' ? (
+                    <label className="cms-system-readiness__secret">
+                      <span>Token do Apify</span>
+                      <input type="password" value={apifyToken} onChange={(event) => setApifyToken(event.target.value)} autoComplete="off" />
+                    </label>
+                  ) : null}
+                  {check.recoveryActionId ? (
+                    <button className="cms-system-readiness__recover" type="button" onClick={() => void recover(check.recoveryActionId!)} disabled={recovering === check.recoveryActionId || (check.recoveryActionId === 'configure-apify' && !/^apify_api_[A-Za-z0-9_-]{16,}$/.test(apifyToken))}>
+                      <Icon name="refresh-double" size={13} />
+                      {recovering === check.recoveryActionId ? 'Corrigindo…' : check.recoveryActionId === 'configure-apify' ? 'Salvar com minha autorização' : 'Corrigir com minha autorização'}
+                    </button>
+                  ) : null}
                 </div>
               </div>;
             })}

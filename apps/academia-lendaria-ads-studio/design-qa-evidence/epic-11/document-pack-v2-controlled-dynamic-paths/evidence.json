@@ -1,0 +1,278 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T00:26:07.823Z",
+  "lane": {
+    "type": "controlled-contract",
+    "runner": "deterministic-local-fixture",
+    "codexRealEquivalent": false,
+    "reasoningEffort": "controlled",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "A geracao textual e controlada e nao substitui a lane separada com Codex CLI real."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "bonus-funil"
+    ],
+    "catalogHash": "57fed13c0854c7fdfb6ac8d0c77ef312bdbf2f451e2fc0e2f0d2bc1b34ae515f"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "bonus-funil",
+      "contractGroup": "dynamic-library",
+      "contractHash": "3b81bcfbd58a48e7c912a018fc037ea8cada9bbcc20ea3c90ad55832bf10550b",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "bonus/checklist-de-execucao/item-1.html",
+          "bonus/checklist-de-execucao/item-1.md",
+          "bonus/checklist-de-execucao/item-1.pdf",
+          "bonus/index.html",
+          "book-do-funil.json",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "bonus/checklist-de-execucao/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/v1/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 472,
+            "hash": "423fc68b4405f679b70213c14bbbdea6292cd9b3b118f7ee6935d6ca8c7ca382",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3648,
+            "hash": "645e88e3dfbb98be5e653e33f36f1705053b7f8fc4c74d45f9203a01bba56336",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "bonus/checklist-de-execucao/item-1.html",
+          "bonus/checklist-de-execucao/item-1.md",
+          "bonus/checklist-de-execucao/item-1.pdf",
+          "bonus/index.html",
+          "book-do-funil.json",
+          "index.html"
+        ],
+        "files": [
+          {
+            "path": "bonus/checklist-de-execucao/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.html",
+            "format": "html",
+            "bytes": 545,
+            "hash": "79e3406544be8ed1499d9ed5fb2c6c6af12c93388d803bbbcd9eb96f2a2cefa2",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.md",
+            "format": "markdown",
+            "bytes": 153,
+            "hash": "0437b61ebf321d4cbb79071e0e4156792c1f71bddc8ff511ce592d4bcf74bf97",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/checklist-de-execucao/v1/item-1.pdf",
+            "format": "pdf",
+            "bytes": 26952,
+            "hash": "5fa3722e061ee5e8ed10d537b78869ef989714508000f11e2ab863fdb366d584",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "bonus/v1/index.html",
+            "format": "html",
+            "bytes": 509,
+            "hash": "2264b3c46ae4cd78b6eacfc9441f12d292547f5dea5e2c0bc62493a6a96225fd",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 470,
+            "hash": "e180f16d7d4916940febd6f903716c65753904cb2029b03344881232d0bde488",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3646,
+            "hash": "dc16d9c454cd7156cb98a209ce4251adef0678151bcc0beb8365bbb1fffbd4e5",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": true,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

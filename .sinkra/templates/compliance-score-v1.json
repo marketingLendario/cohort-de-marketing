@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sinkra-hub/templates/compliance-score-v1.json",
+  "title": "Compliance Score v1",
+  "description": "Output template para tsk04_calcular_compliance_score. Fórmula V5: 50% axiomas_normalized + 50% ap_clean_score.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["compliance_score", "axiomas_normalized", "ap_clean_score", "threshold_min", "verdict"],
+  "properties": {
+    "compliance_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "axiomas_normalized": { "type": "number", "minimum": 0, "maximum": 100 },
+    "ap_clean_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "threshold_min": { "type": "integer", "default": 70 },
+    "verdict": {
+      "type": "string",
+      "enum": ["EXCELLENT", "GOOD", "PASS", "REVIEW", "FAIL"],
+      "description": "≥90 EXCELLENT | ≥80 GOOD | ≥70 PASS | ≥60 REVIEW | <60 FAIL"
+    },
+    "formula_breakdown": {
+      "type": "object",
+      "properties": {
+        "axiomas_weighted_overall": { "type": "number" },
+        "ap_halt_count": { "type": "integer" },
+        "ap_warn_count": { "type": "integer" }
+      }
+    },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "branch_id": { "type": "string" }
+  }
+}

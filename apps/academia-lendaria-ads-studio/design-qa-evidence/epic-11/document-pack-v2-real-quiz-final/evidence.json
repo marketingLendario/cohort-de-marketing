@@ -1,0 +1,278 @@
+{
+  "schemaVersion": "1.0.0",
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T00:31:54.855Z",
+  "lane": {
+    "type": "real-codex",
+    "runner": "codex-cli-chatgpt-session",
+    "codexRealEquivalent": true,
+    "reasoningEffort": "medium",
+    "validates": [
+      "panel-runtime",
+      "cli-runtime",
+      "approval-saga",
+      "database-filesystem",
+      "derived-rendering",
+      "book-reconciliation"
+    ],
+    "limitation": "Saidas generativas independentes podem ter hashes diferentes; contrato, topologia, decisoes e hashes por superficie sao comparados."
+  },
+  "contractCatalog": {
+    "schemaVersion": "2.0.0",
+    "contractCount": 1,
+    "contractIds": [
+      "quiz-funil"
+    ],
+    "catalogHash": "7d5975c883e5b072cb1917f7bddae80e59ffa63f622e229b79e3cbb873d695b7"
+  },
+  "surfaces": {
+    "panel": "Playwright no painel real sobre BFF isolado",
+    "cli": "skill-cli real sobre o mesmo BFF isolado"
+  },
+  "skills": [
+    {
+      "skillId": "quiz-funil",
+      "contractGroup": "interactive-pack",
+      "contractHash": "400ef971618055efe01c0bdd7d9fa8558391a7934b0f3726424e9dc98ec53da7",
+      "panel": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/quiz-app.html",
+          "quiz.html",
+          "quiz.md",
+          "quiz.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 459,
+            "hash": "b361557a98a51e85d3dda0739870f1c7fac9b00e3380a39c20598fb400fd7d03",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3628,
+            "hash": "baa938a2ba5f12c15a9afb83c2990cb499a08bab7d26124dbde2e640093e76c1",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app-v1.html",
+            "format": "html",
+            "bytes": 8695,
+            "hash": "6b6eb3e2af65cc0e412520715ddb9b1d36c5803eaa847ec4c7885b7217943153",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app.html",
+            "format": "html",
+            "bytes": 8695,
+            "hash": "6b6eb3e2af65cc0e412520715ddb9b1d36c5803eaa847ec4c7885b7217943153",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.html",
+            "format": "html",
+            "bytes": 1819,
+            "hash": "7567a22fb4c142475037e564e35202c04844e94a6fd30e23eed1e94632691622",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.md",
+            "format": "markdown",
+            "bytes": 6423,
+            "hash": "cadeed108f67e682bb0b6f50c6e8e6013b2f2faa747015a5a64af4deed42a4f8",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.pdf",
+            "format": "pdf",
+            "bytes": 170800,
+            "hash": "80649b1eef4d177c913ce3c98fe08ef1d6b794c0c9cbb8d3e76ad3bd75669fc4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.html",
+            "format": "html",
+            "bytes": 1819,
+            "hash": "7567a22fb4c142475037e564e35202c04844e94a6fd30e23eed1e94632691622",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.md",
+            "format": "markdown",
+            "bytes": 6423,
+            "hash": "cadeed108f67e682bb0b6f50c6e8e6013b2f2faa747015a5a64af4deed42a4f8",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.pdf",
+            "format": "pdf",
+            "bytes": 170800,
+            "hash": "80649b1eef4d177c913ce3c98fe08ef1d6b794c0c9cbb8d3e76ad3bd75669fc4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "cli": {
+        "approval": {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written"
+        },
+        "expectedCanonicalPaths": [
+          "book-do-funil.json",
+          "index.html",
+          "pagina/quiz-app.html",
+          "quiz.html",
+          "quiz.md",
+          "quiz.pdf"
+        ],
+        "files": [
+          {
+            "path": "book-do-funil.json",
+            "format": "json",
+            "bytes": 457,
+            "hash": "3baa5b7d984ecfeb74c960cda9b888eb4a473c70355a80978a16ec39323a66a4",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "index.html",
+            "format": "html",
+            "bytes": 3626,
+            "hash": "0223c80e33dacafe2aff8c5efb1a05c1582d66a7dc4360582be3e166953a7c12",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app-v1.html",
+            "format": "html",
+            "bytes": 11216,
+            "hash": "33ead008850107c9b26c225af2c20ed8d77ad42aa66bf86bd12f71ea55d21328",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "pagina/quiz-app.html",
+            "format": "html",
+            "bytes": 11216,
+            "hash": "33ead008850107c9b26c225af2c20ed8d77ad42aa66bf86bd12f71ea55d21328",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.html",
+            "format": "html",
+            "bytes": 3561,
+            "hash": "990323a268974ca7cff8729918b1f432f397fd46867f5875dd75f97eaa1eace7",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.md",
+            "format": "markdown",
+            "bytes": 7546,
+            "hash": "1757954b689115b6655435c5f10c555a6b45eda151b57af1df7252b1cb185329",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz-v1.pdf",
+            "format": "pdf",
+            "bytes": 177735,
+            "hash": "9c130df32001806f689e3d5cf5d997f6a8a8d65fd9591265a8f1d7a9b66842ef",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.html",
+            "format": "html",
+            "bytes": 3561,
+            "hash": "990323a268974ca7cff8729918b1f432f397fd46867f5875dd75f97eaa1eace7",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.md",
+            "format": "markdown",
+            "bytes": 7546,
+            "hash": "1757954b689115b6655435c5f10c555a6b45eda151b57af1df7252b1cb185329",
+            "kind": "approved-source",
+            "binary": false,
+            "dbFilesystemMatch": true
+          },
+          {
+            "path": "quiz.pdf",
+            "format": "pdf",
+            "bytes": 177735,
+            "hash": "9c130df32001806f689e3d5cf5d997f6a8a8d65fd9591265a8f1d7a9b66842ef",
+            "kind": "derived",
+            "binary": true,
+            "dbFilesystemMatch": true
+          }
+        ]
+      },
+      "parity": {
+        "canonicalPathsEqual": true,
+        "artifactTopologyEqual": true,
+        "approvedSourceHashesEqual": false,
+        "approvedSourceHashesCompared": true,
+        "semanticContractEqual": true,
+        "databaseFilesystemHashesVerified": true,
+        "bookSemanticStateEqual": true,
+        "binaryHashesComparedAcrossSurfaces": false,
+        "binaryComparisonReason": "PDFs derivados podem carregar metadados de renderizacao; cada hash foi validado entre DB e filesystem na propria superficie."
+      }
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "verified": true
+  },
+  "privacy": {
+    "checked": true,
+    "findings": 0
+  },
+  "browser": {
+    "screenshot": "panel-final.png",
+    "consoleErrors": 0,
+    "failedRequests": 0
+  }
+}

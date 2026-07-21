@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sinkra-hub/templates/sinkra-output-analysis-v1.json",
+  "title": "Sinkra Output Analysis v1 (D6 Companion)",
+  "description": "Companion artifact para sinkra-output.json. D6 canon — axiomas/scores pipeline-internal + provenance metadata (ST-002 fix). NÃO entra no sinkra-output.json strict.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sinkra_output_ref", "compliance_score", "generated_at"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0.0" },
+    "sinkra_output_ref": { "type": "string" },
+    "branch_id": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "compliance_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "axiomas_pass": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^A[0-9]+_[a-z]+$" }
+    },
+    "anti_patterns_clean": { "type": "boolean" },
+    "validator_results": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "enum": ["PASS", "FAIL", "WARN"] }
+    },
+    "execution_summary": {
+      "type": "object",
+      "properties": {
+        "total_leafs": { "type": "integer" },
+        "total_tasks_executed": { "type": "integer" },
+        "duration_minutes": { "type": "number" },
+        "qg_loops_triggered": { "type": "integer" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "ST-002 fix — provenance metadata mora aqui (NÃO no sinkra-output.json strict)",
+      "properties": {
+        "_comment": { "type": "string" },
+        "merge_strategy": { "type": "string" },
+        "per_field_source": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "smoke_test_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^ST-\\d{3}$" },
+          "severity": { "type": "string", "enum": ["VETO", "HIGH", "MEDIUM", "LOW", "INFO"] },
+          "category": { "type": "string" },
+          "task_affected": { "type": "string" },
+          "finding": { "type": "string" },
+          "evidence": { "type": "string" },
+          "fix_proposed": { "type": "string" },
+          "owner": { "type": "string" },
+          "blocker_level": { "type": "string" }
+        }
+      }
+    },
+    "open_decisions_count": { "type": "integer" },
+    "capability_gaps_count": { "type": "integer" }
+  }
+}

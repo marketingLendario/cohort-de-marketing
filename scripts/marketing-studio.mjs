@@ -320,6 +320,15 @@ function printSnapshot(snapshot) {
   }
 }
 
+export function withManagedRuntimeChecks(checks, state) {
+  return [
+    ...checks.filter((item) => !['ports', 'bff', 'web'].includes(item.id)),
+    check('ports', 'Portas locais', 'ready', `Portas ${state.webPort} e ${state.bffPort} pertencem a esta sessão do Studio.`),
+    check('bff', 'Motor local', 'ready', `BFF ativo na porta ${state.bffPort}.`),
+    check('web', 'Interface', 'ready', `Interface ativa na porta ${state.webPort}.`),
+  ];
+}
+
 async function waitFor(url, timeoutMs = 45_000) {
   const deadline = Date.now() + timeoutMs;
   let detail = 'sem resposta';
@@ -491,6 +500,7 @@ async function start(options) {
       SUPABASE_URL: supabase.env.API_URL,
       SUPABASE_SERVICE_ROLE_KEY: supabase.env.SERVICE_ROLE_KEY,
       COHORT_REPO_ROOT: repoRoot,
+      MARKETING_STUDIO_CREATIVE_ROOT: resolve(paths.directory, 'creative-factory'),
       LOCAL_SKILL_RUNNER_ENABLED: 'true',
       LOCAL_SKILL_RUNNER_TOKEN: token,
       MARKETING_STUDIO_READINESS_FILE: paths.readiness,
@@ -572,22 +582,26 @@ async function main() {
   loadRepoEnvironment();
   const options = parseCli(process.argv.slice(2));
   if (options.command === 'stop') return await stop(options);
-  if (options.command === 'status') {
+  let managedState = null;
+  if (options.command === 'check' || options.command === 'status') {
     const paths = runtimePaths();
     const state = await readJson(paths.state);
-    const snapshot = await readJson(paths.readiness);
-    if (state && snapshot && await ownedProcessAlive(state.web, state.repoRoot) && await ownedProcessAlive(state.bff, state.repoRoot)) {
-      printSnapshot(snapshot);
-      console.log(`\nMarketing Studio aberto: http://127.0.0.1:${state.webPort}`);
-      return;
+    if (state && await ownedProcessAlive(state.web, state.repoRoot) && await ownedProcessAlive(state.bff, state.repoRoot)) {
+      managedState = state;
+    } else if (options.command === 'status') {
+      console.log('\nMarketing Studio não está em execução pelo launcher. Diagnóstico do ambiente:');
     }
-    console.log('\nMarketing Studio não está em execução pelo launcher. Diagnóstico do ambiente:');
   }
   if (options.command === 'check' || options.command === 'status') {
     const result = await preflight(options);
-    const snapshot = snapshotFrom(result.checks, options);
+    const checks = managedState ? withManagedRuntimeChecks(result.checks, managedState) : result.checks;
+    const snapshotOptions = managedState
+      ? { ...options, webPort: managedState.webPort, bffPort: managedState.bffPort }
+      : options;
+    const snapshot = snapshotFrom(checks, snapshotOptions);
     await writeJsonAtomic(runtimePaths().readiness, snapshot);
     printSnapshot(snapshot);
+    if (managedState) console.log(`\nMarketing Studio aberto: http://127.0.0.1:${managedState.webPort}`);
     if (snapshot.status === 'blocked') process.exitCode = 1;
     return;
   }

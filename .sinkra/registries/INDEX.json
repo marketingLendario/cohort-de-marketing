@@ -1,0 +1,133 @@
+{
+  "$schema": "sinkra-index-v1",
+  "description": "Master INDEX — ponteiros para registries canônicos do Sinkra Hub. NÃO duplica dados (D6).",
+  "updated_at": "2026-05-03",
+  "version": "2.0.0",
+  "migration_from": "v1.0.0 (squads/sinkra-squad/data/*.yaml → workspace + top-level JSON)",
+  "principle": "Single SOT: cada entity tem UM registry. INDEX aponta, nunca copia.",
+  "correlation": ".sinkra/ → workspace/businesses/sinkra-hub/",
+  "hub_registries": {
+    "entities": {
+      "description": "Entidades do hub (squads, services, apps, 740 entries)",
+      "path": "workspace/businesses/sinkra-hub/registries/entity-registry.json",
+      "format": "json",
+      "entity_type": "Entity"
+    },
+    "people": {
+      "description": "Founders e stakeholders do hub (7 entries)",
+      "path": "workspace/businesses/sinkra-hub/registries/people-registry.json",
+      "format": "json",
+      "entity_type": "Person"
+    },
+    "artifacts": {
+      "description": "Catálogo de artefatos canônicos com lifecycle e TTL (5 docs)",
+      "path": "workspace/businesses/sinkra-hub/registries/artifacts.json",
+      "format": "json",
+      "entity_type": "Artifact"
+    },
+    "processes": {
+      "description": "Processos SINKRA mapeados hub-generic (10 processos)",
+      "path": "workspace/businesses/sinkra-hub/registries/processes.json",
+      "format": "json",
+      "entity_type": "Process"
+    },
+    "tokens": {
+      "description": "Tokens SINKRA SK-IDs (187 entries)",
+      "path": "workspace/businesses/sinkra-hub/registries/tokens.json",
+      "format": "json",
+      "entity_type": "Token"
+    },
+    "governance_rules": {
+      "description": "Regras de governança e vetos (8 rules + 7 vetos)",
+      "path": "workspace/businesses/sinkra-hub/registries/governance-rules.json",
+      "format": "json",
+      "entity_type": "GovernanceRule"
+    }
+  },
+  "top_level_indexes": {
+    "apps": {
+      "description": "Deployable applications (8 apps)",
+      "path": "apps/INDEX.json",
+      "format": "json",
+      "entity_type": "App",
+      "boundary": "ONLINE"
+    },
+    "packages": {
+      "description": "Shared stateless libraries (9 packages)",
+      "path": "packages/INDEX.json",
+      "format": "json",
+      "entity_type": "Package",
+      "boundary": "ONLINE"
+    },
+    "squads": {
+      "description": "Ecosystem de squads registrados (51 squads)",
+      "path": "squads/INDEX.json",
+      "format": "json",
+      "entity_type": "Squad"
+    },
+    "services": {
+      "description": "Service adapters to external systems (11 services)",
+      "path": "services/INDEX.json",
+      "format": "json",
+      "entity_type": "Service",
+      "boundary": "ONLINE"
+    },
+    "infrastructure": {
+      "description": "Infrastructure catalog (10 modules)",
+      "path": "infrastructure/INDEX.json",
+      "format": "json",
+      "entity_type": "Infrastructure"
+    },
+    "infrastructure_map": {
+      "description": "Infrastructure map — servers, platforms, deploy_targets, topology (v3.0.0)",
+      "path": "infrastructure/infrastructure-map.json",
+      "format": "json",
+      "entity_type": "InfrastructureMap",
+      "boundary": "ONLINE",
+      "migrated_from": "squads/infra-ops/data/infrastructure-map.json",
+      "migration_story": "Story 146.1"
+    }
+  },
+  "business_registries": {
+    "allfluence": {
+      "description": "AllFluence business-specific registries",
+      "correlation": ".allfluence/ → workspace/businesses/allfluence/",
+      "registries": {
+        "processes": "workspace/businesses/allfluence/registries/processes.json"
+      }
+    }
+  },
+  "config": {
+    "description": "Behavioral config (thresholds, resolution order)",
+    "path": ".sinkra/config/skill-defaults.json",
+    "note": "R40 compliant — JSON for machine-consumed config (D5)"
+  },
+  "deprecated": {
+    "note": "Estes paths são LEGADOS — NÃO referenciar em código novo",
+    "paths": [
+      "squads/sinkra-squad/data/ecosystem-registry.yaml",
+      "squads/sinkra-squad/data/process-registry.yaml",
+      "squads/sinkra-squad/data/token-registry.yaml",
+      "squads/sinkra-squad/data/governance-rules-registry.yaml",
+      ".aiox-core/data/entity-registry.yaml",
+      ".aiox-core/data/people-registry.yaml",
+      "services/service-catalog.yaml",
+      "workspace/businesses/sinkra-hub/document-registry.yaml",
+      "squads/squad-creator/data/squad-registry.yaml",
+      "squads/squad-creator-pro/data/squad-registry.yaml",
+      ".aiox-core/core/registry/aios-artifact-registry.json",
+      ".aiox-core/core/registry/service-registry.json"
+    ]
+  },
+  "entries": [
+    {
+      "id": "worktree-registry",
+      "path": ".aiox/worktrees/registry.json",
+      "schema_version": "worktree-registry-v1",
+      "description": "Durable worktree registry — tracks active/merged/orphan worktrees per story. Written by O6b, reconciled by WL-6/WL-7.",
+      "owner": "sinkra-aiox",
+      "story": "115.S2.O6b (proveniência allfluence) / 177.W1.5 (port)",
+      "created_at": "2026-06-12T01:56:27.487Z"
+    }
+  ]
+}

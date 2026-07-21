@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "mockup-produto-funil",
+  "jobId": "589ba663-c80c-4e64-bde3-639568fc9c7e",
+  "skillRunId": "95f0a60e-fbd6-4b73-ab62-108b70448c5b",
+  "status": "needs_review",
+  "model": "codex-cli-default+codex-cli-image-gen",
+  "skillHash": "fcee05e9359dee0e73864bb6988e6e794ec82fdc6cb716499da8ced2f45725e9",
+  "proposal": {
+    "fields": [
+      {
+        "key": "project_slug",
+        "value": "epic-11-document-pack-cli"
+      },
+      {
+        "key": "product",
+        "value": "Método Consistência 90"
+      },
+      {
+        "key": "mockup_type",
+        "value": "Device mockup em notebook"
+      },
+      {
+        "key": "brand",
+        "value": "Academia Fit"
+      },
+      {
+        "key": "formats",
+        "value": "4:5, 9:16 e 1:1"
+      },
+      {
+        "key": "generation_status",
+        "value": "Prompt entregue; geração da imagem delegada ao adapter para revisão humana"
+      },
+      {
+        "key": "batchId",
+        "value": "589ba663-c80c-4e64-bde3-639568fc9c7e"
+      },
+      {
+        "key": "generatedItems",
+        "value": "1"
+      }
+    ],
+    "summary": "Prompt canônico de device mockup estruturado para o Método Consistência 90, usando apenas o offerbook e o DESIGN.md confirmados. Nenhuma imagem ou arquivo foi gerado. 1 peça(s) visual(is) pronta(s) para seleção.",
+    "warnings": [
+      "A entrega é somente o prompt canônico; nenhuma imagem foi gerada ou publicada.",
+      "O caminho indicado em artifacts é de referência e não foi gravado, conforme solicitado.",
+      "A regra de Voz = marca foi aplicada: o mockup mostra o produto digital real, sem enquadramento de curso, professor ou área de aluno.",
+      "Revisão humana obrigatória antes de usar a imagem em página ou criativo."
+    ],
+    "artifacts": [
+      {
+        "path": "projetos/epic-11-document-pack-cli/mockups/prompts.md",
+        "title": "Prompt canônico — Device mockup Método Consistência 90",
+        "format": "markdown",
+        "content": "Mockup editorial premium de um notebook exibindo o produto digital \"Método Consistência 90\", da marca \"Academia Fit\". A tela mostra uma interface realista e sóbria do programa de saúde e hábitos, com três etapas claramente organizadas: \"Desinflamar\", \"Reprogramar\" e \"Manter\". Também devem aparecer, de forma discreta e legível, uma aula em vídeo curta, o plano prático e o acesso à Comunidade Consistência, todos confirmados na oferta. Não incluir resultados garantidos, números de emagrecimento, depoimentos, fotos de antes e depois, professor ou especialista em destaque.\n\nInterface com fundo #0A0A0C, painéis elevados em #131316, texto principal #FAFAFA, destaques de confiança em #30B0C7 e ações pontuais em #C9B298, respeitando a regra dos 8% para o ouro. Títulos com aparência da fonte Newsreader; textos de interface com aparência da fonte Hanken Grotesk. Cards com raio de 4px, controles com raio de 2px e painéis com raio de 6px. Direção visual dark premium, refinada, sóbria, com contraste alto, detalhes mínimos e sem gradientes exagerados.\n\nNotebook centralizado, vista frontal levemente em ângulo, com iluminação de estúdio suave, sombra realista e acabamento fotográfico. Fundo externo uniforme #0A0A0C. Composição responsiva, preservando uma área segura ampla ao redor do notebook para adaptações nos formatos vertical 4:5 e 9:16 e quadrado 1:1. A marca \"Academia Fit\" deve aparecer apenas na interface, com grafia correta. Todo texto deve permanecer dentro da tela, nítido e legível. Sem texto solto fora do notebook, sem marca-d'água, sem logos de terceiros, sem elementos inventados e sem excesso de informação visual. Alta resolução.",
+        "artifactType": "mockups"
+      },
+      {
+        "path": "criativos/factory/mockup-produto-funil-82000000-0000-0000-0000-000000000112/589ba663-c80c-4e64-bde3-639568fc9c7e/manifest.json",
+        "title": "Galeria de mockups",
+        "format": "json",
+        "content": "{\n  \"schemaVersion\": \"1.0.0\",\n  \"batchId\": \"589ba663-c80c-4e64-bde3-639568fc9c7e\",\n  \"projectId\": \"82000000-0000-0000-0000-000000000112\",\n  \"campaignId\": \"mockup-produto-funil-82000000-0000-0000-0000-000000000112\",\n  \"productionSkillId\": \"mockup-produto-funil\",\n  \"status\": \"ready_for_review\",\n  \"createdAt\": \"2026-07-12T02:47:05.317Z\",\n  \"items\": [\n    {\n      \"id\": \"mockup-pilot-mockup-product-0\",\n      \"status\": \"ready\",\n      \"archetype\": \"mockup_product\",\n      \"headline\": \"Método Consistência 90\",\n      \"caption\": \"Device mockup do programa digital em notebook, exibindo uma área de membros sóbria baseada no offerbook e no DESIGN.md confirmados.\\n\\n## Mockup escolhido\\n\\n- Item: Método Consistência 90 — programa digital de 90 dias\\n- Tipo: device mockup em notebook\\n- Formatos previstos pelo adapter: 4:5, 9:16 e 1:1\\n- Enquadramento: produto digital da marca Academia Fit, sem professor, depoimento ou linguagem de área de aluno.\\n\\n## Prompt canônico\\n\\nMockup editorial premium de um notebook exibindo o produto digital \\\"Método Consistência 90\\\", da marca \\\"Academia Fit\\\". A tela mostra uma interface realista e sóbria do programa de saúde e hábitos, com três etapas claramente organizadas: \\\"Desinflamar\\\", \\\"Reprogramar\\\" e \\\"Manter\\\". Também devem aparecer, de forma discreta e legível, uma aula em vídeo curta, o plano prático e o acesso à Comunidade Consistência, todos confirmados na oferta. Não incluir resultados garantidos, números de emagrecimento, depoimentos, fotos de antes e depois, professor ou especialista em destaque.\\n\\nInterface com fundo #0A0A0C, painéis elevados em #131316, texto principal #FAFAFA, destaques de confiança em #30B0C7 e ações pontuais em #C9B298, respeitando a regra dos 8% para o ouro. Títulos com aparência da fonte Newsreader; textos de interface com aparência da fonte Hanken Grotesk. Cards com raio de 4px, controles com raio de 2px e painéis com raio de 6px. Direção visual dark premium, refinada, sóbria, com contraste alto, detalhes mínimos e sem gradientes exagerados.\\n\\nNotebook centralizado, vista frontal levemente em ângulo, com iluminação de estúdio suave, sombra realista e acabamento fotográfico. Fundo externo uniforme #0A0A0C. Composição responsiva, preservando uma área segura ampla ao redor do notebook para adaptações nos formatos vertical 4:5 e 9:16 e quadrado 1:1. A marca \\\"Academia Fit\\\" deve aparecer apenas na interface, com grafia correta. Todo texto deve permanecer dentro da tela, nítido e legível. Sem texto solto fora do notebook, sem marca-d'água, sem logos de terceiros, sem elementos inventados e sem excesso de informação visual. Alta resolução.\\n\\n## Mapa de tokens usados\\n\\n- Marca: Academia Fit\\n- Cor primária: #C9B298\\n- Cor secundária: #30B0C7\\n- Fundo: #0A0A0C\\n- Superfície elevada: #131316\\n- Texto: #FAFAFA\\n- Fonte de títulos: Newsreader\\n- Fonte de interface: Hanken Grotesk\\n- Raio de controles: 2px\\n- Raio de cards: 4px\\n- Raio de painéis: 6px\\n- Estilo: dark premium\\n\\n## Checklist de revisão humana\\n\\n- [ ] O nome \\\"Método Consistência 90\\\" está correto e legível.\\n- [ ] As três etapas exibidas são exatamente Desinflamar, Reprogramar e Manter.\\n- [ ] A tela representa somente o programa, o plano prático e a Comunidade Consistência confirmados.\\n- [ ] Não há promessa garantida, antes/depois, depoimento ou alegação clínica.\\n- [ ] A paleta corresponde aos tokens do DESIGN.md.\\n- [ ] O contraste do texto sobre fundo escuro está adequado.\\n- [ ] A marca aparece corretamente como Academia Fit.\\n- [ ] O notebook e a interface permanecem coerentes nos formatos 4:5, 9:16 e 1:1.\\n- [ ] Não há texto deformado, ilegível ou criado fora da interface.\\n- [ ] A imagem gerada pelo adapter foi aprovada antes de qualquer uso em página ou criativo.\",\n      \"linkDescription\": \"Saiba mais\",\n      \"cta\": \"Saiba mais\",\n      \"promptSanitized\": \"brand=academia-fit; archetype=mockup_product; headline=Método Consistência 90; formats=feed,story,square\",\n      \"promptSha256\": \"74187bfd3cc9375ae0bb5ef50081fee3654db0ca83c4b33e288dd886ab6baded\",\n      \"gate\": {\n        \"checks\": {\n          \"gold_coverage\": {\n            \"value_pct\": 3.354,\n            \"min\": 0,\n            \"max\": 100,\n            \"pass\": true\n          },\n          \"dark_first\": {\n            \"dark_pct\": 93.58,\n            \"pass\": true\n          },\n          \"neon_violation\": {\n            \"purple_blue_sat_pct\": 0,\n            \"pass\": true\n          },\n          \"richness\": {\n            \"edge_variance\": 6.183,\n            \"pass\": true\n          },\n          \"contrast_proxy\": {\n            \"value\": 19.76,\n            \"pass\": true\n          }\n        },\n        \"ai_slop_score\": 0,\n        \"brand_adherence_pct\": 100,\n        \"verdict\": \"pass\",\n        \"reasons\": [\n          \"OK: respeita o brand-pack em todas as checagens objetivas\"\n        ]\n      },\n      \"review\": {\n        \"logo\": \"sem sidecar de logo\",\n        \"logo_ok\": true,\n        \"edge_bleed\": false,\n        \"verdict\": \"pass\",\n        \"reasons\": [],\n        \"needs_human_eye\": true\n      },\n      \"assets\": [\n        {\n          \"id\": \"mockup-pilot-mockup-product-0-feed\",\n          \"format\": \"feed\",\n          \"width\": 1080,\n          \"height\": 1350,\n          \"sha256\": \"fc3c5c1db5869a0eea83f811e34b87bb130492107ee00ef6474ea418ea800022\",\n          \"bytes\": 1832452\n        },\n        {\n          \"id\": \"mockup-pilot-mockup-product-0-story\",\n          \"format\": \"story\",\n          \"width\": 1080,\n          \"height\": 1920,\n          \"sha256\": \"fd49d9da2cd74882d2d2f722c8325d0ed83e1cf02e112e3bbb55b2eac16f3b7d\",\n          \"bytes\": 2480495\n        },\n        {\n          \"id\": \"mockup-pilot-mockup-product-0-square\",\n          \"format\": \"square\",\n          \"width\": 1080,\n          \"height\": 1080,\n          \"sha256\": \"b13c9139f36816cc54d84da8b61b076a142d49ca869cf58cc5c248b016413365\",\n          \"bytes\": 1522717\n        }\n      ]\n    }\n  ]\n}",
+        "artifactType": "creativeFactoryBatch"
+      }
+    ],
+    "decisions": [],
+    "questions": [],
+    "resultMarkdown": "## Mockup escolhido\n\n- Item: Método Consistência 90 — programa digital de 90 dias\n- Tipo: device mockup em notebook\n- Formatos previstos pelo adapter: 4:5, 9:16 e 1:1\n- Enquadramento: produto digital da marca Academia Fit, sem professor, depoimento ou linguagem de área de aluno.\n\n## Prompt canônico\n\nMockup editorial premium de um notebook exibindo o produto digital \"Método Consistência 90\", da marca \"Academia Fit\". A tela mostra uma interface realista e sóbria do programa de saúde e hábitos, com três etapas claramente organizadas: \"Desinflamar\", \"Reprogramar\" e \"Manter\". Também devem aparecer, de forma discreta e legível, uma aula em vídeo curta, o plano prático e o acesso à Comunidade Consistência, todos confirmados na oferta. Não incluir resultados garantidos, números de emagrecimento, depoimentos, fotos de antes e depois, professor ou especialista em destaque.\n\nInterface com fundo #0A0A0C, painéis elevados em #131316, texto principal #FAFAFA, destaques de confiança em #30B0C7 e ações pontuais em #C9B298, respeitando a regra dos 8% para o ouro. Títulos com aparência da fonte Newsreader; textos de interface com aparência da fonte Hanken Grotesk. Cards com raio de 4px, controles com raio de 2px e painéis com raio de 6px. Direção visual dark premium, refinada, sóbria, com contraste alto, detalhes mínimos e sem gradientes exagerados.\n\nNotebook centralizado, vista frontal levemente em ângulo, com iluminação de estúdio suave, sombra realista e acabamento fotográfico. Fundo externo uniforme #0A0A0C. Composição responsiva, preservando uma área segura ampla ao redor do notebook para adaptações nos formatos vertical 4:5 e 9:16 e quadrado 1:1. A marca \"Academia Fit\" deve aparecer apenas na interface, com grafia correta. Todo texto deve permanecer dentro da tela, nítido e legível. Sem texto solto fora do notebook, sem marca-d'água, sem logos de terceiros, sem elementos inventados e sem excesso de informação visual. Alta resolução.\n\n## Mapa de tokens usados\n\n- Marca: Academia Fit\n- Cor primária: #C9B298\n- Cor secundária: #30B0C7\n- Fundo: #0A0A0C\n- Superfície elevada: #131316\n- Texto: #FAFAFA\n- Fonte de títulos: Newsreader\n- Fonte de interface: Hanken Grotesk\n- Raio de controles: 2px\n- Raio de cards: 4px\n- Raio de painéis: 6px\n- Estilo: dark premium\n\n## Checklist de revisão humana\n\n- [ ] O nome \"Método Consistência 90\" está correto e legível.\n- [ ] As três etapas exibidas são exatamente Desinflamar, Reprogramar e Manter.\n- [ ] A tela representa somente o programa, o plano prático e a Comunidade Consistência confirmados.\n- [ ] Não há promessa garantida, antes/depois, depoimento ou alegação clínica.\n- [ ] A paleta corresponde aos tokens do DESIGN.md.\n- [ ] O contraste do texto sobre fundo escuro está adequado.\n- [ ] A marca aparece corretamente como Academia Fit.\n- [ ] O notebook e a interface permanecem coerentes nos formatos 4:5, 9:16 e 1:1.\n- [ ] Não há texto deformado, ilegível ou criado fora da interface.\n- [ ] A imagem gerada pelo adapter foi aprovada antes de qualquer uso em página ou criativo.\n\n## Produção visual\n\n1 peça(s) PNG passaram pelo pipeline e aguardam seleção humana."
+  }
+}

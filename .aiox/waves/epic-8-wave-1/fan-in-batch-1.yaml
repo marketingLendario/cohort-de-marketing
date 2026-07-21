@@ -1,0 +1,37 @@
+schema: sinkra-wave-fan-in-v1
+epic: epic-8
+wave: W1
+batch: 1
+generated_at: "2026-07-09T23:52:09Z"
+base_commit: "05d57771f21d9406c4fa7a353a5ad8b4801be303"
+mode: default
+stories:
+  - story_id: "8.W1.1"
+    branch: "wave/8-w1/story-8.W1.1"
+    commit: "63e7dbc1c09ef92135502614f2872d0042c7474c"
+    lifecycle_state: InReview
+    ack_path: ".claude/worktrees/story-8.W1.1/.sdc-ack/8.W1.1/sdc-complete.ack"
+  - story_id: "8.W1.2"
+    branch: "wave/8-w1/story-8.W1.2"
+    commit: "29dd6208226ed947cf8efbf6ab34811593b34365"
+    lifecycle_state: InReview
+    ack_path: ".claude/worktrees/story-8.W1.2/.sdc-ack/8.W1.2/sdc-complete.ack"
+  - story_id: "8.W1.3"
+    branch: "wave/8-w1/story-8.W1.3"
+    commit: "6322295cc6566da7fdf21d18bbe862835e177eb7"
+    lifecycle_state: InReview
+    ack_path: ".claude/worktrees/story-8.W1.3/.sdc-ack/8.W1.3/sdc-complete.ack"
+pairwise_checks:
+  - branches: ["wave/8-w1/story-8.W1.1", "wave/8-w1/story-8.W1.2"]
+    conflicts: []
+  - branches: ["wave/8-w1/story-8.W1.1", "wave/8-w1/story-8.W1.3"]
+    conflicts: []
+  - branches: ["wave/8-w1/story-8.W1.2", "wave/8-w1/story-8.W1.3"]
+    conflicts: []
+diff_check: passed
+conflicts_detected: 0
+merge_sequence:
+  - "63e7dbc1c09ef92135502614f2872d0042c7474c"
+  - "29dd6208226ed947cf8efbf6ab34811593b34365"
+  - "6322295cc6566da7fdf21d18bbe862835e177eb7"
+recommendation: "Convergir localmente via @devops na ordem deterministica e executar os gates integrados; sem push sem autorizacao explicita."

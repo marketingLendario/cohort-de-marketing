@@ -64,7 +64,7 @@ export interface ProjectArtifact {
   artifactType: string;
   title: string;
   path: string;
-  format: 'markdown' | 'html' | 'pdf' | 'image' | 'json' | 'yaml' | 'other';
+  format: 'markdown' | 'html' | 'pdf' | 'docx' | 'image' | 'json' | 'yaml' | 'other';
   state: ArtifactState;
   verification: ArtifactVerification;
   source: 'filesystem' | 'skill_run' | 'migration' | 'demo';
@@ -132,6 +132,15 @@ export interface CampaignPlanRevision {
     checks: Record<string, { value: boolean | null; evidence: string; critical: boolean }>;
   };
   structure: Record<string, unknown> | null;
+  creativeFactory?: {
+    jobId: string;
+    batchId?: string;
+    status: 'queued' | 'running' | 'review' | 'failed' | 'approved';
+    manifest?: CreativeFactoryBatchManifest;
+    selectedItemIds: string[];
+    artifactId?: string;
+    error?: string;
+  };
   manualSubmission: {
     status: 'not_ready' | 'ready' | 'confirmed_by_human';
     confirmedAt?: string;
@@ -139,6 +148,37 @@ export interface CampaignPlanRevision {
   };
   overrides: Record<string, CampaignOverride>;
   updatedAt: string;
+}
+
+export interface CreativeFactoryBatchManifest {
+  schemaVersion: '1.0.0';
+  batchId: string;
+  projectId: string;
+  campaignId: string;
+  productionSkillId?: 'ads-creative-factory' | 'criativos-funil' | 'mockup-produto-funil';
+  status: 'ready_for_review';
+  createdAt: string;
+  items: Array<{
+    id: string;
+    status: 'ready' | 'flagged';
+    archetype: string;
+    headline: string;
+    caption: string;
+    linkDescription: string;
+    cta: string;
+    promptSanitized: string;
+    promptSha256: string;
+    gate: Record<string, unknown>;
+    review: Record<string, unknown>;
+    assets: Array<{
+      id: string;
+      format: 'feed' | 'story' | 'square';
+      width: number;
+      height: number;
+      sha256: string;
+      bytes: number;
+    }>;
+  }>;
 }
 
 export interface WeeklyMetric {

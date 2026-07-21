@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0.0",
+  "validatedAt": "2026-07-11T08:46:37.228Z",
+  "runtime": {
+    "pdf": {
+      "bytes": 16821,
+      "sha256": "78acc1ab7f87931e75d89a37c0537df0666791839f00e3795c4af5dcc0bc6307",
+      "mimeType": "application/pdf",
+      "renderer": "Google Chrome headless"
+    },
+    "docx": {
+      "bytes": 263114,
+      "sha256": "bae555312bf8724444b7df0eca4d239b83a0cbb1d6120113605925f95c0301c3",
+      "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "renderer": ".claude/skills/offerbook/scripts/gerar_docx.py"
+    },
+    "sameInputSameBytesAcrossProcesses": true,
+    "subprocessEnvironmentSanitized": true,
+    "temporaryFilesRemoved": true
+  },
+  "approvalSaga": {
+    "revisions": [1, 2],
+    "filesPerRevision": 10,
+    "firstDocxSha256": "1d00eed6406c5d05651957a53e9277cff99dfbf44d38a6099687297ac5a8c77a",
+    "secondDocxSha256": "69c6bd333d846d148a771b9eee7e704862d220f9b7f1b5f42a23ba7c686acd67",
+    "immutableRevisionPreserved": true,
+    "databaseArtifactHashesMatchedFilesystem": true,
+    "repairDidNotRerenderBinary": true,
+    "bookDoFunilReconciledInSameSaga": true,
+    "browserResponseRedactsBinaryContent": true,
+    "copyAndSalesPagePdfPacksValidated": true,
+    "salesPageProductionGateValidated": true,
+    "cliReviewRetryApprovalValidated": true,
+    "cliToPanelHandoffValidated": true
+  },
+  "commands": [
+    "npm run test:integration:document-pack",
+    "npm test",
+    "npm run lint",
+    "npm run typecheck",
+    "npm run build",
+    "npm run build:server",
+    "npm run test:e2e:parity-contract",
+    "npm run test:e2e:book",
+    "npm run test:e2e:sales-page",
+    "npm run test:e2e:cli-handoff",
+    "supabase test db"
+  ]
+}

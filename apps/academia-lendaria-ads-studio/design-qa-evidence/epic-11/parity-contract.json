@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-12T03:42:03.962Z",
+  "matrix": {
+    "total": 31,
+    "fullE2E": 31,
+    "partial": 0,
+    "proposalOnly": 0
+  },
+  "scenarios": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshots": {
+        "proposal": "parity-contract-desktop-proposal.png",
+        "full": "parity-contract-desktop-full.png"
+      },
+      "skillCount": 31,
+      "offerbook": {
+        "parity": true,
+        "gapAbsent": true
+      },
+      "zelador": {
+        "parity": true,
+        "gapAbsent": true
+      },
+      "layout": {
+        "horizontalOverflow": false,
+        "overlappingDetail": false
+      },
+      "consoleErrors": [],
+      "requestFailures": []
+    },
+    {
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshots": {
+        "proposal": "parity-contract-mobile-proposal.png",
+        "full": "parity-contract-mobile-full.png"
+      },
+      "skillCount": 31,
+      "offerbook": {
+        "parity": true,
+        "gapAbsent": true
+      },
+      "zelador": {
+        "parity": true,
+        "gapAbsent": true
+      },
+      "layout": {
+        "horizontalOverflow": false,
+        "overlappingDetail": false
+      },
+      "consoleErrors": [],
+      "requestFailures": []
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "schema_version": "wave-plan-v1",
+  "epic_id": "9",
+  "wave_id": "W3",
+  "generated_at": "2026-07-11T01:14:41.087Z",
+  "origin_sync": "ahead",
+  "parallel_groups": [
+    [
+      "9.W3.1",
+      "9.W3.2"
+    ],
+    [
+      "9.W3.3"
+    ]
+  ],
+  "stories": [
+    {
+      "story_id": "9.W3.1",
+      "path": "docs/stories/epic-9/STORY-9.W3.1-field-usability-evidence.md",
+      "status": "InProgress",
+      "origin_sha": null,
+      "parallel_group": 0,
+      "worktree": {
+        "path": ".claude/worktrees/story-9.W3.1",
+        "branch": "wave/9-w3/story-9.W3.1",
+        "state": "committed"
+      }
+    },
+    {
+      "story_id": "9.W3.2",
+      "path": "docs/stories/epic-9/STORY-9.W3.2-student-onboarding-recovery.md",
+      "status": "Done",
+      "origin_sha": null,
+      "parallel_group": 0,
+      "worktree": {
+        "path": ".claude/worktrees/story-9.W3.2",
+        "branch": "wave/9-w3/story-9.W3.2",
+        "state": "committed"
+      }
+    },
+    {
+      "story_id": "9.W3.3",
+      "path": "docs/stories/epic-9/STORY-9.W3.3-go-live-gate-aula4-handoff.md",
+      "status": "Draft",
+      "origin_sha": null,
+      "parallel_group": 1,
+      "worktree": {
+        "path": ".claude/worktrees/story-9.W3.3",
+        "branch": "wave/9-w3/story-9.W3.3",
+        "state": "provision"
+      }
+    }
+  ],
+  "orphaned_worktrees": [],
+  "cross_epic_dispatch_check": {
+    "check": "ev_cross_epic_dispatch_check",
+    "status": "skipped",
+    "reason": "graphs-absent",
+    "wave_id": "9.W3",
+    "file_set_size": 2,
+    "logical": {
+      "ok": false,
+      "warn": true,
+      "block": false,
+      "mode": "WARN",
+      "api": "checkLogicalConflict",
+      "reason": "graphs-absent",
+      "hint": "run `node .claude/skills/sinkra-wave-execute/scripts/build-cross-epic-graph.js` first (W2.1)",
+      "wave": "9.W3",
+      "scope": {
+        "epic": "9",
+        "wave": "W3",
+        "scoped": true
+      },
+      "satisfied": null,
+      "unsatisfied": [],
+      "unresolved": []
+    },
+    "physical": {
+      "ok": false,
+      "warn": true,
+      "block": false,
+      "mode": "WARN",
+      "api": "checkPhysicalConflict",
+      "reason": "graphs-absent",
+      "hint": "run `node .claude/skills/sinkra-wave-execute/scripts/build-cross-epic-graph.js` first (W2.1)",
+      "basis": "file_ownership_overlap",
+      "candidates": [
+        "exclusive",
+        "shared"
+      ],
+      "overlaps": [],
+      "domain_overlaps": []
+    },
+    "proposals": [],
+    "impact_notifications": []
+  },
+  "daemon": null
+}

@@ -1,0 +1,24 @@
+{
+  "epicId": "11",
+  "title": "Paridade real entre Painel e CLI",
+  "status": "Done",
+  "baseline": {
+    "total": 31,
+    "fullE2E": 9,
+    "partial": 6,
+    "proposalOnly": 16
+  },
+  "current": {
+    "total": 31,
+    "fullE2E": 31,
+    "partial": 0,
+    "proposalOnly": 0
+  },
+  "stories": [
+    { "id": "11.W1.1", "status": "Done" },
+    { "id": "11.W1.2", "status": "Done" },
+    { "id": "11.W2.1", "status": "Done" },
+    { "id": "11.W2.2", "status": "Done" },
+    { "id": "11.W3.1", "status": "Done" }
+  ]
+}

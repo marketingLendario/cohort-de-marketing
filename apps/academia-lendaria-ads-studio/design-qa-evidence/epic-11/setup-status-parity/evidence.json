@@ -1,0 +1,76 @@
+{
+  "epic": "11",
+  "story": "11.W3.1",
+  "generatedAt": "2026-07-12T03:42:19.965Z",
+  "setup": {
+    "panelCliEquivalent": true,
+    "status": "degraded",
+    "diagnosisHash": "0bb76c1fdf0ae15f0e40a5730ebb2425db3ee8e5b55c5e85c82893baddf95767",
+    "checks": [
+      {
+        "id": "os",
+        "status": "ready",
+        "required": false
+      },
+      {
+        "id": "git",
+        "status": "degraded",
+        "required": true
+      },
+      {
+        "id": "node",
+        "status": "ready",
+        "required": true
+      },
+      {
+        "id": "python",
+        "status": "ready",
+        "required": false
+      },
+      {
+        "id": "codex",
+        "status": "ready",
+        "required": true
+      },
+      {
+        "id": "apify",
+        "status": "ready",
+        "required": false
+      },
+      {
+        "id": "skill-mirror",
+        "status": "ready",
+        "required": true
+      }
+    ],
+    "nextCommands": [
+      "/avatar-funil",
+      "/design-md"
+    ]
+  },
+  "projectStatus": {
+    "panelCliEquivalent": true,
+    "readOnly": true,
+    "completed": 1,
+    "total": 11,
+    "nextCommand": "/avatar-funil",
+    "divergenceCount": 1,
+    "sourceHashesStable": true,
+    "sourceHashes": {
+      "filesystem": "d7e6f69da32fd182d9941d30111db9822f0784e189416cf89b1bd021633188d2",
+      "database": "3bedc2d51492010ef2d4a093438f797202b5bc721037592d041a97b610cbd9ea",
+      "book": null,
+      "pendings": null
+    }
+  },
+  "visual": {
+    "desktop": "panel-desktop.png",
+    "mobile": "panel-mobile.png",
+    "overflow": {
+      "document": false,
+      "body": false
+    },
+    "consoleErrors": [],
+    "failedRequests": []
+  }
+}

@@ -1,7 +1,7 @@
 {
   "story": "8.W3.1",
   "base": "4f05847f6d172cadf2e83befe69fed0d74d55f6c",
-  "startedAt": "2026-07-11T02:59:51.702Z",
+  "startedAt": "2026-07-12T03:37:52.921Z",
   "fixture": {
     "workspaceId": "81000000-0000-0000-0000-000000000031",
     "projectId": "82000000-0000-0000-0000-000000000031",
@@ -15,20 +15,66 @@
     {
       "skillId": "zelador",
       "title": "Zelador",
-      "runId": "ef2e3d0f-a360-4f40-b837-6259b697d2fd",
-      "jobId": "9aa8a9c1-b42d-4ae6-bc4e-32c85e217e2c",
+      "runId": "edff2a75-080a-48d3-925f-86d2299b0257",
+      "jobId": "d269e1b5-0038-410f-8907-4ebf5dc4415f",
       "status": "done",
-      "durationMs": 19454,
-      "proposalHash": "c770afb5e00c60b923e5cc4d2dcd4767815aa59504da6c998402cb27f92952d3",
+      "durationMs": 19726,
+      "proposalHash": "efa42df09ad88465501b24bb46ac80c946903860f040869e9afd5141f080f597",
       "proposal": {
-        "summaryHash": "be36c402e0aec57daf0ad8d050dd89a74ddac452f81f4ff6f923b153c448e94d",
+        "summaryHash": "00793097316b28f75763f52538e95eb8e3b978a9d2c1d0a7e08699a6462f63c6",
         "artifactTypes": [
           "trafficTrackingAudit"
         ],
         "fieldKeys": [
           "status_geral",
-          "estruturador_bloqueado",
-          "fonte_da_evidencia"
+          "tracking_confirmado",
+          "meta_alterada"
+        ],
+        "questionCount": 0,
+        "warningCount": 1
+      },
+      "approvals": [
+        {
+          "decision": "approve",
+          "state": "done",
+          "outcome": "written",
+          "proposalHash": "efa42df09ad88465501b24bb46ac80c946903860f040869e9afd5141f080f597",
+          "proposalRevision": 1
+        }
+      ],
+      "artifacts": [
+        {
+          "id": "b8f571ee-0217-4e7e-bbb7-f997ab270b73",
+          "path": "PAINEL-DA-SEMANA.yaml",
+          "contentHash": "9d85a8dd2d70159fe5b0e9650d2ed1eb877c08f66a4612e47a1c0eb297567ac6",
+          "filesystemHash": "9d85a8dd2d70159fe5b0e9650d2ed1eb877c08f66a4612e47a1c0eb297567ac6",
+          "state": "confirmed",
+          "verification": "confirmed"
+        }
+      ],
+      "job": {
+        "id": "d269e1b5-0038-410f-8907-4ebf5dc4415f",
+        "status": "succeeded",
+        "attempt": 1,
+        "skillId": "zelador"
+      }
+    },
+    {
+      "skillId": "briefista",
+      "title": "Briefista",
+      "runId": "fdcaf1f5-0ecd-47a7-9be7-807a9aea7689",
+      "jobId": "d7e6b3b4-5cc3-4af1-9513-f286e18b0cab",
+      "status": "done",
+      "durationMs": 39254,
+      "proposalHash": "22654968dc5ad941942075c809eb6620e24008c71d942c30982679b81ebbf1fb",
+      "proposal": {
+        "summaryHash": "3873522a126e85c48eb473dd33ff71e5e6b0b6b3a50457ba70b6f0b0638ebe65",
+        "artifactTypes": [
+          "trafficCreativeBattery"
+        ],
+        "fieldKeys": [
+          "status_curadoria",
+          "angulo_recusado"
         ],
         "questionCount": 0,
         "warningCount": 2
@@ -38,70 +84,22 @@
           "decision": "approve",
           "state": "done",
           "outcome": "written",
-          "proposalHash": "c770afb5e00c60b923e5cc4d2dcd4767815aa59504da6c998402cb27f92952d3",
-          "proposalRevision": 1
-        }
-      ],
-      "artifacts": [
-        {
-          "id": "17444200-9346-4c90-9bb6-d2b1681f6f93",
-          "path": "PAINEL-DA-SEMANA.yaml",
-          "contentHash": "c081dfd62e2f028f29c0ad37428d7e68febf87f95c48f487377516b9c7050cd4",
-          "filesystemHash": "c081dfd62e2f028f29c0ad37428d7e68febf87f95c48f487377516b9c7050cd4",
-          "state": "confirmed",
-          "verification": "confirmed"
-        }
-      ],
-      "job": {
-        "id": "9aa8a9c1-b42d-4ae6-bc4e-32c85e217e2c",
-        "status": "succeeded",
-        "attempt": 1,
-        "skillId": "zelador"
-      }
-    },
-    {
-      "skillId": "briefista",
-      "title": "Briefista",
-      "runId": "16309713-27a7-4eb0-984d-bd5134a494a7",
-      "jobId": "2aeef3ee-d2a7-4836-8e00-9290ad93baf5",
-      "status": "done",
-      "durationMs": 38792,
-      "proposalHash": "5e425837ed7f92c966dc31fdb727f2b1082f07d5f61c51ba607d7686675afb1e",
-      "proposal": {
-        "summaryHash": "ba6d02d23445b17e344966d7117b48920fe2a45e692846506fcce7fed96dad67",
-        "artifactTypes": [
-          "trafficCreativeBattery"
-        ],
-        "fieldKeys": [
-          "status",
-          "angulos_processados",
-          "variacoes_geradas",
-          "angulos_recusados"
-        ],
-        "questionCount": 0,
-        "warningCount": 3
-      },
-      "approvals": [
-        {
-          "decision": "approve",
-          "state": "done",
-          "outcome": "written",
-          "proposalHash": "5e425837ed7f92c966dc31fdb727f2b1082f07d5f61c51ba607d7686675afb1e",
+          "proposalHash": "22654968dc5ad941942075c809eb6620e24008c71d942c30982679b81ebbf1fb",
           "proposalRevision": 2
         }
       ],
       "artifacts": [
         {
-          "id": "91cbdf30-d008-40cc-a2ad-2d217a43f76c",
+          "id": "2601f7e8-c690-4409-96be-3d1bd616f96f",
           "path": "PAINEL-DA-SEMANA.yaml",
-          "contentHash": "5b4d735a6a61c2562b87c2bca4ab257699d422fdd7858c49d94513d208cd1864",
-          "filesystemHash": "5b4d735a6a61c2562b87c2bca4ab257699d422fdd7858c49d94513d208cd1864",
+          "contentHash": "7de4e06ddb7bc2350b0da2ec15ca1e1877fc789e060eaa4441977846d8b35dd7",
+          "filesystemHash": "7de4e06ddb7bc2350b0da2ec15ca1e1877fc789e060eaa4441977846d8b35dd7",
           "state": "confirmed",
           "verification": "confirmed"
         }
       ],
       "job": {
-        "id": "2aeef3ee-d2a7-4836-8e00-9290ad93baf5",
+        "id": "d7e6b3b4-5cc3-4af1-9513-f286e18b0cab",
         "status": "succeeded",
         "attempt": 1,
         "skillId": "briefista"
@@ -110,45 +108,47 @@
     {
       "skillId": "estruturador",
       "title": "Estruturador",
-      "runId": "89cb584b-495f-4390-9c8b-1374d59c43db",
-      "jobId": "33d6736c-98dd-4476-9f5e-e56b1391c8e2",
+      "runId": "4cc8e2cb-7f10-46d3-b438-c2cc7dbe0d5a",
+      "jobId": "8690a42f-f0cb-4586-a102-43c6978d262d",
       "status": "done",
-      "durationMs": 44893,
-      "proposalHash": "0ab07623dcbd910f4619ad8d73ccfa4d4a3a5b4c3b2d28b817cbfb8e36971f3b",
+      "durationMs": 27216,
+      "proposalHash": "3dc668c66b6fb66616b65d6c07ec45aa6b964ab9abba8db802391c1b9afeb25a",
       "proposal": {
-        "summaryHash": "bca027c59a0a22afd812701bdb95edeab825a7ce39cf89e2f46e27e849a88e01",
+        "summaryHash": "5523a716a8c2b4523d3d019086c97529c30ed64612d20f83e70277bdf89085c0",
         "artifactTypes": [
           "trafficCampaignPlan"
         ],
         "fieldKeys": [
-          "projectId",
-          "publicationStatus",
-          "humanReviewRequired"
+          "tipo_campanha",
+          "otimizacao",
+          "estrutura",
+          "verba",
+          "status"
         ],
         "questionCount": 0,
-        "warningCount": 3
+        "warningCount": 1
       },
       "approvals": [
         {
           "decision": "approve",
           "state": "done",
           "outcome": "written",
-          "proposalHash": "0ab07623dcbd910f4619ad8d73ccfa4d4a3a5b4c3b2d28b817cbfb8e36971f3b",
+          "proposalHash": "3dc668c66b6fb66616b65d6c07ec45aa6b964ab9abba8db802391c1b9afeb25a",
           "proposalRevision": 1
         }
       ],
       "artifacts": [
         {
-          "id": "92d91437-7f1a-496a-826c-5973f04394a6",
+          "id": "078fabe7-3fef-44e5-8b12-8c1e171cd4ba",
           "path": "PAINEL-DA-SEMANA.yaml",
-          "contentHash": "a7a012f7a2d33f46dd1600ecdccac4a28cd9e6fb41fa2a541a6aa04f51a57713",
-          "filesystemHash": "a7a012f7a2d33f46dd1600ecdccac4a28cd9e6fb41fa2a541a6aa04f51a57713",
+          "contentHash": "a377851385273488bdcddf7ea84b027dbf157a00f76a16242f897c1eb8cccac7",
+          "filesystemHash": "a377851385273488bdcddf7ea84b027dbf157a00f76a16242f897c1eb8cccac7",
           "state": "confirmed",
           "verification": "confirmed"
         }
       ],
       "job": {
-        "id": "33d6736c-98dd-4476-9f5e-e56b1391c8e2",
+        "id": "8690a42f-f0cb-4586-a102-43c6978d262d",
         "status": "succeeded",
         "attempt": 1,
         "skillId": "estruturador"
@@ -157,44 +157,45 @@
     {
       "skillId": "leitor-de-metricas",
       "title": "Leitor de Metricas",
-      "runId": "267ba5ac-ca52-49fb-a7d8-d912a94c5eb2",
-      "jobId": "69641cea-d335-4fa6-82a9-0d25b5915dc8",
+      "runId": "e0f00cd3-3a44-4c10-a9c3-22b962456adf",
+      "jobId": "995b8ee3-57de-46bf-8f50-043b6011da92",
       "status": "done",
-      "durationMs": 50491,
-      "proposalHash": "d553c981ae36349dd753df79635b7b99d28165e212db7b6d1093eed9d6ca830b",
+      "durationMs": 35097,
+      "proposalHash": "5e7ec3dc2f38a849325bc96b8a623dab8051e8ebd6016e2e4200e680902a066f",
       "proposal": {
-        "summaryHash": "faf5439ec6eb98526646517601a6c0e7562345a977a180f736e9402d890f8a03",
+        "summaryHash": "badc276e4be8e8a1fbae6bcc836344a4b91aeb5f411f37d998943cc6d6e64d29",
         "artifactTypes": [
           "trafficMetricReading"
         ],
         "fieldKeys": [
-          "projectId",
-          "reviewStatus"
+          "janela_atribuicao",
+          "amostra_suficiente_para_cpa",
+          "roas_status"
         ],
         "questionCount": 0,
-        "warningCount": 3
+        "warningCount": 1
       },
       "approvals": [
         {
           "decision": "approve",
           "state": "done",
           "outcome": "written",
-          "proposalHash": "d553c981ae36349dd753df79635b7b99d28165e212db7b6d1093eed9d6ca830b",
+          "proposalHash": "5e7ec3dc2f38a849325bc96b8a623dab8051e8ebd6016e2e4200e680902a066f",
           "proposalRevision": 1
         }
       ],
       "artifacts": [
         {
-          "id": "701cebe3-be14-4884-9e5d-7ec6cf4127aa",
+          "id": "5bed8b05-799a-4554-8650-182bf0f1bdc5",
           "path": "PAINEL-DA-SEMANA.yaml",
-          "contentHash": "9c048429a6231fc22d6a00f22f296c5b3aefa30b14812f42feb09a3dd21f6b26",
-          "filesystemHash": "9c048429a6231fc22d6a00f22f296c5b3aefa30b14812f42feb09a3dd21f6b26",
+          "contentHash": "b43ca57eb9f2b8317dc883901947c09063348f1a503fe45310278c8e7cbcebf5",
+          "filesystemHash": "b43ca57eb9f2b8317dc883901947c09063348f1a503fe45310278c8e7cbcebf5",
           "state": "confirmed",
           "verification": "confirmed"
         }
       ],
       "job": {
-        "id": "69641cea-d335-4fa6-82a9-0d25b5915dc8",
+        "id": "995b8ee3-57de-46bf-8f50-043b6011da92",
         "status": "succeeded",
         "attempt": 1,
         "skillId": "leitor-de-metricas"
@@ -203,46 +204,41 @@
     {
       "skillId": "diagnosticador",
       "title": "Diagnosticador",
-      "runId": "d1801168-af99-4cc2-b81b-defc63c03abd",
-      "jobId": "a87ebd31-ac0b-4b51-b897-7afc62375a20",
+      "runId": "38358afe-e0af-4e96-9b98-fde4fa658d5a",
+      "jobId": "fdec50fd-c5fd-4f3d-b4fe-15f4cbc3a4b9",
       "status": "done",
-      "durationMs": 70793,
-      "proposalHash": "a8bd95a10de4c6316e22ca2d5a0936acd0254243acf0da94176ee9b47be689b5",
+      "durationMs": 49600,
+      "proposalHash": "ca9d5044425e9d8bbb21dd78f0424e6146f6cfed03d4db2fba1116f799e47d51",
       "proposal": {
-        "summaryHash": "ec82168645f7f87a369281d6e0335bed6f245a0b95dd054039251e7adedba40b",
+        "summaryHash": "68ea2e9d8c3f7907aeca501e872a4c64692ff486007933c57eafeea4bd9647c7",
         "artifactTypes": [
           "trafficDiagnosis"
         ],
-        "fieldKeys": [
-          "alavanca_unica",
-          "decisao_humana",
-          "execucao",
-          "circuit_breaker"
-        ],
+        "fieldKeys": [],
         "questionCount": 0,
-        "warningCount": 4
+        "warningCount": 3
       },
       "approvals": [
         {
           "decision": "approve",
           "state": "done",
           "outcome": "written",
-          "proposalHash": "a8bd95a10de4c6316e22ca2d5a0936acd0254243acf0da94176ee9b47be689b5",
+          "proposalHash": "ca9d5044425e9d8bbb21dd78f0424e6146f6cfed03d4db2fba1116f799e47d51",
           "proposalRevision": 1
         }
       ],
       "artifacts": [
         {
-          "id": "ddf731fa-a326-429a-952c-37d0fdfbc5ec",
+          "id": "6cf16650-c17d-4e50-b0f7-3d1b93153332",
           "path": "PAINEL-DA-SEMANA.yaml",
-          "contentHash": "02b603119b89866ca8bf36ae60eb2c70d0c3abd74bb23078ce06ec6956a3a8c5",
-          "filesystemHash": "02b603119b89866ca8bf36ae60eb2c70d0c3abd74bb23078ce06ec6956a3a8c5",
+          "contentHash": "17199c25003496e2c4a49616f533911be686f2200c8a1d5c6b72542b09c7f562",
+          "filesystemHash": "17199c25003496e2c4a49616f533911be686f2200c8a1d5c6b72542b09c7f562",
           "state": "confirmed",
           "verification": "confirmed"
         }
       ],
       "job": {
-        "id": "a87ebd31-ac0b-4b51-b897-7afc62375a20",
+        "id": "fdec50fd-c5fd-4f3d-b4fe-15f4cbc3a4b9",
         "status": "succeeded",
         "attempt": 1,
         "skillId": "diagnosticador"
@@ -251,7 +247,7 @@
   ],
   "retries": [
     {
-      "jobId": "9f33ae7e-7192-49cb-93b3-0581f00359cf",
+      "jobId": "93f5cf68-12bf-406f-8d1a-fa854e199e31",
       "attempt": 2,
       "status": "cancelled",
       "retryHttpStatus": 202,
@@ -261,81 +257,93 @@
   "refusals": [
     {
       "skillId": "zelador",
-      "runId": "d57f9be7-29b8-4a7c-9824-218d0fe2104f",
-      "durationMs": 18204,
+      "runId": "0af910cc-b011-4cea-9681-99e9acc36dbf",
+      "durationMs": 50688,
       "reason": "Revisão humana recusou proposta com CAPI/deduplicação não confirmadas."
     }
   ],
   "reloads": [
     {
-      "label": "Zelador crítico pronto para revisão",
-      "at": "2026-07-11T03:00:13.834Z",
+      "label": "Zelador crítico pronto para decisão humana",
+      "at": "2026-07-12T03:38:18.348Z",
+      "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
+      "hydrated": true
+    },
+    {
+      "label": "Zelador continuado após checkpoint 1",
+      "at": "2026-07-12T03:38:31.288Z",
+      "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
+      "hydrated": true
+    },
+    {
+      "label": "Zelador continuado após checkpoint 2",
+      "at": "2026-07-12T03:38:46.483Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
       "label": "recusa do Zelador persistida",
-      "at": "2026-07-11T03:00:16.229Z",
+      "at": "2026-07-12T03:38:49.363Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
       "label": "após recusa e retry do Zelador",
-      "at": "2026-07-11T03:00:19.837Z",
+      "at": "2026-07-12T03:38:52.447Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
-      "label": "Zelador pronto para revisão",
-      "at": "2026-07-11T03:00:37.665Z",
+      "label": "Zelador pronto para decisão humana",
+      "at": "2026-07-12T03:39:10.096Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
       "label": "Zelador materializado",
-      "at": "2026-07-11T03:00:40.949Z",
+      "at": "2026-07-12T03:39:13.804Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
-      "label": "Briefista pronto para revisão",
-      "at": "2026-07-11T03:01:17.683Z",
+      "label": "Briefista pronto para decisão humana",
+      "at": "2026-07-12T03:39:51.124Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
       "label": "Briefista materializado após curadoria",
-      "at": "2026-07-11T03:01:21.397Z",
+      "at": "2026-07-12T03:39:54.725Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
-      "label": "Estruturador pronto para revisão",
-      "at": "2026-07-11T03:02:04.566Z",
+      "label": "Estruturador pronto para decisão humana",
+      "at": "2026-07-12T03:40:20.331Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
       "label": "Estruturador materializado",
-      "at": "2026-07-11T03:02:07.922Z",
+      "at": "2026-07-12T03:40:23.467Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
-      "label": "Leitor de Metricas pronto para revisão",
-      "at": "2026-07-11T03:02:56.620Z",
+      "label": "Leitor de Metricas pronto para decisão humana",
+      "at": "2026-07-12T03:40:56.949Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
       "label": "Leitor materializado",
-      "at": "2026-07-11T03:03:00.036Z",
+      "at": "2026-07-12T03:41:00.278Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     },
     {
-      "label": "Diagnosticador pronto para revisão",
-      "at": "2026-07-11T03:04:09.120Z",
+      "label": "Diagnosticador pronto para decisão humana",
+      "at": "2026-07-12T03:41:47.799Z",
       "url": "http://127.0.0.1:5178/projects/82000000-0000-0000-0000-000000000031/journey",
       "hydrated": true
     }
@@ -370,5 +378,5 @@
     "step_current": 1,
     "created_at": "2026-07-10T09:00:00+00:00"
   },
-  "finishedAt": "2026-07-11T03:04:16.448Z"
+  "finishedAt": "2026-07-12T03:41:55.322Z"
 }

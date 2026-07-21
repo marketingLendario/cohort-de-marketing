@@ -56,6 +56,18 @@ function confirmedFieldSources(data: ProjectBriefData, now: string): Record<stri
   );
 }
 
+export function latestCampaignPlans(plans: CampaignPlanRevision[]): CampaignPlanRevision[] {
+  const latest = new Map<string, CampaignPlanRevision>();
+  for (const plan of plans) {
+    const current = latest.get(plan.campaignId);
+    if (!current || plan.revision > current.revision
+      || (plan.revision === current.revision && plan.updatedAt > current.updatedAt)) {
+      latest.set(plan.campaignId, plan);
+    }
+  }
+  return [...latest.values()];
+}
+
 const DEMO_BRIEF_DATA: ProjectBriefData = {
   schemaVersion: LEGACY_BRIEF_SCHEMA_VERSION,
   meta: { createdAt: NOW, updatedAt: NOW, completionStatus: 'ready_for_funnel' },
@@ -533,7 +545,7 @@ export function createProjectStore(
         },
         upsertCampaignPlan: (plan, persist = true) => {
           set((state) => ({
-            campaignPlans: [...state.campaignPlans.filter((candidate) => candidate.id !== plan.id), plan],
+            campaignPlans: [...state.campaignPlans.filter((candidate) => candidate.campaignId !== plan.campaignId), plan],
           }));
           if (persist) get().persistenceSink?.onCampaignPlanChange?.(plan);
         },
@@ -556,7 +568,7 @@ export function createProjectStore(
             briefRevisions: snapshot.briefRevisions,
             artifacts: snapshot.artifacts,
             skillRuns: snapshot.skillRuns,
-            ...(snapshot.campaignPlans ? { campaignPlans: snapshot.campaignPlans } : {}),
+            ...(snapshot.campaignPlans ? { campaignPlans: latestCampaignPlans(snapshot.campaignPlans) } : {}),
             ...(snapshot.weeklyPanels ? { weeklyPanels: snapshot.weeklyPanels } : {}),
             activeProjectId: snapshot.activeProjectId ?? get().activeProjectId,
             hydration: { status: snapshot.projects.length ? 'ready' : 'empty', error: null, conflict: null },

@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { constants } from 'node:fs';
-import { lstat, mkdir, open, realpath, rename, rm } from 'node:fs/promises';
+import { link, lstat, mkdir, open, realpath, rename, rm } from 'node:fs/promises';
 import { createInterface } from 'node:readline';
 import { basename, isAbsolute, join } from 'node:path';
 
@@ -23,6 +23,7 @@ type MaterializeMessage = {
   type: 'materialize';
   relativePath: string;
   content: string;
+  encoding?: 'utf8' | 'base64';
   hashAfter: string;
   onConflict: 'reject' | 'overwrite';
 };
@@ -57,8 +58,8 @@ let projectRootReal = '';
 let projectSlug = '';
 let writeMode = false;
 
-function sha256(content: string): string {
-  return createHash('sha256').update(content, 'utf8').digest('hex');
+function sha256(content: Buffer | string): string {
+  return createHash('sha256').update(content).digest('hex');
 }
 
 async function pathExists(path: string): Promise<boolean> {
@@ -224,6 +225,14 @@ async function materializeLeaf(message: MaterializeMessage): Promise<WorkerResul
     throw new WorkerFilesystemError('write-failed', 'Projeto não foi criado para escrita.');
   }
   const leaf = basename(message.relativePath);
+  const content = message.encoding === 'base64' ? Buffer.from(message.content, 'base64') : Buffer.from(message.content, 'utf8');
+  const contentHash = sha256(content);
+  if (contentHash !== message.hashAfter) {
+    throw new WorkerFilesystemError(
+      'hash-mismatch',
+      `Hash dos bytes recebidos (${contentHash}) diverge do hash declarado (${message.hashAfter}).`,
+    );
+  }
   const noFollow = assertNoFollowSupport();
   let hashBefore: string | null = null;
   let existingHandle;
@@ -237,7 +246,7 @@ async function materializeLeaf(message: MaterializeMessage): Promise<WorkerResul
     try {
       const stat = await existingHandle.stat();
       if (!stat.isFile()) throw new WorkerFilesystemError('not-a-file', `Alvo não é arquivo: ${message.relativePath}`);
-      hashBefore = sha256(await existingHandle.readFile({ encoding: 'utf8' }));
+      hashBefore = sha256(await existingHandle.readFile());
     } finally {
       await existingHandle.close();
     }
@@ -268,13 +277,42 @@ async function materializeLeaf(message: MaterializeMessage): Promise<WorkerResul
   let tempHandle;
   try {
     tempHandle = await open(tempName, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | noFollow, 0o644);
-    await tempHandle.writeFile(message.content, { encoding: 'utf8' });
+    await tempHandle.writeFile(content);
     await tempHandle.sync();
     await tempHandle.close();
     tempHandle = undefined;
-    // Both names are resolved relative to the already fixed project cwd. A
-    // swapped pathname cannot redirect this rename outside that directory.
-    await rename(tempName, leaf);
+    if (message.onConflict === 'reject' && hashBefore === null) {
+      try {
+        // `link` is the atomic no-clobber commit: unlike rename, it fails if a
+        // concurrent writer created the canonical leaf after our first read.
+        await link(tempName, leaf);
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+        const currentHandle = await open(leaf, constants.O_RDONLY | noFollow);
+        let currentHash: string;
+        try {
+          const stat = await currentHandle.stat();
+          if (!stat.isFile()) throw new WorkerFilesystemError('not-a-file', `Alvo não é arquivo: ${message.relativePath}`);
+          currentHash = sha256(await currentHandle.readFile());
+        } finally {
+          await currentHandle.close();
+        }
+        await rm(tempName, { force: true });
+        return {
+          outcome: currentHash === message.hashAfter ? 'unchanged' : 'conflict',
+          hashBefore: currentHash,
+          hashAfter: message.hashAfter,
+          absolutePath: join(projectRootReal, message.relativePath),
+          relativePath: message.relativePath,
+          bytesWritten: 0,
+        };
+      }
+      await rm(tempName, { force: true });
+    } else {
+      // Both names are resolved relative to the already fixed project cwd. A
+      // swapped pathname cannot redirect this rename outside that directory.
+      await rename(tempName, leaf);
+    }
   } catch (error) {
     await tempHandle?.close().catch(() => {});
     await rm(tempName, { force: true }).catch(() => {});
@@ -287,7 +325,7 @@ async function materializeLeaf(message: MaterializeMessage): Promise<WorkerResul
     hashAfter: message.hashAfter,
     absolutePath: join(projectRootReal, message.relativePath),
     relativePath: message.relativePath,
-    bytesWritten: Buffer.byteLength(message.content, 'utf8'),
+    bytesWritten: content.length,
   };
 }
 

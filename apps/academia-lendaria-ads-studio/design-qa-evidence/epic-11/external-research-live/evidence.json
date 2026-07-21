@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-07-11T14:10:49.092Z",
+  "adapterVersion": "1.0.2",
+  "first": {
+    "cacheHit": false,
+    "fingerprint": "682a8054986862b3e3d639c0512af9a35db55ab1467cc7ea6d501f7ba07e8ac2",
+    "contentHash": "4450af55538d3de61e2db5d1e5c0beabae56d31d1d4283a83346ab5c096c6273",
+    "quota": {
+      "maxBillableCalls": 1,
+      "attemptedBillableCalls": 1,
+      "completedBillableCalls": 1,
+      "maxItemsPerSource": 3
+    },
+    "failures": [],
+    "itemCount": 1,
+    "sourceStatuses": [
+      {
+        "sourceId": "google-search-live",
+        "status": "completed",
+        "itemCount": 1
+      }
+    ]
+  },
+  "retry": {
+    "cacheHit": true,
+    "sameHash": true,
+    "quota": {
+      "maxBillableCalls": 1,
+      "attemptedBillableCalls": 1,
+      "completedBillableCalls": 1,
+      "maxItemsPerSource": 3
+    }
+  },
+  "secretMarkersPresent": false
+}

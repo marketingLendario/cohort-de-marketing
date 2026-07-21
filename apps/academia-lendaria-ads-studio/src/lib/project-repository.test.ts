@@ -393,6 +393,21 @@ describe('adapter Supabase', () => {
     expect(builder.update).not.toHaveBeenCalled();
   });
 
+  it('supersede checkpoint de elicitação pela RPC tenant-safe', async () => {
+    const runRow = {
+      id: 'parent-run', workspace_id: 'ws1', project_id: 'p1', skill_id: 'offerbook', skill_hash: 'hash',
+      status: 'cancelled' as const, input_snapshot: {}, proposal: null, proposal_hash: null, proposal_revision: 1,
+      error: 'Continuação registrada no run continuation-run.', created_at: '2026-07-09T00:00:00.000Z', updated_at: '2026-07-09T01:00:00.000Z',
+    };
+    const { client, rpc } = makeClient({ data: runRow, error: null });
+    const repo = createSupabaseProjectRepository(client);
+    const result = await repo.supersedeSkillRun('ws1', 'parent-run', 'continuation-run');
+    expect(result.status).toBe('cancelled');
+    expect(rpc).toHaveBeenCalledWith('supersede_skill_run_checkpoint', {
+      p_workspace_id: 'ws1', p_parent_run_id: 'parent-run', p_continuation_run_id: 'continuation-run',
+    });
+  });
+
   it('listCampaignPlanRevisionsForProject filtra por workspace_id + project_id, sem exigir campaignId (AC5)', async () => {
     const campaignPlanRow = {
       id: 'cp1',

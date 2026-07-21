@@ -19,6 +19,7 @@ import {
   readSafeArtifactFile,
   type ArtifactWriteRequest,
 } from '../artifact-materializer.js';
+import { materializeConfinedArtifact } from '../artifact-fs-worker-client.js';
 
 const FIXED_NOW = () => new Date('2026-07-09T00:00:00.000Z');
 const sha256 = (content: string) => createHash('sha256').update(content, 'utf8').digest('hex');
@@ -208,6 +209,19 @@ describe('materializeArtifact — gate de integridade expectedHash (AC1/AC4)', (
         { projectsRoot, now: FIXED_NOW },
       ),
     ).rejects.toMatchObject({ code: 'hash-mismatch' });
+  });
+
+  it('worker confinado também recusa hash declarado que diverge dos bytes', async () => {
+    await expect(materializeConfinedArtifact({
+      projectsRoot,
+      slug: 'cliente-x',
+      relativePath: 'worker-integrity.txt',
+      content: 'conteúdo real',
+      hashAfter: sha256('conteúdo adulterado'),
+      onConflict: 'reject',
+    })).rejects.toMatchObject({ code: 'hash-mismatch' });
+
+    await expect(stat(join(projectsRoot, 'cliente-x', 'worker-integrity.txt'))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });
 

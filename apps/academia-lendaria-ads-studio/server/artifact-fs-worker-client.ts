@@ -240,3 +240,24 @@ export async function materializeConfinedArtifact(input: {
   );
   return result as ConfinedMaterializeResult;
 }
+
+export async function materializeConfinedBinaryArtifact(input: {
+  projectsRoot: string;
+  slug: string;
+  relativePath: string;
+  content: Buffer;
+  hashAfter: string;
+  onConflict: 'reject' | 'overwrite';
+}): Promise<ConfinedMaterializeResult> {
+  const result = await withSession(input.projectsRoot, input.slug, true, (worker) =>
+    worker.request({
+      type: 'materialize',
+      relativePath: input.relativePath,
+      content: input.content.toString('base64'),
+      encoding: 'base64',
+      hashAfter: input.hashAfter,
+      onConflict: input.onConflict,
+    }),
+  );
+  return result as ConfinedMaterializeResult;
+}

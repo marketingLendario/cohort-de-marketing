@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sinkra-hub/templates/ajv-validation-report-v1.json",
+  "title": "AJV Validation Report v1",
+  "description": "Output template para leaf_validar_qualidade/tsk01_executar_ajv_strict + leaf_consolidar/tsk02_ajv_strict_final.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ajv_strict_pass", "errors_count", "schema_version", "timestamp"],
+  "properties": {
+    "ajv_strict_pass": { "type": "boolean" },
+    "errors_count": { "type": "integer", "minimum": 0 },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "keyword": { "type": "string" },
+          "instancePath": { "type": "string" },
+          "schemaPath": { "type": "string" },
+          "params": { "type": "object" },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "validators_pass": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Lista de validators V1-V126 que passaram (ex: V116, V117, V120, V121, V125, V126)"
+    },
+    "validators_fail": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "schema_version": { "type": "string", "pattern": "^5\\.[0-9]+\\.[0-9]+$" },
+    "input_ref": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "branch_id": { "type": "string" }
+  }
+}

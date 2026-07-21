@@ -101,7 +101,14 @@ export function createSkillRunWorker(deps: SkillRunWorkerDeps): SkillRunWorker {
       }
 
       try {
+        const previousFailureReason = [...claimed.attempts]
+          .reverse()
+          .find((attempt) => attempt.attempt < claimed.attempt && attempt.status === 'failed' && attempt.reason)
+          ?.reason
         const result = await runner.run(claimed.skillId, claimed.input, {
+          jobId,
+          attempt: claimed.attempt,
+          previousFailureReason,
           signal: controller.signal,
           onStep,
           onLog,

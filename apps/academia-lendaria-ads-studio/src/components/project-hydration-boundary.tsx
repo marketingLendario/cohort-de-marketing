@@ -13,7 +13,7 @@ import { useProjectWorkspace, type UseProjectWorkspaceResult } from '@/hooks/use
  */
 export type ProjectWorkspaceActions = Pick<
   UseProjectWorkspaceResult,
-  'createProject' | 'persistSkillRunStart' | 'persistSkillRunUpdate'
+  'createProject' | 'persistSkillRunStart' | 'persistSkillRunUpdate' | 'supersedeSkillRun'
 > & Partial<Pick<UseProjectWorkspaceResult, 'importProjectBrief'>>;
 
 const ProjectWorkspaceActionsContext = createContext<ProjectWorkspaceActions | null>(null);
@@ -130,6 +130,7 @@ export function ProjectHydrationBoundary({
         importProjectBrief: workspace.importProjectBrief,
         persistSkillRunStart: workspace.persistSkillRunStart,
         persistSkillRunUpdate: workspace.persistSkillRunUpdate,
+        supersedeSkillRun: workspace.supersedeSkillRun,
       }}
     >
       {children}

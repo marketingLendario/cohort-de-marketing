@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-07-12T03:19:26.851Z",
+  "fixture": {
+    "projectId": "82000000-0000-0000-0000-000000000031",
+    "campaignId": "84000000-0000-0000-0000-000000000031",
+    "projectSlug": "story-8-w3-1-traffic-pilot"
+  },
+  "generation": {
+    "executed": true,
+    "selectedItems": 4,
+    "blockedItems": 0
+  },
+  "scenarios": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "screenshot": "creative-factory-desktop-fresh-context.png",
+      "approved": true,
+      "imageCount": 4,
+      "images": [
+        {
+          "alt": "Pare de recomeçar toda segunda-feira",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        },
+        {
+          "alt": "Pare de recomeçar toda segunda-feira",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        },
+        {
+          "alt": "A rotina que vira uma decisão por semana",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        },
+        {
+          "alt": "A rotina que vira uma decisão por semana",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        }
+      ],
+      "hasCta": true,
+      "hasLinkDescription": true,
+      "statusLabelVisible": true,
+      "internalStatusVisible": false,
+      "nextStageEnabled": true,
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "requestFailures": []
+    },
+    {
+      "name": "mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "creative-factory-mobile-fresh-context.png",
+      "approved": true,
+      "imageCount": 4,
+      "images": [
+        {
+          "alt": "Pare de recomeçar toda segunda-feira",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        },
+        {
+          "alt": "Pare de recomeçar toda segunda-feira",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        },
+        {
+          "alt": "A rotina que vira uma decisão por semana",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        },
+        {
+          "alt": "A rotina que vira uma decisão por semana",
+          "complete": true,
+          "naturalWidth": 1080,
+          "naturalHeight": 1350
+        }
+      ],
+      "hasCta": true,
+      "hasLinkDescription": true,
+      "statusLabelVisible": true,
+      "internalStatusVisible": false,
+      "nextStageEnabled": true,
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "requestFailures": []
+    }
+  ]
+}

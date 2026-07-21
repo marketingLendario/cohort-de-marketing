@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(6);
+select plan(8);
 
 select ok(
   has_table_privilege('service_role', 'public.skill_run_jobs', 'SELECT')
@@ -58,6 +58,51 @@ select ok(
 select ok(
   not has_table_privilege('authenticated', 'public.skill_run_jobs', 'DELETE'),
   'authenticated users cannot delete job history'
+);
+
+reset role;
+
+insert into public.skill_runs (id, workspace_id, project_id, skill_id, skill_hash, status, input_snapshot)
+values (
+  '50000000-0000-0000-0000-000000000001',
+  '20000000-0000-0000-0000-000000000001',
+  '30000000-0000-0000-0000-000000000001',
+  'offerbook', 'pending', 'running',
+  '{"jobId":"40000000-0000-0000-0000-000000000001"}'::jsonb
+);
+
+update public.skill_run_jobs
+   set status = 'failed', error = '{"reason":"falha determinística","capabilityUnavailable":false}'::jsonb
+ where id = '40000000-0000-0000-0000-000000000001';
+
+select results_eq(
+  $$ select status, error from public.skill_runs where id = '50000000-0000-0000-0000-000000000001' $$,
+  $$ values ('failed'::text, 'falha determinística'::text) $$,
+  'terminal job failure updates the durable project run without a browser'
+);
+
+insert into public.skill_run_jobs (id, workspace_id, project_id, skill_id, status, skill_hash, proposal)
+values (
+  '40000000-0000-0000-0000-000000000003',
+  '20000000-0000-0000-0000-000000000001',
+  '30000000-0000-0000-0000-000000000001',
+  'copy-funil', 'succeeded', 'hash-real',
+  '{"summary":"pronto","resultMarkdown":"# Pronto","artifacts":[],"fields":[],"questions":[],"warnings":[]}'::jsonb
+);
+
+insert into public.skill_runs (id, workspace_id, project_id, skill_id, skill_hash, status, input_snapshot)
+values (
+  '50000000-0000-0000-0000-000000000002',
+  '20000000-0000-0000-0000-000000000001',
+  '30000000-0000-0000-0000-000000000001',
+  'copy-funil', 'pending', 'running',
+  '{"jobId":"40000000-0000-0000-0000-000000000003"}'::jsonb
+);
+
+select results_eq(
+  $$ select status, skill_hash, proposal ->> 'summary' from public.skill_runs where id = '50000000-0000-0000-0000-000000000002' $$,
+  $$ values ('needs_review'::text, 'hash-real'::text, 'pronto'::text) $$,
+  'a run created after terminal success hydrates from the authoritative job'
 );
 
 select * from finish();

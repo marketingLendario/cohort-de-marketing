@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0.0",
+  "surface": "cli",
+  "skillId": "offerbook",
+  "jobId": "51522194-e35f-48a5-8ea7-f4e672606477",
+  "skillRunId": "48c10bc0-0f72-487e-a826-5d85a910d817",
+  "status": "needs_input",
+  "model": "codex-cli-default",
+  "skillHash": "ea6bd738f3475448bc83c9525ef8a57472d43bd955ba2c35dba6326c91cc4b1b",
+  "proposal": {
+    "fields": [],
+    "summary": "",
+    "warnings": [],
+    "artifacts": [],
+    "questions": [
+      "Confirme a capacidade de entrega de cada bônus, respondendo “sim” ou “não” para cada item: (1) Checklist semanal anti-sanfona; (2) E-book Anti-Sanfona; (3) Workbook Fase 1.",
+      "Quem é o responsável habilitado que assina o programa? Informe nome completo, especialidade e CRM com UF. Se não houver responsável com CRM, responda objetivamente “não há” para que o offerbook registre a lacuna e exija validação jurídica antes da publicação."
+    ],
+    "resultMarkdown": ""
+  }
+}

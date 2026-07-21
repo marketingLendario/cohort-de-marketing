@@ -1,0 +1,87 @@
+schema: sinkra-wave-fan-in-result-v1
+epic: epic-8
+wave: W1
+batch: 1
+executed_by: "@devops"
+executed_at: "2026-07-09T21:10:00-03:00"
+mode: local-fan-in
+target_branch: rafaelscosta
+base_commit: "05d57771f21d9406c4fa7a353a5ad8b4801be303"
+
+preflight:
+  acks_validated: 3
+  ack_verdicts:
+    - story_id: "8.W1.1"
+      status: passed
+      lifecycle_state: InReview
+    - story_id: "8.W1.2"
+      status: passed
+      lifecycle_state: InReview
+    - story_id: "8.W1.3"
+      status: passed
+      lifecycle_state: InReview
+  branch_confirmed: "rafaelscosta"
+  head_confirmed: "05d57771f21d9406c4fa7a353a5ad8b4801be303"
+  tracked_changes_pending: 0
+
+cherry_picks:
+  - story_id: "8.W1.1"
+    source_commit: "63e7dbc1c09ef92135502614f2872d0042c7474c"
+    result_commit: "22ab7a34ec5c3a5c07307eda6eecacd6d1e30a24"
+    conflicts: none
+  - story_id: "8.W1.2"
+    source_commit: "29dd6208226ed947cf8efbf6ab34811593b34365"
+    result_commit: "392adb70e0b1a668c9075d80c0e2a4d94db2c9d1"
+    conflicts: none
+  - story_id: "8.W1.3"
+    source_commit: "6322295cc6566da7fdf21d18bbe862835e177eb7"
+    result_commit: "4dfa684428960e881558209b18ec6bee1d15ae1f"
+    conflicts: none
+
+ownership_check:
+  files_touched_total: 16
+  overlap_between_stories: 0
+  matches_ack_file_lists: true
+
+integration_gates:
+  location: "apps/academia-lendaria-ads-studio"
+  npm_test:
+    status: passed
+    detail: "19 test files, 113 tests passed"
+  npm_lint:
+    status: passed
+    detail: "ESLint: No issues found"
+  npm_typecheck:
+    status: passed
+    detail: "tsc -b — no errors; skill-catalog regenerated in place, no drift"
+  npm_build:
+    status: passed
+    detail: "vite build — built in 567ms"
+  npm_build_server:
+    status: passed
+    detail: "tsc -p tsconfig.server.json — no errors"
+  npm_lint_db:
+    status: passed
+    detail: "supabase db lint --local --level warning — No schema errors found"
+  npm_test_db:
+    status: passed
+    detail: "pgTAP — Files=2, Tests=10, Result: PASS"
+
+diff_check:
+  command: "git diff --check 05d57771f21d9406c4fa7a353a5ad8b4801be303..HEAD"
+  status: clean
+  exit_code: 0
+
+final_sha: "4dfa684428960e881558209b18ec6bee1d15ae1f"
+push_pr_merge: none
+untracked_preserved:
+  - ".aiox/"
+  - ".claude/worktrees/"
+  - ".codegraph/"
+  - "apps/academia-lendaria-ads-studio/design-qa-evidence/"
+
+verdict: PASS
+residual_risks:
+  - "Fan-in permanece local na branch rafaelscosta — nenhum push, PR ou merge remoto foi executado, conforme escopo. Convergência para main/remoto requer autorização explícita e execução por @devops em passo separado."
+  - "Supabase CLI local está em v2.84.2, defasada da mais recente (v2.109.1) — não bloqueante para este fan-in, mas fora do escopo de correção aqui."
+recommendation: "Fan-in local concluído com sucesso. Aguardando decisão do operador para push/PR (fora do escopo desta execução)."
