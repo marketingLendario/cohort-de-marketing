@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project-candidate.v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "candidateId",
+    "suggestedSlug",
+    "displayName",
+    "root",
+    "rootNormalized",
+    "source",
+    "excluded",
+    "evidence",
+    "completeness"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "candidateId": { "type": "string", "pattern": "^cand_[a-f0-9]{16}$" },
+    "suggestedSlug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,62}$" },
+    "displayName": { "type": "string", "minLength": 1 },
+    "root": { "type": "string", "minLength": 1 },
+    "rootNormalized": { "type": "string", "minLength": 1 },
+    "rootRelative": { "type": ["string", "null"] },
+    "source": { "type": "string", "minLength": 1 },
+    "scanRoot": { "type": "string", "minLength": 1 },
+    "excluded": { "type": "boolean" },
+    "exclusionReason": { "type": ["string", "null"] },
+    "errorCode": { "type": ["string", "null"] },
+    "evidence": {
+      "type": "object",
+      "required": ["markersFound", "markerCount", "completenessScore"],
+      "properties": {
+        "markersFound": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "markerCount": { "type": "integer", "minimum": 0 },
+        "completenessScore": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "completeness": { "type": "number", "minimum": 0, "maximum": 1 },
+    "legacyImportPlan": {
+      "type": ["object", "null"],
+      "properties": {
+        "schemaVersion": { "const": "1.0.0" },
+        "strategy": { "const": "bind-in-place" },
+        "atomic": { "const": true },
+        "preserveOriginals": { "const": true },
+        "requiresManualMove": { "const": false },
+        "projectRoot": { "type": "string" },
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["sourcePath", "action", "copy", "deleteSource"],
+            "properties": {
+              "sourcePath": { "type": "string" },
+              "action": { "const": "bind" },
+              "copy": { "const": false },
+              "deleteSource": { "const": false }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "strategy",
+        "atomic",
+        "preserveOriginals",
+        "requiresManualMove",
+        "projectRoot",
+        "operations"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUPER GUIA — APIs e Ads passo a passo · Cohort de Marketing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background:#0A0A0A; --card:#0F0F0F; --raised:#262626; --foreground:#E5E5E5;
+    --muted:#999999; --primary:#C9B298; --primary-light:#D9CBB9; --primary-deep:#8D7556;
+    --success:#23E169; --warn:#f0a34a;
+    --font-body:'Source Serif 4',Georgia,serif; --font-ui:Inter,system-ui,sans-serif;
+    --font-display:Rajdhani,Inter,sans-serif; --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{background:var(--background);color:var(--foreground);font-family:var(--font-body);font-size:18px;line-height:1.65;margin:0}
+  #progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--primary);box-shadow:0 0 15px rgba(201,178,152,.6);z-index:100}
+  .wrap{max-width:960px;margin:0 auto;padding:56px 28px 96px}
+  .hero{text-align:center;padding:24px 0 44px;border-bottom:1px solid var(--raised);margin-bottom:44px}
+  .kicker{display:inline-block;font-family:var(--font-ui);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);padding:6px 16px;border:1px solid var(--primary-deep);border-radius:9999px;margin-bottom:26px}
+  .hero h1{font-family:var(--font-display);font-size:clamp(2.1rem,6vw,3.4rem);font-weight:700;line-height:1.08;margin:0 0 12px}
+  .hero h1 em{font-family:var(--font-body);font-style:normal;font-weight:400;color:var(--primary)}
+  .hero .lead{font-size:1.1rem;color:var(--muted);max-width:70ch;margin:0 auto}
+  .hero .lead strong{color:var(--primary-light)}
+  .toc{background:var(--card);border:1px solid var(--raised);border-radius:.75rem;padding:20px 24px;margin:36px auto;max-width:780px}
+  .toc-label{font-family:var(--font-ui);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .toc ul{margin:0;padding-left:20px;font-family:var(--font-ui);font-size:.93rem;line-height:1.95}
+  .toc a{color:var(--foreground);text-decoration:none}
+  .toc a:hover{color:var(--primary)}
+  section{margin:64px 0;scroll-margin-top:28px}
+  .snum{font-family:var(--font-display);font-size:.95rem;font-weight:700;color:var(--primary);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+  h2{font-family:var(--font-display);font-size:clamp(1.7rem,4vw,2.3rem);font-weight:600;line-height:1.12;margin:0 0 18px}
+  h2 em{font-family:var(--font-body);font-style:normal;font-weight:400;color:var(--primary)}
+  h3{font-family:var(--font-ui);font-size:1.15rem;font-weight:700;margin:36px 0 10px;color:var(--primary-light)}
+  h4{font-family:var(--font-ui);font-size:1rem;font-weight:700;margin:24px 0 8px}
+  p{margin:12px 0}
+  strong{color:var(--primary-light);font-weight:600}
+  code{font-family:var(--font-mono);background:var(--raised);color:var(--primary-light);padding:2px 7px;border-radius:.25rem;font-size:.82em}
+  ol.steps{font-family:var(--font-ui);font-size:.94rem;line-height:1.75;color:var(--muted);padding-left:26px;margin:12px 0}
+  ol.steps li{margin:9px 0;padding-left:4px}
+  ol.steps li::marker{color:var(--primary);font-weight:700}
+  ul.plain{font-family:var(--font-ui);font-size:.93rem;line-height:1.8;color:var(--muted);padding-left:22px}
+  .meta-info{font-family:var(--font-ui);font-size:.9rem;color:var(--muted);background:var(--card);border:1px solid var(--raised);border-radius:.6rem;padding:12px 16px;margin:12px 0}
+  .meta-info strong{color:var(--foreground)}
+  .alerta{background:rgba(201,178,152,.07);border:1px solid var(--primary-deep);border-radius:.75rem;padding:16px 20px;margin:18px 0;font-family:var(--font-ui);font-size:.92rem}
+  .alerta-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+  .alerta p{margin:6px 0 0;color:var(--foreground)}
+  .alerta.warn{border-color:#d97706;background:rgba(217,119,6,.08)}
+  .alerta.warn .alerta-label{color:var(--warn)}
+  .alerta.ok{border-color:#15803d;background:rgba(35,225,105,.06)}
+  .alerta.ok .alerta-label{color:var(--success)}
+  table{width:100%;border-collapse:collapse;font-family:var(--font-ui);font-size:.85rem;margin:18px 0}
+  th{text-align:left;padding:9px 12px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--raised)}
+  td{padding:10px 12px;vertical-align:top;border-bottom:1px solid rgba(38,38,38,.5);color:var(--muted);line-height:1.5}
+  td strong{color:var(--foreground)}
+  .table-scroll{overflow-x:auto}
+  ul.check{list-style:none;padding:0;font-family:var(--font-ui);font-size:.92rem;line-height:2;color:var(--muted)}
+  ul.check li::before{content:"☐  ";color:var(--primary);font-weight:700}
+  .chave{background:var(--card);border:1px solid var(--raised);border-left:3px solid var(--primary);border-radius:.9rem;padding:26px 28px;margin:30px 0}
+  .chave > h3:first-child{margin-top:0}
+  a{color:var(--primary)}
+  @media (max-width:640px){table{font-size:.78rem}th,td{padding:7px 8px}.chave{padding:18px}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="wrap">
+
+<header class="hero">
+  <span class="kicker">Cohort de Marketing · Guia de Credenciais e Operação</span>
+  <h1>SUPER GUIA — <em>APIs e Ads</em> passo a passo</h1>
+  <p class="lead">Para o <strong>novato completo</strong>, sem pulos lógicos: cada chave do <code>.env</code> do zero ao "funcionou" (com teste de sucesso e socorro), a fundação inteira da Meta (BM, conta de anúncios, pagamento, pixel, CAPI) e a subida da campanha da Aula 3 <strong>clique a clique</strong> no default sagrado. Versão markdown: <code>super-guia-apis-e-ads.md</code>.</p>
+</header>
+
+<nav class="toc">
+  <div class="toc-label">As 4 partes</div>
+  <ul>
+    <li><a href="#pa">Parte A — Fundamentos absolutos (o que é chave, o .env, as 4 regras de ouro)</a></li>
+    <li><a href="#pb">Parte B — Cada chave, do zero ao "funcionou" (Apify · Meta ×5 · Hotmart · opcionais)</a></li>
+    <li><a href="#pc">Parte C — Trackeamento sem programar (Pixel, CAPI, deduplicação via Hotmart)</a></li>
+    <li><a href="#pd">Parte D — A campanha da Aula 3 clique a clique (default sagrado no Gerenciador)</a></li>
+  </ul>
+</nav>
+
+<!-- ============ PRÉ-REQUISITOS ============ -->
+<section id="prereq">
+  <h2>Pré-requisitos <em>(confira antes)</em></h2>
+  <table>
+    <tr><th>Tipo</th><th>Pré-requisito</th><th>Não tem? Faça isso</th></tr>
+    <tr><td>📖 Conhecimento</td><td>Os termos básicos (BM, pixel, CAPI, token, campanha/conjunto/anúncio)</td><td>leia o <a href="../02-conhecimento-minimo/guia-conceitos-trafego.md">guia-conceitos-trafego</a> (15 min) — este super-guia explica o COMO; o conceitos explica o O QUÊ</td></tr>
+    <tr><td>🧰 Ferramenta</td><td>Projeto clonado + terminal abrindo NA pasta do projeto</td><td><a href="../01-pre-requisitos/guia-atualizar-projeto.md">guia-atualizar-projeto</a> (e o GUIA-DO-ALUNO Parte 0 se nunca clonou)</td></tr>
+    <tr><td>🔑 Conta</td><td>Perfil do Facebook real e aquecido (pras Partes B.3+ da Meta)</td><td>detalhes no <a href="guia-meta-fundacao.md">guia-meta-fundacao</a></td></tr>
+    <tr><td>📄 Artefato</td><td>Nenhum pra começar — as chaves vêm ANTES dos artefatos</td><td>—</td></tr>
+  </table>
+</section>
+
+<!-- ============ PARTE A ============ -->
+<section id="pa">
+  <div class="snum">Parte A</div>
+  <h2>Fundamentos <em>absolutos</em></h2>
+
+  <h3>A.1 — O que é uma API e uma "chave"</h3>
+  <p style="font-family:var(--font-ui);font-size:.94rem;color:var(--muted)"><strong>API</strong> = a porta de serviço de um site: em vez de você clicar na tela, um programa entra por essa porta e pega os dados direto. <strong>Chave/token</strong> = a senha dessa porta — um texto comprido (ex.: <code>apify_api_x7Kb9...</code>). Quem tem a chave age em seu nome: trate como senha de banco. <strong>Escopo</strong> = o que a chave pode fazer (ex.: <code>ads_read</code> = só LER anúncios).</p>
+
+  <h3>A.2 — As 4 regras de ouro</h3>
+  <ol class="steps">
+    <li><strong>A chave aparece UMA vez só</strong> na maioria dos sites (Meta, OpenAI, Anthropic, Figma). Copie na hora, cole no <code>.env</code>, salve. Perdeu? Revogue no site e gere outra — nunca "procure onde ficou".</li>
+    <li><strong>Nunca cole em lugar público</strong> (grupo, print, planilha). No cohort ela vive num único lugar: o <code>.env</code> na raiz.</li>
+    <li><strong>O <code>.env</code> nunca sobe pro GitHub</strong> (o <code>.gitignore</code> garante). Vazou? Revogue e gere outra.</li>
+    <li><strong>Colar errado é o erro nº 1.</strong> Sem espaço, sem aspas, tudo numa linha. Certo: <code>APIFY_API_TOKEN=apify_api_abc123</code>. Errado: <code>APIFY_API_TOKEN = "apify_api_abc123"</code>.</li>
+  </ol>
+
+  <h3>A.3 — Criar e editar o <code>.env</code> (uma vez)</h3>
+  <ol class="steps">
+    <li>Terminal na raiz do <code>cohort-de-marketing</code> (Windows: pasta aberta no Explorador → barra de endereço → digite <code>cmd</code> → Enter).</li>
+    <li>Copie o modelo: Mac/Linux <code>cp .env.example .env</code> · Windows <code>copy .env.example .env</code>.</li>
+    <li>Abra pra editar: Windows <code>notepad .env</code> · Mac <code>open -e .env</code>.</li>
+    <li><strong>Pegadinha do Bloco de Notas:</strong> salvar como tipo "Todos os arquivos", nome exatamente <code>.env</code> — se virar <code>.env.txt</code>, nada funciona (no Explorador, Exibir → marque "Extensões de nomes de arquivo" pra conferir).</li>
+    <li>Jeito mais fácil: rode <code>/comecar</code> no Claude Code — ele cria o <code>.env</code> e cola as chaves com você.</li>
+  </ol>
+
+  <h3>A.4 — Conferir que salvou</h3>
+  <p style="font-family:var(--font-ui);font-size:.93rem;color:var(--muted)">Na raiz: <code>grep -E "NOME_DA_VARIAVEL" .env</code> (Windows/cmd: <code>findstr "NOME_DA_VARIAVEL" .env</code>). Tem que imprimir a linha. Não imprimiu = não salvou.</p>
+</section>
+
+<!-- ============ PARTE B ============ -->
+<section id="pb">
+  <div class="snum">Parte B</div>
+  <h2>Cada chave, do zero ao <em>"funcionou"</em></h2>
+  <p style="font-family:var(--font-ui);font-size:.92rem;color:var(--muted)">Ordem de prioridade: <strong>B.1 Apify</strong> (Aula 1) → <strong>B.2–B.6 Meta</strong> (Aulas 3–4) → <strong>B.7 Hotmart</strong> (Aula 4, opcional) → <strong>B.8 opcionais</strong>. Aviso: a Meta muda nomes de menu — se o botão não tiver o nome exato daqui, procure o mais parecido; o caminho lógico é o mesmo.</p>
+
+  <!-- B.1 -->
+  <div class="chave" id="b1">
+    <h3>B.1 — APIFY (<code>APIFY_API_TOKEN</code>)</h3>
+    <div class="meta-info"><strong>Serve para:</strong> espião, trend-hunting, conteúdo e criativos coletarem dados reais. · <strong>Custo:</strong> Free = US$ 5/mês de crédito, sem cartão. · <strong>Pré-requisito:</strong> um e-mail.</div>
+    <ol class="steps">
+      <li>Abra <code>https://console.apify.com/sign-up</code>.</li>
+      <li>Crie a conta: "Sign up with Google" (mais fácil) ou e-mail + senha. Com e-mail, o Apify manda um <strong>link de verificação</strong> — clique nele antes de continuar.</li>
+      <li>Questionário de boas-vindas? Responda qualquer coisa ou pule — não afeta nada.</li>
+      <li>No Console, menu lateral esquerdo, desça até <strong>Settings</strong> (engrenagem, canto inferior esquerdo).</li>
+      <li>Abra a aba <strong>"API &amp; Integrations"</strong> (em alguns layouts: <strong>"Integrations" → "API tokens"</strong> — é a mesma tela).</li>
+      <li>Copie o <strong>Personal API token</strong> (começa com <code>apify_api_</code>) pelo ícone de copiar ao lado.</li>
+      <li>Cole em <code>APIFY_API_TOKEN=</code> no <code>.env</code> (logo após o <code>=</code>, sem espaço). Salve.</li>
+    </ol>
+    <div class="alerta ok"><div class="alerta-label">Teste de sucesso</div><p><code>grep -E "APIFY_API_(TOKEN|KEY)" .env</code> imprime a linha; a próxima skill de coleta roda sem pedir a chave.</p></div>
+    <div class="alerta warn"><div class="alerta-label">Se der errado</div><p>Não acha Settings? É o último item do menu esquerdo, embaixo do avatar. · Estourou os US$ 5? A skill avisa e cai no modo manual; renova mês que vem. · <code>APIFY_API_KEY</code> também é aceito, mas use o oficial. · <strong>Boa notícia (diferente da Meta/Hotmart):</strong> o token do Apify fica <strong>sempre visível</strong> em Settings — perdeu, volta lá e copia de novo; e não há aprovação nem espera.</p></div>
+  </div>
+
+  <!-- B.2 -->
+  <div class="chave" id="b2">
+    <h3>B.2 — META: o mapa dos 3 tokens (leia antes)</h3>
+    <div class="table-scroll"><table>
+      <tr><th>Token</th><th>Variável</th><th>Serve para</th><th>Quando</th></tr>
+      <tr><td><strong>Conta de anúncios</strong> (System User)</td><td><code>META_ACCESS_TOKEN</code></td><td>ler campanhas, métricas, demografia (zelador + Aula 4)</td><td><strong>o principal</strong> — Aula 3/4</td></tr>
+      <tr><td><strong>Ad Library</strong></td><td><code>META_AD_LIBRARY_TOKEN</code></td><td>espião puxar anúncios de concorrentes sozinho</td><td>opcional (tem fallback manual)</td></tr>
+      <tr><td><strong>Página / Instagram</strong></td><td><code>META_PAGE_ACCESS_TOKEN</code> · <code>META_INSTAGRAM_TOKEN</code></td><td>engajamento orgânico (comentários, sentimento)</td><td>opcional, avançado</td></tr>
+    </table></div>
+    <p style="font-family:var(--font-ui);font-size:.9rem;color:var(--muted)">E antes de qualquer token: a <strong>fundação B.3</strong> (conta pessoal → BM → Página → conta de anúncios → pagamento).</p>
+  </div>
+
+  <!-- B.3 -->
+  <div class="chave" id="b3">
+    <h3>B.3 — FUNDAÇÃO META: BM, Página, conta de anúncios e pagamento (do zero)</h3>
+    <p style="font-family:var(--font-ui);font-size:.9rem;color:var(--muted)"><strong>Isso nenhum doc do curso ensinava — está aqui completo.</strong> Sem esta fundação, nada da Aula 3/4 existe.</p>
+
+    <h4>B.3.1 — Conta pessoal do Facebook</h4>
+    <p style="font-family:var(--font-ui);font-size:.9rem;color:var(--muted)">Perfil real e "aquecido" (foto, amigos, uso normal). Perfil novo só pra anunciar = alto risco de bloqueio automático. Se não tem: <code>facebook.com</code> → "Criar nova conta" → dados reais → confirmar e-mail/telefone → usar alguns dias antes de anunciar.</p>
+
+    <h4>B.3.2 — Criar o Business Manager</h4>
+    <ol class="steps">
+      <li>Logado no Facebook, abra <code>https://business.facebook.com/overview</code>.</li>
+      <li><strong>"Criar uma conta"</strong> (canto superior direito).</li>
+      <li>Preencha nome do negócio, seu nome e e-mail comercial → Avançar.</li>
+      <li><strong>Confirme o e-mail</strong> que a Meta mandou.</li>
+      <li>Guarde o endereço das configurações: <code>business.facebook.com/settings</code> — tudo a seguir mora aqui.</li>
+    </ol>
+
+    <h4>B.3.3 — Criar (ou vincular) a Página</h4>
+    <ol class="steps">
+      <li><code>business.facebook.com/settings</code> → <strong>Contas → Páginas</strong> → botão azul <strong>"Adicionar"</strong>.</li>
+      <li><strong>"Criar uma nova Página"</strong> (nome = a marca, categoria do negócio) ou <strong>"Adicionar uma Página"</strong> existente.</li>
+      <li>Capriche o básico (logo, capa, descrição) — Página vazia converte pior e levanta suspeita.</li>
+    </ol>
+
+    <h4>B.3.4 — Vincular o Instagram</h4>
+    <ol class="steps">
+      <li>No app do Instagram: Configurações → <strong>Tipo de conta → Profissional (Empresa)</strong> — grátis.</li>
+      <li>Business settings → <strong>Contas → Contas do Instagram → Adicionar</strong> → login do Instagram.</li>
+      <li>Na Página do Facebook → Configurações → <strong>Instagram</strong> → conectar.</li>
+    </ol>
+
+    <h4>B.3.5 — Criar a conta de anúncios</h4>
+    <ol class="steps">
+      <li>Business settings → <strong>Contas → Contas de anúncios → Adicionar → "Criar uma nova conta de anúncios"</strong>.</li>
+      <li>Nome + <strong>fuso (GMT-03:00) São Paulo</strong> + <strong>moeda BRL</strong>. ⚠️ Fuso e moeda <strong>não mudam depois</strong> — errou, cria outra.</li>
+      <li>"Será usada para" → <strong>Meu negócio</strong> → Criar.</li>
+      <li>Adicione você mesmo com <strong>Gerenciar conta de anúncios</strong> (acesso total).</li>
+    </ol>
+
+    <h4>B.3.6 — Forma de pagamento</h4>
+    <ol class="steps">
+      <li>Business settings → <strong>Pagamentos</strong> → selecione a conta → <strong>"Adicionar forma de pagamento"</strong>.</li>
+      <li>Brasil: <strong>cartão de crédito</strong> (recomendado — pós-pago). Boleto/Pix (pré-pago, carrega saldo) existe, mas ⚠️ <strong>evite como forma principal</strong> — conta bloqueada com saldo pré-pago = dinheiro preso até a análise resolver (referência de mercado); detalhes no guia-meta-fundacao, passo 6.</li>
+      <li>Confira: <code>adsmanager.facebook.com</code> → engrenagem → Configurações de pagamento → <strong>sem aviso vermelho</strong>.</li>
+    </ol>
+
+    <h4>B.3.7 — Verificar o domínio</h4>
+    <ol class="steps">
+      <li>Tenha um domínio próprio (ex.: <code>suamarca.com.br</code> — registro.br, ~R$40/ano).</li>
+      <li>Business settings → <strong>Segurança da marca → Domínios → Adicionar</strong> → digite o domínio.</li>
+      <li>Método mais simples: <strong>verificação por DNS (TXT)</strong> — copie o código <code>facebook-domain-verification=...</code>, crie um registro TXT no painel do seu provedor de domínio, aguarde (minutos a horas), clique <strong>Verificar</strong>.</li>
+      <li>Sem site próprio ainda? Pule e anote como pendência — o checkout Hotmart usa o domínio da Hotmart.</li>
+    </ol>
+
+    <div class="alerta ok"><div class="alerta-label">Checklist da fundação (tudo ✅ antes da Aula 3)</div>
+      <ul class="check" style="margin:8px 0 0">
+        <li>BM criado e e-mail confirmado</li>
+        <li>Página com logo e descrição · Instagram profissional vinculado</li>
+        <li>Conta de anúncios (fuso São Paulo, moeda BRL)</li>
+        <li>Pagamento sem aviso vermelho · domínio verificado (ou pendência anotada)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- B.4 -->
+  <div class="chave" id="b4">
+    <h3>B.4 — <code>META_ACCESS_TOKEN</code> + App (o token principal, System User)</h3>
+    <div class="meta-info"><strong>Serve para:</strong> zelador Modo API + painel da Aula 4. Só leitura (<code>ads_read</code>). · <strong>Pré-requisito:</strong> fundação B.3 completa. · <strong>Fontes no repo:</strong> <code>aula-03/materiais/guia-app-meta-integracoes.html</code> (visual) e <code>aula-04/docs/tutorial-token-meta.md</code> (texto).</div>
+
+    <div class="alerta warn"><div class="alerta-label">Antes de começar — como a Meta se comporta</div><p>A Meta (a) muda nomes de menu sem aviso, (b) mostra <strong>telas diferentes pra contas diferentes</strong> (o mesmo clique pode abrir assistentes distintos) e (c) demora pra propagar permissões (minutos) e aprovar verificações (dias). Cada passo abaixo descreve o que a tela faz, as <strong>variações conhecidas</strong> e o tempo de espera. Tela não bate com nenhuma variação? Use a busca do menu lateral, ou o Prompt 3 do mapa-guiado — a IA acha o caminho com você.</p></div>
+
+    <h4>B.4.1 — Criar a conta de desenvolvedor (primeira vez · 5–10 min)</h4>
+    <ol class="steps">
+      <li>Abra <code>developers.facebook.com</code> <strong>já logado</strong> no Facebook — o MESMO perfil que é admin do seu BM (confira no canto superior direito).</li>
+      <li>Clique em <strong>"Começar" / "Get Started"</strong>. Se em vez disso você já vê <strong>"Meus apps"</strong> no topo: sua conta de dev já existe — pule pra B.4.2.</li>
+      <li>O assistente tem <strong>4 etapas, uma tela cada</strong>: <strong>Registrar</strong> (aceitar termos → Avançar) → <strong>Verificar conta</strong> (digite seu celular → chega um <strong>código de 6 dígitos por SMS</strong> → digite; não chegou em 2 min? <strong>"Update Mobile Number"</strong> reenvia) → <strong>Informações de contato</strong> (confirme o e-mail) → <strong>Sobre você</strong> (escolha algo como "profissional de marketing" — não trava nada depois).</li>
+      <li>Prova de que deu certo: o menu <strong>"Meus apps"</strong> aparece no topo.</li>
+    </ol>
+
+    <h4>B.4.2 — Criar o app (10 min) — com as DUAS variações de tela</h4>
+    <ol class="steps">
+      <li><strong>"Meus apps"</strong> → botão verde <strong>"Criar app"</strong>.</li>
+      <li><strong>Tela "Requisitos"</strong> (se aparecer): resumo do que você vai precisar ("um portfólio empresarial…") → <strong>Avançar</strong>.</li>
+      <li><strong>Tela de CASOS DE USO</strong> — cartões clicáveis, com <strong>duas variações</strong>:<br><strong>Variação A (mais comum hoje):</strong> cartões tipo "Autenticar e solicitar dados", "Interação de WhatsApp", "Gerenciar tudo na sua Página", <strong>"Outro"</strong>. Para Marketing API/leitura de anúncios: selecione <strong>"Outro"</strong> → Avançar → "Selecione um tipo de app": <strong>"Negócios"/"Empresa" (Business)</strong> → Avançar.<br><strong>Variação B (contas antigas):</strong> vai direto a "Que tipo de app?" → escolha <strong>Empresa</strong>.</li>
+      <li><strong>Tela "Detalhes do app":</strong> nome ex. <code>Cohort Trafego</code> — <strong>sem acento, sem emoji</strong>, e ⚠️ nunca com "Facebook", "Meta" ou "Insta" no nome (recusa na hora). E-mail de contato: o seu.</li>
+      <li><strong>Campo "Portfólio empresarial" (Business Manager)</strong> — ⚠️ <strong>o passo mais importante e mais esquecido:</strong> selecione o <strong>BM da B.3</strong>. Deixou em branco? O app nasce solto, a Meta pode não enxergar sua BM depois e a lista de permissões do token vem VAZIA na B.4.5 — retrabalho garantido. <strong>Selecione AGORA.</strong></li>
+      <li><strong>"Criar app"</strong> → a Meta pede sua <strong>senha do Facebook</strong> (ou código 2FA) → confirme.</li>
+      <li>Você cai no <strong>painel do app</strong>. Duas coisas pra notar: o seletor <strong>"Modo do app: Desenvolvimento"</strong> no topo (é o modo certo — <strong>NÃO</strong> precisa publicar pra ler os SEUS dados; deixe assim) e, se aparecer o banner <strong>"Acesso à API restrito"</strong>, clique <strong>"Ver ações necessárias"</strong> e siga (normalmente só confirmar contato) — libera o acesso básico.</li>
+      <li><strong>Configurações → Básico:</strong> copie o <strong>ID do app</strong> → <code>META_APP_ID=</code>; clique <strong>"Mostrar"</strong> na <strong>Chave Secreta</strong> (pede a senha de novo) → <code>META_APP_SECRET=</code>. Os demais campos (domínios, política, ícone) <strong>não são necessários</strong> pra leitura dos próprios dados — só entram se um dia pedir App Review.</li>
+      <li><strong>Marketing API (recomendado):</strong> menu <strong>"Adicionar produto"</strong> ou bloco <strong>"Adicionar casos de uso"</strong> no dashboard → se existir <strong>Marketing API</strong> → <strong>"Configurar"</strong> (só adicionar já basta). <strong>Não aparece? Siga em frente sem culpa</strong> — pro token de System User com <code>ads_read</code>, o produto não é pré-requisito; quem destrava os escopos é a B.4.4.</li>
+      <li><strong>Vincular o app ao BM (só se errou o passo 5):</strong> <code>business.facebook.com/settings</code> → <strong>Contas → Aplicativos → "Adicionar" → "Adicionar um ID do app"</strong> → cole o ID → adicionar.</li>
+    </ol>
+
+    <h4>B.4.3 — Criar o Usuário do Sistema (o "usuário robô" · 5 min)</h4>
+    <ol class="steps">
+      <li><code>business.facebook.com/settings</code>. ⚠️ <strong>Variação:</strong> se abrir o <strong>Meta Business Suite</strong> (layout novo com feed), clique na <strong>engrenagem</strong> no canto inferior esquerdo → <strong>"Configurações da empresa"</strong> — cai na mesma tela clássica.</li>
+      <li>Menu esquerdo → <strong>Usuários → Usuários do sistema</strong> → <strong>"Adicionar"</strong>.</li>
+      <li>⚠️ Primeiro usuário do sistema da conta? A Meta pode pedir aceite de termos ou dizer "disponível em breve" — BM recém-criado às vezes precisa de algumas horas/dias de "idade" ou da <strong>Verificação de Empresa</strong> pra liberar. Aguarde e tente de novo.</li>
+      <li>Nome <code>leitor-trafego</code> → função <strong>Funcionário</strong> (Admin não é preciso pra só ler; menos poder = menos risco) → <strong>Criar usuário do sistema</strong>.</li>
+    </ol>
+
+    <h4>B.4.4 — ATRIBUIR OS ATIVOS ⚠️ (ordem OBRIGATÓRIA: ativos ANTES do token)</h4>
+    <ol class="steps">
+      <li>Com <code>leitor-trafego</code> selecionado → <strong>"Atribuir ativos"</strong> (em alguns layouts fica atrás do menu <strong>"..." Mais opções</strong>, no topo à direita).</li>
+      <li>No modal, aba <strong>Apps</strong> → marque <code>Cohort Trafego</code> → ative a chavinha <strong>"Gerenciar app"</strong> (controle total) → <strong>"Salvar alterações"</strong>. <em>← é ESTE toggle que destrava os escopos do token; sem ele a lista de permissões vem VAZIA — o erro nº 1 de todo mundo.</em></li>
+      <li>Repita "Atribuir ativos" → aba <strong>Contas de anúncios</strong> → sua conta → <strong>"Ver desempenho"</strong> (parcial; NÃO precisa "Gerenciar campanhas") → Salvar.</li>
+      <li>(Só p/ orgânico da Aula 4) repita → aba <strong>Páginas</strong> → sua Página → "Ver desempenho da Página" → Salvar.</li>
+      <li>⏱ <strong>Espere 2–5 minutos</strong> — a atribuição propaga com atraso; token gerado no segundo seguinte às vezes vem sem permissões.</li>
+    </ol>
+
+    <h4>B.4.5 — Gerar o token (2 min + atenção total ao copiar)</h4>
+    <ol class="steps">
+      <li>Usuário selecionado → <strong>"Gerar novo token"</strong> (ou "..." → "Gerar token"). Abre o assistente.</li>
+      <li><strong>Tela "Selecionar app":</strong> escolha <code>Cohort Trafego</code> → Avançar.</li>
+      <li><strong>Expiração:</strong> opções típicas <strong>"60 dias"</strong> e <strong>"Nunca"</strong>. Escolha <strong>"Nunca"</strong> se aparecer (permanente = sem refazer a cada 2 meses); só tem "60 dias"? Ok — anote no calendário pra regenerar.</li>
+      <li><strong>Permissões:</strong> marque <strong>somente</strong> <code>ads_read</code> ✅ + <code>business_management</code> ✅. Nada de escopo de escrita — o método é leitura. ⚠️ Lista <strong>vazia</strong>? App não atribuído (B.4.4-2) ou propagação pendente (B.4.4-5).</li>
+      <li><strong>"Gerar token"</strong> → aparece <strong>UMA ÚNICA VEZ</strong> → <strong>copie AGORA</strong> → <code>META_ACCESS_TOKEN=</code> no <code>.env</code> → salve → só então feche. Fechou sem copiar? "Gerar novo token" de novo (o anterior segue válido, mas irrecuperável).</li>
+    </ol>
+
+    <h4>B.4.6 — IDs automáticos</h4>
+    <ol class="steps">
+      <li><code>node scripts/zelador-audit.mjs --gravar-env</code> — descobre e grava conta, pixel, página e BM (o Instagram você pega na mão, B.4.7).</li>
+      <li>Validar sem alterar: <code>node scripts/zelador-audit.mjs --json</code>.</li>
+      <li><strong>Mais de uma conta/pixel/página?</strong> O <code>--gravar-env</code> <strong>não grava nada</strong> nesse caso (nunca escolhe por você): o relatório lista as opções pra você copiar a linha certa no <code>.env</code>. Alternativa só p/ contas: <code>painel-trafego-data.mjs --listar-contas</code>.</li>
+    </ol>
+
+    <h4>B.4.6 — Plano B: cada ID na mão</h4>
+    <ul class="plain">
+      <li><strong>Conta de anúncios:</strong> <code>adsmanager.facebook.com</code> → número na URL (<code>act=123...</code>) → grave <code>META_AD_ACCOUNT_ID=123...</code> — <strong>só o número, sem o <code>act_</code></strong> (padrão do repo; com prefixo também funciona).</li>
+      <li><strong>Pixel:</strong> Events Manager (<code>business.facebook.com/events_manager2</code>) → Fontes de dados → número embaixo do nome.</li>
+      <li><strong>Página:</strong> Página → "Sobre" → "ID da Página" (ou business settings → Contas → Páginas).</li>
+      <li><strong>BM:</strong> business settings → Informações da empresa → "ID do Gerenciador de Negócios".</li>
+      <li><strong>Instagram:</strong> business settings → Contas → Contas do Instagram → número embaixo do @.</li>
+    </ul>
+    <div class="alerta ok"><div class="alerta-label">Teste final</div><p><code>node scripts/painel-trafego-data.mjs --account</code> responde <code>"modo": "api"</code> com dados reais.</p></div>
+    <div class="alerta warn"><div class="alerta-label">Se der errado</div><p><em>"Nenhuma permissão disponível"</em> → pulou a B.4.3 (atribua o app com "Gerenciar app"). · <em>"(#10) Permission Denied"</em> → conta de anúncios não atribuída (B.4.3-2; aguarde uns minutos). · <em>Token expirou em horas</em> → foi gerado no Graph Explorer; refaça pelo System User (B.4.4).</p></div>
+  </div>
+
+  <!-- B.5 -->
+  <div class="chave" id="b5">
+    <h3>B.5 — <code>META_AD_LIBRARY_TOKEN</code> (espião automático — opcional)</h3>
+    <div class="meta-info"><strong>Sem ele a skill funciona igual:</strong> abre a Biblioteca pública (<code>facebook.com/ads/library</code>) e você cola os textos. O pré-requisito é pesado — por isso deixe por último.</div>
+    <ol class="steps">
+      <li><strong>Confirmar a identidade (uma vez na vida · 1–3 dias úteis):</strong> abra <code>facebook.com/ID</code> logado. O fluxo pede <strong>país de residência</strong> → <strong>upload de documento oficial com foto</strong> (RG, CNH ou passaporte — nítido, sem corte, sem reflexo). Envie e aguarde a resposta por notificação/e-mail em <strong>1 a 3 dias úteis</strong>. ⚠️ Não conclui ao vivo numa aula — dispare antes.</li>
+      <li><strong>Aceitar os termos:</strong> aprovada a identidade, <code>facebook.com/ads/library/api/</code> → <strong>"Get Started"</strong> → leia e aceite. A página libera as seções de acesso.</li>
+      <li><strong>App:</strong> o mesmo <code>Cohort Trafego</code> da B.4 serve. Se a página oferecer "adicionar o produto Ad Library API" ao app, adicione.</li>
+      <li><strong>Gerar o token — 2 caminhos equivalentes:</strong> na seção <strong>"Tools"/"Ferramentas"</strong> da própria página; OU no <strong>Graph API Explorer</strong> (<code>developers.facebook.com/tools/explorer</code>): painel direito → selecione o app → <strong>"Generate Access Token"</strong> → confirmar login → o token aparece no campo. Sem escopo especial.</li>
+      <li>Cole em <code>META_AD_LIBRARY_TOKEN=</code>.</li>
+      <li><strong>Teste de sucesso (30 s):</strong> no Graph API Explorer, consulte <code>ads_archive?search_terms='emagrecimento'&amp;ad_reached_countries=['BR']</code> → Enviar. Lista JSON no meio da tela = funcionando.</li>
+    </ol>
+    <div class="alerta warn"><div class="alerta-label">Se der errado</div><p><em>"Application does not have permission"</em> → termos não aceitos com ESTE perfil, ou identidade ainda em análise. · <em>Token expira em horas</em> → estenda no Access Token Debugger (<code>developers.facebook.com/tools/debug/accesstoken</code> → "Estender", vira ~60 dias). · Na dúvida: o fallback manual (abrir a Biblioteca pública e colar os textos) dá o mesmo resultado analítico, sem pré-requisito nenhum.</p></div>
+  </div>
+
+  <!-- B.6 -->
+  <div class="chave" id="b6">
+    <h3>B.6 — Orgânico: <code>META_PAGE_ACCESS_TOKEN</code> e <code>META_INSTAGRAM_TOKEN</code> (avançado, opcional)</h3>
+    <div class="meta-info"><strong>Sem eles o painel funciona</strong> — a aba Engajamento fica "em breve". Caminho A = modo desenvolvedor (sem App Review), validade ~60 dias, só na SUA conta.</div>
+    <h4>Facebook (<code>META_PAGE_ACCESS_TOKEN</code>)</h4>
+    <ol class="steps">
+      <li>Pré: admin do app E da Página; no app → <strong>Casos de uso → "Gerenciar tudo na sua Página" → Personalizar</strong> → adicione <code>pages_read_engagement</code> + <code>pages_read_user_content</code>.</li>
+      <li><strong>Graph API Explorer</strong> (<code>developers.facebook.com/tools/explorer</code>) → seu app → <strong>"Get User Access Token"</strong> → marque <code>pages_read_engagement</code>, <code>pages_read_user_content</code>, <code>pages_show_list</code> → Generate.</li>
+      <li>Estenda: <strong>Access Token Debugger</strong> (<code>developers.facebook.com/tools/debug/accesstoken</code>) → cole → <strong>"Estender token"</strong> (~60 dias) → copie o longo.</li>
+      <li><code>META_PAGE_ACCESS_TOKEN=</code> → teste <code>node scripts/painel-trafego-data.mjs --account --perfil</code> → <code>perfil.disponivel: true</code>.</li>
+      <li>⚠️ Em produção (qualquer conta), posts/comentários exigem <strong>App Review</strong> aprovado (semanas) — limitação real da Meta.</li>
+    </ol>
+    <h4>Instagram (<code>META_INSTAGRAM_TOKEN</code> — API nova, "login do Instagram")</h4>
+    <ol class="steps">
+      <li>É o seu caso se o app mostra escopos <code>instagram_business_basic</code>/<code>instagram_business_manage_comments</code>.</li>
+      <li>App → <strong>Casos de uso → API do Instagram → Personalizar → aba Funções</strong> → adicione seu @ como <strong>"Testador do Instagram"</strong>.</li>
+      <li><strong>Aceite o convite DENTRO do Instagram</strong>: Configurações → <strong>"Apps e sites"</strong> (ou a notificação). <em>← passo esquecido = causa nº 1 de falha.</em></li>
+      <li>De volta ao app → <strong>"Gerar tokens de acesso" → Adicionar conta</strong> → selecione o @ → <strong>"Add all required permissions"</strong> → gerar (já sai longo).</li>
+      <li><code>META_INSTAGRAM_TOKEN=</code> → teste com <code>--perfil</code>. Pré: conta Instagram <strong>Profissional</strong> vinculada à Página (B.3.4).</li>
+    </ol>
+  </div>
+
+  <!-- B.7 -->
+  <div class="chave" id="b7">
+    <h3>B.7 — HOTMART (<code>HOTMART_CLIENT_ID</code> + <code>HOTMART_CLIENT_SECRET</code>)</h3>
+    <p>🔀 <strong>Esta seção virou guia próprio:</strong> <code>guias/03-conexoes-e-apis/guia-hotmart.md</code> (erros M1–M7). O pré-requisito dela (produto com checkout) ganhou o <code>guia-produto-e-checkout.md</code>.</p>
+    <div class="meta-info"><strong>Serve para:</strong> a Aula 4 ler as vendas reais (caixa) — o ROAS rastreado vira "Real". · <strong>Pré-requisito:</strong> conta de <strong>Produtor</strong> — a área de credenciais normalmente é exclusiva de Produtor; o menu não aparece? Sua conta deve ser só de Afiliado — pule (o painel funciona sem).</div>
+    <ol class="steps">
+      <li>Login em <code>app.hotmart.com</code> <strong>com a conta de Produtor</strong> (a dona do produto — afiliado não vê este menu).</li>
+      <li>Menu lateral → <strong>Ferramentas</strong>. ⚠️ Variações: o item pode se chamar só <strong>"Credenciais"</strong> ou <strong>"Credenciais de Desenvolvedor"</strong>. Não achou? Lupa de busca do topo → "credenciais".</li>
+      <li>Na tela de credenciais → <strong>"Criar credencial"</strong> (ou "Nova credencial") → nome <code>Painel Trafego</code>. ⚠️ Se aparecer a opção <strong>"Sandbox": NÃO marque</strong> (sandbox = ambiente de teste com dados falsos; queremos vendas reais).</li>
+      <li><strong>"Criar Credencial"</strong> → copie na hora o <strong>Client ID</strong>, o <strong>Client Secret</strong> e, se exibido, o <strong>"Basic"</strong> (opcional — o script deriva do ID+Secret).</li>
+      <li>Perdeu ou ficou na dúvida depois? Gere uma nova credencial em Ferramentas → Credenciais — é rápido e o painel não se importa.</li>
+      <li>Cole no <code>.env</code>: <code>HOTMART_CLIENT_ID=</code> · <code>HOTMART_CLIENT_SECRET=</code> · <code>HOTMART_BASIC=</code> (o valor "Basic" da tela; não copiou? deixe vazio — o script deriva do ID+Secret).</li>
+    </ol>
+    <div class="alerta ok"><div class="alerta-label">Teste de sucesso</div><p><code>node scripts/hotmart-vendas.mjs --dias=90 --debug</code> responde (mesmo "0 vendas" prova que conectou).</p></div>
+    <div class="alerta"><div class="alerta-label">O truque do ROAS "Real": o parâmetro sck</div><p>No link do anúncio que aponta pro checkout, inclua o identificador da campanha no <strong>sck</strong>. Exemplo literal: <code>https://pay.hotmart.com/A12345678B?sck=meta-c1-frio</code>. Regras (fonte: manual-trackeamento da aula-03): <strong>máx. 30 caracteres</strong>, só letras, números, hífen e pipe — <strong>underscore é proibido</strong> (o sanitizador converte <code>_</code> em <code>-</code>). A venda volta no webhook com esse sck e o painel casa venda ↔ campanha ("Real"). Sem sck: nome do produto ou janela temporal ("Estimado").</p></div>
+    <div class="alerta warn"><div class="alerta-label">Se der errado</div><p>401 = ID/Secret errados ou credencial revogada (gere outra). · "CLIENT_ID ausente" = confira o nome exato da linha no <code>.env</code>.</p></div>
+  </div>
+
+  <!-- B.8 -->
+  <div class="chave" id="b8">
+    <h3>B.8 — Opcionais: Anthropic · OpenAI · Figma</h3>
+    <h4>ANTHROPIC (<code>ANTHROPIC_API_KEY</code>) — só p/ scripts FORA do Claude Code</h4>
+    <ol class="steps">
+      <li><code>console.anthropic.com</code> → conta → <strong>Settings → API Keys → Create Key</strong> → copie (aparece uma vez) → <code>ANTHROPIC_API_KEY=</code>.</li>
+      <li>⚠️ A API é <strong>paga à parte</strong> do plano do Claude: Settings → Billing → adicione créditos, senão toda chamada falha.</li>
+    </ol>
+    <h4>OPENAI (<code>OPENAI_API_KEY</code>) — só p/ fallback GPT</h4>
+    <ol class="steps">
+      <li><code>platform.openai.com/api-keys</code> → <strong>"Create new secret key"</strong> → copie (uma vez) → <code>OPENAI_API_KEY=</code>.</li>
+      <li>⚠️ Também exige billing: Settings → Billing → créditos.</li>
+    </ol>
+    <h4>FIGMA (<code>FIGMA_API_KEY</code> + <code>FIGMA_FILE_ID</code>) — só p/ swipe file visual</h4>
+    <ol class="steps">
+      <li><code>figma.com</code> logado → <strong>avatar → Settings → aba Security</strong>.</li>
+      <li><strong>Personal access tokens → "Generate new token"</strong> → nome <code>cohort-swipe</code> → escopo <strong>File content: Read</strong> → gerar → copie (uma vez) → <code>FIGMA_API_KEY=</code>.</li>
+      <li><code>FIGMA_FILE_ID</code>: abra o arquivo no navegador → URL <code>figma.com/design/XXXXXXXX/nome</code> → o <code>XXXXXXXX</code> é o ID (URLs antigas usam <code>/file/XXXXXXXX</code> — mesmo lugar).</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ PARTE C ============ -->
+<section id="pc">
+  <div class="snum">Parte C</div>
+  <h2>Trackeamento <em>sem programar</em> (Pixel + CAPI via Hotmart)</h2>
+  <p>🔀 <strong>Esta parte virou guia próprio:</strong> <code>guias/03-conexoes-e-apis/guia-pixel-capi.md</code> (erros T1–T9, com o caminho genérico WordPress/GTM). O conteúdo abaixo permanece como referência dentro do índice.</p>
+  <p style="font-family:var(--font-ui);font-size:.92rem;color:var(--muted)">O <code>manual-trackeamento.html</code> da aula-03 é o blueprint avançado (pra quem tem programador). Este é o caminho do aluno comum vendendo via Hotmart — <strong>só cliques, zero código</strong>.</p>
+
+  <h3>C.1 — Criar o Pixel ("Conjunto de dados")</h3>
+  <ol class="steps">
+    <li><code>business.facebook.com/events_manager2</code> → <strong>"Conectar dados"</strong> (ou botão verde "Conectar fontes de dados").</li>
+    <li><strong>"Web"</strong> → Conectar → nome (ex.: <code>Pixel Sua Marca</code>) → Criar.</li>
+    <li>Na pergunta de instalação, pode fechar — a Hotmart instala (C.2). Anote o <strong>ID</strong> (número embaixo do nome) = <code>META_PIXEL_ID</code>.</li>
+  </ol>
+
+  <h3>C.2 — Ligar Pixel + CAPI pela Hotmart (o pulo do gato)</h3>
+  <ol class="steps">
+    <li><code>app.hotmart.com</code> → <strong>Ferramentas → Pixel de rastreamento</strong> → escolha o produto → <strong>Facebook/Meta</strong>.</li>
+    <li>Cole o <strong>ID do Pixel</strong> (C.1).</li>
+    <li>Modo de envio: <strong>"Conversions API"</strong> ou <strong>"Ambos"</strong>. O token da CAPI é gerado na Meta: Events Manager → seu pixel → aba <strong>Configurações → "API de Conversões" → "Gerar token de acesso"</strong> → cole no campo da Hotmart. Se a tela perguntar ONDE disparar: marque <strong>"visita à página de pagamento"</strong> (é o <code>InitiateCheckout</code>) e NÃO marque a página de produto da Hotmart — só infla evento sem valor (referência de mercado).</li>
+    <li>Salve. A Hotmart dispara <code>InitiateCheckout</code> e <code>Purchase</code> com <strong><code>event_id</code></strong> automático — é isso que garante a <strong>deduplicação</strong> (navegador + servidor contam UMA vez).</li>
+    <li>⚠️ Boleto/Pix: na hora sai <code>Payment Generated</code>; o <code>Purchase</code> só dispara quando aprova — e só via CAPI. Sem CAPI, venda de boleto "some" do pixel.</li>
+  </ol>
+
+  <h3>C.2.5 — Plugar o pixel na SUA página de vendas (o passo que todo mundo pula)</h3>
+  <ol class="steps">
+    <li>A Hotmart instala o pixel só no <strong>checkout</strong>. Na página de vendas é você que pluga — e as páginas geradas pelas skills <strong>já nascem pixel-ready</strong>.</li>
+    <li>Abra o HTML da sua página (<code>projetos/{slug}/pagina/...</code>) → no <code>&lt;head&gt;</code>, o snippet do Meta Pixel vem <strong>pronto porém COMENTADO</strong>, com o placeholder <code>[PLUG: SEU_PIXEL_ID]</code>.</li>
+    <li>Substitua o placeholder pelo ID do pixel (C.1) e <strong>descomente</strong> o snippet (e o <code>&lt;noscript&gt;</code> logo abaixo). Republique.</li>
+    <li>Só então o teste C.3 mostra o <code>PageView</code>.</li>
+  </ol>
+
+  <h3>C.3 — Testar que dispara (5 min)</h3>
+  <ol class="steps">
+    <li>Instale a extensão <strong>Meta Pixel Helper</strong> (Chrome Web Store).</li>
+    <li>Abra sua página de vendas → o ícone acende e lista <code>PageView</code>.</li>
+    <li>Clique no botão de compra até o checkout → o Helper (ou Events Manager → <strong>"Testar eventos"</strong>) lista <code>InitiateCheckout</code>.</li>
+    <li>Events Manager → Visão geral: eventos aparecem no gráfico nas próximas horas (<code>Purchase</code> só com venda real).</li>
+    <li>Deduplicação ok = evento "Navegador + Servidor" com selo verde de desduplicado.</li>
+  </ol>
+
+  <div class="alerta"><div class="alerta-label">⚠️ Duas manhas do Events Manager (referência de mercado)</div><p>(1) A Meta às vezes desativa/reativa <strong>sozinha</strong> configurações como a "Correspondência avançada automática" — depois de salvar qualquer coisa, reabra a tela e confirme que ficou como você deixou. (2) Alerta vermelho/amarelo no Events Manager <strong>raramente é crítico</strong> — leia o texto antes do pânico: "Purchase não dispara" quase sempre é problema de checkout/CAPI, não pixel "estragado" ("pixel frio/sujo" é mito).</p></div>
+
+  <div class="alerta ok"><div class="alerta-label">C.4 — O gabarito do /zelador</div><p>BM ativo · conta ativa · Pixel disparando · CAPI ativa · Purchase deduplicado (<code>event_id</code>) · domínio verificado (B.3.7) · pagamento ok. Item <strong>crítico</strong> vermelho (todos, exceto o domínio) = o Estruturador <strong>não deixa</strong> subir campanha; domínio não verificado = status PARCIAL, que <strong>não bloqueia</strong> (siga com a pendência anotada). Dois itens a API não prova — <strong>deduplicação e domínio</strong>: mesmo no Modo API, o zelador confirma com VOCÊ na tela. Vai publicar via API (Gates 2/3)? Rode antes <code>node scripts/zelador-audit.mjs --testar-escrita</code> — é o que libera o Modo API do estruturador.</p></div>
+</section>
+
+<!-- ============ PARTE D ============ -->
+<section id="pd">
+  <div class="snum">Parte D</div>
+  <h2>A campanha da Aula 3 <em>clique a clique</em></h2>
+  <p style="font-family:var(--font-ui);font-size:.92rem;color:var(--muted)">Pré-requisitos: fundação B.3 ✅ · tracking C ✅ · Aula 2 pronta (<code>offerbook.md</code>, <code>copy.md</code>, <code>DESIGN.md</code>) · 2–3 criativos finalistas curados no <code>/briefista</code>.</p>
+
+  <h3>D.1 — A ordem do squad (sempre)</h3>
+  <p style="font-family:var(--font-ui);font-size:.92rem;color:var(--muted)"><code>/zelador</code> (audita — bloqueante) → <code>/briefista</code> (bateria; VOCÊ cura 2–3 finalistas) → <code>/estruturador</code> (monta) → você publica → 7 dias → <code>/leitor-de-metricas</code> → <code>/diagnosticador</code> → decisão registrada no <code>PAINEL-DA-SEMANA.yaml</code>.</p>
+
+  <h3>D.2 — O default sagrado (decore antes de abrir o Gerenciador)</h3>
+  <div class="table-scroll"><table>
+    <tr><th>Campo</th><th>Valor prescrito</th><th>Por quê</th></tr>
+    <tr><td><strong>Estrutura</strong></td><td>1 campanha → 1 conjunto → 2–3 criativos</td><td>não fragmentar verba</td></tr>
+    <tr><td><strong>Objetivo</strong></td><td>Vendas (ou Cadastro) — <strong>NUNCA "Impulsionar"</strong></td><td>Impulsionar otimiza engajamento, não venda — erro nº 1</td></tr>
+    <tr><td><strong>Otimização</strong></td><td>Conversão (evento Compra/Lead do SEU pixel)</td><td>traz quem compra, não quem clica</td></tr>
+    <tr><td><strong>Público</strong></td><td>amplo/frio + Advantage+, máx. 1 interesse guarda-chuva</td><td>iniciante erra segmentando demais</td></tr>
+    <tr><td><strong>Posicionamento</strong></td><td>Advantage+ automático</td><td>a plataforma escolhe onde entregar</td></tr>
+    <tr><td><strong>Verba</strong></td><td>R$ 30/dia × 7 dias (piso R$ 20; alternativa: R$ 70/dia × 3 dias, 1 ângulo)</td><td>kit de validação, não escala</td></tr>
+    <tr><td><strong>Regra dos 7 dias</strong></td><td>NÃO mexer em nada</td><td>cada edição reseta o aprendizado</td></tr>
+    <tr><td><strong>Circuit breaker</strong> (única exceção)</td><td>gasto ≥ 2× CPA-alvo com 0 conversões E CTR &lt; 0,5% → pode trocar criativo/ângulo</td><td>corta sangria com evidência</td></tr>
+    <tr><td><strong>Temperatura</strong></td><td>1 campanha = 1 conjunto = 1 temperatura</td><td>nunca misturar frio/morno/quente</td></tr>
+  </table></div>
+
+  <h3>D.3 — Criando no Gerenciador de Anúncios, tela a tela</h3>
+  <h4>Nível campanha</h4>
+  <ol class="steps">
+    <li><code>adsmanager.facebook.com</code> → confira no topo a <strong>conta de anúncios</strong> certa.</li>
+    <li>Botão verde <strong>"+ Criar"</strong>.</li>
+    <li>Objetivo: <strong>"Vendas"</strong> (checkout) ou <strong>"Cadastros"</strong> (lead) → Continuar. Se oferecer "configuração recomendada vs manual", escolha <strong>manual</strong>.</li>
+    <li><strong>Nome</strong> rastreável: <code>[SUAMARCA] Oferta X - Vendas - 2026-07</code>.</li>
+    <li><strong>Orçamento no CONJUNTO de anúncios</strong> (R$ 30,00/dia) — é como o Modo API do estruturador cria; se o Gerenciador oferecer "orçamento da campanha (Advantage/CBO)", desligue. Com 1 conjunto, o efeito é o mesmo.</li>
+    <li>Categoria especial: só crédito/emprego/moradia/social/eleitoral — senão, em branco. → Avançar.</li>
+  </ol>
+  <h4>Nível conjunto de anúncios</h4>
+  <ol class="steps" start="7">
+    <li>Nome: <code>Frio - Advantage+ - BR</code>.</li>
+    <li><strong>Conversão</strong>: local = Site · <strong>Pixel</strong> = o seu · <strong>Evento</strong> = <strong>Comprar (Purchase)</strong> (ou Lead). ⚠️ Evento cinza/"inativo" = o pixel nunca o registrou → volte ao C.3.</li>
+    <li><strong>Datas</strong>: início hoje · <strong>término em 7 dias</strong> (o default tem fim programado).</li>
+    <li><strong>Público</strong>: aceite o "Público Advantage+". Localização = Brasil (ou sua região) · idade no padrão/amplo (o default sagrado não restringe idade) · <strong>não empilhe interesses</strong> — no máx. 1 guarda-chuva, ou nenhum (100% amplo).</li>
+    <li><strong>Posicionamentos Advantage+</strong> (automático) — não desmarque nada. → Avançar.</li>
+  </ol>
+  <h4>Nível anúncio (repita p/ cada finalista)</h4>
+  <ol class="steps" start="12">
+    <li>Nome: <code>H1 - dor - reels</code> (hook + ângulo + formato).</li>
+    <li><strong>Identidade</strong>: sua Página + Instagram vinculado.</li>
+    <li>"Criar anúncio" → formato <strong>"Imagem ou vídeo único"</strong>.</li>
+    <li><strong>Adicionar mídia</strong> → suba o criativo (vídeo 9:16; revise os recortes dos outros posicionamentos no preview à direita).</li>
+    <li><strong>Texto principal</strong> = copy do finalista · <strong>Título</strong> = hook curto · Descrição opcional.</li>
+    <li><strong>CTA</strong>: "Saiba mais" (página de vendas) ou "Comprar agora" (checkout direto).</li>
+    <li><strong>URL do site</strong> já com rastreio: UTMs na página, ou <code>sck</code> no checkout — ex.: <code>https://pay.hotmart.com/A12345678B?sck=meta-c1-frio</code>.</li>
+    <li>Confira o preview em Feed, Stories e Reels — nada cortado/ilegível.</li>
+    <li>2º e 3º criativos: menu esquerdo do editor → <strong>"Duplicar"</strong> o anúncio → troque só mídia/copy → renomeie.</li>
+  </ol>
+  <h4>Publicar</h4>
+  <ol class="steps" start="21">
+    <li>Botão verde <strong>"Publicar"</strong> → entra "Em análise" (minutos a ~24 h).</li>
+    <li><strong>Recomendação do método:</strong> publique e <strong>pause imediatamente</strong> (toggle azul ao lado do nome) — revise com calma e ative quando estiver 100%. É o que o <code>/estruturador</code> faz no Modo API (Gate 2 cria pausado; Gate 3 ativa só com a sua ordem).</li>
+    <li>Registre no <code>PAINEL-DA-SEMANA.yaml</code>: data, verba, criativos, <strong>critério de sucesso</strong> (ex.: ≥ 1 venda ou CPA ≤ R$ X em 7 dias) e <strong>critério de reversão</strong> (ex.: R$ 210 gastos sem venda = pausa).</li>
+  </ol>
+
+  <h3>D.4 — Os 7 dias e o ciclo semanal</h3>
+  <ol class="steps">
+    <li><strong>Dias 1–7: não mexa em NADA.</strong> Nem copy, nem público, nem "ajustadinha" — edição reseta o aprendizado. Única exceção: o circuit breaker (D.2).</li>
+    <li><strong>Dia 7:</strong> <code>/leitor-de-metricas</code> (com chaves B.4, lê sozinho; sem, você cola os números). Toda métrica com selo Real/Estimado/não fornecido.</li>
+    <li><code>/diagnosticador</code>: aponta <strong>UMA</strong> alavanca (hipótese + sucesso + reversão). Você decide e registra no <code>PAINEL-DA-SEMANA.yaml</code> (histórico — nunca apague semanas).</li>
+    <li>Aula 4: <code>/gestor-de-campanhas</code> compara planejado × realizado (7/30 dias); <code>/retroalimentacao</code> devolve os aprendizados pro avatar e pra copy.</li>
+  </ol>
+</section>
+
+<!-- ============ APÊNDICE ============ -->
+<section id="apendice">
+  <div class="snum">Apêndice</div>
+  <h2>Tabela-resumo: chave → onde → <em>teste de sucesso</em></h2>
+  <div class="table-scroll"><table>
+    <tr><th>Chave</th><th>Onde pegar</th><th>Prova de que funcionou</th></tr>
+    <tr><td><code>APIFY_API_TOKEN</code></td><td>console.apify.com → Settings → API &amp; Integrations</td><td>skill de coleta roda sem pedir chave</td></tr>
+    <tr><td><code>META_APP_ID</code>/<code>SECRET</code></td><td>developers.facebook.com → app → Configurações → Básico</td><td>valores no <code>.env</code></td></tr>
+    <tr><td><code>META_ACCESS_TOKEN</code></td><td>business settings → Usuários do sistema → atribuir ativos → gerar (<code>ads_read</code>+<code>business_management</code>)</td><td><code>painel-trafego-data.mjs --account</code> → <code>"modo":"api"</code></td></tr>
+    <tr><td>IDs Meta (5)</td><td><code>zelador-audit.mjs --gravar-env</code> (plano B: B.4.6)</td><td>IDs no <code>.env</code></td></tr>
+    <tr><td><code>META_AD_LIBRARY_TOKEN</code></td><td>ads/library/api → identidade → termos → token</td><td>espião coleta sozinho</td></tr>
+    <tr><td><code>META_PAGE_ACCESS_TOKEN</code></td><td>Graph Explorer → escopos de página → estender no Debugger</td><td><code>--perfil</code> → <code>disponivel:true</code></td></tr>
+    <tr><td><code>META_INSTAGRAM_TOKEN</code></td><td>app → Casos de uso → API do Instagram → testador → gerar</td><td>idem</td></tr>
+    <tr><td><code>HOTMART_CLIENT_ID</code>/<code>SECRET</code></td><td>app.hotmart.com → Ferramentas → Credenciais de Desenvolvedor</td><td><code>hotmart-vendas.mjs --dias=90 --debug</code> responde</td></tr>
+    <tr><td><code>ANTHROPIC_API_KEY</code></td><td>console.anthropic.com → API Keys (+ billing!)</td><td>script SDK responde</td></tr>
+    <tr><td><code>OPENAI_API_KEY</code></td><td>platform.openai.com/api-keys (+ billing!)</td><td>idem</td></tr>
+    <tr><td><code>FIGMA_API_KEY</code></td><td>figma.com → avatar → Settings → Security → tokens</td><td>swipe-file exporta pro Figma</td></tr>
+  </table></div>
+  <section id="proximos">
+    <h2>Pronto. <em>Próximos passos</em></h2>
+    <table>
+      <tr><th>Agora</th><th>O quê</th></tr>
+      <tr><td>▶️ Fazer</td><td>rode <code>/zelador</code> — ele confere TODAS as conexões deste guia de uma vez e aponta o que ficou faltando</td></tr>
+      <tr><td>📖 Ler</td><td>com as chaves no lugar, a operação: <a href="../04-operacao/guia-criativos.md">guia-criativos</a> → <a href="../04-operacao/guia-campanha-no-ar.md">guia-campanha-no-ar</a> → <a href="../04-operacao/guia-e-depois.md">guia-e-depois</a></td></tr>
+      <tr><td>🚑 Se travar</td><td>Meta app/token → catálogo E1–E16 do <a href="guia-meta-api.md">guia-meta-api</a> · fundação/conta → F1–F10 do <a href="guia-meta-fundacao.md">guia-meta-fundacao</a> · cada seção B.x tem o próprio bloco "Se der errado"</td></tr>
+    </table>
+  </section>
+
+  <p style="text-align:center;font-family:var(--font-ui);font-size:.8rem;color:var(--muted);margin-top:56px;padding-top:22px;border-top:1px solid var(--raised)">SUPER GUIA de APIs e Ads · Cohort de Marketing · Academia Lendária · 21 de julho de 2026 · em conflito, as telas reais dos serviços e os arquivos do repositório vencem este guia — se um menu mudou de nome, procure o equivalente: o caminho lógico é o mesmo</p>
+</section>
+
+</div>
+<script>
+window.addEventListener('scroll',()=>{const e=document.getElementById('progress'),h=document.documentElement,s=h.scrollHeight-h.clientHeight;e.style.width=(s>0?(window.scrollY/s)*100:0)+'%'});
+</script>
+</body>
+</html>

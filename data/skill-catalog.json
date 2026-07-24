@@ -487,7 +487,8 @@
       ],
       "feeds": [
         "email-funil",
-        "recuperacao-funil"
+        "recuperacao-funil",
+        "iniciar-trafego"
       ],
       "guard": "Níveis 2-1.",
       "artifactSummary": "pasta pagina/",
@@ -812,6 +813,66 @@
       "execution": {
         "mode": "local_skill",
         "requiresHumanReview": true
+      }
+    },
+    {
+      "id": "iniciar-trafego",
+      "title": "Iniciar Tráfego",
+      "command": "/iniciar-trafego",
+      "description": "Porteiro A2→A3: descobre o projeto, valida bindings e conversão, sincroniza o Studio e monta o Painel da Semana com aprovação humana.",
+      "phase": "Tráfego (Aula 3)",
+      "phaseColor": "#22c55e",
+      "order": 25,
+      "kind": "traffic",
+      "level": "Aula 3",
+      "skillPath": ".claude/skills/iniciar-trafego/SKILL.md",
+      "prerequisites": [
+        "binding:avatar",
+        "binding:offerbook",
+        "binding:copy",
+        "binding:funnel",
+        "binding:design",
+        "binding:salesPage"
+      ],
+      "outputs": [
+        "trafego/PAINEL-DA-SEMANA.yaml"
+      ],
+      "primaryArtifacts": [
+        "trafficWeeklyPanel"
+      ],
+      "feeds": [
+        "zelador",
+        "briefista"
+      ],
+      "guard": "Nunca pergunta se quer sincronizar; após sync + readback pergunta somente “Quer abrir?”. Nunca grava antes da aprovação textual explícita.",
+      "artifactSummary": "Painel da Semana (ponte A2→A3)",
+      "execution": {
+        "mode": "local_skill",
+        "requiresHumanReview": true
+      }
+    },
+    {
+      "id": "iniciar-studio",
+      "title": "Iniciar Studio",
+      "command": "/iniciar-studio",
+      "description": "Worker interno do lifecycle do Marketing Studio — discovery, Docker, Supabase, BFF e abertura opcional. Invocado por /iniciar-trafego; nao faz parte da jornada do aluno na Aula 3.",
+      "phase": "Tráfego (Aula 3)",
+      "phaseColor": "#22c55e",
+      "order": 25.5,
+      "kind": "traffic",
+      "level": "Aula 3",
+      "skillPath": ".claude/skills/iniciar-studio/SKILL.md",
+      "prerequisites": [],
+      "outputs": [],
+      "primaryArtifacts": [],
+      "feeds": [
+        "iniciar-trafego"
+      ],
+      "guard": "Nunca instruir o aluno a rodar este comando durante /iniciar-trafego.",
+      "artifactSummary": "Runtime interno do Studio",
+      "execution": {
+        "mode": "local_worker",
+        "requiresHumanReview": false
       }
     },
     {
@@ -1365,6 +1426,21 @@
       "from": "status-funil",
       "to": "cro-funil",
       "type": "utility"
+    },
+    {
+      "from": "pagina-vendas-funil",
+      "to": "iniciar-trafego",
+      "type": "dependency"
+    },
+    {
+      "from": "iniciar-trafego",
+      "to": "iniciar-studio",
+      "type": "utility"
+    },
+    {
+      "from": "iniciar-trafego",
+      "to": "zelador",
+      "type": "dependency"
     },
     {
       "from": "copy-funil",

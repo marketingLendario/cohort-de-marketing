@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-runtime-result.v1",
+  "type": "object",
+  "required": ["ok", "leaseId"],
+  "properties": {
+    "ok": { "const": true },
+    "leaseId": { "type": "string", "minLength": 8 },
+    "bffUrl": { "type": "string" },
+    "healthPath": { "type": "string" },
+    "intentPath": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "traffic-panel.v1",
+  "type": "object",
+  "required": ["schemaVersion", "projectId", "panelPath", "sourceHashes", "readiness", "insumos_a2", "projecao"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "projectId": { "type": "string", "minLength": 8 },
+    "panelPath": { "type": "string", "const": "trafego/PAINEL-DA-SEMANA.yaml" },
+    "sourceHashes": { "type": "object", "additionalProperties": { "type": "string" } },
+    "readiness": { "type": "string" },
+    "insumos_a2": { "type": "object" },
+    "projecao": { "type": "object" },
+    "studioSyncStatus": { "enum": ["pending", "synced", "failed", "not_started"] },
+    "downstreamSections": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

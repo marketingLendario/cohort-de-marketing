@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "ts_x",
+  "sourceProjectId": "prj_x",
+  "sourceProjectSlug": "demo",
+  "proposalId": "prop_x",
+  "proposalHash": "short",
+  "studioProjectId": "mp_x",
+  "campaignId": "camp_x",
+  "panelHash": "short",
+  "readbackOk": true,
+  "deepLink": "not-a-uri",
+  "syncedAt": "2026-07-23T02:00:00.000Z"
+}

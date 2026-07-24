@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "suggestedSlug": "projeto-sem-id",
+  "displayName": "Projeto sem ID",
+  "root": "D:/aluno/projeto-sem-id",
+  "rootNormalized": "D:/aluno/projeto-sem-id",
+  "source": "scan",
+  "excluded": false,
+  "evidence": {
+    "markersFound": [],
+    "markerCount": 0,
+    "completenessScore": 0
+  },
+  "completeness": 0
+}

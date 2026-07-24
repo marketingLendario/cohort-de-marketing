@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-runtime-lease.v1",
+  "type": "object",
+  "required": ["schemaVersion", "leaseId", "createdAt", "purpose", "studioRoot", "profile"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "leaseId": { "type": "string", "minLength": 8 },
+    "createdAt": { "type": "string" },
+    "purpose": { "enum": ["traffic-sync", "open"] },
+    "studioRoot": { "type": "string", "minLength": 1 },
+    "profile": { "enum": ["traffic-sync", "open"] },
+    "intentPath": { "type": "string" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "proposalId": "prop_abc123456789",
+  "projectId": "prj_abc123456789",
+  "proposalHash": "1234567890abcdef",
+  "assessmentHash": "fedcba0987654321",
+  "sourceHashes": {
+    "materials": "mat123",
+    "copy": "copy123",
+    "offerbook": "off123"
+  },
+  "canonicalInput": {
+    "schemaVersion": "2.0.0",
+    "canonicalHash": "abc123"
+  },
+  "conversionMode": "direct_checkout",
+  "angles": [
+    {
+      "nome": "Angulo A",
+      "dor": "Dor A",
+      "nivel_consciencia": "consciente",
+      "locator": "copy/landing.md#h2-1",
+      "sourceHash": "a1111111"
+    },
+    {
+      "nome": "Angulo B",
+      "dor": "Dor B",
+      "nivel_consciencia": "consciente",
+      "locator": "copy/landing.md#h2-2",
+      "sourceHash": "b2222222"
+    }
+  ],
+  "insumosYaml": "insumos_a2:\n  ticket: 997\n",
+  "economics": { "ticket": 997, "margem_pct": 40 },
+  "calcProvenance": "worker:economics-v1",
+  "panelPatch": { "insumos_a2": {} },
+  "studioHandoffDraft": { "panelPath": "trafego/PAINEL-DA-SEMANA.yaml" },
+  "createdAt": "2026-07-23T02:00:00.000Z"
+}

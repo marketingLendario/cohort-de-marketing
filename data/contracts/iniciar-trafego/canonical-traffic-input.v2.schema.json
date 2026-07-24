@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "canonical-traffic-input.v2",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "project",
+    "conversionMode",
+    "fields",
+    "economics",
+    "bindings",
+    "sourceHashes",
+    "semanticReceipt",
+    "stale",
+    "staleReason",
+    "canonicalHash"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "2.0.0" },
+    "project": {
+      "type": "object",
+      "required": ["projectId", "slug", "projectRoot"],
+      "properties": {
+        "projectId": { "type": ["string", "null"] },
+        "slug": { "type": "string", "minLength": 1 },
+        "projectRoot": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "conversionMode": { "enum": ["direct_checkout", "application_call", "lead_capture"] },
+    "fields": { "type": "object", "minProperties": 10 },
+    "economics": {
+      "type": "object",
+      "required": ["ticket", "margem_pct", "valid"],
+      "properties": {
+        "ticket": { "type": ["number", "null"], "minimum": 0 },
+        "margem_pct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "valid": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "bindings": { "type": "object" },
+    "sourceHashes": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+    },
+    "semanticReceipt": { "type": ["object", "null"] },
+    "stale": { "type": "boolean" },
+    "staleReason": { "type": ["string", "null"] },
+    "canonicalHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "errors": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

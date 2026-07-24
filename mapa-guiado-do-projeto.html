@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Guiado do Projeto — Cohort de Marketing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background:#0A0A0A; --card:#0F0F0F; --raised:#262626; --foreground:#E5E5E5;
+    --muted:#999999; --primary:#C9B298; --primary-light:#D9CBB9; --primary-deep:#8D7556;
+    --success:#23E169; --warn:#f0a34a;
+    --font-body:'Source Serif 4',Georgia,serif; --font-ui:Inter,system-ui,sans-serif;
+    --font-display:Rajdhani,Inter,sans-serif; --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{background:var(--background);color:var(--foreground);font-family:var(--font-body);font-size:18px;line-height:1.65;margin:0}
+  #progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--primary);box-shadow:0 0 15px rgba(201,178,152,.6);z-index:110}
+  nav.tabs{position:sticky;top:0;background:rgba(10,10,10,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--raised);z-index:100;padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  nav.tabs a{font-family:var(--font-ui);font-size:.78rem;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 14px;border:1px solid transparent;border-radius:9999px;transition:.15s}
+  nav.tabs a:hover,nav.tabs a.on{color:var(--primary);border-color:var(--primary-deep)}
+  .wrap{max-width:1000px;margin:0 auto;padding:48px 28px 96px}
+  .hero{text-align:center;padding:20px 0 44px;border-bottom:1px solid var(--raised);margin-bottom:44px}
+  .kicker{display:inline-block;font-family:var(--font-ui);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);padding:6px 16px;border:1px solid var(--primary-deep);border-radius:9999px;margin-bottom:26px}
+  .hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700;line-height:1.06;margin:0 0 12px}
+  .hero h1 em{font-family:var(--font-body);font-style:normal;font-weight:400;color:var(--primary)}
+  .hero .lead{font-size:1.12rem;color:var(--muted);max-width:72ch;margin:0 auto}
+  .hero .lead strong{color:var(--primary-light)}
+  section{margin:72px 0;scroll-margin-top:70px}
+  .snum{font-family:var(--font-display);font-size:.95rem;font-weight:700;color:var(--primary);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+  h2{font-family:var(--font-display);font-size:clamp(1.7rem,4vw,2.4rem);font-weight:600;line-height:1.12;margin:0 0 18px}
+  h2 em{font-family:var(--font-body);font-style:normal;font-weight:400;color:var(--primary)}
+  h3{font-family:var(--font-ui);font-size:1.18rem;font-weight:700;margin:36px 0 10px;color:var(--primary-light)}
+  h4{font-family:var(--font-ui);font-size:1rem;font-weight:700;margin:22px 0 8px}
+  p{margin:12px 0}
+  strong{color:var(--primary-light);font-weight:600}
+  code{font-family:var(--font-mono);background:var(--raised);color:var(--primary-light);padding:2px 7px;border-radius:.25rem;font-size:.82em}
+  pre{background:var(--card);border:1px solid var(--raised);border-radius:.75rem;padding:18px 20px;overflow-x:auto;font-family:var(--font-mono);font-size:.79rem;line-height:1.65;color:var(--foreground)}
+  pre code{background:none;padding:0;color:inherit;font-size:1em}
+  table{width:100%;border-collapse:collapse;font-family:var(--font-ui);font-size:.85rem;margin:18px 0}
+  th{text-align:left;padding:9px 12px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--raised)}
+  td{padding:10px 12px;vertical-align:top;border-bottom:1px solid rgba(38,38,38,.5);color:var(--muted);line-height:1.5}
+  td strong{color:var(--foreground)}
+  td code{white-space:nowrap}
+  .table-scroll{overflow-x:auto}
+  .alerta{background:rgba(201,178,152,.07);border:1px solid var(--primary-deep);border-radius:.75rem;padding:16px 20px;margin:18px 0;font-family:var(--font-ui);font-size:.92rem}
+  .alerta-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+  .alerta p{margin:6px 0 0;color:var(--foreground)}
+  .alerta.warn{border-color:#d97706;background:rgba(217,119,6,.08)}
+  .alerta.warn .alerta-label{color:var(--warn)}
+  .rule{display:grid;grid-template-columns:30px 1fr;gap:14px;align-items:flex-start;padding:14px 18px;background:var(--card);border-left:2px solid var(--primary);border-radius:.5rem;margin:10px 0;font-family:var(--font-ui);font-size:.92rem;color:var(--muted)}
+  .rule .n{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--primary);line-height:1.25}
+  .rule strong{color:var(--foreground)}
+  .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;margin:20px 0}
+  .skill-card{background:var(--card);border:1px solid var(--raised);border-left:2px solid var(--primary);border-radius:.75rem;padding:18px 20px;font-family:var(--font-ui);font-size:.87rem;color:var(--muted);line-height:1.55}
+  .skill-card .skill-name{font-family:var(--font-mono);font-size:.92rem;color:var(--primary);font-weight:700;margin-bottom:8px}
+  .skill-card .skill-out{margin:10px 0 0;padding-top:10px;border-top:1px solid var(--raised);font-size:.8rem}
+  .skill-card .skill-out strong{color:var(--primary)}
+  .prompt-box{position:relative;background:var(--card);border:1px solid var(--raised);border-radius:.75rem;padding:16px 20px;margin:14px 0}
+  .prompt-box .pb-title{font-family:var(--font-ui);font-size:.8rem;font-weight:700;color:var(--primary);margin-bottom:8px}
+  .prompt-box pre{border:none;background:none;padding:0;margin:0;white-space:pre-wrap;font-size:.76rem;color:var(--muted)}
+  .prompt-box button{position:absolute;top:12px;right:12px;font-family:var(--font-ui);font-size:.7rem;font-weight:700;color:var(--primary);background:var(--raised);border:1px solid var(--primary-deep);border-radius:.4rem;padding:5px 12px;cursor:pointer}
+  .prompt-box button:hover{background:var(--primary-deep);color:#111}
+  ul.plain{font-family:var(--font-ui);font-size:.92rem;line-height:1.8;color:var(--muted);padding-left:22px}
+  ol.steps{font-family:var(--font-ui);font-size:.93rem;line-height:1.75;color:var(--muted);padding-left:26px;margin:12px 0}
+  ol.steps li{margin:8px 0}
+  ol.steps li::marker{color:var(--primary);font-weight:700}
+  .chk{font-family:var(--font-ui);font-size:.92rem;color:var(--muted)}
+  .chk label{display:flex;gap:12px;align-items:flex-start;padding:8px 12px;border-radius:.4rem;cursor:pointer;line-height:1.55}
+  .chk label:hover{background:var(--card)}
+  .chk input{margin-top:5px;accent-color:var(--primary);width:15px;height:15px;flex:none}
+  .chk input:checked + span{color:var(--success);text-decoration:line-through;text-decoration-color:rgba(35,225,105,.4)}
+  a{color:var(--primary)}
+  @media (max-width:640px){table{font-size:.78rem}th,td{padding:7px 8px}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav class="tabs" id="tabs">
+  <a href="#s0">0 · O repositório</a>
+  <a href="#sia">IA</a>
+  <a href="#s1">1 · Instalação</a>
+  <a href="#s2">2 · Telas</a>
+  <a href="#s3">3 · Fundações</a>
+  <a href="#s4">4 · Skills</a>
+  <a href="#s5">5 · Fluxo</a>
+  <a href="#s6">6 · Anatomia</a>
+  <a href="#s7">7 · Checklist</a>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="kicker">Cohort de Marketing · Mapa Cognitivo Completo</span>
+  <h1>Mapa Guiado do <em>Projeto</em></h1>
+  <p class="lead">O mapa completo do repositório, do zero ao avançado: o que ele é, como instalar tudo (com prompts prontos), as <strong>37 skills</strong> em <strong>4 aulas</strong>, as telas de navegação, o fluxo de dados de ponta a ponta, a anatomia do repo e o <strong>checklist interativo</strong> que prova que tudo funciona. Sucessor atualizado do mapa do Ads Studio — agora <strong>CLI puro</strong>, sem painel web. Versão markdown (p/ IA): <code>mapa-guiado-do-projeto.md</code>.</p>
+</header>
+
+<!-- ==================== SEÇÃO 0 ==================== -->
+<section id="s0">
+  <div class="snum">Seção 0</div>
+  <h2>O que é <em>este repositório</em></h2>
+  <p><strong>Em uma frase:</strong> a fábrica de marketing do Cohort — 37 skills (roteiros de IA que executam trabalhos inteiros de funil: pesquisa, oferta, copy, design, páginas, e-mails, criativos, tráfego e análise de dados), organizadas em 4 aulas, operadas por CLI (Claude Code ou Codex) com aprovação humana em cada passo.</p>
+
+  <div class="alerta">
+    <div class="alerta-label">O que mudou em relação ao Ads Studio antigo</div>
+    <p>Não existe mais o painel web (<code>npm run studio</code>, Supabase, Docker, BFF) — o modo de uso é <strong>CLI puro</strong>. Em troca, o que era estático virou vivo: o mapa de skills é gerado do catálogo, o progresso é lido do disco (<code>/status-funil</code> + motor de prontidão), cada projeto tem um hub próprio (o Book do Funil) e a Aula 4 gera um painel de dados interativo que abre offline. Ganhou-se também a Aula 4 inteira (Central de Dados, +6 skills) e as integrações Meta Graph API (leitura) e Hotmart (caixa real).</p>
+  </div>
+
+  <h3>Os 5 axiomas</h3>
+  <div class="rule"><span class="n">1</span><span><strong>A IA executa, você aprova</strong> — nenhuma skill publica anúncio, dispara e-mail ou sobe página sozinha. O squad de tráfego é recommend-only; o <code>/estruturador</code> só publica via API em 3 gates, com a sua confirmação explícita.</span></div>
+  <div class="rule"><span class="n">2</span><span><strong>O estado são os arquivos</strong> (<code>projetos/{slug}/</code>), não o chat. Fechar ou limpar a conversa não perde nada — pra voltar, abra a IA na pasta e rode a próxima skill.</span></div>
+  <div class="rule"><span class="n">3</span><span><strong>Fonte única para cada coisa:</strong> oferta = <code>offerbook.md</code> · mensagem = <code>copy.md</code> · identidade = <code>DESIGN.md</code> · catálogo = <code>data/skill-catalog.json</code> · prontidão = <code>skill-surface-contract.js</code> + <code>scripts/lib/skill-readiness.mjs</code>.</span></div>
+  <div class="rule"><span class="n">4</span><span><strong>Dado sem fonte não existe:</strong> pesquisa exige citação literal (verbatim) ou marca <code>[SUPOSIÇÃO]</code>; métrica carrega selo <code>Real</code> / <code>Estimado</code> / <code>Calculado</code> / <code>não fornecido</code> — todo ROAS é Estimado (atribuição ≠ caixa); ausente nunca vira zero.</span></div>
+  <div class="rule"><span class="n">5</span><span><strong>O ciclo fecha</strong> — método O.F.T.R.: Oferta → Funil → Tráfego → <strong>Retroalimentação</strong>. Os dados reais da Aula 4 voltam pro avatar (Aula 1) e pra copy/offerbook (Aula 2), orientando a próxima rodada.</span></div>
+
+  <h3>As 4 aulas (trajeto pedagógico)</h3>
+  <div class="table-scroll"><table>
+    <tr><th>Fase</th><th>Pergunta</th><th>Skills (ordem)</th><th>Entregável-chave</th></tr>
+    <tr><td><strong>Aula 1</strong> — Pesquisa → Oferta</td><td>Para quem, contra quem, o quê?</td><td><code>/comecar</code> → <code>/avatar-funil</code> → <code>/espiao-do-concorrente</code> → <code>/trend-hunting</code> → <code>/swipe-file</code> → <code>/offerbook</code></td><td><code>offerbook.md</code> (+ Perfil do Projeto)</td></tr>
+    <tr><td><strong>Aula 2</strong> — Identidade → Funil</td><td>Como falo, com que cara, por qual caminho?</td><td><code>/design-md</code> → <code>/metodo-funil</code> → <code>/copy-funil</code> → peça de topo → <code>/pagina-vendas-funil</code> → <code>/email-funil</code> → <code>/conteudo-funil</code> → <code>/recuperacao-funil</code> → <code>/backend-funil</code> → <code>/cro-funil</code></td><td><code>copy.md</code> + <code>DESIGN.md</code> + <code>funil.md</code> + peças</td></tr>
+    <tr><td><strong>Aula 3</strong> — Tráfego</td><td>Como subo, leio e otimizo?</td><td><code>/zelador</code> → <code>/briefista</code> → <code>/estruturador</code> → <code>/leitor-de-metricas</code> → <code>/diagnosticador</code></td><td><code>PAINEL-DA-SEMANA.yaml</code></td></tr>
+    <tr><td><strong>Aula 4</strong> — Central de Dados</td><td>O que os números dizem e o que devolvo pro funil?</td><td><code>/analista-de-dados</code> (hub) → <code>/coletor-de-dados</code> → <code>/board-de-especialistas</code> → <code>/painel-de-dados</code> → <code>/retroalimentacao</code> → <code>/gestor-de-campanhas</code></td><td><code>painel-trafego.html</code> + <code>retroalimentacao.md</code></td></tr>
+  </table></div>
+
+  <div class="alerta">
+    <div class="alerta-label">Aulas ≠ trabalho — abra sempre na raiz</div>
+    <p>As pastas <code>aula-01/</code> a <code>aula-04/</code> são <strong>material didático</strong> (guias, docs, templates, exemplos). O seu trabalho <strong>nunca</strong> é gravado dentro delas — vive em <code>projetos/{slug}/</code>, na raiz, criado automaticamente pela primeira skill que gravar algo. As skills só existem na raiz (<code>.claude/skills/</code>); abrir a IA dentro de <code>aula-XX/</code> = skills não carregam e caminhos erram. Não importa qual aula você cursa: abre na raiz, roda a skill, tudo converge pro mesmo <code>projetos/{slug}/</code>.</p>
+  </div>
+</section>
+
+<!-- ==================== INSTRUÇÕES PARA IA ==================== -->
+<section id="sia">
+  <div class="snum">Referência</div>
+  <h2>Instruções para a <em>IA</em> que operar este repo</h2>
+  <p style="font-family:var(--font-ui);font-size:.92rem;color:var(--muted)">Se você é um assistente de IA operando neste repositório, siga estas regras ao usar este guia:</p>
+  <div class="rule"><span class="n">1</span><span><strong>Fontes de verdade:</strong> este arquivo é um mapa, não a fonte. Canônicos: <code>README.md</code>, <code>AGENTS.md</code>, <code>.claude/skills/{nome}/SKILL.md</code>, <code>data/skill-catalog.json</code>, <code>data/skill-unlock-rules.json</code>, <code>skill-surface-contract.js</code>, <code>data/contracts/</code>. Em conflito, a fonte vence este guia.</span></div>
+  <div class="rule"><span class="n">2</span><span><strong>Nunca instale nada sem perguntar antes.</strong> Ofereça a instalação em 1 linha, aguarde o "sim".</span></div>
+  <div class="rule"><span class="n">3</span><span><strong>Nunca deixe o usuário num beco</strong> (regra <code>_shared/nunca-travar.md</code>): todo erro vira explicação em português simples + UM próximo passo.</span></div>
+  <div class="rule"><span class="n">4</span><span><strong>O estado são os arquivos</strong> em <code>projetos/{slug}/</code>, nunca o chat. Nunca diga que fechar a conversa perde progresso.</span></div>
+  <div class="rule"><span class="n">5</span><span><strong>Nada é publicado sem aprovação humana explícita.</strong> Publicar, pausar ou alterar campanha na Meta é sempre ação humana.</span></div>
+  <div class="rule"><span class="n">6</span><span><strong>Toda métrica carrega selo:</strong> <code>Real</code> (literal da fonte) · <code>Estimado</code> (atribuição/projeção — todo ROAS) · <code>Calculado</code> (variação entre dois Real) · <code>não fornecido</code> (nunca inventar nem derivar).</span></div>
+  <div class="rule"><span class="n">7</span><span><strong><code>.claude/skills/</code> é a fonte canônica; <code>.agents/skills/</code> é espelho byte a byte.</strong> Nunca deixe divergirem (<code>cp -R .claude/skills/. .agents/skills/</code> refaz).</span></div>
+  <div class="rule"><span class="n">8</span><span><strong><code>projetos/</code> e <code>.env</code> não são versionados</strong> (gitignore). Nunca commite <code>.env</code> nem dados reais da conta do aluno.</span></div>
+  <div class="rule"><span class="n">9</span><span><strong>Slug de projeto:</strong> minúsculas, números e hífen (<code>^[a-z0-9][a-z0-9-]*$</code>).</span></div>
+  <div class="rule"><span class="n">10</span><span><strong>Pro usuário leigo:</strong> traduza jargão na primeira ocorrência (4 palavras entre parênteses); não infantilize o avançado.</span></div>
+</section>
+
+<!-- ==================== SEÇÃO 1 ==================== -->
+<section id="s1">
+  <div class="snum">Seção 1</div>
+  <h2>Instalação</h2>
+
+  <h3>Trilha ZERO — prompts prontos (a IA instala; sempre perguntando antes)</h3>
+  <p style="font-family:var(--font-ui);font-size:.92rem;color:var(--muted)"><strong>Prompt 0 (oficial):</strong> <code>/comecar</code> (Codex: <code>@comecar</code>) — detecta o SO, confere git/Node/Python/Apify, instala o que faltar perguntando, aponta UM próximo comando. Rede de segurança do curso: travou em qualquer aula, rode de novo. Os prompts abaixo cobrem os casos específicos — clique em <strong>copiar</strong> e cole no chat da IA:</p>
+
+  <div class="prompt-box"><div class="pb-title">Prompt 1 — ambiente das skills</div><button data-copy>copiar</button><pre>Leia o arquivo README.md e a skill .claude/skills/comecar/SKILL.md deste repositório. Depois verifique o que já tenho instalado (git, Node, Python) e se existe a chave do Apify no arquivo .env da raiz. Para cada coisa que faltar: me explique em 1 frase o que é e para que serve, me pergunte antes de instalar, e instale pelo caminho mais simples do meu sistema operacional. Não sou programador — traduza qualquer erro em português simples e nunca me deixe sem um próximo passo. Ao final, me diga qual é o único próximo comando que devo rodar.</pre></div>
+
+  <div class="prompt-box"><div class="pb-title">Prompt 2 — Apify do zero</div><button data-copy>copiar</button><pre>Ainda não tenho conta nem chave do Apify. Me guie passo a passo, com calma: (1) criar a conta gratuita em console.apify.com; (2) encontrar o Personal API token nas configurações; (3) eu colo o token aqui no chat e VOCÊ cria ou atualiza o arquivo .env na raiz deste projeto com a linha APIFY_API_TOKEN=... (o arquivo .env pode não existir ainda — crie se for o caso); (4) confirme que ficou salvo mostrando o resultado de um grep. Nunca invente o valor do token: use exatamente o que eu colar.</pre></div>
+
+  <div class="prompt-box"><div class="pb-title">Prompt 3 — chaves da Meta (Aulas 3 e 4)</div><button data-copy>copiar</button><pre>Quero conectar a minha conta de anúncios da Meta em modo LEITURA. Leia aula-04/docs/configurar-chaves-meta.md e aula-04/docs/tutorial-token-meta.md e me guie passo a passo: criar o app, gerar o token de usuário do sistema com business_management + ads_read, e preencher no .env as variáveis META_ACCESS_TOKEN e META_AD_ACCOUNT_ID. Se eu só tiver o token, rode node scripts/zelador-audit.mjs para descobrir os IDs pela API. Nada de publicar ou alterar campanha — só leitura. Se eu não quiser conectar agora, confirme que tudo roda em Modo Exemplo.</pre></div>
+
+  <div class="prompt-box"><div class="pb-title">Prompt 4 — Python da Creative Factory</div><button data-copy>copiar</button><pre>Quero usar a ads-creative-factory. Instale as dependências Python dela a partir de .claude/skills/ads-creative-factory/requirements.txt (me pergunte antes de instalar), rode o script doctor.py da mesma skill para diagnosticar o ambiente e me traduza o resultado: o que está ok e o que falta.</pre></div>
+
+  <div class="prompt-box"><div class="pb-title">Prompt 5 — socorro (qualquer erro)</div><button data-copy>copiar</button><pre>O comando que acabei de rodar deu erro. Leia a mensagem de erro acima, me explique em português simples o que aconteceu (sem jargão), me diga se é grave, e me proponha UMA correção de cada vez, perguntando antes de executar. Se a correção envolver apagar ou sobrescrever qualquer coisa, me avise explicitamente antes.</pre></div>
+
+  <h3>Passo a passo — Modo Aluno (o único modo)</h3>
+  <ol class="steps">
+    <li><strong>Obter o projeto</strong> (repo privado — o git pede login do GitHub; a "senha" no terminal é um Personal Access Token, não a senha comum; alternativa: Code → Download ZIP, mas sem <code>git pull</code> depois):<br><code>git clone https://github.com/marketingLendario/cohort-de-marketing.git</code> → <code>cd cohort-de-marketing</code>. Depois, sempre <code>git pull</code> (nunca clonar de novo por cima).</li>
+    <li><strong>Abrir a IA na pasta RAIZ</strong> (nunca dentro de <code>aula-XX/</code>): <code>claude</code> (ou <code>codex</code>). Digitar <code>/</code> + "funil" deve listar as skills.</li>
+    <li><strong>Rodar <code>/comecar</code></strong> — fecha apontando UM próximo comando.</li>
+    <li><strong>Node</strong> (<code>node --version</code>, v18+) e <strong>Python</strong> (<code>python --version</code>; Windows: <code>py --version</code>; instalar do python.org marcando "Add Python to PATH"; digitar <code>python</code> sem ter instalado abre a loja da Microsoft = stub, não erro).</li>
+    <li><strong>Apify e o <code>.env</code></strong> (não vem no clone, de propósito): conta em <code>console.apify.com</code> → Settings → API &amp; Integrations → copiar o Personal API token (<code>apify_api_...</code>) → <code>cp .env.example .env</code> (Windows: <code>copy</code>) → colar em <code>APIFY_API_TOKEN=</code>. Conferir: <code>grep -E "APIFY_API_(TOKEN|KEY)" .env</code>. Bloco de Notas: salvar como "Todos os arquivos" com nome <code>.env</code> (senão vira <code>.env.txt</code>). Sem a chave o começo do funil funciona; a primeira skill de coleta configura com você — nunca "pular Apify" em silêncio.</li>
+    <li><strong>Chaves da Meta (Aula 3/4) e Hotmart (opcional, Aula 4)</strong> — guias: <code>aula-04/docs/configurar-chaves-meta.md</code>, <code>tutorial-token-meta.md</code>, <code>tutorial-hotmart.md</code>, e o passo a passo pra novato completo no <a href="guias/03-conexoes-e-apis/super-guia-apis-e-ads.html">SUPER GUIA de APIs</a>. Sem elas, <code>/zelador</code> roda em Modo Manual e a Aula 4 em <strong>Modo Exemplo</strong> — nada trava.</li>
+    <li><strong>Creative Factory</strong> (quando for gerar criativos): <code>python -m pip install -r .claude/skills/ads-creative-factory/requirements.txt</code> e diagnóstico <code>python .claude/skills/ads-creative-factory/scripts/doctor.py --json</code>.</li>
+  </ol>
+
+  <h3>Sem conta do Codex — TODAS as opções para gerar imagens</h3>
+  <p style="font-family:var(--font-ui);font-size:.9rem;color:var(--muted)"><strong>Fato:</strong> o motor de imagem da <code>ads-creative-factory</code> chama exclusivamente o Codex CLI logado; chaves <code>OPENAI_API_KEY</code>/<code>CODEX_API_KEY</code> são ignoradas — colocar chave de API <strong>não</strong> destrava a fábrica canônica. Caminhos:</p>
+  <div class="table-scroll"><table>
+    <tr><th>#</th><th>Opção</th><th>Como</th><th>Cobre</th></tr>
+    <tr><td>1</td><td><strong>Conta ChatGPT legítima</strong></td><td><code>codex login</code> abre o navegador — entre com qualquer conta ChatGPT paga a que tenha acesso legítimo. Conferir: <code>codex login status</code></td><td>Fábrica completa</td></tr>
+    <tr><td>2</td><td><strong>Banners sem IA de imagem</strong></td><td><code>/criativos-funil</code> monta banners em HTML na identidade do DESIGN.md e captura PNG (feed 4:5, story 9:16, 1:1) via <code>gerar_png.sh</code> + Chrome</td><td>Criativos estáticos</td></tr>
+    <tr><td>3</td><td><strong>Prompts portáveis</strong></td><td><code>/mockup-produto-funil</code> gera prompts parametrizados pela marca para colar em QUALQUER ferramenta de imagem (Gemini, Midjourney, ChatGPT web)</td><td>Mockups e imagens pontuais</td></tr>
+    <tr><td>4</td><td><strong>Ponte via API própria</strong></td><td>A IA cria um script gerador alternativo em <code>projetos/{slug}/creative-factory/custom/</code> usando a SUA chave (Gemini/OpenAI/OpenRouter), sem modificar a fábrica canônica; amostra → aprovação → lote; registrado nas pendências do Book</td><td>Geração por IA sem Codex</td></tr>
+  </table></div>
+  <p style="font-family:var(--font-ui);font-size:.88rem;color:var(--muted)">Regras de marca valem sempre: <strong>nunca gerar rosto/likeness de pessoa real por IA</strong>; o logo nunca entra na geração — é aplicado depois, na composição.</p>
+
+  <h3>Inventário completo de dependências</h3>
+  <div class="table-scroll"><table>
+    <tr><th>Dependência</th><th>Obrigatória para</th><th>Verificar</th><th>Instalar</th></tr>
+    <tr><td><strong>Git</strong></td><td>baixar/atualizar (todos)</td><td><code>git --version</code></td><td>git-scm.com / <code>xcode-select --install</code> / apt</td></tr>
+    <tr><td><strong>Claude Code ou Codex CLI</strong></td><td>rodar skills (todos)</td><td>digitar <code>/</code> ou <code>@</code> na pasta raiz</td><td>sites oficiais</td></tr>
+    <tr><td><strong>Node 18+</strong></td><td>design-md, validadores, scripts das Aulas 3/4, painel de dados</td><td><code>node --version</code></td><td>nodejs.org LTS</td></tr>
+    <tr><td><strong>Python 3.x</strong></td><td>coletores, DOCX do offerbook, Creative Factory</td><td><code>python --version</code> / <code>py --version</code></td><td>python.org + "Add to PATH"</td></tr>
+    <tr><td>python-docx</td><td>só o DOCX do offerbook</td><td>a skill avisa</td><td><code>pip install python-docx</code> (fallback: md+html)</td></tr>
+    <tr><td>numpy, Pillow, PyYAML</td><td>só ads-creative-factory</td><td><code>doctor.py --json</code></td><td><code>pip install -r .claude/skills/ads-creative-factory/requirements.txt</code></td></tr>
+    <tr><td><strong>Chrome/Edge</strong></td><td>gerar_pdf.sh (~15 skills), gerar_png.sh</td><td>navegador instalado</td><td>fallback: abrir .html e imprimir (Ctrl/Cmd+P)</td></tr>
+    <tr><td><strong>Chave Apify</strong></td><td>skills de coleta</td><td><code>grep -E "APIFY_API_(TOKEN|KEY)" .env</code></td><td>console.apify.com → token → .env</td></tr>
+    <tr><td>Chaves Meta (leitura)</td><td>zelador Modo API + Aula 4 real</td><td>linhas no <code>.env</code></td><td><code>aula-04/docs/</code> + <a href="guias/03-conexoes-e-apis/super-guia-apis-e-ads.html">SUPER GUIA</a></td></tr>
+    <tr><td>Hotmart ID/Secret (opcional)</td><td>caixa real na Aula 4</td><td>linhas no <code>.env</code></td><td><code>aula-04/docs/tutorial-hotmart.md</code></td></tr>
+    <tr><td>META_AD_LIBRARY_TOKEN (opcional)</td><td>melhora coleta do espião</td><td>linha no <code>.env</code></td><td>opcional (fallback: URL pública)</td></tr>
+    <tr><td>FIGMA_API_KEY (opcional)</td><td>swipe file visual</td><td>linha no <code>.env</code></td><td>opcional (fallback: markdown)</td></tr>
+  </table></div>
+
+  <h3>Variáveis de <code>.env</code> reconhecidas (fonte: <code>.env.example</code>)</h3>
+  <div class="table-scroll"><table>
+    <tr><th>Variável</th><th>Para quê</th><th>Precisa?</th></tr>
+    <tr><td><code>APIFY_API_TOKEN</code> (ou <code>APIFY_API_KEY</code>)</td><td>coletas: espião, trend, conteúdo, criativos</td><td><strong>Sim</strong>, p/ skills de coleta</td></tr>
+    <tr><td><code>META_AD_LIBRARY_TOKEN</code></td><td>Ad Library via Graph API no espião</td><td>opcional</td></tr>
+    <tr><td><code>META_ACCESS_TOKEN</code></td><td>Graph API em leitura (zelador Modo API, Aula 4)</td><td>p/ dados reais</td></tr>
+    <tr><td><code>META_APP_ID</code> / <code>META_APP_SECRET</code></td><td>validação extra do token (appsecret_proof)</td><td>recomendadas</td></tr>
+    <tr><td><code>META_BUSINESS_MANAGER_ID</code> · <code>META_AD_ACCOUNT_ID</code> · <code>META_PIXEL_ID</code> · <code>META_FACEBOOK_PAGE_ID</code> · <code>META_INSTAGRAM_BUSINESS_ACCOUNT_ID</code></td><td>IDs dos ativos — <code>node scripts/zelador-audit.mjs --gravar-env</code> descobre e grava sozinho</td><td>p/ dados reais</td></tr>
+    <tr><td><code>META_PAGE_ACCESS_TOKEN</code> / <code>META_INSTAGRAM_TOKEN</code></td><td>engajamento orgânico (comentários/sentimento) na Aula 4</td><td>opcionais</td></tr>
+    <tr><td><code>HOTMART_CLIENT_ID</code> / <code>HOTMART_CLIENT_SECRET</code> (/ <code>HOTMART_BASIC</code>)</td><td>caixa real e atribuição venda→campanha (Aula 4)</td><td>opcionais</td></tr>
+    <tr><td><code>ANTHROPIC_API_KEY</code> / <code>OPENAI_API_KEY</code></td><td>só scripts fora do Claude Code</td><td>opcionais</td></tr>
+    <tr><td><code>FIGMA_API_KEY</code> / <code>FIGMA_FILE_ID</code></td><td>swipe file no Figma</td><td>opcionais</td></tr>
+  </table></div>
+  <p style="font-family:var(--font-ui);font-size:.88rem;color:var(--muted)"><strong>Nunca</strong> commitar o <code>.env</code>. Stubs preparados (ainda não conectados): Kiwify, Eduzz, Monetizze. Passo a passo de CADA chave pra novato completo: <a href="guias/03-conexoes-e-apis/super-guia-apis-e-ads.html">super-guia-apis-e-ads.html</a>.</p>
+</section>
+
+<!-- ==================== SEÇÃO 2 ==================== -->
+<section id="s2">
+  <div class="snum">Seção 2</div>
+  <h2>As "telas" do projeto <em>(sem painel web)</em></h2>
+  <p>O painel web do Ads Studio foi descontinuado. As superfícies de navegação agora são arquivos que abrem no navegador — e um comando:</p>
+  <div class="table-scroll"><table>
+    <tr><th>Superfície</th><th>Onde</th><th>O que mostra</th></tr>
+    <tr><td><strong><a href="GUIA-DO-ALUNO.html">GUIA-DO-ALUNO.html</a></strong></td><td>raiz</td><td>o curso inteiro (Partes 0–5): ambiente, Aulas 1–4, socorro, glossário</td></tr>
+    <tr><td><strong><a href="mapa-skills.html">mapa-skills.html</a></strong></td><td>raiz (espelho em <code>aula-03/materiais/</code>)</td><td>grafo das skills gerado de <code>data/skill-catalog.json</code> + regras de desbloqueio, com exemplo de entregável por skill (amostras <code>academia-fit</code>) e a próxima skill recomendada (estado salvo no navegador)</td></tr>
+    <tr><td><strong>Book do Funil</strong></td><td><code>projetos/{slug}/index.html</code></td><td>o hub do SEU projeto: cards por fase, badges de status, galeria das peças, pendências e "VOCÊ ESTÁ AQUI" (regra: <code>_shared/book-do-funil.md</code>; versões nunca sobrescrevem — recriar gera <code>-v2</code>)</td></tr>
+    <tr><td><strong>painel-trafego.html</strong></td><td><code>projetos/{slug}/</code> (Aula 4)</td><td>painel self-contained (abre offline) com 7 telas: Visão geral c/ filtro de mês, Séries no tempo, Campanhas ordenáveis, Vendas &amp; atribuição, Audiência (pirâmide etária + mapa do Brasil), Engajamento + "Quem é o meu cliente", Board de especialistas</td></tr>
+    <tr><td><strong><code>/status-funil</code></strong></td><td>no chat</td><td>o "você está aqui" determinístico: lê <code>projetos/</code> do disco, marca [x]/[ ] cada peça, pendências por decisão, fecha com próximo comando + razão do motor. Vários projetos → status de todos</td></tr>
+    <tr><td><strong>briefing.html</strong></td><td>raiz</td><td>formulário standalone do Project Brief (salva no navegador, exporta <code>{slug}-project-brief.json</code>)</td></tr>
+    <tr><td><strong>Guias por aula</strong></td><td><code>aula-0X/</code></td><td><code>aula-trafego-GUIA-ALUNO.html</code> (3), <code>aula-dados-GUIA-ALUNO.html</code> (4), READMEs e docs</td></tr>
+  </table></div>
+
+  <h3>O ciclo de trabalho (o que substitui a "Jornada" do painel antigo)</h3>
+  <div class="rule"><span class="n">1</span><span>Rode a skill da vez (o <code>/status-funil</code> ou o mapa dizem qual, com a razão).</span></div>
+  <div class="rule"><span class="n">2</span><span>A skill pergunta o que precisa, propõe, <strong>você revisa e aprova</strong> — só então grava em <code>projetos/{slug}/</code>.</span></div>
+  <div class="rule"><span class="n">3</span><span>Toda skill fecha atualizando o <strong>Book do Funil</strong> e as pendências (<code>pendencias.md</code>, contadas <strong>por decisão</strong>, nunca por linha — re-run reconcilia, não infla: 14 pendências não viram 17).</span></div>
+  <div class="rule"><span class="n">4</span><span>Entregável visual sai em <strong>3 formatos</strong>: <code>.md</code> (fonte de verdade), <code>.html</code> (na identidade do DESIGN.md), <code>.pdf</code>.</span></div>
+  <div class="rule"><span class="n">5</span><span>Entre skills: <code>/status-funil</code>. Travou: <code>/comecar</code>. Trocou de cliente/nicho: <strong>conversa nova</strong> (um projeto, uma conversa, uma pasta).</span></div>
+</section>
+
+<!-- ==================== SEÇÃO 3 ==================== -->
+<section id="s3">
+  <div class="snum">Seção 3</div>
+  <h2>Fundações <em>(glossário mínimo)</em></h2>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">Terminal</div>Janela de comandos. Tudo aqui é comando, mas o <code>/comecar</code> guia cada um.</div>
+    <div class="skill-card"><div class="skill-name">.env</div>Arquivo de chaves locais na raiz; não vem no clone (de propósito); nunca vai pro git.</div>
+    <div class="skill-card"><div class="skill-name">Git</div>Baixa/atualiza o material do curso preservando <code>projetos/</code>.</div>
+    <div class="skill-card"><div class="skill-name">Claude Code / Codex</div>Assistentes que executam as skills. <code>.claude/skills/</code> (canônica) ↔ <code>.agents/skills/</code> (espelho byte a byte pro Codex).</div>
+    <div class="skill-card"><div class="skill-name">Node / npm</div>Motor da design-md (18+), dos validadores e dos scripts das Aulas 3/4 (zelador-audit, leitor, gestor, painel de dados).</div>
+    <div class="skill-card"><div class="skill-name">Python</div>Coletores de pesquisa, DOCX do offerbook, Creative Factory (numpy/Pillow/PyYAML).</div>
+    <div class="skill-card"><div class="skill-name">Chrome/Edge headless</div>Converte HTML→PDF (<code>gerar_pdf.sh</code>) e HTML→PNG (<code>gerar_png.sh</code>). Fallback: abrir o .html e imprimir.</div>
+    <div class="skill-card"><div class="skill-name">Apify</div>Scraping com dados reais via API REST direta pelo <code>.env</code> (NÃO é MCP). Central nas skills de coleta.</div>
+    <div class="skill-card"><div class="skill-name">Graph API (Meta)</div>Leitura da conta de anúncios: insights, campanhas, demografia, funil. Sempre read-only — exceto o <code>/estruturador</code>, que cria campanha pausada em 3 gates com a sua confirmação.</div>
+    <div class="skill-card"><div class="skill-name">Hotmart API</div>Caixa real (vendas) pra atribuição honesta da Aula 4 — sem dado pessoal de comprador. ROAS só vira "Real" com venda conferida no caixa.</div>
+    <div class="skill-card"><div class="skill-name">Contratos (JSON Schema)</div><code>data/contracts/</code> versiona as interfaces (project-brief, campaign-plan, weekly-panel, weekly-ledger, traffic-analytics, decision-outcome, source-reconciliation). <code>skill-surface-contract.js</code> valida catálogo, regras, brief e índice.</div>
+    <div class="skill-card"><div class="skill-name">ArtifactIndex v1</div>Índice determinístico do que existe em <code>projetos/{slug}/</code> (<code>scripts/project-artifact-index.mjs</code>): sha256, hardening contra path escape/symlink/segredos. A ponte entre o disco e o motor.</div>
+    <div class="skill-card"><div class="skill-name">Motor de prontidão</div><code>scripts/lib/skill-readiness.mjs</code> decide a próxima skill e a razão — usado pelo <code>/status-funil</code> e pelo mapa. Nunca hardcoded.</div>
+    <div class="skill-card"><div class="skill-name">Testes e validadores</div>Bateria <code>.test.mjs</code> em <code>scripts/</code> (release gate Aula 4, weekly ledger, circuit breaker, contratos, artifact index) + <code>validate-mapa-*.mjs</code>, <code>validate-skill-catalog.mjs</code>, <code>verify-skill-contracts.mjs</code>.</div>
+  </div>
+</section>
+
+<!-- ==================== SEÇÃO 4 ==================== -->
+<section id="s4">
+  <div class="snum">Seção 4</div>
+  <h2>Taxonomia das <em>37 skills</em></h2>
+  <p style="font-family:var(--font-ui);font-size:.9rem;color:var(--muted)">Formato: comando — o que faz. <strong>[pré-requisitos]</strong> → saídas. Fonte por skill: <code>.claude/skills/{nome}/SKILL.md</code>. Visual interativo: <a href="mapa-skills.html">mapa-skills.html</a>.</p>
+
+  <h3>Setup</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/comecar</div>Passo zero: ambiente do leigo ao dev, chave Apify, UM próximo comando. Nunca trava.<p class="skill-out"><strong>[—]</strong> → ambiente pronto</p></div>
+    <div class="skill-card"><div class="skill-name">/status-funil</div>Checklist do funil: o que existe, o que falta, "você está aqui". Vários projetos → status de todos. Fecha com próximo comando + razão do motor.<p class="skill-out"><strong>[projeto iniciado]</strong> → relatório</p></div>
+  </div>
+
+  <h3>Pesquisa (Aula 1)</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/avatar-funil</div>Avatar em 7 dimensões + focus group sintético em 3 personas testando a headline. Minera dor real em 3 fontes com verbatim; modo rede ou offline.<p class="skill-out"><strong>[—]</strong> → <code>relatorio-avatar.{md,html,pdf}</code> · (Python, Apify/WebSearch)</p></div>
+    <div class="skill-card"><div class="skill-name">/espiao-do-concorrente</div>Dossiê multi-fonte de UM concorrente: Ad Library, Google Ads Transparency, TikTok Ads, orgânico, site, reputação. Ganchos, ofertas, ângulos e as brechas.<p class="skill-out"><strong>[—]</strong> → <code>dossie-{X}.*</code> · (Apify; offline ok)</p></div>
+    <div class="skill-card"><div class="skill-name">/trend-hunting</div>Tendências emergentes antes da saturação + variações de hook prontas pra teste + briefing pro media buyer.<p class="skill-out"><strong>[—]</strong> → <code>trends-*.*</code> · (Apify OBRIGATÓRIO)</p></div>
+    <div class="skill-card"><div class="skill-name">/swipe-file</div>Biblioteca categorizada dos winners do espião/trend, por tipo, formato, padrão e nicho. Inspiração, não cópia.<p class="skill-out"><strong>[saídas deles]</strong> → <code>swipe-file-index.*</code> · (Figma opcional)</p></div>
+  </div>
+
+  <h3>Oferta / Copy</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/offerbook</div>O Livro da Oferta em 7 blocos + Perfil do Projeto — o gate central do sistema. Avatar e Análise de Cliente vêm da pesquisa real.<p class="skill-out"><strong>[avatar + ≥1 dossiê]</strong> → <code>offerbook-{slug}.{md,docx,html}</code> · (python-docx p/ DOCX)</p></div>
+    <div class="skill-card"><div class="skill-name">/copy-funil</div>Fundação da mensagem: diagnóstico (Schwartz), Big Idea + mecanismos (Todd Brown), banco de headlines (Halbert) e bullets (Bencivenga), validação. 3 fluxos.<p class="skill-out"><strong>[offerbook]</strong> → <code>copy.md</code> — fonte única da mensagem</p></div>
+    <div class="skill-card"><div class="skill-name">/bonus-funil</div>Gera os ENTREGÁVEIS dos bônus de verdade: ebook, workbook, checklist, guia completos; áudio/vídeo viram roteiro pronto.<p class="skill-out"><strong>[offerbook + DESIGN.md]</strong> → bônus completos</p></div>
+    <div class="skill-card"><div class="skill-name">/mockup-produto-funil</div>Prompts de geração de imagem parametrizados pela marca, portáveis pra qualquer ferramenta.<p class="skill-out"><strong>[offerbook + DESIGN.md]</strong> → <code>mockups/</code></p></div>
+  </div>
+
+  <h3>Design / Método</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/design-md</div>Identidade visual em 5 modos (pronto · extrair de site · do zero · referências/mood board · neutro), com preview e autocrítica.<p class="skill-out"><strong>[—]</strong> → <code>DESIGN.md</code> + <code>tokens.json</code> + <code>preview.html</code> · (Node 18+)</p></div>
+    <div class="skill-card"><div class="skill-name">/metodo-funil</div>Diagnóstico de consciência (1–5) + Mapa de Execução: a lista ordenada das peças com a skill de cada uma. Dita a ordem dali em diante.<p class="skill-out"><strong>[offerbook]</strong> → <code>funil.md</code></p></div>
+  </div>
+
+  <h3>Peças de funil (Aula 2)</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/advertorial-funil</div>Topo, nível 5: página editorial de pré-venda pro público frio — parece artigo, planta o problema, mecanismo, transição pra oferta.<p class="skill-out"><strong>[copy, offerbook, DESIGN.md]</strong> → <code>advertorial.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/lancamento-funil</div>Topo, nível 5 com lista: PLF completo — PLCs, carrinho, 9 gatilhos, régua de dias, tipos de lançamento.<p class="skill-out"><strong>[copy/offerbook]</strong> → <code>lancamento.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/vsl-funil</div>Topo, nível 5: funil de VSL Direct Response + plano de escala + estratégia de ticket.<p class="skill-out"><strong>[offerbook/copy]</strong> → <code>vsl.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/webinario-funil</div>Meio, níveis 4/3: Perfect Webinar — registro → aquecimento → roteiro (3 segredos → stack → fechamento) → pós.<p class="skill-out"><strong>[copy, DESIGN.md]</strong> → <code>webinario.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/quiz-funil</div>Meio, nível 4: quiz segmentador com ramificação, N resultados, captura e follow-up por diagnóstico.<p class="skill-out"><strong>[copy, offerbook, DESIGN.md]</strong> → <code>quiz.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/pagina-vendas-funil</div>Fundo: página de 16 elementos na identidade da marca; headline passa em 3 testes antes de avançar.<p class="skill-out"><strong>[DESIGN.md + copy.md OBRIGATÓRIOS]</strong> → <code>pagina/</code></p></div>
+    <div class="skill-card"><div class="skill-name">/email-funil</div>E-mails HTML em 6 tipos (convite, confirmação, lembrete, recap, nurture, venda) na identidade. Não dispara nada.<p class="skill-out"><strong>[copy, DESIGN.md]</strong> → <code>emails/</code> · (local: use WhatsApp)</p></div>
+    <div class="skill-card"><div class="skill-name">/whatsapp-funil</div>Sequência de WhatsApp/DM por momento (lembrete, confirmação, carrinho, recusado, nutrição), casada ao estágio.<p class="skill-out"><strong>[copy quando existe]</strong> → <code>whatsapp.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/recuperacao-funil</div>Cascata pós-checkout: carrinho abandonado, cartão recusado, boleto, downsell, re-elevação. Recuperar custa menos que adquirir.<p class="skill-out"><strong>[copy, Perfil]</strong> → <code>recuperacao.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/backend-funil</div>Onde mora o lucro: upsell/OTO/order bump/downsell, janela de dopamina 3–7s, janela de 4h, LTV.<p class="skill-out"><strong>[offerbook, copy]</strong> → <code>back-end.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/cro-funil</div>KPIs por etapa, gargalo, teste A/B (1 por vez, ≥1000 views, headline primeiro), quando escalar verba.<p class="skill-out"><strong>[funil montado]</strong> → <code>cro.md</code></p></div>
+  </div>
+
+  <h3>Conteúdo / Criativos</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/conteudo-funil</div>Modela Reels de um criador de referência (coleta → transcreve → analisa hooks) e gera roteiros na SUA voz, 3 por nível do funil.<p class="skill-out"><strong>[voz da marca]</strong> → <code>conteudo/</code> · (Apify, Python)</p></div>
+    <div class="skill-card"><div class="skill-name">/criativos-funil</div>Espiona a Ad Library do concorrente → roteiros de vídeo + banners estáticos HTML→PNG na identidade, por rede e formato.<p class="skill-out"><strong>[DESIGN.md p/ banners]</strong> → <code>criativos/</code> · (Apify, Chrome)</p></div>
+    <div class="skill-card"><div class="skill-name">/ads-creative-factory</div>Motor Python de criativos em escala: packs versionados, 6 arquétipos (dark_editorial, light_clean, person_authority, mockup_product, ugc_native, didactic_compare), gate automático de marca, anti-saturação.<p class="skill-out"><strong>[brand pack do DESIGN.md]</strong> · (numpy/Pillow/PyYAML; imagem via Codex — alternativas na Seção 1)</p></div>
+  </div>
+
+  <h3>Tráfego (Aula 3 — squad recommend-only · memória: <code>PAINEL-DA-SEMANA.yaml</code>)</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/zelador</div>Saúde de conta/tracking: pixel, CAPI, deduplicação, BM, pagamento, domínio. SEMPRE primeiro; bloqueante. Modo API (<code>node scripts/zelador-audit.mjs</code>) ou Modo Manual (checklist com evidência).<p class="skill-out"><strong>[—]</strong> → auditoria OK/PARCIAL/CRÍTICO</p></div>
+    <div class="skill-card"><div class="skill-name">/briefista</div>Bateria de anúncios a partir dos ângulos da Aula 2 (recusa ângulo sem nível de consciência): 3–5 variações por ângulo, 6 categorias de hook. Você cura 2–3 finalistas.<p class="skill-out"><strong>[ângulos c/ nível]</strong> → bateria p/ curadoria</p></div>
+    <div class="skill-card"><div class="skill-name">/estruturador</div>Campanha no <strong>default sagrado</strong> (1 campanha → 1 conjunto → 2–3 criativos; Vendas/Cadastro; R$30/dia × 7d). Modo API: 3 gates (aprovar → criar PAUSADO → ativar só com ordem). Guardrails bloqueiam desvio.<p class="skill-out"><strong>[zelador ≠ CRÍTICO + briefing]</strong> → plano/campanha</p></div>
+    <div class="skill-card"><div class="skill-name">/leitor-de-metricas</div>Lê a semana sem calcular derivadas nem completar ausentes; selos Real/Estimado/não fornecido; registra se a amostra basta pro CPA.<p class="skill-out"><strong>[Graph API ou dados colados]</strong> → leitura literal</p></div>
+    <div class="skill-card"><div class="skill-name">/diagnosticador</div>UMA alavanca por vez: hipótese + critério de sucesso + critério de reversão + circuit breaker.<p class="skill-out"><strong>[leitura do leitor]</strong> → decisão semanal</p></div>
+  </div>
+
+  <h3>Central de Dados (Aula 4 — Squad de Dados · fecha o O.F.T.R.)</h3>
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">/analista-de-dados</div>O HUB: configura chaves Meta/Hotmart (ou Modo Exemplo, que nunca trava) e orquestra as etapas abaixo na ordem certa. Um comando roda tudo.<p class="skill-out"><strong>[—]</strong> → sequência completa</p></div>
+    <div class="skill-card"><div class="skill-name">/coletor-de-dados</div>Bundle bruto: séries dia/mês/trimestre, campanhas c/ metadados, funil (agregado/dia/campanha×dia), heatmap dia×hora, demografia idade/gênero/UF, vendas + atribuição, engajamento orgânico — sem PII.<p class="skill-out"><strong>[config do painel]</strong> → <code>dados-trafego/bundle.json</code></p></div>
+    <div class="skill-card"><div class="skill-name">/board-de-especialistas</div>Sentimento dos comentários (leitura por IA) + board de 6 clones: Media Buyer, Analista de Dados, Diretor de Criativos, CRO/Growth, Estrategista de Audiência, Social/Comunidade. Veredito + alavanca + evidência com selo.<p class="skill-out"><strong>[bundle]</strong> → <code>dados-trafego/board.json</code></p></div>
+    <div class="skill-card"><div class="skill-name">/painel-de-dados</div>Renderiza o <code>painel-trafego.html</code>: 7 telas interativas, self-contained (abre offline), identidade do DESIGN.md + PDF + registro no Book.<p class="skill-out"><strong>[bundle + board]</strong> → <code>painel-trafego.html</code> + PDF</p></div>
+    <div class="skill-card"><div class="skill-name">/retroalimentacao</div>Devolve os dados ao início: demografia/linguagem → avatar (Aula 1); produtos/prova/objeções reais → copy + offerbook (Aula 2); melhores janelas.<p class="skill-out"><strong>[coleta + board]</strong> → <code>retroalimentacao.md</code></p></div>
+    <div class="skill-card"><div class="skill-name">/gestor-de-campanhas</div>Realizado 7/30 dias (gasto, CTR, conversões, caixa) × planejado no PAINEL-DA-SEMANA (verba, critérios): desvios, tendência, parecer.<p class="skill-out"><strong>[painel da semana]</strong> → <code>gestao-campanhas.md</code></p></div>
+  </div>
+
+  <h3>Regras compartilhadas (<code>.claude/skills/_shared/</code>)</h3>
+  <p style="font-family:var(--font-ui);font-size:.9rem;color:var(--muted)"><code>nunca-travar.md</code> (nunca beco; Apify central; glossário inline; Sonnet basta; estado=arquivos) · <code>perfil.md</code> (Perfil do Projeto + guard de enquadramento por tipo de negócio) · <code>book-do-funil.md</code> (hub <code>index.html</code>; versões nunca sobrescrevem; "VOCÊ ESTÁ AQUI") · <code>entrega-padrao.md</code> (3 formatos md/html/pdf) · <code>pendencias.md</code> (dedup por decisão) · <code>rastreamento.md</code> (páginas pixel-ready) · <code>brand-choice.md</code> (neutro vs DESIGN.md) · <code>squad-trafego/</code> (contrato + template do Painel da Semana).</p>
+
+  <h3>A cadeia de dados (regra de dependência)</h3>
+  <pre><code>avatar + espiao (+trend +swipe) → offerbook → [design-md] → metodo-funil → copy.md → TODAS as peças
+copy.md   = fonte única da mensagem
+DESIGN.md = fonte única da identidade
+offerbook = fonte única da oferta/Perfil
+bundle + board (Aula 4) → retroalimentacao.md → de volta pro avatar e pra copy</code></pre>
+</section>
+
+<!-- ==================== SEÇÃO 5 ==================== -->
+<section id="s5">
+  <div class="snum">Seção 5</div>
+  <h2>Mapa de <em>fluxo</em></h2>
+  <pre><code>AULA 1 · PESQUISA
+/comecar (ambiente + chave Apify no .env)
+   ├─ /avatar-funil ──────────→ relatorio-avatar.md   (a dor real, verbatim)
+   ├─ /espiao-do-concorrente ─→ dossie-{X}.md          (hooks, ofertas, brechas)
+   ├─ /trend-hunting ─────────→ trends-*.md            (formatos virais)
+   └─ /swipe-file ────────────→ swipe-file-index.md    (biblioteca de winners)
+                 ↓  (avatar + dossiê OBRIGATÓRIOS)
+            /offerbook ────────→ offerbook.md + Perfil  [FONTE ÚNICA DA OFERTA]
+
+AULA 2 · IDENTIDADE + FUNIL
+/design-md ────────────────────→ DESIGN.md + tokens     [FONTE ÚNICA DA IDENTIDADE]
+/metodo-funil (lê offerbook) ──→ funil.md               (consciência 1–5 + Mapa de Execução)
+/copy-funil (lê offerbook) ────→ copy.md                [FONTE ÚNICA DA MENSAGEM]
+       ├─ topo (nível 5): /advertorial-funil · /lancamento-funil · /vsl-funil
+       ├─ meio (nível 4/3): /webinario-funil · /quiz-funil
+       ├─ fundo (nível 2/1): /pagina-vendas-funil
+       ├─ sequências: /email-funil · /whatsapp-funil · /recuperacao-funil
+       ├─ conteúdo/criativos: /conteudo-funil · /criativos-funil · /mockup-produto-funil · /bonus-funil
+       └─ back-end/otimização: /backend-funil · /cro-funil
+       ↓  tudo registrado no Book do Funil (projetos/{slug}/index.html)
+          + pendencias.md (decisões do dono) + marcador "VOCÊ ESTÁ AQUI"
+
+AULA 3 · TRÁFEGO (squad recommend-only)
+/zelador → /briefista → /estruturador → [VOCÊ publica na Meta — ou 3 gates via API]
+              └→ ads-creative-factory        ↓
+                                   /leitor-de-metricas → /diagnosticador
+              memória compartilhada: PAINEL-DA-SEMANA.yaml ←┘
+
+AULA 4 · CENTRAL DE DADOS (Squad de Dados — fecha o ciclo O.F.T.R.)
+/analista-de-dados (hub; chaves Meta/Hotmart ou Modo Exemplo)
+   → /coletor-de-dados ────────→ dados-trafego/bundle.json
+   → /board-de-especialistas ──→ dados-trafego/board.json (6 clones + sentimento)
+   → /painel-de-dados ─────────→ painel-trafego.html (7 telas, offline) + PDF
+   → /retroalimentacao ────────→ retroalimentacao.md ──→ volta pro /avatar-funil e /copy-funil
+   → /gestor-de-campanhas ─────→ gestao-campanhas.md (realizado × planejado, 7/30 dias)</code></pre>
+
+  <h3>Pipeline do exemplo canônico (<code>academia-fit</code>) e do mapa de skills</h3>
+  <pre><code>scripts/run-nucleo-cohort.sh        → gera projetos/academia-fit/ (Aulas 1–2, ordem N12)
+scripts/run-aula-04-walkthrough.mjs → gera as peças da Aula 4 do exemplo
+sync-mapa-samples.sh                → rsync projetos/academia-fit → mapa-skills-samples/ + regen PDFs
+scripts/validate-mapa-wiring.mjs    → confere que todo sampleUrl do mapa existe e abre
+scripts/validate-mapa-preview.mjs   → valida os previews</code></pre>
+  <p style="font-family:var(--font-ui);font-size:.88rem;color:var(--muted)">A sincronização é <strong>manual</strong> — rode a cadeia quando o exemplo mudar.</p>
+</section>
+
+<!-- ==================== SEÇÃO 6 ==================== -->
+<section id="s6">
+  <div class="snum">Seção 6</div>
+  <h2>Anatomia do <em>repositório</em></h2>
+  <pre><code>.claude/skills/          ← fonte canônica das 37 skills (SKILL.md + scripts + templates)
+.agents/skills/          ← espelho byte a byte p/ Codex (nunca divergir)
+aula-01/ … aula-04/      ← material didático por aula (README, guia HTML, docs/, templates/, exemplos/)
+data/                    ← skill-catalog.json, skill-unlock-rules.json, project-brief.schema.json,
+                           contracts/ (campaign-plan, weekly-panel, weekly-ledger,
+                           traffic-analytics, decision-outcome, source-reconciliation)
+scripts/                 ← validadores (mapa, catálogo, contratos), motor de prontidão
+                           (lib/skill-readiness.mjs), ArtifactIndex (project-artifact-index.mjs),
+                           Aula 3 (zelador-audit, leitor-metricas, estruturador-publish,
+                           circuit-breaker), Aula 4 (painel-trafego-data/render, hotmart-vendas,
+                           gestor-campanhas, retroalimentacao) + testes .test.mjs
+services/meta-ads/       ← adapter Graph API (read-only por construção; credenciais via .env local)
+assets/al/               ← identidade Academia Lendária (fonts, css, logo) usada pelos guias
+GUIA-DO-ALUNO.html       ← o curso inteiro num documento (Partes 0–5)
+mapa-skills.html + mapa-skills-artifacts.js + skill-surface-contract.js ← mapa vivo das skills
+mapa-skills-samples/     ← amostras do projeto-exemplo academia-fit (o que o mapa exibe)
+sync-mapa-samples.sh     ← sincroniza projetos/academia-fit → amostras
+briefing.html            ← Project Brief standalone
+super-guia-apis-e-ads.{md,html} ← passo a passo de TODAS as chaves + ads p/ novato
+mapa-guiado-do-projeto.{md,html} ← ESTE guia
+projetos/                ← SEU trabalho (fora do git; um subdiretório por cliente/funil;
+                           criado automaticamente na 1ª skill)
+docs/ · plans/           ← stories, releases, notas de merge
+.gitignore · AGENTS.md   ← guardas (.env e projetos/ nunca sobem)</code></pre>
+</section>
+
+<!-- ==================== SEÇÃO 7 ==================== -->
+<section id="s7">
+  <div class="snum">Seção 7</div>
+  <h2>Checklist de <em>validação</em> (interativo — salva no navegador)</h2>
+  <p style="font-family:var(--font-ui);font-size:.9rem;color:var(--muted)">Marque conforme valida. O progresso fica salvo neste navegador (localStorage). <button id="chk-reset" style="font-family:var(--font-ui);font-size:.72rem;font-weight:700;color:var(--warn);background:var(--raised);border:1px solid #d97706;border-radius:.4rem;padding:4px 10px;cursor:pointer">zerar tudo</button></p>
+
+  <h3>Bloco 1 — Fundação</h3>
+  <div class="chk" data-blk="b1">
+    <label><input type="checkbox"><span><code>ls</code>/<code>dir</code> na raiz mostra <code>.claude</code>, <code>aula-01</code>…<code>aula-04</code>, <code>data</code>, <code>scripts</code> (senão: pasta errada)</span></label>
+    <label><input type="checkbox"><span><code>git --version</code> ok e <code>git pull</code> sem erro (ZIP: aceitável, sem updates)</span></label>
+    <label><input type="checkbox"><span>IA aberta na RAIZ: digitar <code>/</code> + "funil" lista as skills (senão: abriu dentro de <code>aula-XX/</code> ou fora da pasta)</span></label>
+    <label><input type="checkbox"><span><code>design-md</code> aparece UMA vez (duas = apagar a global antiga em <code>~/.claude/skills/design-md</code>)</span></label>
+    <label><input type="checkbox"><span><code>node --version</code> v18+ · <code>python --version</code> 3.x (loja da Microsoft abrindo = não instalado)</span></label>
+    <label><input type="checkbox"><span><code>grep -E "APIFY_API_(TOKEN|KEY)" .env</code> imprime a linha</span></label>
+    <label><input type="checkbox"><span><code>/comecar</code> termina apontando exatamente UM comando</span></label>
+  </div>
+
+  <h3>Bloco 2 — Funil (Aulas 1–2)</h3>
+  <div class="chk" data-blk="b2">
+    <label><input type="checkbox"><span><code>projetos/{slug}/relatorio-avatar.md</code> + ≥1 <code>dossie-*.md</code> existem</span></label>
+    <label><input type="checkbox"><span><code>offerbook</code> existe com o Perfil do Projeto no topo</span></label>
+    <label><input type="checkbox"><span><code>DESIGN.md</code> + <code>preview.html</code> existem e o preview tem a cara da marca</span></label>
+    <label><input type="checkbox"><span><code>funil.md</code> existe com estágio de consciência + próximo passo</span></label>
+    <label><input type="checkbox"><span><code>copy.md</code> existe (sem ele nenhuma peça se monta)</span></label>
+    <label><input type="checkbox"><span>Book do Funil (<code>projetos/{slug}/index.html</code>) abre com cards + "VOCÊ ESTÁ AQUI:"</span></label>
+    <label><input type="checkbox"><span><code>pendencias.md</code> mostra placar por decisão e re-run NÃO duplica</span></label>
+    <label><input type="checkbox"><span><code>/status-funil</code> fecha com "Próximo passo:" + "Razão:" vindos do motor</span></label>
+  </div>
+
+  <h3>Bloco 3 — Tráfego (Aula 3)</h3>
+  <div class="chk" data-blk="b3">
+    <label><input type="checkbox"><span><code>/zelador</code> rodou (Modo API com chaves Meta, ou Modo Manual com evidência) e aprovou o tracking</span></label>
+    <label><input type="checkbox"><span>Bateria do <code>/briefista</code> existe e VOCÊ curou 2–3 finalistas</span></label>
+    <label><input type="checkbox"><span>Estrutura do <code>/estruturador</code> no default sagrado (1 campanha → 1 conjunto → 2–3 criativos; Vendas/Cadastro; R$30/dia × 7d)</span></label>
+    <label><input type="checkbox"><span>Publicação só pausada e com a sua confirmação (Gate 3 explícito)</span></label>
+    <label><input type="checkbox"><span><code>PAINEL-DA-SEMANA.yaml</code> preenchido (verba diária, critério de sucesso, critério de reversão)</span></label>
+    <label><input type="checkbox"><span>Toda métrica no leitor/diagnosticador tem selo Real/Estimado/não fornecido</span></label>
+  </div>
+
+  <h3>Bloco 4 — Central de Dados (Aula 4)</h3>
+  <div class="chk" data-blk="b4">
+    <label><input type="checkbox"><span><code>/analista-de-dados</code> rodou (Modo Exemplo sem chaves; real com <code>META_ACCESS_TOKEN</code> + <code>META_AD_ACCOUNT_ID</code>)</span></label>
+    <label><input type="checkbox"><span><code>projetos/{slug}/dados-trafego/bundle.json</code> + <code>board.json</code> existem</span></label>
+    <label><input type="checkbox"><span><code>painel-trafego.html</code> abre offline com as 7 telas e a identidade da marca</span></label>
+    <label><input type="checkbox"><span>Todo ROAS aparece como "Estimado" (só vira Real com caixa Hotmart conferido)</span></label>
+    <label><input type="checkbox"><span><code>retroalimentacao.md</code> existe e aponta o que muda no avatar e na copy</span></label>
+    <label><input type="checkbox"><span><code>gestao-campanhas.md</code> compara realizado × planejado (7/30 dias)</span></label>
+  </div>
+
+  <h3>Bloco 5 — Qualidade (dev)</h3>
+  <div class="chk" data-blk="b5">
+    <label><input type="checkbox"><span><code>node scripts/validate-skill-catalog.mjs</code> código 0</span></label>
+    <label><input type="checkbox"><span><code>node scripts/verify-skill-contracts.mjs</code> código 0</span></label>
+    <label><input type="checkbox"><span><code>node scripts/validate-mapa-wiring.mjs</code> e <code>validate-mapa-preview.mjs</code> código 0</span></label>
+    <label><input type="checkbox"><span>Testes <code>.test.mjs</code> de <code>scripts/</code> verdes</span></label>
+    <label><input type="checkbox"><span><code>diff -rq .claude/skills .agents/skills</code> sem diferenças</span></label>
+    <label><input type="checkbox"><span><code>git status</code> não mostra <code>.env</code> nem <code>projetos/</code></span></label>
+  </div>
+
+  <div class="alerta"><div class="alerta-label">Regra de ouro</div><p>Um checklist só vale se puder reprovar. Item sem teste executado = não-verificado, não "provavelmente ok".</p></div>
+</section>
+
+<p style="text-align:center;font-family:var(--font-ui);font-size:.8rem;color:var(--muted);margin-top:64px;padding-top:22px;border-top:1px solid var(--raised)">Mapa Guiado do Projeto · Cohort de Marketing · Academia Lendária · atualizado em 21 de julho de 2026 · sucessor do mapa do Ads Studio · fonte de verdade: os arquivos do repositório (em conflito, eles vencem este guia)</p>
+</div>
+
+<script>
+  // barra de progresso
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress'), h = document.documentElement;
+    const sh = h.scrollHeight - h.clientHeight;
+    el.style.width = (sh > 0 ? (window.scrollY / sh) * 100 : 0) + '%';
+  });
+  // botões copiar dos prompts
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const txt = btn.parentElement.querySelector('pre').innerText;
+      navigator.clipboard.writeText(txt).then(() => {
+        btn.textContent = 'copiado!'; setTimeout(() => btn.textContent = 'copiar', 1600);
+      });
+    });
+  });
+  // checklist persistente
+  const CHK_KEY = 'cohort.mapa.chk';
+  const loadC = () => { try { return JSON.parse(localStorage.getItem(CHK_KEY)) || {} } catch { return {} } };
+  const saveC = (s) => localStorage.setItem(CHK_KEY, JSON.stringify(s));
+  const state = loadC();
+  document.querySelectorAll('.chk').forEach(blk => {
+    const id = blk.dataset.blk;
+    blk.querySelectorAll('input[type=checkbox]').forEach((cb, i) => {
+      const k = id + ':' + i;
+      cb.checked = !!state[k];
+      cb.addEventListener('change', () => { state[k] = cb.checked; saveC(state); });
+    });
+  });
+  document.getElementById('chk-reset').addEventListener('click', () => {
+    if (confirm('Zerar todo o checklist?')) { localStorage.removeItem(CHK_KEY); location.reload(); }
+  });
+  // scroll-spy das abas
+  const tabs = [...document.querySelectorAll('nav.tabs a')];
+  const secs = tabs.map(a => document.querySelector(a.getAttribute('href')));
+  window.addEventListener('scroll', () => {
+    let cur = 0;
+    secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < 120) cur = i; });
+    tabs.forEach((a, i) => a.classList.toggle('on', i === cur));
+  }, { passive: true });
+</script>
+</body>
+</html>

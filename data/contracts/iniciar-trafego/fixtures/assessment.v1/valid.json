@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectId": "prj_abc123456789",
+  "sourceHashes": { "copy": "abc123" },
+  "checks": [
+    {
+      "id": "page",
+      "result": "pass",
+      "severity": "info",
+      "owner": "worker",
+      "routeCommand": "set-page-url",
+      "evidence": "deployment.json",
+      "status": "ok"
+    }
+  ],
+  "status": "PROPOSAL_SEED_READY",
+  "blocksProposal": false,
+  "pageOk": true,
+  "pixelOk": true,
+  "checkoutOk": true,
+  "economics": { "ticket": 997, "margem_pct": 40 }
+}

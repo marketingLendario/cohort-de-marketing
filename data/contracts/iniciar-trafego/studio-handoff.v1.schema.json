@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-handoff.v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "sourceProjectId",
+    "sourceProjectSlug",
+    "proposalId",
+    "proposalHash",
+    "panelPath",
+    "panelHash",
+    "panelContent",
+    "angles"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "sourceProjectId": { "type": "string", "minLength": 8 },
+    "sourceProjectSlug": { "type": "string", "minLength": 1 },
+    "proposalId": { "type": "string", "minLength": 8 },
+    "proposalHash": { "type": "string", "minLength": 16 },
+    "panelPath": { "type": "string", "minLength": 1 },
+    "panelHash": { "type": "string", "minLength": 16 },
+    "panelContent": { "type": "string", "minLength": 20 },
+    "angles": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["nome", "dor", "nivel_consciencia", "locator", "sourceHash"],
+        "properties": {
+          "nome": { "type": "string" },
+          "dor": { "type": "string" },
+          "nivel_consciencia": { "type": "string" },
+          "locator": { "type": "string" },
+          "sourceHash": { "type": "string", "minLength": 8 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "insumosYaml": { "type": "string" },
+    "economics": {
+      "type": "object",
+      "properties": {
+        "ticket": { "type": "number" },
+        "margem_pct": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "tracking": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["OK", "CRITICO", "UNVERIFIED"] }
+      },
+      "additionalProperties": true
+    },
+    "publishedUrl": { "type": "string", "format": "uri" },
+    "campaignPlan": { "type": "object" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "2.0.0",
+  "project": {
+    "slug": "sem-identidade"
+  },
+  "conversionMode": "inventado",
+  "fields": {},
+  "economics": {
+    "ticket": -1,
+    "margem_pct": 120,
+    "valid": true
+  }
+}

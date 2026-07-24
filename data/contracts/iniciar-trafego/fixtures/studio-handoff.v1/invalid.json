@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceProjectId": "prj_x",
+  "sourceProjectSlug": "demo",
+  "proposalId": "prop_x",
+  "proposalHash": "short",
+  "panelPath": "trafego/PAINEL-DA-SEMANA.yaml",
+  "panelHash": "short",
+  "angles": []
+}

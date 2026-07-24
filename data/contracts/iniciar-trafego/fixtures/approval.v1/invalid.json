@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0.0",
+  "proposalId": "prop_x",
+  "proposalHash": "short",
+  "approvalText": "ok",
+  "approvedAt": "2026-07-23T02:00:00.000Z",
+  "actor": "bot",
+  "parserResult": { "approved": false }
+}

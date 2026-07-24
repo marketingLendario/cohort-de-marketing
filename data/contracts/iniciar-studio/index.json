@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "contracts": [
+    {
+      "id": "studio-distribution-manifest.v1",
+      "file": "studio-distribution-manifest.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "data/studio-distribution.json",
+      "consumer": "scripts/lib/iniciar-studio/discovery.mjs"
+    },
+    {
+      "id": "studio-preflight.v1",
+      "file": "studio-preflight.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-studio/discovery.mjs",
+      "consumer": "scripts/lib/iniciar-studio/coordinator.mjs"
+    },
+    {
+      "id": "studio-install-intent.v1",
+      "file": "studio-install-intent.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-studio/install-intent-store.mjs",
+      "consumer": "scripts/lib/iniciar-studio/coordinator.mjs"
+    },
+    {
+      "id": "studio-runtime-request.v1",
+      "file": "studio-runtime-request.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-studio/coordinator.mjs",
+      "consumer": "scripts/marketing-studio.mjs"
+    },
+    {
+      "id": "studio-runtime-result.v1",
+      "file": "studio-runtime-result.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-studio/coordinator.mjs",
+      "consumer": "scripts/lib/iniciar-trafego/studio-sync-client.mjs"
+    },
+    {
+      "id": "studio-runtime-lease.v1",
+      "file": "studio-runtime-lease.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-studio/runtime-lease.mjs",
+      "consumer": "scripts/lib/iniciar-studio/coordinator.mjs"
+    },
+    {
+      "id": "studio-open-receipt.v1",
+      "file": "studio-open-receipt.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-studio/coordinator.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    }
+  ]
+}

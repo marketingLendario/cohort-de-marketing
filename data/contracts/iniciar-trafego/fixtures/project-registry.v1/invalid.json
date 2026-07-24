@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "createdAt": "2026-07-23T00:00:00.000Z",
+  "updatedAt": "2026-07-23T00:01:00.000Z",
+  "projects": {
+    "slug-como-identidade": {
+      "schemaVersion": "1.0.0",
+      "slug": "slug-como-identidade"
+    }
+  }
+}

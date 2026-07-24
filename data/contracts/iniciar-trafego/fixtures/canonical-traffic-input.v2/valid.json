@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "2.0.0",
+  "project": {
+    "projectId": "prj_abc123456789",
+    "slug": "exemplo",
+    "projectRoot": "D:/aluno/exemplo"
+  },
+  "conversionMode": "application_call",
+  "fields": {
+    "profile": null,
+    "avatar": null,
+    "offer": null,
+    "awareness": null,
+    "conversionMode": null,
+    "funnel": null,
+    "copyAngles": null,
+    "design": null,
+    "page": null,
+    "ticket": null
+  },
+  "economics": {
+    "ticket": 147,
+    "margem_pct": null,
+    "valid": false
+  },
+  "bindings": {},
+  "sourceHashes": {},
+  "semanticReceipt": null,
+  "stale": false,
+  "staleReason": null,
+  "canonicalHash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+}

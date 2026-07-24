@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-distribution-manifest.v1",
+  "type": "object",
+  "required": ["schemaVersion", "distributionStatus", "artifacts", "studioRepoEnv", "defaultRelativePath", "platforms", "launcher"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "distributionStatus": { "enum": ["ready", "unavailable_pending_official_artifacts"] },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["platform", "arch", "version", "url", "sizeBytes", "sha256", "format"],
+        "properties": {
+          "platform": { "enum": ["win32", "darwin", "linux"] },
+          "arch": { "enum": ["x64", "arm64"] },
+          "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+" },
+          "url": { "type": "string", "pattern": "^https://" },
+          "sizeBytes": { "type": "integer", "minimum": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "format": { "enum": ["zip", "tar.gz"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "studioRepoEnv": { "type": "string", "minLength": 1 },
+    "defaultRelativePath": { "type": "string", "minLength": 1 },
+    "platforms": { "type": "object", "minProperties": 1 },
+    "launcher": {
+      "type": "object",
+      "required": ["script", "profiles"],
+      "properties": {
+        "script": { "type": "string" },
+        "profiles": { "type": "object", "minProperties": 1 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "distributionStatus": { "const": "ready" } } },
+      "then": { "properties": { "artifacts": { "minProperties": 4 } } }
+    }
+  ],
+  "additionalProperties": true
+}

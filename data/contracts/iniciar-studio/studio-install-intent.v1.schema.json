@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-install-intent.v1",
+  "type": "object",
+  "required": ["schemaVersion", "purpose", "projectRoot", "handoffPath", "proposalId", "proposalHash"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "purpose": { "enum": ["traffic-sync", "open"] },
+    "projectRoot": { "type": "string", "minLength": 1 },
+    "handoffPath": { "type": "string", "minLength": 1 },
+    "proposalId": { "type": "string", "minLength": 8 },
+    "proposalHash": { "type": "string", "minLength": 16 },
+    "runId": { "type": "string" },
+    "leaseId": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  },
+  "additionalProperties": true
+}

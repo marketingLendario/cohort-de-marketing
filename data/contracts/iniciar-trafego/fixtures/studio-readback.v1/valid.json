@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0.0",
+  "ok": true,
+  "receiptId": "ts_proj-1_prop-1_hash-pro",
+  "proposalId": "prop-1",
+  "sourceProjectId": "proj-1",
+  "sourceProjectSlug": "forja",
+  "panelPath": "trafego/PAINEL-DA-SEMANA.yaml",
+  "panelContent": "insumos_a2:\n  angulos:\n    - nome: Angulo principal\n",
+  "angleCount": 1,
+  "publishedUrl": "https://example.com/page",
+  "insumosYaml": "insumos_a2:\n  angulos: []\n",
+  "deepLink": "http://127.0.0.1:5177/projects/mp-1",
+  "entities": {
+    "marketingProjectId": "mp-1",
+    "briefRevisionId": "br-1",
+    "campaignId": "c-1",
+    "campaignPlanRevisionId": "cpr-1",
+    "unitEconomicsId": "c-1",
+    "artifactIds": ["art-1"]
+  },
+  "hashes": {
+    "proposalHash": "hash-prop-aaaaaaaa",
+    "panelHash": "hash-panel-bbbbbbbbbbbbbbbb",
+    "artifactHash": "hash-panel-bbbbbbbbbbbbbbbb"
+  },
+  "angles": [
+    {
+      "nome": "Angulo principal",
+      "dor": "Dor canonica",
+      "nivel_consciencia": "3",
+      "locator": "copy.md#heading-1",
+      "sourceHash": "srcHash01"
+    }
+  ],
+  "economics": { "ticket": 97, "margem_pct": 40 },
+  "campaignPlan": { "mode": "direct_checkout" },
+  "entityVersions": { "briefRevision": 1, "campaignPlanRevision": 1 }
+}

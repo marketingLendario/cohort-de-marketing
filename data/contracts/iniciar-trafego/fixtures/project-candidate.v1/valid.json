@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "candidateId": "cand_0123456789abcdef",
+  "suggestedSlug": "projeto-exemplo",
+  "slug": "projeto-exemplo",
+  "displayName": "Projeto Exemplo",
+  "root": "D:/aluno/projeto-exemplo",
+  "rootNormalized": "D:/aluno/projeto-exemplo",
+  "rootRelative": null,
+  "source": "scan",
+  "scanRoot": "D:/aluno",
+  "excluded": false,
+  "exclusionReason": null,
+  "errorCode": null,
+  "evidence": {
+    "markersFound": ["copy.md"],
+    "markerCount": 1,
+    "completenessScore": 0.1666666667
+  },
+  "completeness": 0.1666666667,
+  "legacyImportPlan": {
+    "schemaVersion": "1.0.0",
+    "strategy": "bind-in-place",
+    "atomic": true,
+    "preserveOriginals": true,
+    "requiresManualMove": false,
+    "projectRoot": "D:/aluno/projeto-exemplo",
+    "operations": [
+      {
+        "sourcePath": "copy.md",
+        "action": "bind",
+        "copy": false,
+        "deleteSource": false
+      }
+    ]
+  }
+}

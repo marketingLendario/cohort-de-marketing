@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-domain-readback.v1",
+  "type": "object",
+  "required": ["schemaVersion", "ok", "receiptId", "entities", "deepLink"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "ok": { "type": "boolean" },
+    "receiptId": { "type": "string", "minLength": 8 },
+    "entities": {
+      "type": "object",
+      "required": [
+        "marketingProjectId",
+        "briefRevisionId",
+        "campaignId",
+        "campaignPlanRevisionId",
+        "unitEconomicsId"
+      ],
+      "properties": {
+        "marketingProjectId": { "type": "string", "minLength": 1 },
+        "briefRevisionId": { "type": "string", "minLength": 1 },
+        "campaignId": { "type": "string", "minLength": 1 },
+        "campaignPlanRevisionId": { "type": "string", "minLength": 1 },
+        "unitEconomicsId": { "type": "string", "minLength": 1 },
+        "artifactIds": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "hashes": {
+      "type": "object",
+      "properties": {
+        "proposalHash": { "type": "string" },
+        "panelHash": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "deepLink": { "type": "string", "minLength": 8 },
+    "publishedUrl": { "type": "string" },
+    "sourceProjectId": { "type": "string" },
+    "sourceProjectSlug": { "type": "string" },
+    "panelPath": { "type": "string" },
+    "angleCount": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": true
+}

@@ -25,7 +25,8 @@
     ],
     "avatar": [
       "avatar.md",
-      "relatorio-avatar.md"
+      "relatorio-avatar.md",
+      "pesquisa-avatar-*/relatorio-avatar.md"
     ],
     "competitorDossier": [
       "espiao/dossie-*.md",
@@ -39,7 +40,8 @@
       "briefing-swipe-file.md"
     ],
     "offerbook": [
-      "offerbook.md"
+      "offerbook.md",
+      "offerbook-*.md"
     ],
     "design": [
       "DESIGN.md"
@@ -103,6 +105,9 @@
     ],
     "cro": [
       "cro.md"
+    ],
+    "trafficWeeklyPanel": [
+      "trafego/PAINEL-DA-SEMANA.yaml"
     ],
     "trafficTrackingAudit": [
       "squad-trafego/tracking-audit.json",
@@ -1005,6 +1010,44 @@
       "recommendedArtifacts": [],
       "availableWhen": "Disponivel quando ha projeto para inspecionar.",
       "panelHint": "Le arquivos e pendencias; nao cria conteudo."
+    },
+    "iniciar-trafego": {
+      "type": "traffic",
+      "command": "/iniciar-trafego",
+      "priority": 25,
+      "recommendationEligible": true,
+      "primaryArtifacts": [
+        "trafficWeeklyPanel"
+      ],
+      "requiredFields": [
+        "project.slug"
+      ],
+      "recommendedFields": [
+        "channels.primaryCtaUrl",
+        "offer.exactPrice"
+      ],
+      "requiredArtifacts": [
+        "avatar",
+        "offerbook",
+        "copy",
+        "funnel",
+        "design",
+        "salesPage"
+      ],
+      "recommendedArtifacts": [],
+      "panelHint": "Valida pontes A2→A3 e monta Painel com aprovacao explicita."
+    },
+    "iniciar-studio": {
+      "type": "traffic",
+      "command": "/iniciar-studio",
+      "priority": 25.5,
+      "recommendationEligible": false,
+      "primaryArtifacts": [],
+      "requiredFields": [],
+      "recommendedFields": [],
+      "requiredArtifacts": [],
+      "recommendedArtifacts": [],
+      "panelHint": "Worker interno — invocado por /iniciar-trafego, nao pelo aluno."
     },
     "zelador": {
       "type": "traffic",

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0.0",
+  "ok": true,
+  "receiptId": "x",
+  "entities": {
+    "marketingProjectId": "",
+    "briefRevisionId": "",
+    "campaignId": "",
+    "campaignPlanRevisionId": "",
+    "unitEconomicsId": ""
+  },
+  "deepLink": "http://x"
+}

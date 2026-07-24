@@ -1,0 +1,18 @@
+{
+  "status": "bound",
+  "artifactId": "art_0123456789abcdef",
+  "artifactType": "avatar",
+  "path": "pesquisa-avatar-exemplo/relatorio-avatar.md",
+  "hash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "size": 120,
+  "sizeBytes": 120,
+  "rule": "pesquisa-avatar-*/relatorio-avatar.md",
+  "origin": {
+    "kind": "precedence-rule",
+    "rule": "pesquisa-avatar-*/relatorio-avatar.md"
+  },
+  "confirmationStatus": "confirmed",
+  "guide": "/avatar-funil",
+  "label": "avatar"
+}

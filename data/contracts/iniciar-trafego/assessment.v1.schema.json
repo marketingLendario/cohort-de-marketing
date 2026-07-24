@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assessment.v1",
+  "type": "object",
+  "required": ["schemaVersion", "projectId", "sourceHashes", "checks", "status"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "projectId": { "type": "string", "minLength": 8 },
+    "sourceHashes": { "type": "object", "additionalProperties": { "type": "string" } },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "result", "severity"],
+        "properties": {
+          "id": { "type": "string" },
+          "result": { "enum": ["pass", "fail", "unverified", "not_applicable"] },
+          "severity": { "enum": ["critical", "major", "minor", "info"] },
+          "owner": { "type": "string" },
+          "routeCommand": { "type": "string" },
+          "evidence": { "type": "string" },
+          "status": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": { "enum": ["BLOCKED", "INPUTS_READY", "PROPOSAL_SEED_READY"] },
+    "blocksProposal": { "type": "boolean" },
+    "pageOk": { "type": "boolean" },
+    "pixelOk": { "type": "boolean" },
+    "checkoutOk": { "type": "boolean" },
+    "economics": {
+      "type": "object",
+      "properties": {
+        "ticket": { "type": "number", "minimum": 0 },
+        "margem_pct": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

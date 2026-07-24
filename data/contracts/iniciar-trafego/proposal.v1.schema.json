@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "proposal.v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "proposalId",
+    "projectId",
+    "proposalHash",
+    "assessmentHash",
+    "sourceHashes",
+    "canonicalInput",
+    "conversionMode",
+    "angles",
+    "insumosYaml",
+    "economics",
+    "calcProvenance",
+    "panelPatch",
+    "studioHandoffDraft",
+    "createdAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "proposalId": { "type": "string", "minLength": 8 },
+    "projectId": { "type": "string", "minLength": 8 },
+    "proposalHash": { "type": "string", "minLength": 16 },
+    "assessmentHash": { "type": "string", "minLength": 16 },
+    "sourceHashes": {
+      "type": "object",
+      "required": ["materials"],
+      "properties": {
+        "materials": { "type": "string" },
+        "avatar": { "type": "string" },
+        "offerbook": { "type": "string" },
+        "copy": { "type": "string" },
+        "funil": { "type": "string" },
+        "design": { "type": "string" },
+        "page": { "type": "string" },
+        "deployment": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "canonicalInput": { "type": "object" },
+    "conversionMode": { "enum": ["direct_checkout", "application_call", "lead_capture"] },
+    "angles": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["nome", "dor", "nivel_consciencia", "locator", "sourceHash"],
+        "properties": {
+          "nome": { "type": "string" },
+          "dor": { "type": "string" },
+          "nivel_consciencia": { "type": "string" },
+          "locator": { "type": "string" },
+          "sourceHash": { "type": "string", "minLength": 8 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "insumosYaml": { "type": "string", "minLength": 20 },
+    "economics": {
+      "type": "object",
+      "required": ["ticket", "margem_pct"],
+      "properties": {
+        "ticket": { "type": "number", "minimum": 0 },
+        "margem_pct": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false
+    },
+    "calcProvenance": { "type": "string" },
+    "panelPatch": { "type": "object" },
+    "studioHandoffDraft": { "type": "object" },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

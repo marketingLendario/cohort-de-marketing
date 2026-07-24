@@ -46,6 +46,15 @@ pesquisa-avatar-cursos-tech-migracao-carreira/
 CHANGELOG.md
 projetos/
 scripts/lib/.test-out/
+_interno/
 
 # runtime do squad de tráfego (log de publicações, snapshots)
 outputs/
+
+# AIOX cockpit-integration (conductor file-protocol + state) — managed
+.sdc-decision/
+.sdc-resolution/
+.sdc-inbox/
+.sdc-ack/
+.sdc-status/
+.aiox/

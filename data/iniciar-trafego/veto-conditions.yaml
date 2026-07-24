@@ -1,0 +1,13 @@
+veto_conditions:
+  PROJECT_NOT_FOUND:
+    blocks: all
+    next: "/comecar"
+  PROPOSAL_STALE:
+    blocks: panel_write
+    next: "node scripts/iniciar-trafego.mjs propose"
+  STUDIO_SYNC_FAILED:
+    blocks: READY_FOR_ZELADOR
+    next: "node scripts/iniciar-trafego.mjs approve --retry"
+  PAGE_URL_MISSING:
+    blocks: proposal
+    next: "node scripts/iniciar-trafego.mjs set-page-url"

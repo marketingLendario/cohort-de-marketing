@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0.0",
+  "environment": "production",
+  "url": "https://example.com/landing",
+  "provider": "vercel",
+  "deployedAt": "2026-07-23T02:00:00.000Z",
+  "localPageSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "status": "verified"
+}

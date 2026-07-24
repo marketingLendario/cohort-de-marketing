@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-readback.v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "ok",
+    "receiptId",
+    "proposalId",
+    "sourceProjectId",
+    "sourceProjectSlug",
+    "panelPath",
+    "panelContent",
+    "angleCount",
+    "publishedUrl",
+    "insumosYaml",
+    "deepLink",
+    "entities",
+    "hashes",
+    "angles",
+    "economics",
+    "campaignPlan",
+    "entityVersions"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "ok": { "const": true },
+    "receiptId": { "type": "string", "minLength": 8 },
+    "proposalId": { "type": "string", "minLength": 1 },
+    "sourceProjectId": { "type": "string", "minLength": 1 },
+    "sourceProjectSlug": { "type": "string", "minLength": 1 },
+    "panelPath": { "type": "string", "minLength": 1 },
+    "panelContent": { "type": "string", "minLength": 20 },
+    "angleCount": { "type": "integer", "minimum": 0 },
+    "publishedUrl": { "type": "string" },
+    "deepLink": { "type": "string", "minLength": 8 },
+    "entities": {
+      "type": "object",
+      "required": ["marketingProjectId", "briefRevisionId", "campaignId", "campaignPlanRevisionId", "unitEconomicsId", "artifactIds"],
+      "properties": {
+        "marketingProjectId": { "type": "string" },
+        "briefRevisionId": { "type": "string" },
+        "campaignId": { "type": "string" },
+        "campaignPlanRevisionId": { "type": "string" },
+        "unitEconomicsId": { "type": "string" },
+        "artifactIds": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "required": ["proposalHash", "panelHash", "artifactHash"],
+      "properties": {
+        "proposalHash": { "type": "string", "minLength": 8 },
+        "panelHash": { "type": "string", "minLength": 16 },
+        "artifactHash": { "type": "string", "minLength": 16 }
+      }
+    },
+    "angles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["nome", "dor", "nivel_consciencia", "locator", "sourceHash"],
+        "properties": {
+          "nome": { "type": "string" },
+          "dor": { "type": "string" },
+          "nivel_consciencia": { "type": "string" },
+          "locator": { "type": "string" },
+          "sourceHash": { "type": "string", "minLength": 8 }
+        }
+      }
+    },
+    "economics": {
+      "type": "object",
+      "required": ["ticket", "margem_pct"],
+      "properties": {
+        "ticket": { "type": "number" },
+        "margem_pct": { "type": "number" }
+      }
+    },
+    "insumosYaml": { "type": "string" },
+    "campaignPlan": { "type": "object", "minProperties": 1 },
+    "entityVersions": { "type": "object", "minProperties": 1 }
+  },
+  "additionalProperties": true
+}

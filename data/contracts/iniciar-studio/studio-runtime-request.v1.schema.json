@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-runtime-request.v1",
+  "type": "object",
+  "required": ["profile", "leaseId"],
+  "properties": {
+    "profile": { "enum": ["traffic-sync", "open"] },
+    "leaseId": { "type": "string", "minLength": 8 },
+    "deepLink": { "type": "string" },
+    "projectRoot": { "type": "string" }
+  },
+  "additionalProperties": true
+}

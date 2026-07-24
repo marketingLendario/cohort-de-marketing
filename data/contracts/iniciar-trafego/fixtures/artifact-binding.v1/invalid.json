@@ -1,0 +1,13 @@
+{
+  "status": "bound",
+  "artifactId": "art_sem_hash",
+  "artifactType": "avatar",
+  "path": "../fora.md",
+  "sizeBytes": 10,
+  "rule": "avatar.md",
+  "origin": {
+    "kind": "precedence-rule",
+    "rule": "avatar.md"
+  },
+  "confirmationStatus": "confirmed"
+}

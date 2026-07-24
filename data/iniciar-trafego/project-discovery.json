@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0.0",
+  "scanRoots": ["projetos", "."],
+  "excludeDirNames": [
+    ".git",
+    ".aiox",
+    "_interno",
+    ".claude",
+    ".agents",
+    "node_modules",
+    "mapa-skills-samples",
+    "aula-01",
+    "aula-02",
+    "aula-03",
+    "aula-04",
+    "assets",
+    "data",
+    "docs",
+    "guias",
+    "plans",
+    "scripts",
+    "services",
+    "fixtures",
+    "templates",
+    "examples"
+  ],
+  "excludePathSegments": ["mapa-skills-samples/academia-fit"],
+  "maxDepth": 2,
+  "sampleRoots": ["mapa-skills-samples"]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "sourceProjectId": "prj_abc123456789",
+  "sourceProjectSlug": "demo-projeto",
+  "proposalId": "prop_abc123456789",
+  "proposalHash": "1234567890abcdef",
+  "panelPath": "trafego/PAINEL-DA-SEMANA.yaml",
+  "panelHash": "panelhash1234567890",
+  "panelContent": "insumos_a2:\n  angulos:\n    - nome: Angulo A\n",
+  "angles": [
+    {
+      "nome": "Angulo A",
+      "dor": "Dor A",
+      "nivel_consciencia": "consciente",
+      "locator": "copy/landing.md#h2-1",
+      "sourceHash": "a1111111"
+    },
+    {
+      "nome": "Angulo B",
+      "dor": "Dor B",
+      "nivel_consciencia": "consciente",
+      "locator": "copy/landing.md#h2-2",
+      "sourceHash": "b2222222"
+    }
+  ],
+  "economics": { "ticket": 997, "margem_pct": 40 },
+  "tracking": { "status": "CRITICO" },
+  "publishedUrl": "https://example.com/landing",
+  "campaignPlan": {
+    "panelPath": "trafego/PAINEL-DA-SEMANA.yaml",
+    "mode": "direct_checkout"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "proposalId": "prop_x",
+  "proposalHash": "short",
+  "assessmentHash": "short",
+  "sourceHashes": {},
+  "angles": [],
+  "insumosYaml": "x",
+  "economics": {},
+  "calcProvenance": "",
+  "panelPatch": {},
+  "studioHandoffDraft": {},
+  "createdAt": "bad-date"
+}

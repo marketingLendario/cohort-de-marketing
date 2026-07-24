@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "artifact-binding.v1",
+  "type": "object",
+  "required": [
+    "status",
+    "artifactId",
+    "artifactType",
+    "path",
+    "sha256",
+    "sizeBytes",
+    "rule",
+    "origin",
+    "confirmationStatus"
+  ],
+  "properties": {
+    "status": { "const": "bound" },
+    "artifactId": { "type": "string", "pattern": "^art_[a-f0-9]{16}$" },
+    "artifactType": { "type": "string", "minLength": 1 },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "size": { "type": "integer", "minimum": 0 },
+    "sizeBytes": { "type": "integer", "minimum": 0 },
+    "rule": { "type": "string", "minLength": 1 },
+    "origin": {
+      "type": "object",
+      "required": ["kind", "rule"],
+      "properties": {
+        "kind": { "const": "precedence-rule" },
+        "rule": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "confirmationStatus": { "const": "confirmed" },
+    "guide": { "type": "string" },
+    "label": { "type": "string" }
+  },
+  "additionalProperties": false
+}

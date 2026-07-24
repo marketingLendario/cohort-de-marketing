@@ -1,0 +1,35 @@
+schemaVersion: "1.0.0"
+target: iniciar-trafego-iniciar-studio
+rules:
+  - id: AR-01
+    veto: "Instruir aluno a rodar /iniciar-studio durante /iniciar-trafego"
+    enforcement: CODE
+    check: scripts/validate-iniciar-trafego-studio.mjs --grep=/iniciar-studio
+  - id: AR-02
+    veto: "Sync depender de Studio previamente aberto pelo aluno"
+    enforcement: CODE
+    check: iniciar-trafego approve chama iniciar-studio ensure antes do POST sync
+  - id: AR-03
+    veto: "Pergunta de abertura controlar sincronizacao"
+    enforcement: CODE
+    check: sync+readback terminam antes de OPEN_DECISION
+  - id: AR-04
+    veto: "Profile traffic-sync iniciar Vite ou browser"
+    enforcement: CODE
+    check: marketing-studio.mjs --profile=traffic-sync
+  - id: AR-05
+    veto: "Promover painel antes de readback verificado"
+    enforcement: CODE
+    check: writeApprovedPanel apos readback ok
+  - id: AR-06
+    veto: "Readback confirmar somente traffic_start_receipts"
+    enforcement: CODE
+    check: studio-domain-readback.v1 schema
+  - id: AR-07
+    veto: "Reexecucao duplicar projeto ou campanha"
+    enforcement: CODE
+    check: idempotencia proposalId+proposalHash
+  - id: AR-08
+    veto: "Release encerrar processos fora do lease atual"
+    enforcement: CODE
+    check: iniciar-studio release --lease

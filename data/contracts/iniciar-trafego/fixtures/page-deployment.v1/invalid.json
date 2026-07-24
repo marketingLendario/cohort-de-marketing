@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "1.0.0",
+  "environment": "production",
+  "url": "http://insecure.example",
+  "status": "verified"
+}

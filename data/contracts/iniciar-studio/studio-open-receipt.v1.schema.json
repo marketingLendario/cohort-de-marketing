@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-open-receipt.v1",
+  "type": "object",
+  "required": ["ok", "deepLink", "leaseId"],
+  "properties": {
+    "ok": { "const": true },
+    "deepLink": { "type": "string", "minLength": 8 },
+    "leaseId": { "type": "string", "minLength": 8 },
+    "opened": { "type": "boolean" }
+  },
+  "additionalProperties": true
+}

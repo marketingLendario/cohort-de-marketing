@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "distributionStatus": "ready",
+  "artifacts": {
+    "win32-x64": { "platform": "win32", "arch": "x64", "version": "1.0.0", "url": "https://downloads.example.com/studio-win32-x64.zip", "sizeBytes": 100, "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "format": "zip" },
+    "darwin-x64": { "platform": "darwin", "arch": "x64", "version": "1.0.0", "url": "https://downloads.example.com/studio-darwin-x64.tar.gz", "sizeBytes": 100, "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "format": "tar.gz" },
+    "darwin-arm64": { "platform": "darwin", "arch": "arm64", "version": "1.0.0", "url": "https://downloads.example.com/studio-darwin-arm64.tar.gz", "sizeBytes": 100, "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "format": "tar.gz" },
+    "linux-x64": { "platform": "linux", "arch": "x64", "version": "1.0.0", "url": "https://downloads.example.com/studio-linux-x64.tar.gz", "sizeBytes": 100, "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "format": "tar.gz" }
+  },
+  "studioRepoEnv": "AIOX_STUDIO_ROOT",
+  "defaultRelativePath": "../academia-lendaria-ads-studio",
+  "platforms": { "win32": {}, "darwin": {}, "linux": {} },
+  "launcher": { "script": "scripts/marketing-studio.mjs", "profiles": { "traffic-sync": {} } }
+}

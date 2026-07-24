@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0.0",
+  "createdAt": "2026-07-23T00:00:00.000Z",
+  "updatedAt": "2026-07-23T00:01:00.000Z",
+  "projects": {
+    "prj_abc123456789": {
+      "schemaVersion": "1.0.0",
+      "projectId": "prj_abc123456789",
+      "slug": "projeto-exemplo",
+      "displayName": "Projeto Exemplo",
+      "projectRoot": "D:/aluno/projeto-exemplo",
+      "projectRootNormalized": "D:/aluno/projeto-exemplo",
+      "rootRelative": null,
+      "rootFingerprint": "0123456789abcdef01234567",
+      "pathFingerprint": "cand_0123456789abcdef",
+      "manifestHash": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "candidateId": "cand_0123456789abcdef",
+      "bindings": null,
+      "lastRunState": null,
+      "slugCollisionWith": [],
+      "movedFrom": null,
+      "createdAt": "2026-07-23T00:00:00.000Z",
+      "updatedAt": "2026-07-23T00:01:00.000Z"
+    }
+  }
+}

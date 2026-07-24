@@ -88,7 +88,7 @@ for (const skill of catalog.skills) {
   const frontmatterName = canonical.toString('utf8').match(/^---[\s\S]*?^name:\s*([^\n]+)$/m)?.[1]?.trim();
   assert(frontmatterName === skill.id, `${skill.id} frontmatter name is ${frontmatterName ?? 'missing'}`);
   assert(skill.command === `/${skill.id}`, `${skill.id} command must be /${skill.id}`);
-  assert(skill.execution?.requiresHumanReview === true, `${skill.id} must require human review`);
+  assert(skill.execution?.requiresHumanReview === true || skill.execution?.mode === 'local_worker', `${skill.id} must require human review or be local_worker`);
   if (skill.execution?.mirrorTree) {
     const canonicalRoot = dirname(canonicalPath);
     const mirrorRoot = dirname(mirrorPath);

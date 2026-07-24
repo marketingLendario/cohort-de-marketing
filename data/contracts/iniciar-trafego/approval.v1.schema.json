@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "approval.v1",
+  "type": "object",
+  "required": ["schemaVersion", "proposalId", "proposalHash", "approvalText", "approvedAt", "actor", "parserResult"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "proposalId": { "type": "string", "minLength": 8 },
+    "proposalHash": { "type": "string", "minLength": 16 },
+    "approvalText": { "type": "string", "minLength": 3 },
+    "approvedAt": { "type": "string", "format": "date-time" },
+    "actor": { "const": "human" },
+    "parserResult": {
+      "type": "object",
+      "required": ["approved"],
+      "properties": {
+        "approved": { "type": "boolean" },
+        "normalizedText": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

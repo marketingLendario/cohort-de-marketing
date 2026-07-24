@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project-manifest.v1",
+  "type": "object",
+  "required": ["schemaVersion", "projectId", "slug", "name", "createdAt", "source"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "projectId": { "type": "string", "minLength": 8 },
+    "slug": { "type": "string", "minLength": 1, "pattern": "^[a-z0-9-]+$" },
+    "name": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "source": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

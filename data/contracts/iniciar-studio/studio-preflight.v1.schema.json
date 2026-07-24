@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "studio-preflight.v1",
+  "type": "object",
+  "required": ["ok"],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "code": { "type": "string" },
+    "root": { "type": "string" },
+    "launcher": { "type": "string" }
+  },
+  "additionalProperties": true
+}

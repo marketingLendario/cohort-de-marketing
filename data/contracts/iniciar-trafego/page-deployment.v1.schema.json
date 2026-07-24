@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "page-deployment.v1",
+  "type": "object",
+  "required": ["schemaVersion", "environment", "url", "status"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "environment": { "const": "production" },
+    "url": { "type": "string", "pattern": "^https://" },
+    "provider": { "type": "string" },
+    "origin": { "enum": ["set-page-url", "deploy-receipt", "manifest", "config", "remote-verify"] },
+    "deployedAt": { "type": "string", "format": "date-time" },
+    "verifiedAt": { "type": "string", "format": "date-time" },
+    "localPageSha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "status": { "enum": ["verified", "unverified", "blocked"] },
+    "httpStatus": { "type": "integer" },
+    "finalUrl": { "type": "string" },
+    "identityMatch": { "type": "boolean" },
+    "identityMarker": { "type": "string" },
+    "remotePageSha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+    "remotePixelOk": { "type": "boolean" },
+    "remoteCheckoutOk": { "type": ["boolean", "null"] },
+    "remoteConversionOk": { "type": "boolean" },
+    "conversionMode": { "enum": ["direct_checkout", "application_call", "lead_capture"] },
+    "conversionEvidence": { "type": "object" },
+    "attempts": { "type": "integer", "minimum": 1 },
+    "verificationCode": { "type": "string" },
+    "verificationError": { "type": "string" }
+  },
+  "additionalProperties": false
+}

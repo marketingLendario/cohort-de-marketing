@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "1.0.0",
+  "contracts": [
+    {
+      "id": "project-manifest.v1",
+      "file": "project-manifest.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/project-context.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "project-candidate.v1",
+      "file": "project-candidate.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/project-discovery.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "project-registry.v1",
+      "file": "project-registry.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/project-registry.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "artifact-binding.v1",
+      "file": "artifact-binding.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/artifact-resolution.mjs",
+      "consumer": "scripts/lib/iniciar-trafego-gates.mjs"
+    },
+    {
+      "id": "canonical-traffic-input.v2",
+      "file": "canonical-traffic-input.v2.schema.json",
+      "version": "2.0.0",
+      "producer": "scripts/lib/iniciar-trafego/semantic-bridge.mjs",
+      "consumer": "scripts/lib/iniciar-trafego-gates.mjs"
+    },
+    {
+      "id": "page-deployment.v1",
+      "file": "page-deployment.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/page-verifier.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "assessment.v1",
+      "file": "assessment.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego-gates.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "proposal.v1",
+      "file": "proposal.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/proposal-store.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "approval.v1",
+      "file": "approval.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/proposal-store.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "traffic-panel.v1",
+      "file": "traffic-panel.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego-gates.mjs",
+      "consumer": "scripts/lib/iniciar-trafego-gates.mjs"
+    },
+    {
+      "id": "studio-handoff.v1",
+      "file": "studio-handoff.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/iniciar-trafego.mjs",
+      "consumer": "academia-lendaria-ads-studio/server/traffic-start/service.ts"
+    },
+    {
+      "id": "run-state.v1",
+      "file": "run-state.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/iniciar-trafego.mjs",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "studio-sync-receipt.v1",
+      "file": "studio-sync-receipt.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "academia-lendaria-ads-studio/server/traffic-start/service.ts",
+      "consumer": "scripts/iniciar-trafego.mjs"
+    },
+    {
+      "id": "sync-intent.v1",
+      "file": "sync-intent.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "scripts/lib/iniciar-trafego/studio-sync-client.mjs",
+      "consumer": "scripts/lib/iniciar-studio/coordinator.mjs"
+    },
+    {
+      "id": "studio-domain-readback.v1",
+      "file": "studio-domain-readback.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "academia-lendaria-ads-studio/server/traffic-start/service.ts",
+      "consumer": "scripts/lib/iniciar-trafego/readback-compare.mjs"
+    },
+    {
+      "id": "studio-readback.v1",
+      "file": "studio-readback.v1.schema.json",
+      "version": "1.0.0",
+      "producer": "academia-lendaria-ads-studio/server/traffic-start/service.ts",
+      "consumer": "scripts/lib/iniciar-trafego/studio-sync-client.mjs"
+    }
+  ]
+}

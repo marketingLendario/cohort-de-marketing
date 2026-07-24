@@ -149,7 +149,7 @@ function validateRules(rules) {
   return globs;
 }
 
-async function assertProjectRoot(projectRoot) {
+async function assertProjectRoot(projectRoot, allowedRoots = []) {
   if (typeof projectRoot !== 'string' || projectRoot.length === 0) {
     fail('INVALID_PROJECT_ROOT', 'A raiz do projeto é inválida.');
   }
@@ -159,8 +159,19 @@ async function assertProjectRoot(projectRoot) {
   } catch {
     fail('PROJECT_NOT_FOUND', 'O projeto informado não existe ou não pode ser lido.');
   }
-  if (path.basename(path.dirname(resolved)) !== 'projetos' || !SAFE_SLUG.test(path.basename(resolved))) {
-    fail('INVALID_PROJECT_ROOT', 'Use uma raiz no formato projetos/{slug}.');
+  if (!SAFE_SLUG.test(path.basename(resolved))) {
+    fail('INVALID_PROJECT_ROOT', 'A pasta do projeto precisa ter slug portátil.');
+  }
+  const normalizedAllowed = [];
+  for (const allowedRoot of allowedRoots) {
+    try {
+      normalizedAllowed.push(await realpath(allowedRoot));
+    } catch {
+      fail('INVALID_ALLOWED_ROOT', 'Uma raiz permitida não existe ou não pode ser lida.');
+    }
+  }
+  if (normalizedAllowed.length > 0 && !normalizedAllowed.some((allowedRoot) => insideRoot(allowedRoot, resolved))) {
+    fail('PROJECT_ROOT_OUTSIDE_ALLOWED', 'A raiz do projeto está fora das raízes explicitamente permitidas.');
   }
   const info = await stat(resolved);
   if (!info.isDirectory()) fail('INVALID_PROJECT_ROOT', 'A raiz do projeto deve ser um diretório.');
@@ -268,9 +279,9 @@ async function metadataFor(file) {
   };
 }
 
-export async function buildArtifactIndex({ projectRoot, rules }) {
+export async function buildArtifactIndex({ projectRoot, rules, allowedRoots = [projectRoot] }) {
   const globs = validateRules(rules);
-  const root = await assertProjectRoot(projectRoot);
+  const root = await assertProjectRoot(projectRoot, allowedRoots);
   const byPath = new Map();
 
   for (const artifactType of Object.keys(globs).sort()) {
@@ -358,12 +369,13 @@ export function confirmArtifact(index, { artifactType, path: artifactPath }, rul
 }
 
 function parseArgs(argv) {
-  const result = { confirmations: [] };
+  const result = { confirmations: [], allowedRoots: [] };
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (token === '--project') result.projectRoot = argv[++index];
     else if (token === '--rules') result.rulesPath = argv[++index];
     else if (token === '--output') result.outputPath = argv[++index];
+    else if (token === '--allowed-root') result.allowedRoots.push(argv[++index]);
     else if (token === '--confirm') result.confirmations.push(argv[++index]);
     else fail('INVALID_ARGUMENT', 'Argumento de CLI não reconhecido.');
   }
@@ -381,7 +393,11 @@ async function runCli() {
   } catch {
     fail('INVALID_RULES', 'Não foi possível carregar as regras de artefatos.');
   }
-  let index = await buildArtifactIndex({ projectRoot: args.projectRoot, rules });
+  let index = await buildArtifactIndex({
+    projectRoot: args.projectRoot,
+    rules,
+    allowedRoots: args.allowedRoots.length ? args.allowedRoots : [args.projectRoot],
+  });
   for (const value of args.confirmations) {
     const separator = value?.indexOf(':') ?? -1;
     if (separator <= 0) fail('INVALID_CONFIRMATION', 'Use --confirm tipo:path-relativo.');

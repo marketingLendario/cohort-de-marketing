@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "run-state.v1",
+  "type": "object",
+  "required": ["schemaVersion", "runId", "projectId", "state", "stateHistory", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "runId": { "type": "string", "minLength": 8 },
+    "projectId": { "type": "string", "minLength": 8 },
+    "state": { "type": "string", "minLength": 3 },
+    "stateHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["state", "at"],
+        "properties": {
+          "state": { "type": "string" },
+          "at": { "type": "string", "format": "date-time" },
+          "note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "attempts": { "type": "integer", "minimum": 0 },
+    "lock": { "type": ["string", "null"] },
+    "error": { "type": ["object", "null"] },
+    "resumableAction": { "type": ["string", "null"] },
+    "hashes": { "type": "object", "additionalProperties": { "type": "string" } },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

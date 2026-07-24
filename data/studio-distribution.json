@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0.0",
+  "distributionStatus": "unavailable_pending_official_artifacts",
+  "artifacts": {},
+  "studioRepoEnv": "AIOX_STUDIO_ROOT",
+  "defaultRelativePath": "../academia-lendaria-ads-studio",
+  "platforms": {
+    "win32": {
+      "label": "Windows 10/11",
+      "docker": "Docker Desktop",
+      "packageManagers": ["winget"],
+      "resumeMechanism": "ScheduledTask"
+    },
+    "darwin": {
+      "label": "macOS Intel / Apple Silicon",
+      "docker": "Docker Desktop",
+      "packageManagers": ["brew"],
+      "resumeMechanism": "LaunchAgent"
+    },
+    "linux": {
+      "label": "Linux (adapter previsto)",
+      "docker": "Docker Engine",
+      "packageManagers": ["apt", "dnf"],
+      "resumeMechanism": "systemd-user",
+      "releaseClaim": "somente apos E2E proprio"
+    }
+  },
+  "launcher": {
+    "script": "scripts/marketing-studio.mjs",
+    "profiles": {
+      "traffic-sync": {
+        "requiresCodex": false,
+        "requiresVite": false,
+        "requiresBrowser": false
+      },
+      "open": {
+        "requiresCodex": false,
+        "requiresVite": true,
+        "requiresBrowser": true
+      }
+    }
+  }
+}
