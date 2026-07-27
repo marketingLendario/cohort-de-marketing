@@ -109,7 +109,7 @@ cohort-de-marketing/
 cp .env.example .env        # Windows (cmd): copy .env.example .env
 ```
 
-A chave que importa de verdade é a do **Apify** (`APIFY_API_TOKEN` — grátis, US$ 5/mês de crédito): ela é **central** pras skills de coleta (espião, trend, conteúdo, criativos). Sem ela essas skills param e te ajudam a configurar — ou rode `/comecar`, que cuida disso por você. As demais chaves são opcionais. O `.env` nunca vai pro GitHub (está no `.gitignore`).
+A chave que importa de verdade é a do **Apify** (`APIFY_API_TOKEN`). Ela é **central** pras skills de coleta (espião, trend, conteúdo, criativos). Confira os planos e créditos atuais no Apify. Sem a chave, essas skills param e te ajudam a configurar. Você também pode rodar `/comecar`, que cuida disso por você. As demais chaves são opcionais. O `.env` nunca vai pro GitHub (está no `.gitignore`).
 
 ---
 
