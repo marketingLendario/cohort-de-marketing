@@ -8,7 +8,6 @@ from decimal import Decimal
 from pathlib import Path
 from unittest import mock
 
-
 SCRIPT_DIR = Path(__file__).resolve().parents[1]
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
@@ -88,6 +87,9 @@ class ApifyScraperTests(unittest.TestCase):
                 self.assertEqual(payload["outputVariant"], "rich")
                 self.assertEqual(payload["fieldStyle"], "camelCase")
                 self.assertEqual(payload["outputPreset"], "flat")
+                self.assertTrue(payload["includeUnavailableFields"])
+                if mode == "search":
+                    self.assertTrue(payload["includeSearchTerms"])
 
     def test_follower_payload_exposes_every_relation(self) -> None:
         cases = {
@@ -115,6 +117,7 @@ class ApifyScraperTests(unittest.TestCase):
                 self.assertEqual(payload["maxItemsPerTarget"], 50)
                 self.assertEqual(payload["outputMode"], "full")
                 self.assertTrue(payload["includeTargetMetadata"])
+                self.assertTrue(payload["includeUnavailableUsers"])
                 self.assertTrue(payload["overlapMode"])
 
     def test_profile_urls_preserve_relation_path(self) -> None:
@@ -224,12 +227,39 @@ class ApifyScraperTests(unittest.TestCase):
             with self.subTest(charge=value):
                 with self.assertRaises(apify_scraper.argparse.ArgumentTypeError):
                     apify_scraper.decimal_positivo(value)
-        with self.assertRaisesRegex(ValueError, "ID de post"):
-            apify_scraper.montar_payload_x_tweets(
-                "https://x.com/xquik",
-                "thread",
-                10,
-            )
+        for target in ("https://x.com/xquik", "post-sem-id"):
+            with self.subTest(target=target), self.assertRaisesRegex(
+                ValueError,
+                "ID de post",
+            ):
+                apify_scraper.montar_payload_x_tweets(
+                    target,
+                    "thread",
+                    10,
+                )
+
+    def test_rejects_insecure_or_unexpected_x_urls(self) -> None:
+        invalid_urls = (
+            "http://x.com/xquik",
+            "https://example.com/xquik",
+            "https://x.com.example.org/xquik/status/123",
+        )
+        for url in invalid_urls:
+            with self.subTest(url=url):
+                with self.assertRaises(ValueError):
+                    apify_scraper.montar_payload_x_tweets(
+                        url,
+                        "profileTweets",
+                        10,
+                    )
+                with self.assertRaises(ValueError):
+                    apify_scraper.montar_payload_x_followers(
+                        url,
+                        "followers",
+                        10,
+                        None,
+                        False,
+                    )
 
 
 if __name__ == "__main__":

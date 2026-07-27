@@ -129,6 +129,8 @@ Use os dois Actors conforme a tarefa:
 - [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper): busca, posts, perfis, listas, artigos, respostas, citações, threads, retweeters e favoriters.
 - [X Follower Scraper](https://apify.com/xquik/x-follower-scraper): seguidores, seguindo, seguidores verificados, membros e seguidores de listas e membros de comunidades.
 
+Antes de rodar, mostre o Actor, os alvos, os limites e o teto monetário. Confira o preço atual no Store. Peça aprovação explícita. Sem aprovação, não execute.
+
 Rode o script compartilhado a partir da raiz:
 
 ```bash

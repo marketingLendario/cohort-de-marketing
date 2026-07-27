@@ -20,9 +20,11 @@ limitar o custo total da execução.
 Uso:
     python3 apify_scraper.py instagram-hashtag "autoestima50mais" --limit 30
     python3 apify_scraper.py tiktok-hashtag "menopausa" --limit 30
-    python3 apify_scraper.py instagram-profile "https://www.instagram.com/perfil/" --limit 30
+    python3 apify_scraper.py instagram-profile \
+        "https://www.instagram.com/perfil/" --limit 30
     python3 apify_scraper.py tiktok-profile "@perfil" --limit 30
-    python3 apify_scraper.py x-tweets "marketing digital lang:pt" --x-mode search --limit 30
+    python3 apify_scraper.py x-tweets "marketing digital lang:pt" \
+        --x-mode search --limit 30
     python3 apify_scraper.py x-followers "@perfil" --relation followers --limit 30
     python3 apify_scraper.py run apify~instagram-scraper --input '{"search":"x"}'
 
@@ -203,7 +205,10 @@ def cmd_instagram_profile(
     token: str,
     max_total_charge_usd: Optional[Decimal] = None,
 ):
-    """Perfil/posts: instagram-post-scraper (username[]) — instagram-scraper retorna not_found."""
+    """Coleta perfil e posts com instagram-post-scraper.
+
+    O instagram-scraper retorna not_found neste caminho.
+    """
     alvo = url.strip().rstrip("/")
     if "instagram.com" in alvo:
         user = alvo.split("instagram.com/")[-1].split("/")[0].lstrip("@")

@@ -163,6 +163,7 @@ Se você não é técnico ou a ferramenta travou, vá pela trilha manual — ela
    - Check do token: `APIFY_API_TOKEN` (ou `APIFY_API_KEY` — os dois nomes valem) no `.env` ou no ambiente. Sem token: conta gratuita em apify.com > Settings > API tokens.
    - Exemplos (rode com `python scripts/apify_scraper.py`; se `python` não existir, tente `python3` no Mac/Linux ou `py` no Windows): `instagram-profile "https://www.instagram.com/perfil/" --limit 20` · `tiktok-hashtag "tema" --limit 20` · `x-tweets "tema lang:pt" --x-mode search --limit 20 --max-total-charge-usd 1` · `x-followers "@perfil" --relation followers --limit 20 --max-total-charge-usd 1` · genérico: `run apify~instagram-scraper --input '{...}'`
    - Para X, use [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper) e [X Follower Scraper](https://apify.com/xquik/x-follower-scraper). Confira o preço atual antes de rodar.
+   - Antes de rodar, mostre o Actor, os alvos, `--limit`, `--max-items-per-target` quando houver e `--max-total-charge-usd`. Peça aprovação explícita. Sem aprovação, não execute.
    - Limite ENXUTO (10-30 itens): coleta pequena gasta menos cota. Defina também `--max-total-charge-usd`.
    - A saída é JSON com views, likes, caption, URL e data — leia e analise.
 

@@ -2,7 +2,7 @@
 
 import re
 from typing import Optional
-
+from urllib.parse import urlparse
 
 ACTOR_X_TWEETS = "xquik~x-tweet-scraper"
 ACTOR_X_FOLLOWERS = "xquik~x-follower-scraper"
@@ -32,6 +32,13 @@ X_RELATIONS = (
     "list_followers",
     "community_members",
 )
+_X_HOSTS = {
+    "mobile.twitter.com",
+    "twitter.com",
+    "www.twitter.com",
+    "www.x.com",
+    "x.com",
+}
 
 _PROFILE_MODES = {
     "profileTweets",
@@ -54,12 +61,23 @@ def _separar_alvos(alvo: str) -> list[str]:
 
 
 def _eh_url(alvo: str) -> bool:
-    return alvo.startswith(("https://", "http://"))
+    return "://" in alvo
+
+
+def _validar_url_x(alvo: str) -> str:
+    url = urlparse(alvo)
+    if url.scheme != "https":
+        raise ValueError(f"URL do X precisa usar HTTPS: {alvo}")
+    if (url.hostname or "").lower() not in _X_HOSTS:
+        raise ValueError(f"URL fora dos domínios esperados do X: {alvo}")
+    return alvo
 
 
 def _extrair_tweet_id(alvo: str) -> str:
     if alvo.isdigit():
         return alvo
+    if _eh_url(alvo):
+        _validar_url_x(alvo)
     encontrado = re.search(r"/status/(\d+)", alvo)
     if encontrado:
         return encontrado.group(1)
@@ -74,7 +92,7 @@ def _exigir_alvos(alvo: str) -> list[str]:
 
 
 def _separar_urls_e_valores(alvos: list[str]) -> tuple[list[str], list[str]]:
-    urls = [item for item in alvos if _eh_url(item)]
+    urls = [_validar_url_x(item) for item in alvos if _eh_url(item)]
     valores = [item for item in alvos if not _eh_url(item)]
     return urls, valores
 
@@ -160,12 +178,15 @@ def montar_payload_x_tweets(
         "outputVariant": "rich",
         "fieldStyle": "camelCase",
         "outputPreset": "flat",
+        "includeUnavailableFields": True,
     }
     campo_id = _TWEET_ID_FIELDS.get(modo)
     if campo_id:
         _adicionar_ids_de_post(payload, alvo, campo_id)
     else:
         _MODE_BUILDERS[modo](payload, alvo)
+    if modo == "search":
+        payload["includeSearchTerms"] = True
     if limite_por_alvo is not None:
         payload["maxItemsPerTarget"] = limite_por_alvo
     return payload
@@ -191,8 +212,9 @@ def montar_payload_x_followers(
         "maxItems": limite,
         "outputMode": "full",
         "includeTargetMetadata": True,
+        "includeUnavailableUsers": True,
     }
-    urls = [item for item in alvos if _eh_url(item)]
+    urls = [_validar_url_x(item) for item in alvos if _eh_url(item)]
     ids = [item for item in alvos if not _eh_url(item)]
     if urls:
         payload["startUrls"] = urls
