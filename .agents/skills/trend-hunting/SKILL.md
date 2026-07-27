@@ -63,7 +63,7 @@ Se não vier o nicho, **pergunte e PARE** até receber.
 
 Além do nicho, o usuário pode (opcionalmente) colar **links de concorrentes** para a skill puxar as tendências direto dos perfis deles. Logo após receber o nicho, pergunte:
 
-> Quer que eu também cace tendências a partir de concorrentes específicos? Cole os links dos perfis (Instagram, TikTok, YouTube ou LinkedIn) — um por linha. Eu uso o Apify para raspar os posts recentes deles e extrair os formatos que estão funcionando.
+> Quer que eu também cace tendências a partir de concorrentes específicos? Cole os links dos perfis (Instagram, TikTok, YouTube, LinkedIn ou X) - um por linha. Eu uso o Apify para raspar os posts recentes deles e extrair os formatos que estão funcionando.
 >
 > Se não tiver concorrentes em mente, é só dizer "não" que eu sigo só pelo nicho.
 
@@ -75,20 +75,20 @@ Além do nicho, o usuário pode (opcionalmente) colar **links de concorrentes** 
 
 ## Pré-requisitos
 
-1. **Apify configurado** (OBRIGATÓRIO) — a **chave** no `.env` (`APIFY_API_TOKEN` ou `APIFY_API_KEY`). **NÃO é MCP:** a coleta roda por **API REST direta** (chamada à `api.apify.com`, com o SEU token), do mesmo jeito que a `/conteudo-funil` faz pelo `scripts/apify_scraper.py`. Sem a chave a skill não coleta. Veja a seção **Setup do Apify** logo abaixo. É o que dá o scrape de Reels (Instagram), TikTok e perfis de concorrentes.
+1. **Apify configurado** (OBRIGATÓRIO) - a **chave** no `.env` (`APIFY_API_TOKEN` ou `APIFY_API_KEY`). **NÃO é MCP:** a coleta roda por **API REST direta** (chamada à `api.apify.com`, com o SEU token), do mesmo jeito que a `/conteudo-funil` faz pelo `scripts/apify_scraper.py`. Sem a chave a skill não coleta. Veja a seção **Setup do Apify** logo abaixo. É o que dá o scrape de Reels, TikTok, posts e audiências do X e perfis de concorrentes.
 2. **Nicho ou palavras-chave** definidas (5-10 termos)
-3. **Acesso a Twitter/X** (busca pública, sem login obrigatório)
+3. **Acesso público ao Twitter/X** (fallback quando a cota do Apify estourar)
 4. **Output do `/avatar-funil`** (recomendado) — para filtrar tendências relevantes ao perfil do cliente
 
 ---
 
 ## Setup do Apify (OBRIGATÓRIO — fazer 1 vez)
 
-Esta skill **depende do Apify** para raspar Instagram Reels, TikTok e perfis de concorrentes. A coleta é por **API REST direta** (chamada à `api.apify.com` com o SEU token) — **NÃO é MCP**: não precisa instalar servidor, nem `claude mcp add`, nem reiniciar nada. O único pré-requisito é a **chave** no `.env`. É o mesmo padrão da `/conteudo-funil`, que chama a API pelo `scripts/apify_scraper.py` (só stdlib do Python). Faça esse setup uma única vez; depois é só usar.
+Esta skill **depende do Apify** para raspar Instagram Reels, TikTok, X e perfis de concorrentes. A coleta é por **API REST direta** (chamada à `api.apify.com` com o SEU token) - **NÃO é MCP**: não precisa instalar servidor, nem `claude mcp add`, nem reiniciar nada. O único pré-requisito é a **chave** no `.env`. É o mesmo padrão da `/conteudo-funil`, que chama a API pelo `scripts/apify_scraper.py` (só stdlib do Python). Faça esse setup uma única vez; depois é só usar.
 
 ### É grátis?
 
-Sim, dá pra começar de graça. O plano **Free** da Apify não pede cartão e entrega **US$ 5 de crédito por mês**. Cada scrape consome um pouco desse crédito (centavos por post/perfil). Para uso leve de trend hunting (alguns perfis e dezenas de Reels por mês), os **US$ 5 grátis costumam bastar**. Se você for raspar muito toda semana, o crédito acaba e o próximo plano é o Starter (US$ 29/mês). Comece no Free e só suba se precisar.
+O Apify oferece opções gratuitas e pagas. Créditos, limites e preços podem mudar. Confirme o plano atual no console. Confira também o preço atual na página de cada Actor antes da execução. Sempre use `--limit` e `--max-total-charge-usd`.
 
 ### Passo 1 — Criar conta e pegar o token
 
@@ -116,11 +116,39 @@ grep -qE "APIFY_API_(TOKEN|KEY)=apify" .env 2>/dev/null && echo "chave ok" || ec
 
 - Se a **chave** estiver faltando, **PARE** e ajude a configurar (não caia para coleta manual — o Apify é pré-requisito desta skill):
 
-  > Esta skill precisa da sua chave do Apify para raspar Reels, TikTok e perfis de concorrentes, e ela ainda não está no `.env`. Siga o **Setup do Apify** na SKILL: criar conta (US$ 5 grátis, sem cartão) → pegar o token no **console.apify.com > Settings > Integrations > API tokens** → colar no `.env` como `APIFY_API_TOKEN=apify_api_...`. Quando terminar, rode `/trend-hunting [nicho]` de novo.
+  > Esta skill precisa da sua chave do Apify para raspar Reels, TikTok, X e perfis de concorrentes, e ela ainda não está no `.env`. Siga o **Setup do Apify** na SKILL: criar conta, pegar o token no **console.apify.com > Settings > Integrations > API tokens** e colar no `.env` como `APIFY_API_TOKEN=apify_api_...`. Quando terminar, rode `/trend-hunting [nicho]` de novo.
 
 - Se a chave estiver lá, siga o pipeline normalmente (a coleta usa a API REST com o script `apify_scraper.py`).
 
-> **Apify é central, nunca opcional — fallback só em cota estourada** (segue `.claude/skills/_shared/nunca-travar.md`). Se faltar a chave, o certo é **ajudar a configurar** (os passos acima), não pular. Só existe um caso de fallback: quando o Apify **realmente falha por cota mensal estourada** (os US$ 5 grátis do mês acabaram). Aí, avise em texto: *"A cota do Apify estourou este mês. Sigo pelas fontes que dão pra buscar manualmente (Twitter/X público, busca por hashtag no navegador) e retomo o scrape completo quando a cota renovar."* Nunca "pular Apify" por padrão nem falhar em silêncio. Glossário: *cota* (limite de crédito do mês); *fallback* (plano B).
+> **Apify é central, nunca opcional. O fallback só entra com cota estourada** (segue `.claude/skills/_shared/nunca-travar.md`). Se faltar a chave, o certo é **ajudar a configurar** (os passos acima), não pular. Só existe um caso de fallback: quando o Apify **realmente falha por cota mensal estourada**. Aí, avise em texto: *"A cota do Apify estourou este mês. Sigo pelas fontes que dão pra buscar manualmente (Twitter/X público, busca por hashtag no navegador) e retomo o scrape completo quando a cota renovar."* Nunca "pular Apify" por padrão nem falhar em silêncio. Glossário: *cota* (limite de crédito do mês); *fallback* (plano B).
+
+### Actors do X
+
+Use os dois Actors conforme a tarefa:
+
+- [X Tweet Scraper](https://apify.com/xquik/x-tweet-scraper): busca, posts, perfis, listas, artigos, respostas, citações, threads, retweeters e favoriters.
+- [X Follower Scraper](https://apify.com/xquik/x-follower-scraper): seguidores, seguindo, seguidores verificados, membros e seguidores de listas e membros de comunidades.
+
+Rode o script compartilhado a partir da raiz:
+
+```bash
+python3 .claude/skills/conteudo-funil/scripts/apify_scraper.py x-tweets \
+  "TERMO lang:pt min_faves:100 since:AAAA-MM-DD until:AAAA-MM-DD" \
+  --x-mode search --limit 30 --max-total-charge-usd 1
+
+python3 .claude/skills/conteudo-funil/scripts/apify_scraper.py x-followers \
+  "@concorrente1,@concorrente2" --relation followers \
+  --limit 200 --max-items-per-target 100 --overlap \
+  --max-total-charge-usd 1
+```
+
+Substitua datas, termos, perfis, limites e teto antes de executar. O limite global vale para toda a busca. Nas rotas explícitas com vários alvos, `--max-items-per-target` distribui a amostra. Valores não positivos são rejeitados. O modo `--overlap` mescla perfis repetidos e preserva as origens.
+
+`--x-mode` aceita `legacy`, `tweet`, `tweets`, `search`, `profileTweets`, `profileReplies`, `profileMedia`, `profileLikes`, `listTweets`, `article`, `replies`, `quotes`, `thread`, `retweeters` e `favoriters`.
+
+`--relation` aceita `followers`, `following`, `verified_followers`, `list_members`, `list_followers` e `community_members`.
+
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
 
 ---
 
@@ -147,10 +175,12 @@ A partir do nicho, gerar 5-10 termos de busca em 3 categorias:
 
 ### Etapa 2 — Scan nas fontes
 
-**A. Twitter/X** (busca pública)
-- Buscar cada termo
+**A. Twitter/X** (via X Tweet Scraper no Apify)
+- Calcular as datas exatas da janela de 14 dias
+- Buscar cada termo com `--x-mode search`
 - Filtrar posts dos últimos 14 dias com 100+ likes
 - Capturar: texto do post, formato (thread, single, vídeo), engajamento
+- Usar a busca pública só quando a cota do Apify estourar
 
 **B. Instagram Reels** (via Apify — obrigatório)
 - Buscar hashtags do nicho com o scraper de Instagram
@@ -166,9 +196,11 @@ A partir do nicho, gerar 5-10 termos de busca em 3 categorias:
 - Formato: carousel PDF, post longo, vídeo, enquete
 
 **E. Concorrentes** (só se o usuário colou links na ativação — via Apify)
-- Para cada perfil que o usuário colou, use o scraper Apify da plataforma certa (Instagram, TikTok, YouTube ou LinkedIn) para puxar os posts dos últimos 14 dias.
+- Para cada perfil que o usuário colou, use o scraper Apify da plataforma certa (Instagram, TikTok, YouTube, LinkedIn ou X) para puxar os posts dos últimos 14 dias.
 - Capture os mesmos campos das outras fontes (hook, formato, narrativa, CTA, engajamento) e **marque a origem como `[CONCORRENTE: @perfil]`** em cada exemplo.
 - Foque no **orgânico** do concorrente (o que ele posta). Anúncio pago é com a `/espiao-do-concorrente`.
+- Com 2+ perfis do X, use o X Follower Scraper com `--overlap`.
+- Trate a sobreposição como sinal de audiência, não como causalidade.
 
 ### Etapa 3 — Identificação de padrões
 
@@ -356,6 +388,7 @@ E recomende qual testar primeiro e por quê.
 
 **Fundação**
 - [ ] Apify configurado (chave `APIFY_API_TOKEN` ou `APIFY_API_KEY` no `.env`) — pré-requisito bloqueante
+- [ ] Preço atual conferido e execução limitada por itens e teto monetário
 - [ ] Nicho e palavras-chave definidos (5-10 termos)
 - [ ] Fontes scaneadas (Twitter/X + Reels + TikTok; LinkedIn se B2B; concorrentes se houver links)
 - [ ] Janela de 14 dias respeitada
