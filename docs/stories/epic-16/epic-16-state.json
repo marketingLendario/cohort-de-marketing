@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "epic-state-v1",
+  "epicId": "16",
+  "namespace": "PUB",
+  "title": "Projeto canonico como fonte de verdade",
+  "status": "Draft",
+  "verificationVerdict": "NOT_RUN",
+  "created": "2026-07-14",
+  "dependsOn": [
+    "GATE-0"
+  ],
+  "implementationAuthorized": false,
+  "waves": [
+    {
+      "id": "W1",
+      "name": "Contrato e round-trip",
+      "status": "planned",
+      "stories": [
+        {
+          "id": "16.W1.1",
+          "status": "Draft",
+          "dependsOn": []
+        },
+        {
+          "id": "16.W1.2",
+          "status": "Draft",
+          "dependsOn": [
+            "16.W1.1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "W2",
+      "name": "Artefatos e readiness",
+      "status": "planned",
+      "stories": [
+        {
+          "id": "16.W2.1",
+          "status": "Draft",
+          "dependsOn": [
+            "16.W1.1"
+          ]
+        },
+        {
+          "id": "16.W2.2",
+          "status": "Draft",
+          "dependsOn": [
+            "16.W1.1",
+            "16.W2.1"
+          ]
+        },
+        {
+          "id": "16.W2.3",
+          "status": "Draft",
+          "dependsOn": [
+            "16.W2.1",
+            "16.W2.2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "W3",
+      "name": "Release gate",
+      "status": "planned",
+      "stories": [
+        {
+          "id": "16.W3.1",
+          "status": "Draft",
+          "dependsOn": [
+            "16.W1.2",
+            "16.W2.2",
+            "16.W2.3"
+          ]
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,29 @@
+risks:
+  - name: public_private_contract_drift
+    description: Public and private surfaces can expose contradictory project or skill states.
+    severity: high
+    mitigation: Versioned releases, hashes, generated adapters and shared contract fixtures.
+  - name: capability_loss
+    description: Contract consolidation or refactoring can remove behavior already approved in Epics 8-16.
+    severity: high
+    mitigation: Baseline comparison and explicit non-regression gates in every epic.
+  - name: evidence_privacy
+    description: Jobs and evidence can retain secrets, PII or absolute paths.
+    severity: high
+    mitigation: Minimize and redact before persistence, then scan synthetic fixtures and outputs.
+  - name: recovery_regression
+    description: Performance work can weaken terminal transitions, cancellation or restart recovery.
+    severity: high
+    mitigation: Preserve Plans 001-005 as baseline and require fault injection before release.
+  - name: false_data_precision
+    description: Missing or incompatible metrics can be presented as a reliable time series.
+    severity: high
+    mitigation: Preserve source, seal, attribution window and missing status in all aggregations.
+  - name: big_bang_delivery
+    description: Cross-repository scope can delay validation until the end of the program.
+    severity: medium
+    mitigation: Execute in waves with contract-first dependencies and a pilot at each fan-in.
+  - name: external_ci_unavailable
+    description: GitHub Actions billing can prevent the remote quality gate from starting.
+    severity: medium
+    mitigation: Require a documented equivalent local gate and never convert missing CI into a PASS.
