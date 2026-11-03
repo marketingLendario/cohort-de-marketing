@@ -27,7 +27,7 @@ O painel abre no navegador em `http://127.0.0.1:4747/` (ou na próxima porta liv
 - Escuta somente em `127.0.0.1`; rejeita `Host` e `Origin` externos.
 - Toda rota `/api` exige um token novo a cada inicialização, entregue à página servida pelo próprio servidor.
 - A API só lê arquivos dentro de `projetos/`; `..`, caminhos absolutos e symlinks que escapam são recusados. `projetos/{slug}/.painel/` (logs dos runs) não é servido.
-- O Claude Code roda com as ferramentas `Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Skill` pré-aprovadas e o modo de permissão acima. Rode o painel só no seu computador.
+- O Claude Code roda com as ferramentas `Bash, Read, Write, Edit, Glob, Grep, WebFetch, WebSearch, Skill` pré-aprovadas e o modo de permissão acima. **Risco:** como `Bash`, `WebFetch` e `WebSearch` ficam liberados sem confirmação, uma página da web maliciosa lida por uma skill de pesquisa (concorrente, trend, swipe) pode tentar executar comandos na sua máquina, por exemplo ler o `.env` com a chave do Apify. Rode o painel só no seu computador, só com projetos seus, e não deixe a porta exposta na rede. O painel mostra esse aviso no topo da tela. Restringir as ferramentas por skill é uma melhoria futura.
 
 ## Estado e logs
 

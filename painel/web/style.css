@@ -15,7 +15,7 @@ h1 { font-size: 16px; margin: 0; }
 h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--suave); margin: 16px 0 6px; }
 #diag { font-size: 13px; color: var(--suave); }
 #diag.problema { color: var(--erro); }
-main { display: grid; grid-template-columns: 260px minmax(0, 1fr) 320px; height: calc(100vh - 49px); }
+main { display: grid; grid-template-columns: 260px minmax(0, 1fr) 320px; height: calc(100vh - 80px); }
 aside { padding: 12px 16px; overflow: auto; background: var(--painel); }
 #lateral { border-right: 1px solid var(--borda); }
 #arquivos { border-left: 1px solid var(--borda); }
@@ -58,3 +58,6 @@ ul { list-style: none; margin: 0; padding: 0; }
 @media (max-width: 900px) {
   main { grid-template-columns: 1fr; height: auto; }
 }
+
+#aviso { padding: 6px 16px; font-size: 12px; color: #92400e; background: #fffbeb; border-bottom: 1px solid #fcd34d; }
+@media (prefers-color-scheme: dark) { #aviso { color: #fcd34d; background: #292108; border-color: #78350f; } }
