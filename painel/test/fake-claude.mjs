@@ -12,6 +12,8 @@ const registro = { pid: process.pid, argv: args };
 const out = (o) => process.stdout.write(JSON.stringify(o) + '\n');
 
 function gravar() {
+  // Em modo de desenvolvimento (PAINEL_FAKE=1) o cwd e a raiz do repositorio: nao deixar lixo la.
+  if (process.env.PAINEL_FAKE === '1') return;
   appendFileSync(join(process.cwd(), 'fake-calls.jsonl'), JSON.stringify(registro) + '\n');
 }
 

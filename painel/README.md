@@ -10,7 +10,7 @@ Requisitos: Node 22+ e Claude Code instalado e com login (`claude`).
 node painel/server.mjs
 ```
 
-O painel abre no navegador em `http://127.0.0.1:4747/` (ou na próxima porta livre). Escolha o projeto de `projetos/{slug}/`, clique numa skill, escreva instruções opcionais e rode. Perguntas da skill viram botões; depois que o turno termina, a caixa de resposta permite pedir ajustes na mesma sessão.
+O painel abre no navegador em `http://127.0.0.1:4747/` (ou na próxima porta livre). Escolha o projeto de `projetos/{slug}/`, clique numa skill, escreva instruções opcionais e rode. Quando a skill usa a ferramenta de perguntas, as opções aparecem como botões, e depois que o turno termina a caixa de resposta permite continuar a mesma sessão. Esses dois recursos foram verificados só com o claude falso (veja "Limitações conhecidas").
 
 ## Variáveis de ambiente
 

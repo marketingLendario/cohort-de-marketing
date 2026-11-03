@@ -92,5 +92,5 @@ Multiusuário, hospedagem em nuvem, login, telas específicas de cada skill, apr
 
 ## Questões em aberto
 
-- Como detectar de forma confiável, no stream-json, que a skill está esperando uma resposta do usuário (a validar no primeiro protótipo do runner).
+- Como detectar de forma confiável, no stream-json, que a skill está esperando uma resposta do usuário (a validar no primeiro protótipo do runner). Estado em 2026-11-03: o parser trata `AskUserQuestion` como pergunta e qualquer turno concluído permite resposta livre via `--resume`, mas isso só foi exercitado com o claude falso; a verificação com o Claude Code real (skill que pergunta, e continuação de sessão) segue em aberto porque o limite de sessão da conta foi atingido durante o teste.
 - Se o aluno usa Codex em vez de Claude Code, o runner precisará de um adaptador; fora do núcleo por ora.
