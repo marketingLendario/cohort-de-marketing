@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="painel-token" content="{{TOKEN}}">
+<title>Painel do Funil</title>
+<link rel="stylesheet" href="/style.css">
+<script>
+  if (location.protocol === 'file:') {
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.innerHTML = '<div style="max-width:640px;margin:48px auto;padding:0 16px;font:16px/1.5 system-ui,sans-serif">'
+        + '<h1 style="font-size:20px">Abra o painel pelo servidor</h1>'
+        + '<p>Este arquivo não funciona aberto direto do Finder. No terminal, dentro da pasta do projeto, rode:</p>'
+        + '<pre style="background:#f5f5f4;padding:12px;border-radius:6px">node painel/server.mjs</pre>'
+        + '<p>O navegador abre sozinho em <code>http://127.0.0.1:4747/</code>. Se não abrir, copie o endereço que aparece no terminal.</p></div>';
+    });
+  }
+</script>
+</head>
+<body>
+<div id="app">
+  <aside id="lateral" aria-label="Cliente e arquivos">
+    <div class="marca">
+      <span class="marca-sinal" aria-hidden="true"></span>
+      <span>Painel do Funil</span>
+    </div>
+
+    <button id="nova-conversa" class="botao-linha" type="button">
+      <span aria-hidden="true">+</span> Nova conversa
+    </button>
+
+    <section class="bloco">
+      <label class="rotulo" for="sel-cliente">Cliente</label>
+      <div class="linha-cliente">
+        <select id="sel-cliente"></select>
+        <button id="novo-cliente" class="botao-icone" type="button" title="Cadastrar novo cliente" aria-label="Cadastrar novo cliente">+</button>
+      </div>
+      <form id="form-cliente" hidden>
+        <input id="nome-cliente" type="text" placeholder="Nome do cliente" autocomplete="off" required>
+        <div class="acoes-cliente">
+          <button type="button" id="cancelar-cliente" class="botao-texto">Cancelar</button>
+          <button type="submit" class="botao-primario">Cadastrar</button>
+        </div>
+        <p id="erro-cliente" class="erro-pequeno" hidden></p>
+      </form>
+    </section>
+
+    <section class="bloco bloco-arquivos">
+      <h2 class="rotulo">Arquivos do cliente</h2>
+      <ul id="arvore"></ul>
+    </section>
+
+    <footer class="rodape-lateral">
+      <div id="diag" role="status"></div>
+      <p id="aviso" role="note">Bash e web liberados sem confirmação. Use só no seu computador.</p>
+    </footer>
+  </aside>
+
+  <main id="centro">
+    <div class="barra-topo">
+      <button id="abrir-lateral" class="botao-icone so-celular" type="button" aria-label="Mostrar cliente e arquivos">☰</button>
+      <div id="cabecalho-run"></div>
+      <button id="abrir-historico" class="botao-icone so-celular" type="button" aria-label="Mostrar histórico">⟲</button>
+    </div>
+
+    <div id="log" aria-live="polite">
+      <div id="boas-vindas">
+        <p class="saudacao">O que vamos fazer por <span id="nome-saudacao">este cliente</span> hoje?</p>
+        <p class="dica">Escolha uma skill no botão <strong>Skills</strong> da barra abaixo ou digite <kbd>/</kbd> para buscar.</p>
+      </div>
+    </div>
+
+    <form id="composer" autocomplete="off">
+      <div id="popover-skills" hidden>
+        <input id="busca-skill" type="search" placeholder="Buscar skill" aria-label="Buscar skill">
+        <ul id="lista-skills" role="listbox" aria-label="Skills"></ul>
+      </div>
+      <div class="caixa">
+        <textarea id="campo" rows="1" placeholder="Escolha uma skill para começar"></textarea>
+        <div class="linha-acoes">
+          <button id="botao-skill" type="button" class="botao-skill" aria-haspopup="listbox">
+            <span aria-hidden="true">⌘</span> Skills
+          </button>
+          <span id="chip-skill" hidden>
+            <span id="chip-nome"></span>
+            <button id="tirar-skill" type="button" aria-label="Tirar a skill escolhida">×</button>
+          </span>
+          <span class="espaco"></span>
+          <button id="enviar" type="submit" class="botao-enviar" aria-label="Enviar">↑</button>
+        </div>
+      </div>
+      <p class="nota-composer">Enter envia · Shift+Enter quebra linha</p>
+    </form>
+  </main>
+
+  <aside id="historico" aria-label="Histórico do cliente">
+    <div class="historico-topo">
+      <h2 class="rotulo">Histórico do cliente</h2>
+      <button id="avaliar" class="botao-primario largo" type="button">Avaliar conta</button>
+      <button id="ver-anuncios" class="botao-secundario largo" type="button">Conta de anúncios</button>
+    </div>
+    <ol id="linha-tempo"></ol>
+  </aside>
+</div>
+
+<dialog id="janela-arquivo" aria-label="Arquivo">
+  <div class="janela-topo">
+    <span id="titulo-arquivo" class="mono"></span>
+    <button type="button" class="botao-icone" data-fechar aria-label="Fechar">×</button>
+  </div>
+  <div id="visualizador"></div>
+</dialog>
+
+<dialog id="janela-resumo" aria-label="Avaliação da conta">
+  <div id="resumo"></div>
+</dialog>
+
+<dialog id="janela-anuncios" aria-label="Conta de anúncios Meta">
+  <div id="anuncios"></div>
+</dialog>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>
