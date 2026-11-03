@@ -4,13 +4,15 @@ Interface HTML que roda as skills do cohort pelo Claude Code, sem usar o termina
 
 ## Como rodar
 
+Abra sempre pelo servidor. Abrir `painel/web/index.html` direto do Finder não funciona.
+
 Requisitos: Node 22+ e Claude Code instalado e com login (`claude`).
 
 ```bash
 node painel/server.mjs
 ```
 
-O painel abre no navegador em `http://127.0.0.1:4747/` (ou na próxima porta livre). Escolha o projeto de `projetos/{slug}/`, clique numa skill, escreva instruções opcionais e rode. Quando a skill usa a ferramenta de perguntas, as opções aparecem como botões, e depois que o turno termina a caixa de resposta permite continuar a mesma sessão. Esses dois recursos foram verificados só com o claude falso (veja "Limitações conhecidas").
+O painel abre no navegador em `http://127.0.0.1:4747/` (ou na próxima porta livre). Escolha o projeto de `projetos/{slug}/`, clique numa skill, escreva instruções opcionais e rode. Quando a skill usa a ferramenta de perguntas, as opções aparecem como botões, e depois que o turno termina a caixa de resposta permite continuar a mesma sessão. Os dois recursos foram verificados com o Claude Code real.
 
 ## Variáveis de ambiente
 
@@ -45,4 +47,4 @@ cd painel && npm test
 - Só Claude Code (não Codex).
 - Telas específicas por skill, redline/roteiro com comentário por trecho e painel de tráfego são os sub-projetos seguintes.
 - Verificado com o Claude Code real (2.1.185): `/status-funil` roda em modo headless (`claude -p "/skill ..."`), com streaming, estado "Concluído" e custo. O resultado final de um turno pode chegar cerca de um minuto depois do texto final, e o estado continua "Executando" nesse intervalo.
-- Não verificado com o Claude Code real: a resposta de acompanhamento na mesma sessão (`--resume`) e o cartão de pergunta (`AskUserQuestion`). A skill `status-funil` não faz perguntas, e o limite de sessão da conta foi atingido durante o teste; o painel mostrou a mensagem do limite como erro. Ambos seguem cobertos apenas pelos testes com o claude falso.
+- Verificado com o Claude Code real em 2026-11-03: a resposta de acompanhamento continua a mesma sessão (`--resume`, mesmo `session_id` e contexto preservado). Em modo headless, `AskUserQuestion` aparece no stream como pergunta, a ferramenta é recusada pelo próprio Claude Code e o turno termina; o painel mostra as opções como botões e envia a escolha na mesma sessão. Se o texto das instruções parecer uma ordem para o modelo ("faça X antes de tudo"), ele pode tratá-lo como injeção e ignorar; escreva as instruções como contexto do pedido.

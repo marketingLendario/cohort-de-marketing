@@ -6,6 +6,17 @@
 <meta name="painel-token" content="{{TOKEN}}">
 <title>Painel do Funil</title>
 <link rel="stylesheet" href="/style.css">
+<script>
+  if (location.protocol === 'file:') {
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.innerHTML = '<div style="max-width:640px;margin:48px auto;padding:0 16px;font:16px/1.5 system-ui,sans-serif">'
+        + '<h1 style="font-size:20px">Abra o painel pelo servidor</h1>'
+        + '<p>Este arquivo não funciona aberto direto do Finder. No terminal, dentro da pasta do projeto, rode:</p>'
+        + '<pre style="background:#f5f5f4;padding:12px;border-radius:6px">node painel/server.mjs</pre>'
+        + '<p>O navegador abre sozinho em <code>http://127.0.0.1:4747/</code>. Se não abrir, copie o endereço que aparece no terminal.</p></div>';
+    });
+  }
+</script>
 </head>
 <body>
 <header>
