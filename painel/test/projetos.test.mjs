@@ -72,7 +72,7 @@ test('lerArquivo bloqueia .painel via symlink, caixa e barra invertida', () => {
 test('lerFrontmatter remove aspas, suporta blocos | e > e mantém sem aspas', () => {
   assert.equal(lerFrontmatter('---\ndescription: "Estrutura X"\n---\n').description, 'Estrutura X');
   assert.equal(lerFrontmatter("---\ndescription: 'Estrutura Y'\n---\n").description, 'Estrutura Y');
-  assert.equal(lerFrontmatter('---\nname: a\ndescription: |\n  linha um\n  linha dois\n\nother: z\n---\n').description, 'linha um\nlinha dois');
+  assert.equal(lerFrontmatter('---\nname: a\ndescription: |\n  linha um\n  linha dois\n\nother: z\n---\n').description, 'linha um linha dois');
   assert.equal(lerFrontmatter('---\ndescription: >-\n  linha um\n  linha dois\nname: a\n---\n').description, 'linha um linha dois');
   assert.equal(lerFrontmatter('---\ndescription: >\n  a\n  b\n---\n').description, 'a b');
   assert.equal(lerFrontmatter('---\ndescription: Sem aspas\n---\n').description, 'Sem aspas');
@@ -83,4 +83,15 @@ test('listarSkills remove aspas da description', () => {
   mkdirSync(join(r, '.claude', 'skills', 'quote'), { recursive: true });
   writeFileSync(join(r, '.claude', 'skills', 'quote', 'SKILL.md'), '---\nname: quote\ndescription: "Com aspas"\n---\n');
   assert.equal(listarSkills(r).find((s) => s.name === 'quote').description, 'Com aspas');
+});
+
+test('projetoDir rejeita arquivo regular com nome de slug valido', () => {
+  const r = repo();
+  assert.throws(() => projetoDir(r, 'solto.txt'), CaminhoInvalido);
+});
+
+test('lerFrontmatter colapsa descricao multiparagrafo (formato real do copy-funil) e continuacao de escalar simples', () => {
+  const d = lerFrontmatter('---\nname: copy-funil\ndescription: |\n  A FUNDACAO da copy\n  do funil.\n\n  O resultado vira a fonte.\n---\n').description;
+  assert.equal(d, 'A FUNDACAO da copy do funil. O resultado vira a fonte.');
+  assert.equal(lerFrontmatter('---\ndescription: foo\n  bar\nname: x\n---\n').description, 'foo bar');
 });

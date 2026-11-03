@@ -21,9 +21,11 @@ export function lerFrontmatter(txt) {
       while (i + 1 < linhas.length && (/^\s/.test(linhas[i + 1]) || linhas[i + 1] === '')) {
         corpo.push(linhas[++i].trim());
       }
-      o[k[1]] = (bloco[1] === '>' ? corpo.filter(Boolean).join(' ') : corpo.join('\n')).trim();
+      o[k[1]] = corpo.join(' ').replace(/\s+/g, ' ').trim();
     } else {
-      o[k[1]] = tirarAspas(v);
+      const partes = [v];
+      while (i + 1 < linhas.length && /^\s+\S/.test(linhas[i + 1])) partes.push(linhas[++i].trim());
+      o[k[1]] = partes.length > 1 ? partes.join(' ').replace(/\s+/g, ' ').trim() : tirarAspas(v);
     }
   }
   return o;

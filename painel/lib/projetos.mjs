@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { resolveInside, CaminhoInvalido } from './paths.mjs';
 
@@ -19,6 +19,8 @@ export function projetoDir(repoRoot, slug) {
     throw new CaminhoInvalido('projeto invalido');
   }
   const dir = resolveInside(base, slug);
-  if (!existsSync(dir)) throw new CaminhoInvalido('projeto nao encontrado');
+  let st;
+  try { st = statSync(dir); } catch { throw new CaminhoInvalido('projeto nao encontrado'); }
+  if (!st.isDirectory()) throw new CaminhoInvalido('projeto nao encontrado');
   return dir;
 }
