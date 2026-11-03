@@ -1,8 +1,11 @@
 // Barra de escrita fixa: escolhe a skill (botão Skills ou "/" no início do texto)
 // e envia. Com skill escolhida, inicia uma execução nova; sem skill, responde à
-// conversa aberta.
+// conversa aberta. As skills aparecem em blocos de uso (blocos.js).
+import { agruparSkills } from './blocos.js';
+
 export function criarComposer({ form, campo, botaoSkill, chip, chipNome, tirarSkill, popover, busca, lista, enviar, aoEnviar }) {
   let skills = [];
+  let sugeridas = [];
   let skill = null;
   let marcado = 0;
   let filtradas = [];
@@ -34,8 +37,8 @@ export function criarComposer({ form, campo, botaoSkill, chip, chipNome, tirarSk
   }
 
   function desenharLista() {
-    const f = filtro().trim().toLowerCase();
-    filtradas = skills.filter((s) => s.name.includes(f) || s.description.toLowerCase().includes(f));
+    const grupos = agruparSkills(skills, { filtro: filtro(), sugeridas });
+    filtradas = grupos.flatMap((g) => g.itens);
     marcado = Math.min(marcado, Math.max(filtradas.length - 1, 0));
     lista.replaceChildren();
     if (filtradas.length === 0) {
@@ -45,22 +48,39 @@ export function criarComposer({ form, campo, botaoSkill, chip, chipNome, tirarSk
       lista.append(li);
       return;
     }
-    filtradas.forEach((s, i) => {
-      const li = document.createElement('li');
-      li.setAttribute('role', 'option');
-      li.setAttribute('aria-selected', String(i === marcado));
-      const nome = document.createElement('span');
-      nome.className = 'nome';
-      nome.textContent = `/${s.name}`;
-      const desc = document.createElement('span');
-      desc.className = 'desc';
-      desc.textContent = s.description;
-      li.title = s.description;
-      li.append(nome, desc);
-      li.addEventListener('mousedown', (e) => { e.preventDefault(); escolher(s.name); });
-      lista.append(li);
-    });
-    lista.children[marcado]?.scrollIntoView({ block: 'nearest' });
+    let i = 0;
+    let marcadoLi = null;
+    for (const g of grupos) {
+      const cab = document.createElement('li');
+      cab.className = 'grupo';
+      cab.setAttribute('role', 'presentation');
+      cab.textContent = g.titulo;
+      lista.append(cab);
+      for (const s of g.itens) {
+        const indice = i++;
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.setAttribute('aria-selected', String(indice === marcado));
+        const nome = document.createElement('span');
+        nome.className = 'nome';
+        nome.textContent = `/${s.name}`;
+        const desc = document.createElement('span');
+        desc.className = 'desc';
+        desc.textContent = s.description;
+        li.title = s.description;
+        li.append(nome, desc);
+        li.addEventListener('mousedown', (e) => { e.preventDefault(); escolher(s.name); });
+        li.addEventListener('mousemove', () => {
+          if (marcado === indice) return;
+          marcado = indice;
+          for (const o of lista.querySelectorAll('[role="option"]')) o.setAttribute('aria-selected', 'false');
+          li.setAttribute('aria-selected', 'true');
+        });
+        if (indice === marcado) marcadoLi = li;
+        lista.append(li);
+      }
+    }
+    marcadoLi?.scrollIntoView({ block: 'nearest' });
   }
 
   function abrirPopover(focarBusca) {
@@ -136,6 +156,7 @@ export function criarComposer({ form, campo, botaoSkill, chip, chipNome, tirarSk
 
   return {
     definirSkills(lista) { skills = lista; },
+    definirSugestoes(lista) { sugeridas = lista; },
     escolher(nome) { escolher(nome); },
     abrirSkills() { abrirPopover(true); },
     definirEstado(novo) { estado = { ...estado, ...novo }; atualizar(); },

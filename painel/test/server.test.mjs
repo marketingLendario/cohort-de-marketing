@@ -395,3 +395,10 @@ test('GET /api/projetos/:slug/resumo devolve as etapas e as execuções do clien
   assert.equal(typeof resumo.execucoes.total, 'number');
   assert.equal((await chamar('/api/projetos/nao-existe/resumo')).status, 400);
 });
+
+test('GET /api/projetos/:slug/anuncios responde mesmo sem dados coletados', async () => {
+  const r = await chamar('/api/projetos/demo/anuncios');
+  assert.equal(r.status, 200);
+  assert.deepEqual(await r.json(), { disponivel: false });
+  assert.equal((await chamar('/api/projetos/nao-existe/anuncios')).status, 400);
+});

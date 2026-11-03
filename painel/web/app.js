@@ -4,6 +4,7 @@ import { criarArquivos } from './arquivos.js';
 import { criarHistorico } from './historico.js';
 import { criarComposer } from './composer.js';
 import { criarResumo } from './resumo.js';
+import { criarAnuncios } from './anuncios.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -35,9 +36,7 @@ const composer = criarComposer({
   aoEnviar: async ({ skill, texto }) => {
     if (!cliente) return;
     if (skill) {
-      const meta = await api('/api/runs', { metodo: 'POST', corpo: { skill, projeto: cliente, args: texto } });
-      await visao.abrir(meta.id);
-      historico.carregar();
+      await iniciarRun(skill, texto);
     } else {
       await visao.responder(texto);
     }
@@ -46,7 +45,7 @@ const composer = criarComposer({
 
 const visao = criarVisaoRun({
   cabecalho: $('#cabecalho-run'), log: $('#log'), boasVindas: $('#boas-vindas'),
-  aoMudar: () => historico.carregar(),
+  aoMudar: () => { historico.carregar(); atualizarSugestoes(); },
   aoArquivosMudarem: () => arquivos.recarregar(),
   aoEstado: (meta) => composer.definirEstado({ podeResponder: visao?.podeResponder() ?? false, temCliente: Boolean(cliente), runAberto: Boolean(meta) }),
 });
@@ -56,6 +55,30 @@ const resumo = criarResumo({
   aoAbrirArquivo: (caminho) => arquivos.abrirArquivo(caminho),
   aoRodarSkill: (skill) => { visao.fechar(); composer.escolher(skill); },
 });
+
+async function iniciarRun(skill, args) {
+  const meta = await api('/api/runs', { metodo: 'POST', corpo: { skill, projeto: cliente, args } });
+  await visao.abrir(meta.id);
+  historico.carregar();
+}
+
+const anuncios = criarAnuncios({
+  janela: $('#janela-anuncios'), alvo: $('#anuncios'), obterProjeto: () => cliente,
+  aoAbrirArquivo: (caminho) => arquivos.abrirArquivo(caminho),
+  aoAnalisar: () => iniciarRun('analista-de-dados',
+    'Quero entender a conta de anúncios Meta deste cliente: campanhas, gastos e resultados, com o painel de dados no fim.')
+    .catch((e) => alert(e.message)),
+});
+
+// A sugestão do seletor de skills é o próximo passo do funil deste cliente.
+async function atualizarSugestoes() {
+  const slug = cliente;
+  if (!slug) { composer.definirSugestoes([]); return; }
+  try {
+    const r = await api(`/api/projetos/${slug}/resumo`);
+    if (slug === cliente) composer.definirSugestoes(r.proxima ? [r.proxima.skill] : []);
+  } catch { composer.definirSugestoes([]); }
+}
 
 async function diagnostico() {
   const alvo = $('#diag');
@@ -91,6 +114,8 @@ async function trocarCliente(slug) {
   if (cliente) lembrar('painel.cliente', cliente);
   $('#nome-saudacao').textContent = cliente ?? 'este cliente';
   $('#avaliar').disabled = !cliente;
+  $('#ver-anuncios').disabled = !cliente;
+  atualizarSugestoes();
   visao.fechar();
   arquivos.recarregar();
   await historico.carregar();
@@ -114,6 +139,7 @@ $('#nova-conversa').addEventListener('click', () => {
   composer.abrirSkills();
 });
 $('#avaliar').addEventListener('click', () => { fecharGavetas(); resumo.abrir(); });
+$('#ver-anuncios').addEventListener('click', () => { fecharGavetas(); anuncios.abrir(); });
 $('#abrir-lateral').addEventListener('click', () => $('#lateral').classList.toggle('aberto'));
 $('#abrir-historico').addEventListener('click', () => $('#historico').classList.toggle('aberto'));
 for (const b of document.querySelectorAll('[data-fechar]')) {

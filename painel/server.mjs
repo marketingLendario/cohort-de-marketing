@@ -6,6 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { CaminhoInvalido, resolveInside } from './lib/paths.mjs';
 import { criarProjeto, listarProjetos, projetoDir } from './lib/projetos.mjs';
 import { resumoProjeto } from './lib/resumo.mjs';
+import { resumoAnuncios } from './lib/anuncios.mjs';
 import { listarArquivos, lerArquivo } from './lib/arquivos.mjs';
 import { listarSkills } from './lib/skills.mjs';
 import { RunManager, ErroRequisicao } from './lib/runner.mjs';
@@ -166,6 +167,9 @@ export function criarServidor({ repoRoot, runManager, token, diagnostico }) {
       }
       if ((m = caminho.match(/^\/api\/projetos\/([^/]+)\/runs$/))) {
         return json(res, 200, { runs: runManager.listar(m[1]) });
+      }
+      if ((m = caminho.match(/^\/api\/projetos\/([^/]+)\/anuncios$/))) {
+        return json(res, 200, resumoAnuncios(projetoDir(repoRoot, m[1])));
       }
       if ((m = caminho.match(/^\/api\/projetos\/([^/]+)\/resumo$/))) {
         return json(res, 200, resumoProjeto(projetoDir(repoRoot, m[1]), runManager.listar(m[1])));

@@ -13,6 +13,7 @@
   --atencao: #9a6a12;
   --atencao-suave: #fbf1dc;
   --sombra: 0 1px 2px rgba(31, 30, 28, .06), 0 8px 24px rgba(31, 30, 28, .06);
+  --grafico: #c2603d;
   --serif: ui-serif, "Iowan Old Style", Charter, Georgia, serif;
   --sans: ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -35,6 +36,7 @@
     --atencao: #e3b259;
     --atencao-suave: #3a3020;
     --sombra: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    --grafico: #d36f4f;
     color-scheme: dark;
   }
 }
@@ -56,6 +58,9 @@ kbd { font-family: var(--mono); font-size: 12px; padding: 1px 5px; border: 1px s
 .botao-primario { background: var(--acento); color: #fff; border: 0; border-radius: 8px; padding: 7px 14px; font-weight: 500; }
 .botao-primario:hover { filter: brightness(1.06); }
 .botao-primario.largo { width: 100%; padding: 9px 14px; }
+.botao-secundario { background: var(--cartao); color: var(--texto); border: 1px solid var(--linha); border-radius: 8px; padding: 8px 14px; font-weight: 500; }
+.botao-secundario:hover { border-color: var(--suave); }
+.botao-secundario.largo { width: 100%; }
 .botao-texto { background: none; border: 0; color: var(--suave); padding: 6px 8px; border-radius: 6px; }
 .botao-texto:hover { color: var(--texto); background: var(--linha); }
 .botao-icone { width: 32px; height: 32px; flex: none; display: grid; place-items: center; background: none; border: 1px solid var(--linha); border-radius: 8px; color: var(--suave); font-size: 16px; line-height: 1; }
@@ -152,6 +157,8 @@ kbd { font-family: var(--mono); font-size: 12px; padding: 1px 5px; border: 1px s
 #popover-skills { position: absolute; left: 20px; right: 20px; bottom: calc(100% - 6px); max-width: 520px; margin-inline: auto; background: var(--cartao); border: 1px solid var(--linha); border-radius: 14px; box-shadow: var(--sombra); padding: 8px; display: flex; flex-direction: column; gap: 6px; max-height: min(420px, 60vh); z-index: 5; }
 #busca-skill { padding: 8px 10px; border: 1px solid var(--linha); border-radius: 9px; background: var(--fundo); }
 #lista-skills { overflow: auto; min-height: 0; }
+#lista-skills li.grupo { cursor: default; padding: 10px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--suave); }
+#lista-skills li.grupo:first-child { padding-top: 4px; }
 #lista-skills li { padding: 7px 10px; border-radius: 8px; cursor: pointer; }
 #lista-skills li[aria-selected="true"] { background: var(--acento-suave); }
 #lista-skills .nome { font-family: var(--mono); font-size: 13px; }
@@ -235,6 +242,60 @@ dialog::backdrop { background: rgba(31, 30, 28, .35); backdrop-filter: blur(2px)
 .link-acao { background: none; border: 0; padding: 0; color: var(--acento); font-weight: 500; }
 .link-acao:hover { text-decoration: underline; }
 
+/* ---------- conta de anúncios ---------- */
+#janela-anuncios { width: min(1120px, 95vw); max-height: 92vh; overflow: hidden; }
+#anuncios { padding: 28px 32px 32px; overflow: auto; max-height: 92vh; display: flex; flex-direction: column; gap: 18px; }
+#anuncios .resumo-topo { margin-bottom: 0; }
+.acoes-topo { display: flex; align-items: center; gap: 8px; }
+.selo-exemplo { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 8px; border-radius: 999px; color: var(--atencao); background: var(--atencao-suave); }
+.indicadores { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.indicador { background: var(--cartao); border: 1px solid var(--linha); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.rotulo-indicador { font-size: 12px; color: var(--suave); }
+.indicador strong { font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.1; letter-spacing: -.01em; }
+.variacao { font-size: 12px; font-weight: 500; color: var(--suave); }
+.variacao.bom { color: var(--ok); }
+.variacao.ruim { color: var(--erro); }
+.nota-variacao { margin: -8px 0 0; font-size: 12px; color: var(--suave); }
+.grade-anuncios { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 14px; }
+.grafico { position: relative; }
+.grafico svg { width: 100%; height: auto; display: block; overflow: visible; }
+.grafico .grade { stroke: var(--linha); stroke-width: 1; }
+.grafico .eixo { fill: var(--suave); font-size: 11px; font-family: var(--sans); }
+.grafico .area { fill: var(--grafico); opacity: .12; }
+.grafico .linha { fill: none; stroke: var(--grafico); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.grafico .cruz { stroke: var(--suave); stroke-width: 1; stroke-dasharray: 3 3; }
+.grafico .ponto-grafico { fill: var(--grafico); stroke: var(--cartao); stroke-width: 2; }
+.dica-grafico { position: absolute; top: 0; transform: translateX(-50%); display: flex; flex-direction: column; gap: 1px; padding: 8px 10px; border-radius: 10px; background: var(--texto); color: var(--fundo); font-size: 12px; pointer-events: none; white-space: nowrap; box-shadow: var(--sombra); }
+.funil-anuncios { display: flex; flex-direction: column; gap: 12px; }
+.funil-texto { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.funil-texto strong { font-variant-numeric: tabular-nums; }
+.funil-trilha { height: 8px; border-radius: 4px; background: var(--lateral); margin-top: 4px; overflow: hidden; }
+.funil-trilha i { display: block; height: 100%; border-radius: 4px; background: var(--grafico); }
+.funil-taxa { display: block; font-size: 11.5px; color: var(--suave); margin-top: 2px; }
+.rolagem-tabela { overflow-x: auto; }
+.tabela-campanhas { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tabela-campanhas th { text-align: left; font-weight: 500; font-size: 12px; color: var(--suave); padding: 0 10px 8px; border-bottom: 1px solid var(--linha); white-space: nowrap; }
+.tabela-campanhas td { padding: 10px; border-bottom: 1px solid var(--linha); vertical-align: middle; }
+.tabela-campanhas tr:last-child td { border-bottom: 0; }
+.tabela-campanhas .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tabela-campanhas th:not(:first-child) { text-align: right; }
+.nome-campanha { display: block; font-weight: 500; }
+.situacao { font-size: 11.5px; color: var(--suave); }
+.situacao.ativa { color: var(--ok); }
+.situacao.ativa::before { content: "● "; }
+.situacao.pausada::before { content: "❚❚ "; font-size: 9px; }
+.barra-inline { display: block; height: 4px; margin-top: 5px; margin-left: auto; width: 96px; border-radius: 2px; background: var(--lateral); overflow: hidden; }
+.barra-inline i { display: block; height: 100%; margin-left: auto; border-radius: 2px; background: var(--grafico); }
+.sintese { font-family: var(--serif); font-size: 16px; line-height: 1.6; margin: 0 0 14px; }
+.especialistas { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.especialista { border: 1px solid var(--linha); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; background: var(--fundo); }
+.especialista .papel { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--acento); }
+.especialista strong { font-weight: 600; font-size: 14px; }
+.especialista p { margin: 0; font-size: 13px; color: var(--suave); }
+.vazio-anuncios { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.vazio-anuncios h3 { font-family: var(--serif); font-weight: 500; font-size: 20px; margin: 0; }
+.vazio-anuncios p { margin: 0; color: var(--suave); max-width: 640px; }
+
 /* ---------- telas menores ---------- */
 .so-celular { display: none; }
 @media (max-width: 1080px) {
@@ -243,6 +304,8 @@ dialog::backdrop { background: rgba(31, 30, 28, .35); backdrop-filter: blur(2px)
   #historico.aberto { transform: none; }
   #abrir-historico { display: grid; }
   .resumo-grade { grid-template-columns: 1fr; }
+  .indicadores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grade-anuncios { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
   #app { grid-template-columns: minmax(0, 1fr); }
@@ -251,7 +314,9 @@ dialog::backdrop { background: rgba(31, 30, 28, .35); backdrop-filter: blur(2px)
   #abrir-lateral { display: grid; }
   .barra-topo, #log, #composer { padding-left: 16px; padding-right: 16px; }
   #popover-skills { left: 16px; right: 16px; }
-  #resumo { padding: 20px 16px; }
+  #resumo, #anuncios { padding: 20px 16px; }
+  .indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .resumo-topo { flex-wrap: wrap; }
   .resumo-topo h2 { font-size: 26px; }
 }
 @media (prefers-reduced-motion: reduce) {
