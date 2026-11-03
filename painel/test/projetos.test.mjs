@@ -1,11 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { listarProjetos, projetoDir } from '../lib/projetos.mjs';
 import { listarArquivos, lerArquivo } from '../lib/arquivos.mjs';
-import { listarSkills } from '../lib/skills.mjs';
+import { listarSkills, lerFrontmatter } from '../lib/skills.mjs';
 import { CaminhoInvalido } from '../lib/paths.mjs';
 
 function repo() {
@@ -58,4 +58,29 @@ test('lerArquivo devolve conteúdo e mime; bloqueia .painel e ..', () => {
 test('listarSkills lê frontmatter e ignora _shared', () => {
   assert.deepEqual(listarSkills(repo()),
     [{ name: 'avatar-funil', description: 'Faz pesquisa de avatar' }]);
+});
+
+test('lerArquivo bloqueia .painel via symlink, caixa e barra invertida', () => {
+  const r = repo();
+  const dir = projetoDir(r, 'alfa');
+  symlinkSync(join(dir, '.painel'), join(dir, 'atalho'), 'dir');
+  assert.throws(() => lerArquivo(dir, 'atalho/meta.json'), CaminhoInvalido);
+  assert.throws(() => lerArquivo(dir, '.PAINEL/meta.json'), (e) => e instanceof CaminhoInvalido || e.code === 'ENOENT');
+  assert.throws(() => lerArquivo(dir, '.painel\\meta.json'), (e) => e instanceof CaminhoInvalido || e.code === 'ENOENT');
+});
+
+test('lerFrontmatter remove aspas, suporta blocos | e > e mantém sem aspas', () => {
+  assert.equal(lerFrontmatter('---\ndescription: "Estrutura X"\n---\n').description, 'Estrutura X');
+  assert.equal(lerFrontmatter("---\ndescription: 'Estrutura Y'\n---\n").description, 'Estrutura Y');
+  assert.equal(lerFrontmatter('---\nname: a\ndescription: |\n  linha um\n  linha dois\n\nother: z\n---\n').description, 'linha um\nlinha dois');
+  assert.equal(lerFrontmatter('---\ndescription: >-\n  linha um\n  linha dois\nname: a\n---\n').description, 'linha um linha dois');
+  assert.equal(lerFrontmatter('---\ndescription: >\n  a\n  b\n---\n').description, 'a b');
+  assert.equal(lerFrontmatter('---\ndescription: Sem aspas\n---\n').description, 'Sem aspas');
+});
+
+test('listarSkills remove aspas da description', () => {
+  const r = repo();
+  mkdirSync(join(r, '.claude', 'skills', 'quote'), { recursive: true });
+  writeFileSync(join(r, '.claude', 'skills', 'quote', 'SKILL.md'), '---\nname: quote\ndescription: "Com aspas"\n---\n');
+  assert.equal(listarSkills(r).find((s) => s.name === 'quote').description, 'Com aspas');
 });

@@ -1,13 +1,30 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+function tirarAspas(v) {
+  const m = v.match(/^(["'])([\s\S]*)\1$/);
+  return m ? m[2] : v;
+}
+
 export function lerFrontmatter(txt) {
   const m = txt.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!m) return {};
   const o = {};
-  for (const linha of m[1].split(/\r?\n/)) {
-    const k = linha.match(/^([A-Za-z_-]+):\s*(.*)$/);
-    if (k) o[k[1]] = k[2].trim();
+  const linhas = m[1].split(/\r?\n/);
+  for (let i = 0; i < linhas.length; i++) {
+    const k = linhas[i].match(/^([A-Za-z_-]+):\s*(.*)$/);
+    if (!k) continue;
+    const v = k[2].trim();
+    const bloco = v.match(/^([|>])[+-]?$/);
+    if (bloco) {
+      const corpo = [];
+      while (i + 1 < linhas.length && (/^\s/.test(linhas[i + 1]) || linhas[i + 1] === '')) {
+        corpo.push(linhas[++i].trim());
+      }
+      o[k[1]] = (bloco[1] === '>' ? corpo.filter(Boolean).join(' ') : corpo.join('\n')).trim();
+    } else {
+      o[k[1]] = tirarAspas(v);
+    }
   }
   return o;
 }

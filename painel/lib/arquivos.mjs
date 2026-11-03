@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { extname, join } from 'node:path';
+import { readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import { extname, join, relative } from 'node:path';
 import { resolveInside, CaminhoInvalido } from './paths.mjs';
 
 const IGNORAR = new Set(['.painel', '.git', 'node_modules']);
@@ -27,7 +27,7 @@ export function listarArquivos(dir, { maxProfundidade = 6, maxItens = 2000 } = {
       .sort((a, b) => a.name.localeCompare(b.name));
     for (const d of entradas) {
       if (itens.length >= maxItens) return;
-      if (IGNORAR.has(d.name) || d.isSymbolicLink()) continue;
+      if (IGNORAR.has(d.name.toLowerCase()) || d.isSymbolicLink()) continue;
       const r = rel ? `${rel}/${d.name}` : d.name;
       if (d.isDirectory()) {
         itens.push({ path: r, tipo: 'dir' });
@@ -42,10 +42,12 @@ export function listarArquivos(dir, { maxProfundidade = 6, maxItens = 2000 } = {
 }
 
 export function lerArquivo(dir, rel) {
-  if (typeof rel !== 'string' || rel.split('/').some((p) => IGNORAR.has(p))) {
+  if (typeof rel !== 'string') throw new CaminhoInvalido('caminho nao permitido');
+  const abs = resolveInside(dir, rel);
+  const segmentos = relative(realpathSync(dir), abs).split(/[\\/]+/);
+  if (segmentos.some((p) => IGNORAR.has(p.toLowerCase()))) {
     throw new CaminhoInvalido('caminho nao permitido');
   }
-  const abs = resolveInside(dir, rel);
   const st = statSync(abs);
   if (!st.isFile()) throw new CaminhoInvalido('nao e arquivo');
   if (st.size > MAX_BYTES) throw new CaminhoInvalido('arquivo grande demais');
