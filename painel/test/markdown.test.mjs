@@ -30,3 +30,26 @@ test('só links http(s) viram âncora', () => {
 test('não entra em loop com linhas estranhas', () => {
   assert.doesNotThrow(() => renderMarkdown('#\n#hashtag\n- \n```\nsem fechar'));
 });
+
+test('conteúdo de code span não é reprocessado (globs em spans separados)', () => {
+  const html = renderMarkdown('`*.md` e `*.js`');
+  assert.match(html, /<p><code>\*\.md<\/code> e <code>\*\.js<\/code><\/p>/);
+  assert.ok(!html.includes('<em>'));
+});
+
+test('link em markdown dentro de code span fica literal', () => {
+  const html = renderMarkdown('`[x](https://a.com)`');
+  assert.ok(!html.includes('<a '));
+  assert.match(html, /<code>\[x\]\(https:\/\/a\.com\)<\/code>/);
+});
+
+test('asteriscos na URL não injetam em/strong no href', () => {
+  const html = renderMarkdown('[v](https://a.com/*b*/x)');
+  assert.match(html, /<a href="https:\/\/a\.com\/\*b\*\/x" [^>]*>v<\/a>/);
+  assert.ok(!html.includes('<em>'));
+});
+
+test('negrito e itálico fora de code continuam funcionando', () => {
+  const html = renderMarkdown('**forte** e *ênfase* com `*x*`');
+  assert.match(html, /<strong>forte<\/strong> e <em>ênfase<\/em> com <code>\*x\*<\/code>/);
+});

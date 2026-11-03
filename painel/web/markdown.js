@@ -5,12 +5,19 @@ const esc = (s) => s
   .replace(/"/g, '&quot;');
 
 function inline(texto) {
-  let s = esc(texto);
-  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
-  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  s = s.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
-  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  // Placeholders (U+0000) protegem code spans e links do reprocessamento.
+  const guardados = [];
+  const guardar = (html) => `\u0000${guardados.push(html) - 1}\u0000`;
+  const formatar = (t) => t
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+  let s = esc(String(texto).replace(/\u0000/g, ''));
+  s = s.replace(/`([^`]+)`/g, (_, c) => guardar(`<code>${c}</code>`));
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, t, u) =>
+    guardar(`<a href="${u}" target="_blank" rel="noopener noreferrer">${formatar(t)}</a>`));
+  s = formatar(s);
+  const volta = /\u0000(\d+)\u0000/g;
+  while (volta.test(s)) s = s.replace(volta, (_, n) => guardados[Number(n)]);
   return s;
 }
 
