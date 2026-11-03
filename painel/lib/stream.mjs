@@ -14,6 +14,7 @@ export function parseLinha(linha) {
   if (o.type === 'assistant' && Array.isArray(o.message?.content)) {
     const saida = [];
     for (const b of o.message.content) {
+      if (!b || typeof b !== 'object') continue;
       if (b.type === 'text' && b.text) {
         saida.push({ tipo: 'texto', texto: b.text });
       } else if (b.type === 'tool_use') {

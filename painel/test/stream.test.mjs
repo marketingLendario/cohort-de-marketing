@@ -45,3 +45,8 @@ test('ignora hooks, rate limit, lixo e linhas vazias', () => {
   assert.deepEqual(parseLinha('nao e json'), []);
   assert.deepEqual(parseLinha(''), []);
 });
+
+test('itens nulos ou primitivos em message.content sao ignorados', () => {
+  const evs = parseLinha(l({ type: 'assistant', message: { content: [null, 3, 'x'] } }));
+  assert.deepEqual(evs, []);
+});
