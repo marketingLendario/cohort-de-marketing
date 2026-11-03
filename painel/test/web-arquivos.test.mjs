@@ -30,8 +30,10 @@ function montar(projeto = 'p1') {
   const arvore = new No('ul');
   const visualizador = new No('div');
   const estado = { projeto };
-  const arq = criarArquivos({ arvore, visualizador, obterProjeto: () => estado.projeto });
-  return { arvore, visualizador, estado, arq };
+  const janela = { open: false, showModal() { this.open = true; } };
+  const titulo = new No('span');
+  const arq = criarArquivos({ arvore, visualizador, titulo, janela, obterProjeto: () => estado.projeto });
+  return { arvore, visualizador, estado, arq, janela, titulo };
 }
 
 async function carregarArvore(ctx, itens, slug = 'p1') {
@@ -59,7 +61,9 @@ test('clicar B enquanto A carrega mostra só B, mesmo se A responder depois', as
     await tick(); await tick();
     assert.ok(ctx.visualizador.textContent.includes('conteudo B'));
     assert.ok(!ctx.visualizador.textContent.includes('conteudo A'));
-    assert.equal(ctx.visualizador.children.length, 2);
+    assert.equal(ctx.visualizador.children.length, 1);
+    assert.equal(ctx.titulo.textContent, 'b.txt');
+    assert.equal(ctx.janela.open, true, 'abrir um arquivo mostra a janela do visualizador');
   } finally { f.restaurar(); }
 });
 

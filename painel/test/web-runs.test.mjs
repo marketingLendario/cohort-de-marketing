@@ -4,18 +4,19 @@ import { No, instalarAmbiente, esperar, tick } from './fake-dom.mjs';
 
 const amb = instalarAmbiente();
 const { criarVisaoRun } = await import('../web/runs.js');
-const { criarListaRuns } = await import('../web/lista-runs.js');
+const { criarHistorico } = await import('../web/historico.js');
 
 const pend = (re) => amb.pedidos.filter((p) => re.test(p.url));
 const meta = (id, extra = {}) => ({ id, skill: `skill-${id}`, estado: 'executando', ...extra });
 
 function montar(opcoes = {}) {
-  const dom = { cabecalho: new No('div'), log: new No('div'), form: new No('form') };
+  const dom = { cabecalho: new No('div'), log: new No('div'), boasVindas: new No('div') };
   const chamadas = { mudar: 0, arquivos: 0 };
   const visao = criarVisaoRun({
     ...dom, atrasoMs: 5,
     aoMudar: () => { chamadas.mudar++; },
     aoArquivosMudarem: () => { chamadas.arquivos++; },
+    aoEstado: () => {},
     ...opcoes,
   });
   return { ...dom, chamadas, visao };
@@ -107,9 +108,9 @@ test('replay do histórico coalesce atualizações de meta e recargas de arquivo
   assert.equal(chamadas.mudar, 1);
 });
 
-test('lista de runs: chamadas sobrepostas não duplicam nem mostram resposta velha', async () => {
-  const lista = new No('ul');
-  const l = criarListaRuns({ lista, obterProjeto: () => 'p', aoAbrir: () => {} });
+test('histórico: chamadas sobrepostas não duplicam nem mostram resposta velha', async () => {
+  const lista = new No('ol');
+  const l = criarHistorico({ lista, obterProjeto: () => 'p', obterAberto: () => null, aoAbrir: () => {} });
   const um = l.carregar();
   const dois = l.carregar();
   const r = (skill) => ({ runs: [{ id: skill, skill, estado: 'concluido', criadoEm: 0 }] });
@@ -118,6 +119,35 @@ test('lista de runs: chamadas sobrepostas não duplicam nem mostram resposta vel
   await dois;
   p1.responder(r('velha'));
   await um;
-  assert.equal(lista.children.length, 1);
+  assert.equal(lista.children.filter((c) => /item-tempo/.test(c.className)).length, 1);
   assert.match(lista.textContent, /nova/);
+  assert.ok(!lista.textContent.includes('velha'));
+});
+
+test('histórico mostra as execuções da mais antiga para a mais recente', async () => {
+  const lista = new No('ol');
+  const l = criarHistorico({ lista, obterProjeto: () => 'p', obterAberto: () => 'b', aoAbrir: () => {} });
+  const feito = l.carregar();
+  pend(/projetos\/p\/runs/).at(-1).responder({ runs: [
+    { id: 'b', skill: 'copy-funil', estado: 'concluido', criadoEm: '2026-11-02T10:00:00Z', custoUsd: 0.4 },
+    { id: 'a', skill: 'avatar-funil', estado: 'concluido', criadoEm: '2026-11-01T10:00:00Z' },
+  ] });
+  await feito;
+  const itens = lista.children.filter((c) => /item-tempo/.test(c.className));
+  assert.deepEqual(itens.map((i) => /avatar/.test(i.textContent) ? 'a' : 'b'), ['a', 'b']);
+  assert.match(itens[1].className, /ativo/);
+  assert.match(itens[1].textContent, /US\$ 0\.40/);
+});
+
+test('ao abrir um run, a conversa começa pelo pedido com a skill e as instruções', async () => {
+  const { visao, log } = montar();
+  const a = visao.abrir('A');
+  pend(/runs\/A\?/)[0].responder(meta('A', { args: 'nicho fitness', sessionId: 's', estado: 'concluido' }));
+  await a;
+  assert.match(log.children[0].textContent, /\/skill-A/);
+  assert.match(log.children[0].textContent, /nicho fitness/);
+  assert.equal(visao.podeResponder(), true);
+  assert.equal(visao.idAberto(), 'A');
+  visao.fechar();
+  assert.equal(visao.podeResponder(), false);
 });
