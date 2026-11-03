@@ -7,6 +7,14 @@ const extensao = (caminho) => (caminho.includes('.') ? caminho.split('.').pop().
 
 export function criarArquivos({ arvore, visualizador, obterProjeto }) {
   let timer = null;
+  let seq = 0;
+  let aberto = null; // { slug, caminho } do arquivo no visualizador
+
+  function limparVisualizador() {
+    seq++;
+    aberto = null;
+    visualizador.replaceChildren();
+  }
 
   function urlArquivo(slug, caminho) {
     return urlApi(`/api/projetos/${slug}/arquivo`, { path: caminho });
@@ -19,49 +27,57 @@ export function criarArquivos({ arvore, visualizador, obterProjeto }) {
   }
 
   async function abrirArquivo(slug, caminho) {
-    visualizador.replaceChildren();
+    const minha = ++seq;
+    aberto = { slug, caminho };
     const titulo = document.createElement('div');
     titulo.className = 'pequeno';
     titulo.textContent = caminho;
-    visualizador.append(titulo);
+    const corpo = document.createDocumentFragment();
+    visualizador.replaceChildren(titulo);
     const ext = extensao(caminho);
     try {
       if (ext === 'html') {
         const f = document.createElement('iframe');
         f.setAttribute('sandbox', 'allow-scripts');
         f.src = urlArquivo(slug, caminho);
-        visualizador.append(f);
+        corpo.append(f);
       } else if (IMAGENS.has(ext)) {
         const img = document.createElement('img');
         img.src = urlArquivo(slug, caminho);
         img.alt = caminho;
-        visualizador.append(img);
+        corpo.append(img);
       } else if (ext === 'pdf') {
         const a = document.createElement('a');
         a.href = urlArquivo(slug, caminho);
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         a.textContent = 'Abrir PDF em nova aba';
-        visualizador.append(a);
+        corpo.append(a);
       } else if (ext === 'md') {
         const d = document.createElement('div');
-        d.innerHTML = renderMarkdown(await textoDe(slug, caminho));
-        visualizador.append(d);
+        const md = await textoDe(slug, caminho);
+        if (minha !== seq) return;
+        d.innerHTML = renderMarkdown(md);
+        corpo.append(d);
       } else {
         let txt = await textoDe(slug, caminho);
+        if (minha !== seq) return;
         if (ext === 'json') {
           try { txt = JSON.stringify(JSON.parse(txt), null, 2); } catch { /* mostra cru */ }
         }
         const pre = document.createElement('pre');
         pre.textContent = txt;
-        visualizador.append(pre);
+        corpo.append(pre);
       }
     } catch (e) {
+      if (minha !== seq) return;
       const erro = document.createElement('div');
       erro.className = 'msg erro';
       erro.textContent = e.message;
-      visualizador.append(erro);
+      corpo.append(erro);
     }
+    if (minha !== seq) return;
+    visualizador.append(corpo);
   }
 
   function desenhar(slug, itens) {
@@ -99,13 +115,17 @@ export function criarArquivos({ arvore, visualizador, obterProjeto }) {
       const slug = obterProjeto();
       if (!slug) {
         arvore.replaceChildren();
-        visualizador.replaceChildren();
+        limparVisualizador();
         return;
       }
+      if (aberto && aberto.slug !== slug) limparVisualizador();
       try {
         const { itens } = await api(`/api/projetos/${slug}/arquivos`);
+        if (obterProjeto() !== slug) return;
+        if (aberto && !itens.some((i) => i.tipo !== 'dir' && i.path === aberto.caminho)) limparVisualizador();
         desenhar(slug, itens);
       } catch (e) {
+        if (obterProjeto() !== slug) return;
         arvore.textContent = e.message;
       }
     }, 300);

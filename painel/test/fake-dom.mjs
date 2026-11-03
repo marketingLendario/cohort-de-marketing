@@ -2,7 +2,7 @@
 export class No {
   constructor(tag) {
     this.tag = tag; this.children = []; this.className = ''; this.hidden = false;
-    this._texto = ''; this.scrollTop = 0; this.scrollHeight = 0; this.ouvintes = {};
+    this._texto = ''; this.scrollTop = 0; this.scrollHeight = 0; this.ouvintes = {}; this.style = {};
   }
   set textContent(v) { this._texto = String(v); this.children = []; }
   get textContent() { return this._texto + this.children.map((c) => c.textContent).join(''); }
