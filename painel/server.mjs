@@ -4,7 +4,8 @@ import { spawn } from 'node:child_process';
 import { dirname, extname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { CaminhoInvalido, resolveInside } from './lib/paths.mjs';
-import { listarProjetos, projetoDir } from './lib/projetos.mjs';
+import { criarProjeto, listarProjetos, projetoDir } from './lib/projetos.mjs';
+import { resumoProjeto } from './lib/resumo.mjs';
 import { listarArquivos, lerArquivo } from './lib/arquivos.mjs';
 import { listarSkills } from './lib/skills.mjs';
 import { RunManager, ErroRequisicao } from './lib/runner.mjs';
@@ -166,6 +167,9 @@ export function criarServidor({ repoRoot, runManager, token, diagnostico }) {
       if ((m = caminho.match(/^\/api\/projetos\/([^/]+)\/runs$/))) {
         return json(res, 200, { runs: runManager.listar(m[1]) });
       }
+      if ((m = caminho.match(/^\/api\/projetos\/([^/]+)\/resumo$/))) {
+        return json(res, 200, resumoProjeto(projetoDir(repoRoot, m[1]), runManager.listar(m[1])));
+      }
       if ((m = caminho.match(/^\/api\/runs\/([^/]+)$/))) {
         const meta = runManager.obter(m[1]);
         if (!meta) throw new ErroRequisicao('run não encontrado', 404);
@@ -180,6 +184,10 @@ export function criarServidor({ repoRoot, runManager, token, diagnostico }) {
     }
 
     if (req.method === 'POST') {
+      if (caminho === '/api/projetos') {
+        const c = await lerCorpo(req);
+        return json(res, 200, criarProjeto(repoRoot, c.nome));
+      }
       if (caminho === '/api/runs') {
         const c = await lerCorpo(req);
         return json(res, 200, runManager.iniciar({ skill: c.skill, slug: c.projeto, args: c.args ?? '' }));

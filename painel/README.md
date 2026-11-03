@@ -12,7 +12,7 @@ Requisitos: Node 22+ e Claude Code instalado e com login (`claude`).
 node painel/server.mjs
 ```
 
-O painel abre no navegador em `http://127.0.0.1:4747/` (ou na próxima porta livre). Escolha o projeto de `projetos/{slug}/`, clique numa skill, escreva instruções opcionais e rode. Quando a skill usa a ferramenta de perguntas, as opções aparecem como botões, e depois que o turno termina a caixa de resposta permite continuar a mesma sessão. Os dois recursos foram verificados com o Claude Code real.
+O painel abre no navegador em `http://127.0.0.1:4747/` (ou na próxima porta livre). O layout segue o do Claude: à esquerda, o cliente (cada cliente é uma pasta em `projetos/`; o botão + cadastra um novo) e os arquivos dele; no centro, a conversa com a barra de escrita fixa embaixo, onde você escolhe a skill pelo botão **Skills** ou digitando `/`; à direita, o histórico do cliente em ordem e o botão **Avaliar conta**, que mostra as etapas do funil entregues, a próxima, as execuções, o gasto com IA e as pendências. Quando a skill usa a ferramenta de perguntas, as opções aparecem como botões, e depois que o turno termina a caixa de resposta permite continuar a mesma sessão. Os dois recursos foram verificados com o Claude Code real.
 
 ## Variáveis de ambiente
 

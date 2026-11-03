@@ -19,41 +19,102 @@
 </script>
 </head>
 <body>
-<header>
-  <h1>Painel do Funil</h1>
-  <div id="diag" role="status"></div>
-</header>
-<div id="aviso" role="note">Atenção: o Claude Code roda aqui com Bash e acesso à web liberados, sem pedir confirmação. Conteúdo lido da web pode tentar executar comandos nesta máquina. Use o painel só no seu computador e só com projetos seus.</div>
-<main>
-  <aside id="lateral">
-    <label>Projeto
-      <select id="sel-projeto"></select>
-    </label>
-    <h2>Skills</h2>
-    <input id="filtro-skill" type="search" placeholder="Filtrar skills">
-    <ul id="lista-skills"></ul>
-    <h2>Execuções</h2>
-    <ul id="lista-runs"></ul>
+<div id="app">
+  <aside id="lateral" aria-label="Cliente e arquivos">
+    <div class="marca">
+      <span class="marca-sinal" aria-hidden="true"></span>
+      <span>Painel do Funil</span>
+    </div>
+
+    <button id="nova-conversa" class="botao-linha" type="button">
+      <span aria-hidden="true">+</span> Nova conversa
+    </button>
+
+    <section class="bloco">
+      <label class="rotulo" for="sel-cliente">Cliente</label>
+      <div class="linha-cliente">
+        <select id="sel-cliente"></select>
+        <button id="novo-cliente" class="botao-icone" type="button" title="Cadastrar novo cliente" aria-label="Cadastrar novo cliente">+</button>
+      </div>
+      <form id="form-cliente" hidden>
+        <input id="nome-cliente" type="text" placeholder="Nome do cliente" autocomplete="off" required>
+        <div class="acoes-cliente">
+          <button type="button" id="cancelar-cliente" class="botao-texto">Cancelar</button>
+          <button type="submit" class="botao-primario">Cadastrar</button>
+        </div>
+        <p id="erro-cliente" class="erro-pequeno" hidden></p>
+      </form>
+    </section>
+
+    <section class="bloco bloco-arquivos">
+      <h2 class="rotulo">Arquivos do cliente</h2>
+      <ul id="arvore"></ul>
+    </section>
+
+    <footer class="rodape-lateral">
+      <div id="diag" role="status"></div>
+      <p id="aviso" role="note">Bash e web liberados sem confirmação. Use só no seu computador.</p>
+    </footer>
   </aside>
-  <section id="principal">
-    <form id="form-nova" hidden>
-      <div><strong id="nova-skill"></strong></div>
-      <textarea id="nova-args" rows="3" placeholder="Instruções para a skill (opcional)"></textarea>
-      <button type="submit">Rodar</button>
+
+  <main id="centro">
+    <div class="barra-topo">
+      <button id="abrir-lateral" class="botao-icone so-celular" type="button" aria-label="Mostrar cliente e arquivos">☰</button>
+      <div id="cabecalho-run"></div>
+      <button id="abrir-historico" class="botao-icone so-celular" type="button" aria-label="Mostrar histórico">⟲</button>
+    </div>
+
+    <div id="log" aria-live="polite">
+      <div id="boas-vindas">
+        <p class="saudacao">O que vamos fazer por <span id="nome-saudacao">este cliente</span> hoje?</p>
+        <p class="dica">Escolha uma skill no botão <strong>Skills</strong> da barra abaixo ou digite <kbd>/</kbd> para buscar.</p>
+      </div>
+    </div>
+
+    <form id="composer" autocomplete="off">
+      <div id="popover-skills" hidden>
+        <input id="busca-skill" type="search" placeholder="Buscar skill" aria-label="Buscar skill">
+        <ul id="lista-skills" role="listbox" aria-label="Skills"></ul>
+      </div>
+      <div class="caixa">
+        <textarea id="campo" rows="1" placeholder="Escolha uma skill para começar"></textarea>
+        <div class="linha-acoes">
+          <button id="botao-skill" type="button" class="botao-skill" aria-haspopup="listbox">
+            <span aria-hidden="true">⌘</span> Skills
+          </button>
+          <span id="chip-skill" hidden>
+            <span id="chip-nome"></span>
+            <button id="tirar-skill" type="button" aria-label="Tirar a skill escolhida">×</button>
+          </span>
+          <span class="espaco"></span>
+          <button id="enviar" type="submit" class="botao-enviar" aria-label="Enviar">↑</button>
+        </div>
+      </div>
+      <p class="nota-composer">Enter envia · Shift+Enter quebra linha</p>
     </form>
-    <div id="cabecalho-run"></div>
-    <div id="log" aria-live="polite"></div>
-    <form id="form-resposta" hidden>
-      <textarea rows="2" placeholder="Responda ou peça um ajuste"></textarea>
-      <button type="submit">Enviar</button>
-    </form>
-  </section>
-  <aside id="arquivos">
-    <h2>Arquivos</h2>
-    <ul id="arvore"></ul>
-    <div id="visualizador"></div>
+  </main>
+
+  <aside id="historico" aria-label="Histórico do cliente">
+    <div class="historico-topo">
+      <h2 class="rotulo">Histórico do cliente</h2>
+      <button id="avaliar" class="botao-primario largo" type="button">Avaliar conta</button>
+    </div>
+    <ol id="linha-tempo"></ol>
   </aside>
-</main>
+</div>
+
+<dialog id="janela-arquivo" aria-label="Arquivo">
+  <div class="janela-topo">
+    <span id="titulo-arquivo" class="mono"></span>
+    <button type="button" class="botao-icone" data-fechar aria-label="Fechar">×</button>
+  </div>
+  <div id="visualizador"></div>
+</dialog>
+
+<dialog id="janela-resumo" aria-label="Avaliação da conta">
+  <div id="resumo"></div>
+</dialog>
+
 <script type="module" src="/app.js"></script>
 </body>
 </html>

@@ -376,3 +376,22 @@ test('encerramento: encerrarTodos que trava não impede a saída (timeout)', asy
   await fim;
   assert.deepEqual(saidas, [0]);
 });
+
+test('POST /api/projetos cria cliente; duplicado e nome vazio dão 400', async () => {
+  const criado = await chamar('/api/projetos', { metodo: 'POST', corpo: { nome: 'Loja da Ana' } });
+  assert.equal(criado.status, 200);
+  assert.deepEqual(await criado.json(), { slug: 'loja-da-ana' });
+  const lista = await (await chamar('/api/projetos')).json();
+  assert.ok(lista.projetos.some((p) => p.slug === 'loja-da-ana'));
+  assert.equal((await chamar('/api/projetos', { metodo: 'POST', corpo: { nome: 'loja da ana' } })).status, 400);
+  assert.equal((await chamar('/api/projetos', { metodo: 'POST', corpo: { nome: '' } })).status, 400);
+});
+
+test('GET /api/projetos/:slug/resumo devolve as etapas e as execuções do cliente', async () => {
+  const r = await chamar('/api/projetos/demo/resumo');
+  assert.equal(r.status, 200);
+  const resumo = await r.json();
+  assert.equal(resumo.etapas.length, 11);
+  assert.equal(typeof resumo.execucoes.total, 'number');
+  assert.equal((await chamar('/api/projetos/nao-existe/resumo')).status, 400);
+});

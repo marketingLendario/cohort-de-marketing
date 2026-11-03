@@ -5,7 +5,7 @@ const IMAGENS = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg']);
 
 const extensao = (caminho) => (caminho.includes('.') ? caminho.split('.').pop().toLowerCase() : '');
 
-export function criarArquivos({ arvore, visualizador, obterProjeto }) {
+export function criarArquivos({ arvore, visualizador, titulo, janela, obterProjeto }) {
   let timer = null;
   let seq = 0;
   let aberto = null; // { slug, caminho } do arquivo no visualizador
@@ -29,11 +29,10 @@ export function criarArquivos({ arvore, visualizador, obterProjeto }) {
   async function abrirArquivo(slug, caminho) {
     const minha = ++seq;
     aberto = { slug, caminho };
-    const titulo = document.createElement('div');
-    titulo.className = 'pequeno';
     titulo.textContent = caminho;
     const corpo = document.createDocumentFragment();
-    visualizador.replaceChildren(titulo);
+    visualizador.replaceChildren();
+    if (!janela.open) janela.showModal();
     const ext = extensao(caminho);
     try {
       if (ext === 'html') {
@@ -57,6 +56,7 @@ export function criarArquivos({ arvore, visualizador, obterProjeto }) {
         const d = document.createElement('div');
         const md = await textoDe(slug, caminho);
         if (minha !== seq) return;
+        d.className = 'msg';
         d.innerHTML = renderMarkdown(md);
         corpo.append(d);
       } else {
@@ -84,8 +84,8 @@ export function criarArquivos({ arvore, visualizador, obterProjeto }) {
     arvore.replaceChildren();
     if (itens.length === 0) {
       const vazio = document.createElement('li');
-      vazio.className = 'pequeno';
-      vazio.textContent = 'Nenhum arquivo ainda.';
+      vazio.className = 'vazio';
+      vazio.textContent = 'Nenhum arquivo ainda. O que as skills entregarem aparece aqui.';
       arvore.append(vazio);
       return;
     }
@@ -131,5 +131,5 @@ export function criarArquivos({ arvore, visualizador, obterProjeto }) {
     }, 300);
   }
 
-  return { recarregar };
+  return { recarregar, abrirArquivo: (caminho) => abrirArquivo(obterProjeto(), caminho) };
 }

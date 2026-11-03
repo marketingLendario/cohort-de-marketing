@@ -6,6 +6,7 @@ const ROTULO = {
   concluido: 'Concluído', erro: 'Erro', cancelado: 'Cancelado',
 };
 const PODE_RESPONDER = new Set(['aguardando_resposta', 'concluido', 'erro']);
+const EM_ANDAMENTO = new Set(['na_fila', 'executando']);
 const ESCREVEM_ARQUIVOS = new Set(['Write', 'Edit', 'Bash']);
 
 function el(tag, classe, texto) {
@@ -17,10 +18,10 @@ function el(tag, classe, texto) {
 
 function resumoEntrada(entrada) {
   const v = entrada?.file_path ?? entrada?.command ?? entrada?.pattern ?? entrada?.url ?? '';
-  return String(v).slice(0, 100);
+  return String(v).slice(0, 120);
 }
 
-export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem, atrasoMs = 200 }) {
+export function criarVisaoRun({ cabecalho, log, boasVindas, aoMudar, aoArquivosMudarem, aoEstado, atrasoMs = 200 }) {
   let fonte = null;
   let meta = null;
   // geracao invalida qualquer trabalho assíncrono iniciado antes de fechar()/abrir().
@@ -28,7 +29,18 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
   let seqMeta = 0;
   let timerMeta = null;
   let timerArquivos = null;
-  const campo = form.querySelector('textarea');
+  const digitando = el('div', 'digitando');
+  digitando.append(el('i'), el('i'), el('i'));
+  digitando.setAttribute('aria-label', 'A skill está trabalhando');
+
+  function rolarParaFim() {
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function mostrarDigitando() {
+    digitando.remove();
+    if (meta && EM_ANDAMENTO.has(meta.estado)) log.append(digitando);
+  }
 
   function fechar() {
     geracao++;
@@ -40,23 +52,26 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
     fonte = null;
     meta = null;
     cabecalho.replaceChildren();
-    log.replaceChildren();
-    form.hidden = true;
+    log.replaceChildren(boasVindas);
+    aoEstado(null);
   }
 
   function desenharCabecalho() {
     cabecalho.replaceChildren();
     if (!meta) return;
+    const data = new Date(meta.criadoEm).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
     cabecalho.append(el('strong', '', `/${meta.skill}`),
-      el('span', `estado ${meta.estado}`, ROTULO[meta.estado] ?? meta.estado));
-    if (meta.estado === 'executando' || meta.estado === 'na_fila') {
-      const b = el('button', '', 'Cancelar');
+      el('span', `estado ${meta.estado}`, ROTULO[meta.estado] ?? meta.estado),
+      el('span', 'data', data));
+    if (EM_ANDAMENTO.has(meta.estado)) {
+      const b = el('button', 'botao-texto', 'Cancelar');
       b.type = 'button';
       b.onclick = () => api(`/api/runs/${meta.id}/cancelar`, { metodo: 'POST', corpo: {} })
         .catch((e) => alert(e.message));
       cabecalho.append(b);
     }
-    form.hidden = !(PODE_RESPONDER.has(meta.estado) && meta.sessionId);
+    mostrarDigitando();
+    aoEstado(meta);
   }
 
   async function atualizarMeta(minha) {
@@ -87,12 +102,9 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
     timerArquivos = setTimeout(() => { timerArquivos = null; aoArquivosMudarem(); }, atrasoMs);
   }
 
-  async function enviar(texto) {
-    try {
-      await api(`/api/runs/${meta.id}/resposta`, { metodo: 'POST', corpo: { texto } });
-    } catch (e) {
-      alert(e.message);
-    }
+  async function responder(texto) {
+    if (!meta) return;
+    await api(`/api/runs/${meta.id}/resposta`, { metodo: 'POST', corpo: { texto } });
   }
 
   function desenharPergunta(perguntas) {
@@ -104,7 +116,7 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
         const b = el('button', '', o.label);
         b.type = 'button';
         if (o.description) b.append(el('small', '', o.description));
-        b.onclick = () => enviar(o.label);
+        b.onclick = () => responder(o.label).catch((e) => alert(e.message));
         opcoes.append(b);
       }
       caixa.append(opcoes);
@@ -116,7 +128,7 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
     switch (ev.tipo) {
       case 'estado':
         agendarMeta();
-        break;
+        return;
       case 'texto': {
         const d = el('div', 'msg');
         d.innerHTML = renderMarkdown(ev.texto);
@@ -144,7 +156,15 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
       default:
         return;
     }
-    log.scrollTop = log.scrollHeight;
+    mostrarDigitando();
+    rolarParaFim();
+  }
+
+  function pedidoInicial() {
+    const bolha = el('div', 'msg usuario');
+    bolha.append(el('span', 'skill-usada', `/${meta.skill}`));
+    bolha.append(document.createTextNode(meta.args?.trim() || 'Rodar a skill'));
+    return bolha;
   }
 
   async function abrir(id) {
@@ -153,6 +173,7 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
     const novo = await api(`/api/runs/${id}`);
     if (minha !== geracao) return;
     meta = novo;
+    log.replaceChildren(pedidoInicial());
     desenharCabecalho();
     fonte?.close();
     fonte = new EventSource(urlApi(`/api/runs/${id}/events`));
@@ -161,13 +182,11 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
     };
   }
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const texto = campo.value.trim();
-    if (!texto || !meta) return;
-    campo.value = '';
-    enviar(texto);
-  });
-
-  return { abrir, fechar };
+  return {
+    abrir,
+    fechar,
+    responder,
+    idAberto: () => meta?.id ?? null,
+    podeResponder: () => Boolean(meta && meta.sessionId && PODE_RESPONDER.has(meta.estado)),
+  };
 }
