@@ -1,12 +1,9 @@
 import { api } from './api.js';
 import { criarVisaoRun } from './runs.js';
 import { criarArquivos } from './arquivos.js';
+import { criarListaRuns } from './lista-runs.js';
 
 const $ = (s) => document.querySelector(s);
-const ROTULO = {
-  na_fila: 'na fila', executando: 'executando', aguardando_resposta: 'aguardando você',
-  concluido: 'concluído', erro: 'erro', cancelado: 'cancelado',
-};
 
 let projeto = null;
 let skills = [];
@@ -68,26 +65,10 @@ function escolherSkill(nome) {
   $('#nova-args').focus();
 }
 
-async function carregarRuns() {
-  const lista = $('#lista-runs');
-  lista.replaceChildren();
-  if (!projeto) return;
-  try {
-    const { runs } = await api(`/api/projetos/${projeto}/runs`);
-    for (const r of runs) {
-      const li = document.createElement('li');
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = `/${r.skill} · ${ROTULO[r.estado] ?? r.estado}`;
-      b.title = new Date(r.criadoEm).toLocaleString('pt-BR');
-      b.onclick = () => visao.abrir(r.id);
-      li.append(b);
-      lista.append(li);
-    }
-  } catch (e) {
-    lista.textContent = e.message;
-  }
-}
+const listaRuns = criarListaRuns({
+  lista: $('#lista-runs'), obterProjeto: () => projeto, aoAbrir: (id) => visao.abrir(id),
+});
+const carregarRuns = () => listaRuns.carregar();
 
 async function trocarProjeto(slug) {
   projeto = slug || null;

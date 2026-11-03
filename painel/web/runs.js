@@ -20,12 +20,22 @@ function resumoEntrada(entrada) {
   return String(v).slice(0, 100);
 }
 
-export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem }) {
+export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem, atrasoMs = 200 }) {
   let fonte = null;
   let meta = null;
+  // geracao invalida qualquer trabalho assíncrono iniciado antes de fechar()/abrir().
+  let geracao = 0;
+  let seqMeta = 0;
+  let timerMeta = null;
+  let timerArquivos = null;
   const campo = form.querySelector('textarea');
 
   function fechar() {
+    geracao++;
+    clearTimeout(timerMeta);
+    clearTimeout(timerArquivos);
+    timerMeta = null;
+    timerArquivos = null;
     fonte?.close();
     fonte = null;
     meta = null;
@@ -49,11 +59,32 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
     form.hidden = !(PODE_RESPONDER.has(meta.estado) && meta.sessionId);
   }
 
-  async function atualizarMeta() {
-    if (!meta) return;
-    meta = await api(`/api/runs/${meta.id}`);
+  async function atualizarMeta(minha) {
+    if (!meta || minha !== geracao) return;
+    const seq = ++seqMeta;
+    let novo;
+    try {
+      novo = await api(`/api/runs/${meta.id}`);
+    } catch (e) {
+      if (minha === geracao) log.append(el('div', 'msg erro', `Não consegui atualizar o estado: ${e.message}`));
+      return;
+    }
+    if (minha !== geracao || seq !== seqMeta) return;
+    meta = novo;
     desenharCabecalho();
     aoMudar();
+  }
+
+  // O servidor reenvia o histórico inteiro a cada conexão: junta rajadas em uma só atualização.
+  function agendarMeta() {
+    if (timerMeta) return;
+    const minha = geracao;
+    timerMeta = setTimeout(() => { timerMeta = null; atualizarMeta(minha); }, atrasoMs);
+  }
+
+  function agendarArquivos() {
+    if (timerArquivos) return;
+    timerArquivos = setTimeout(() => { timerArquivos = null; aoArquivosMudarem(); }, atrasoMs);
   }
 
   async function enviar(texto) {
@@ -84,7 +115,7 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
   function tratar(ev) {
     switch (ev.tipo) {
       case 'estado':
-        atualizarMeta();
+        agendarMeta();
         break;
       case 'texto': {
         const d = el('div', 'msg');
@@ -94,7 +125,7 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
       }
       case 'ferramenta':
         log.append(el('div', 'ferramenta', `${ev.nome} ${resumoEntrada(ev.entrada)}`.trim()));
-        if (ESCREVEM_ARQUIVOS.has(ev.nome)) aoArquivosMudarem();
+        if (ESCREVEM_ARQUIVOS.has(ev.nome)) agendarArquivos();
         break;
       case 'pergunta':
         desenharPergunta(ev.perguntas);
@@ -108,7 +139,7 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
       case 'resultado':
         log.append(el('div', 'resultado',
           ev.custoUsd != null ? `Fim do turno · custo US$ ${ev.custoUsd.toFixed(2)}` : 'Fim do turno'));
-        aoArquivosMudarem();
+        agendarArquivos();
         break;
       default:
         return;
@@ -118,10 +149,16 @@ export function criarVisaoRun({ cabecalho, log, form, aoMudar, aoArquivosMudarem
 
   async function abrir(id) {
     fechar();
-    meta = await api(`/api/runs/${id}`);
+    const minha = geracao;
+    const novo = await api(`/api/runs/${id}`);
+    if (minha !== geracao) return;
+    meta = novo;
     desenharCabecalho();
+    fonte?.close();
     fonte = new EventSource(urlApi(`/api/runs/${id}/events`));
-    fonte.onmessage = (m) => tratar(JSON.parse(m.data));
+    fonte.onmessage = (m) => {
+      if (minha === geracao) tratar(JSON.parse(m.data));
+    };
   }
 
   form.addEventListener('submit', (e) => {
