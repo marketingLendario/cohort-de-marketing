@@ -2,8 +2,46 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="painel-token" content="{{TOKEN}}">
 <title>Painel do Funil</title>
+<link rel="stylesheet" href="/style.css">
 </head>
-<body>Painel</body>
+<body>
+<header>
+  <h1>Painel do Funil</h1>
+  <div id="diag" role="status"></div>
+</header>
+<main>
+  <aside id="lateral">
+    <label>Projeto
+      <select id="sel-projeto"></select>
+    </label>
+    <h2>Skills</h2>
+    <input id="filtro-skill" type="search" placeholder="Filtrar skills">
+    <ul id="lista-skills"></ul>
+    <h2>Execuções</h2>
+    <ul id="lista-runs"></ul>
+  </aside>
+  <section id="principal">
+    <form id="form-nova" hidden>
+      <div><strong id="nova-skill"></strong></div>
+      <textarea id="nova-args" rows="3" placeholder="Instruções para a skill (opcional)"></textarea>
+      <button type="submit">Rodar</button>
+    </form>
+    <div id="cabecalho-run"></div>
+    <div id="log" aria-live="polite"></div>
+    <form id="form-resposta" hidden>
+      <textarea rows="2" placeholder="Responda ou peça um ajuste"></textarea>
+      <button type="submit">Enviar</button>
+    </form>
+  </section>
+  <aside id="arquivos">
+    <h2>Arquivos</h2>
+    <ul id="arvore"></ul>
+    <div id="visualizador"></div>
+  </aside>
+</main>
+<script type="module" src="/app.js"></script>
+</body>
 </html>
