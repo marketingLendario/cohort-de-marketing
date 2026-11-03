@@ -265,3 +265,35 @@ test('run recuperado do disco não deixa a fila do projeto presa', async () => {
   m1.cancelar(id);
   await esperar(() => estadoDe(m1, id) === 'cancelado');
 });
+
+test('encerrarTodos cancela runs ativos e da fila e mata o processo', async () => {
+  const repo = criarRepo();
+  const m = novoManager(RunManager, repo);
+  const a = m.iniciar({ skill: 'avatar-funil', slug: 'demo', args: '[lento]' });
+  await esperar(() => chamadas(repo).length === 1);
+  const { pid } = chamadas(repo)[0];
+  const b = m.iniciar({ skill: 'avatar-funil', slug: 'demo' });
+  assert.equal(estadoDe(m, b.id), 'na_fila');
+  await m.encerrarTodos();
+  assert.ok(!vivo(pid));
+  assert.equal(estadoDe(m, a.id), 'cancelado');
+  assert.equal(estadoDe(m, b.id), 'cancelado');
+  await new Promise((r) => setTimeout(r, 150));
+  assert.equal(chamadas(repo).length, 1, 'nenhum novo processo deve nascer depois');
+});
+
+test('encerrarTodos sem runs ativos resolve de imediato', async () => {
+  const m = novoManager(RunManager, criarRepo());
+  await m.encerrarTodos();
+});
+
+test('totalOuvintes reflete assinaturas e cancelamentos', async () => {
+  const m = novoManager(RunManager, criarRepo());
+  const { id } = m.iniciar({ skill: 'avatar-funil', slug: 'demo' });
+  assert.equal(m.totalOuvintes(id), 0);
+  const cancelar = m.assinar(id, () => {});
+  assert.equal(m.totalOuvintes(id), 1);
+  cancelar();
+  assert.equal(m.totalOuvintes(id), 0);
+  await esperar(() => estadoDe(m, id) === 'concluido');
+});

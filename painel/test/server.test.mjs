@@ -1,14 +1,15 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { criarServidor } from '../server.mjs';
+import { EventEmitter } from 'node:events';
+import { criarServidor, instalarEncerramento } from '../server.mjs';
 import { RunManager } from '../lib/runner.mjs';
 import { criarRepo, esperar, novoManager } from './helpers.mjs';
 
 const TOKEN = 't'.repeat(48);
-let servidor, base, porta;
+let servidor, base, porta, gerente;
 
 before(async () => {
   const repo = criarRepo();
@@ -17,9 +18,10 @@ before(async () => {
   writeFileSync(join(repo, 'projetos', 'demo', '.painel', 'segredo.json'), '{}');
   writeFileSync(join(repo, 'projetos', 'demo', 'sub', 'nota.md'), '# Oi');
   writeFileSync(join(repo, 'projetos', 'demo', 'avatar.html'), '<h1>x</h1>');
+  gerente = novoManager(RunManager, repo);
   servidor = criarServidor({
     repoRoot: repo,
-    runManager: novoManager(RunManager, repo),
+    runManager: gerente,
     token: TOKEN,
     diagnostico: async () => ({ claudeInstalado: true, versao: 'x', logado: true, problemas: [] }),
   });
@@ -147,4 +149,157 @@ test('erros de validação e run inexistente', async () => {
   assert.equal(ruim.status, 400);
   assert.equal((await chamar('/api/runs/abc')).status, 404);
   assert.equal((await chamar('/api/runs/abc/cancelar', { metodo: 'POST', corpo: {} })).status, 404);
+});
+
+// ---- SSE: retomada, saneamento de `desde` e limpeza ----
+
+async function lerSse(caminho, headers = {}) {
+  const r = await fetch(base + caminho, { headers });
+  const leitor = r.body.getReader();
+  const dec = new TextDecoder();
+  let txt = '';
+  while (!txt.includes('"tipo":"resultado"')) {
+    const { value, done } = await leitor.read();
+    if (done) break;
+    txt += dec.decode(value);
+  }
+  await leitor.cancel();
+  return txt;
+}
+const idsDe = (txt) => [...txt.matchAll(/^id: (\d+)$/gm)].map((m) => Number(m[1]));
+
+async function runConcluido() {
+  const { id } = await (await chamar('/api/runs', {
+    metodo: 'POST', corpo: { skill: 'avatar-funil', projeto: 'demo' },
+  })).json();
+  await esperar(async () => (await (await chamar(`/api/runs/${id}`)).json()).estado === 'concluido');
+  return id;
+}
+
+test('SSE: ?desde=2 pula eventos e as linhas id: são seq+1', async () => {
+  const id = await runConcluido();
+  const todos = idsDe(await lerSse(`/api/runs/${id}/events?token=${TOKEN}`));
+  assert.equal(todos[0], 1);
+  const parcial = idsDe(await lerSse(`/api/runs/${id}/events?token=${TOKEN}&desde=2`));
+  assert.equal(parcial[0], 3);
+  assert.deepEqual(parcial, todos.slice(2));
+});
+
+test('SSE: Last-Event-ID retoma do evento seguinte', async () => {
+  const id = await runConcluido();
+  const parcial = idsDe(await lerSse(`/api/runs/${id}/events?token=${TOKEN}`, { 'last-event-id': '3' }));
+  assert.equal(parcial[0], 4);
+});
+
+test('SSE: desde negativo, fracionário ou lixo devolve o histórico inteiro/saneado', async () => {
+  const id = await runConcluido();
+  const todos = idsDe(await lerSse(`/api/runs/${id}/events?token=${TOKEN}`));
+  assert.deepEqual(idsDe(await lerSse(`/api/runs/${id}/events?token=${TOKEN}&desde=-5`)), todos);
+  assert.deepEqual(idsDe(await lerSse(`/api/runs/${id}/events?token=${TOKEN}&desde=abc`)), todos);
+  assert.deepEqual(idsDe(await lerSse(`/api/runs/${id}/events?token=${TOKEN}&desde=2.9`)), todos.slice(2));
+});
+
+test('SSE: ao desconectar o ouvinte é removido de um run vivo', async () => {
+  const { id } = await (await chamar('/api/runs', {
+    metodo: 'POST', corpo: { skill: 'avatar-funil', projeto: 'demo', args: '[lento]' },
+  })).json();
+  await esperar(async () => (await (await chamar(`/api/runs/${id}`)).json()).estado === 'executando');
+  const ac = new AbortController();
+  const r = await fetch(`${base}/api/runs/${id}/events?token=${TOKEN}`, { signal: ac.signal });
+  const leitor = r.body.getReader();
+  await leitor.read();
+  assert.equal(gerente.totalOuvintes(id), 1);
+  ac.abort();
+  await esperar(() => gerente.totalOuvintes(id) === 0);
+  await chamar(`/api/runs/${id}/cancelar`, { metodo: 'POST', corpo: {} });
+  await esperar(async () => (await (await chamar(`/api/runs/${id}`)).json()).estado === 'cancelado');
+});
+
+// ---- caminhos felizes e guardas ----
+
+test('POST com Origin da própria origem é aceito', async () => {
+  const r = await chamar('/api/runs', {
+    metodo: 'POST', corpo: { skill: 'nao-existe', projeto: 'demo' },
+    headers: { origin: `http://127.0.0.1:${porta}` },
+  });
+  assert.equal(r.status, 400, 'passou pela guarda de origem e falhou só na validação da skill');
+});
+
+test('Host localhost:{porta} é aceito', async () => {
+  const status = await new Promise((ok, ko) => {
+    http.get({ host: '127.0.0.1', port: porta, path: '/', headers: { host: `localhost:${porta}` } },
+      (res) => { res.resume(); ok(res.statusCode); }).on('error', ko);
+  });
+  assert.equal(status, 200);
+});
+
+test('corpo acima de 100 KB devolve 413', async () => {
+  const r = await fetch(`${base}/api/runs`, {
+    method: 'POST',
+    headers: { 'x-painel-token': TOKEN, 'content-type': 'application/json' },
+    body: JSON.stringify({ skill: 'avatar-funil', projeto: 'demo', args: 'x'.repeat(101 * 1024) }),
+  });
+  assert.equal(r.status, 413);
+});
+
+test('método diferente de GET em estático devolve 405', async () => {
+  const r = await fetch(base + '/', { method: 'POST', body: '{}' });
+  assert.equal(r.status, 405);
+});
+
+test('resposta e cancelar funcionam num run vivo', async () => {
+  const { id } = await (await chamar('/api/runs', {
+    metodo: 'POST', corpo: { skill: 'avatar-funil', projeto: 'demo', args: '[pergunta]' },
+  })).json();
+  await esperar(async () => (await (await chamar(`/api/runs/${id}`)).json()).estado === 'aguardando_resposta');
+  const resp = await chamar(`/api/runs/${id}/resposta`, { metodo: 'POST', corpo: { texto: 'A' } });
+  assert.equal(resp.status, 200);
+  await esperar(async () => (await (await chamar(`/api/runs/${id}`)).json()).estado === 'concluido');
+  assert.equal((await chamar(`/api/runs/${id}/resposta`, { metodo: 'POST', corpo: { texto: '' } })).status, 400);
+
+  const lento = await (await chamar('/api/runs', {
+    metodo: 'POST', corpo: { skill: 'avatar-funil', projeto: 'demo', args: '[lento]' },
+  })).json();
+  await esperar(async () => (await (await chamar(`/api/runs/${lento.id}`)).json()).estado === 'executando');
+  const canc = await chamar(`/api/runs/${lento.id}/cancelar`, { metodo: 'POST', corpo: {} });
+  assert.equal(canc.status, 200);
+  assert.deepEqual(await canc.json(), { ok: true });
+  await esperar(async () => (await (await chamar(`/api/runs/${lento.id}`)).json()).estado === 'cancelado');
+});
+
+test('encerramento: SIGTERM cancela runs, fecha SSE e sai', async () => {
+  const repo = criarRepo();
+  mkdirSync(join(repo, 'projetos', 'demo'), { recursive: true });
+  const m = novoManager(RunManager, repo);
+  const srv = criarServidor({ repoRoot: repo, runManager: m, token: TOKEN, diagnostico: async () => ({}) });
+  await new Promise((ok) => srv.listen(0, '127.0.0.1', ok));
+  const url = `http://127.0.0.1:${srv.address().port}`;
+  const h = { 'x-painel-token': TOKEN, 'content-type': 'application/json' };
+  const { id } = await (await fetch(`${url}/api/runs`, {
+    method: 'POST', headers: h, body: JSON.stringify({ skill: 'avatar-funil', projeto: 'demo', args: '[lento]' }),
+  })).json();
+  await esperar(() => existsSync(join(repo, 'fake-calls.jsonl')));
+  const chamadas = readFileSync(join(repo, 'fake-calls.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+  const { pid } = chamadas[0];
+  const sse = await fetch(`${url}/api/runs/${id}/events?token=${TOKEN}`);
+  const leitor = sse.body.getReader();
+  await leitor.read();
+
+  const fakeProc = new EventEmitter();
+  const saidas = [];
+  const encerrou = new Promise((ok) => {
+    instalarEncerramento({ servidor: srv, runManager: m, processo: fakeProc, sair: (c) => { saidas.push(c); ok(); } });
+  });
+  fakeProc.emit('SIGTERM');
+  await encerrou;
+  assert.deepEqual(saidas, [0]);
+  assert.equal(m.obter(id).estado, 'cancelado');
+  assert.throws(() => process.kill(pid, 0), 'o processo filho deve estar morto');
+  let fechou = false;
+  try {
+    for (let i = 0; i < 20 && !fechou; i++) fechou = (await leitor.read()).done;
+  } catch {
+    fechou = true; // conexão derrubada pelo servidor
+  }
+  assert.equal(fechou, true, 'a conexão SSE deve ter sido fechada');
 });

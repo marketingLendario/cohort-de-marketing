@@ -222,6 +222,26 @@ function abrirNavegador(url) {
   } catch { /* o aluno abre o endereço manualmente */ }
 }
 
+// Ctrl+C / SIGTERM: os claude rodam em grupos de processos próprios (detached),
+// então o sinal não chega a eles. Cancela tudo, fecha as conexões e sai.
+export function instalarEncerramento({ servidor, runManager, processo = process, sair = process.exit }) {
+  let encerrando = false;
+  const encerrar = async () => {
+    if (encerrando) return;
+    encerrando = true;
+    try {
+      await runManager.encerrarTodos();
+    } catch (e) {
+      console.error(`painel: falha ao encerrar runs: ${e.message}`);
+    }
+    servidor.closeAllConnections();
+    servidor.close();
+    sair(0);
+  };
+  for (const sinal of ['SIGINT', 'SIGTERM']) processo.on(sinal, encerrar);
+  return encerrar;
+}
+
 async function iniciar() {
   const repoRoot = resolve(AQUI, '..');
   const fake = process.env.PAINEL_FAKE === '1';
@@ -240,6 +260,7 @@ async function iniciar() {
     try {
       await ouvir(servidor, p);
       const url = `http://127.0.0.1:${p}/`;
+      instalarEncerramento({ servidor, runManager });
       console.log(`Painel rodando em ${url}`);
       if (process.env.PAINEL_NO_OPEN !== '1') abrirNavegador(url);
       return;

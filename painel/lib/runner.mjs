@@ -49,7 +49,7 @@ export class RunManager {
       estado: 'na_fila', criadoEm: new Date().toISOString(), finalizadoEm: null,
       custoUsd: null, perguntaPendente: null, erro: null,
     };
-    const run = { meta, dir, eventos: [], ouvintes: new Set(), proc: null, cancelado: false };
+    const run = { meta, dir, eventos: [], ouvintes: new Set(), proc: null, cancelado: false, fim: null };
     this.#runs.set(meta.id, run);
     this.#salvar(run);
     this.#emitir(run, { tipo: 'estado', estado: 'na_fila' });
@@ -102,6 +102,26 @@ export class RunManager {
     const run = this.#exigir(id);
     run.ouvintes.add(fn);
     return () => run.ouvintes.delete(fn);
+  }
+
+  totalOuvintes(id) {
+    return this.#runs.get(id)?.ouvintes.size ?? 0;
+  }
+
+  // Encerramento do servidor: descarta a fila, mata todos os processos ativos
+  // (grupo inteiro, com escalada para SIGKILL) e espera cada um terminar.
+  async encerrarTodos() {
+    const aguardando = [];
+    for (const fila of this.#filas.values()) {
+      for (const { run } of fila.espera.splice(0)) this.#mudarEstado(run, 'cancelado');
+    }
+    for (const run of this.#runs.values()) {
+      if (!run.proc) continue;
+      run.cancelado = true;
+      this.#encerrar(run);
+      aguardando.push(run.fim);
+    }
+    await Promise.all(aguardando);
   }
 
   listar(slug) {
@@ -233,6 +253,8 @@ export class RunManager {
     let buffer = '';
     let stderr = '';
     let finalizado = false;
+    let liberarFim;
+    run.fim = new Promise((ok) => { liberarFim = ok; });
 
     const finalizar = (codigo) => {
       if (finalizado) return;
@@ -252,6 +274,7 @@ export class RunManager {
         }
       } finally {
         fila.ativo = null;
+        liberarFim();
         this.#proximo(run.meta.slug);
       }
     };
