@@ -27,7 +27,11 @@ export class RunManager {
   #runs = new Map();
   #filas = new Map();
 
-  constructor({ repoRoot, claudeBin = 'claude', claudeBaseArgs = [], permissionMode = 'acceptEdits' }) {
+  constructor({
+    repoRoot, claudeBin = 'claude', claudeBaseArgs = [], permissionMode = 'acceptEdits',
+    killGraceMs = 5000,
+  }) {
+    this.killGraceMs = killGraceMs;
     this.repoRoot = repoRoot;
     this.claudeBin = claudeBin;
     this.claudeBaseArgs = claudeBaseArgs;
@@ -47,7 +51,7 @@ export class RunManager {
     };
     const run = { meta, dir, eventos: [], ouvintes: new Set(), proc: null, cancelado: false };
     this.#runs.set(meta.id, run);
-    log.salvarMeta(dir, meta);
+    this.#salvar(run);
     this.#emitir(run, { tipo: 'estado', estado: 'na_fila' });
     this.#enfileirar(run, montarPrompt(skill, slug, meta.args));
     return { ...meta };
@@ -79,7 +83,7 @@ export class RunManager {
     }
     if (run.proc) {
       run.cancelado = true;
-      run.proc.kill('SIGTERM');
+      this.#encerrar(run);
       return;
     }
     throw new ErroRequisicao('run nao esta em andamento', 409);
@@ -142,17 +146,56 @@ export class RunManager {
     return null;
   }
 
+  // Persistencia e ouvintes nunca podem derrubar o processo nem prender a fila:
+  // falhas de disco sao toleradas (o estado em memoria segue valido) e um
+  // ouvinte que lanca e removido.
+  #salvar(run) {
+    try {
+      log.salvarMeta(run.dir, run.meta);
+    } catch (e) {
+      console.error(`painel: falha ao salvar meta do run ${run.meta.id}: ${e.message}`);
+    }
+  }
+
   #emitir(run, ev) {
     const completo = { seq: run.eventos.length, ts: Date.now(), ...ev };
     run.eventos.push(completo);
-    log.anexarEvento(run.dir, run.meta.id, completo);
-    for (const fn of run.ouvintes) fn(completo);
+    try {
+      log.anexarEvento(run.dir, run.meta.id, completo);
+    } catch (e) {
+      console.error(`painel: falha ao gravar evento do run ${run.meta.id}: ${e.message}`);
+    }
+    for (const fn of [...run.ouvintes]) {
+      try {
+        fn(completo);
+      } catch {
+        run.ouvintes.delete(fn);
+      }
+    }
+  }
+
+  // SIGTERM no grupo de processos (POSIX) com escalada para SIGKILL.
+  #sinalizar(proc, sinal) {
+    try {
+      if (process.platform !== 'win32' && proc.pid) process.kill(-proc.pid, sinal);
+      else proc.kill(sinal);
+    } catch {
+      try { proc.kill(sinal); } catch { /* processo ja encerrado */ }
+    }
+  }
+
+  #encerrar(run) {
+    const proc = run.proc;
+    this.#sinalizar(proc, 'SIGTERM');
+    if (!run.timerKill) {
+      run.timerKill = setTimeout(() => this.#sinalizar(proc, 'SIGKILL'), this.killGraceMs);
+    }
   }
 
   #mudarEstado(run, estado) {
     run.meta.estado = estado;
     run.meta.finalizadoEm = TERMINAIS.has(estado) ? new Date().toISOString() : null;
-    log.salvarMeta(run.dir, run.meta);
+    this.#salvar(run);
     this.#emitir(run, { tipo: 'estado', estado });
   }
 
@@ -177,12 +220,14 @@ export class RunManager {
     this.#mudarEstado(run, 'executando');
 
     const argv = [
-      ...this.claudeBaseArgs, '-p', prompt,
+      ...this.claudeBaseArgs, '-p',
       '--output-format', 'stream-json', '--verbose',
       '--permission-mode', this.permissionMode,
       '--allowedTools', FERRAMENTAS.join(','),
     ];
     if (run.meta.sessionId) argv.push('--resume', run.meta.sessionId);
+    // "--" encerra as opcoes: o prompt (possivelmente digitado pelo usuario) nunca vira flag.
+    argv.push('--', prompt);
 
     let resultado = null;
     let buffer = '';
@@ -193,17 +238,22 @@ export class RunManager {
       if (finalizado) return;
       finalizado = true;
       run.proc = null;
-      if (run.cancelado) {
-        this.#mudarEstado(run, 'cancelado');
-      } else if (resultado?.ok) {
-        this.#mudarEstado(run, run.meta.perguntaPendente ? 'aguardando_resposta' : 'concluido');
-      } else {
-        run.meta.erro = resultado?.texto || stderr.trim() || `claude saiu com codigo ${codigo}`;
-        this.#emitir(run, { tipo: 'erro', mensagem: run.meta.erro });
-        this.#mudarEstado(run, 'erro');
+      clearTimeout(run.timerKill);
+      run.timerKill = null;
+      try {
+        if (run.cancelado) {
+          this.#mudarEstado(run, 'cancelado');
+        } else if (resultado?.ok) {
+          this.#mudarEstado(run, run.meta.perguntaPendente ? 'aguardando_resposta' : 'concluido');
+        } else {
+          run.meta.erro = resultado?.texto || stderr.trim() || `claude saiu com codigo ${codigo}`;
+          this.#emitir(run, { tipo: 'erro', mensagem: run.meta.erro });
+          this.#mudarEstado(run, 'erro');
+        }
+      } finally {
+        fila.ativo = null;
+        this.#proximo(run.meta.slug);
       }
-      fila.ativo = null;
-      this.#proximo(run.meta.slug);
     };
 
     const tratar = (linha) => {
@@ -216,7 +266,7 @@ export class RunManager {
           if (ev.sessionId) run.meta.sessionId = ev.sessionId;
         }
         if (ev.tipo === 'init' || ev.tipo === 'pergunta' || ev.tipo === 'resultado') {
-          log.salvarMeta(run.dir, run.meta);
+          this.#salvar(run);
         }
         this.#emitir(run, ev);
       }
@@ -224,7 +274,10 @@ export class RunManager {
 
     let proc;
     try {
-      proc = spawn(this.claudeBin, argv, { cwd: this.repoRoot, stdio: ['ignore', 'pipe', 'pipe'] });
+      proc = spawn(this.claudeBin, argv, {
+        cwd: this.repoRoot, stdio: ['ignore', 'pipe', 'pipe'],
+        detached: process.platform !== 'win32',
+      });
     } catch (e) {
       stderr = e.message;
       finalizar(null);

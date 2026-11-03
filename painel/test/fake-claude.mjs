@@ -1,10 +1,26 @@
 const args = process.argv.slice(2);
-const prompt = args[args.indexOf('-p') + 1] ?? '';
+import { appendFileSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { join } from 'node:path';
+const iSep = args.indexOf('--');
+const prompt = iSep >= 0 ? (args[iSep + 1] ?? '') : (args[args.indexOf('-p') + 1] ?? '');
 const iResume = args.indexOf('--resume');
 const resume = iResume >= 0 ? args[iResume + 1] : null;
-const modo = prompt.match(/\[(lento|erro|pergunta)\]/)?.[1] ?? 'ok';
+const modo = prompt.match(/\[(lento|erro|pergunta|neto|teimoso)\]/)?.[1] ?? 'ok';
 const sessionId = resume ?? 'sess-123';
+const registro = { pid: process.pid, argv: args };
 const out = (o) => process.stdout.write(JSON.stringify(o) + '\n');
+
+function gravar() {
+  appendFileSync(join(process.cwd(), 'fake-calls.jsonl'), JSON.stringify(registro) + '\n');
+}
+
+if (modo === 'neto') {
+  const neto = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' });
+  registro.neto = neto.pid;
+}
+if (modo === 'teimoso') process.on('SIGTERM', () => {});
+gravar();
 
 if (modo === 'erro') {
   process.stderr.write('falha simulada\n');
@@ -14,7 +30,7 @@ if (modo === 'erro') {
 out({ type: 'system', subtype: 'hook_started' });
 out({ type: 'system', subtype: 'init', session_id: sessionId });
 
-if (modo === 'lento') {
+if (modo === 'lento' || modo === 'neto' || modo === 'teimoso') {
   setInterval(() => {}, 1000);
 } else {
   const texto = resume ? `retomado ${resume}: ${prompt}` : `rodando ${prompt}`;
