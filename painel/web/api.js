@@ -16,6 +16,6 @@ export async function api(caminho, { metodo = 'GET', corpo, params } = {}) {
     body: corpo !== undefined ? JSON.stringify(corpo) : undefined,
   });
   const dados = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(dados.erro ?? `erro ${r.status}`);
+  if (!r.ok) throw new Error(dados.erro ?? `Não foi possível concluir a operação (${r.status})`);
   return dados;
 }

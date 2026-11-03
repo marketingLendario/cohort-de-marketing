@@ -47,7 +47,7 @@ function lerCorpo(req) {
         const txt = Buffer.concat(partes).toString('utf8');
         obj = txt ? JSON.parse(txt) : {};
       } catch {
-        ko(new ErroRequisicao('json invalido'));
+        ko(new ErroRequisicao('json inválido'));
         return;
       }
       if (obj === null || typeof obj !== 'object' || Array.isArray(obj)) {
@@ -64,8 +64,8 @@ function responderErro(res, e) {
   if (res.headersSent) { res.end(); return; }
   if (e instanceof ErroRequisicao) return json(res, e.status, { erro: e.message });
   if (e instanceof CaminhoInvalido) return json(res, 400, { erro: e.message });
-  if (e instanceof URIError) return json(res, 400, { erro: 'endereco invalido' });
-  if (e?.code === 'ENOENT') return json(res, 404, { erro: 'nao encontrado' });
+  if (e instanceof URIError) return json(res, 400, { erro: 'endereço inválido' });
+  if (e?.code === 'ENOENT') return json(res, 404, { erro: 'não encontrado' });
   console.error(e);
   return json(res, 500, { erro: 'erro interno' });
 }
@@ -77,11 +77,11 @@ export function criarServidor({ repoRoot, runManager, token, diagnostico }) {
     try {
       abs = resolveInside(WEB, rel);
     } catch (e) {
-      if (e instanceof CaminhoInvalido) throw new ErroRequisicao('nao encontrado', 404);
+      if (e instanceof CaminhoInvalido) throw new ErroRequisicao('não encontrado', 404);
       throw e;
     }
     if (!existsSync(abs) || !statSync(abs).isFile() || !TIPOS_ESTATICOS[extname(abs)]) {
-      throw new ErroRequisicao('nao encontrado', 404);
+      throw new ErroRequisicao('não encontrado', 404);
     }
     let corpo = readFileSync(abs);
     if (rel === 'index.html') corpo = Buffer.from(corpo.toString('utf8').replaceAll('{{TOKEN}}', token));
@@ -132,21 +132,21 @@ export function criarServidor({ repoRoot, runManager, token, diagnostico }) {
 
   async function tratar(req, res) {
     const porta = servidor.address().port;
-    if (!hostPermitido(req.headers.host, porta)) throw new ErroRequisicao('host nao permitido', 403);
+    if (!hostPermitido(req.headers.host, porta)) throw new ErroRequisicao('host não permitido', 403);
     const url = new URL(req.url, `http://127.0.0.1:${porta}`);
     const caminho = url.pathname;
 
     if (!caminho.startsWith('/api/')) {
-      if (req.method !== 'GET') throw new ErroRequisicao('metodo nao permitido', 405);
+      if (req.method !== 'GET') throw new ErroRequisicao('método não permitido', 405);
       return estatico(res, caminho);
     }
 
     const recebido = req.headers['x-painel-token'] ?? url.searchParams.get('token');
-    if (!tokenValido(token, recebido)) throw new ErroRequisicao('token invalido', 401);
+    if (!tokenValido(token, recebido)) throw new ErroRequisicao('token inválido', 401);
 
     if (req.method === 'POST') {
       const origem = req.headers.origin;
-      if (origem && origem !== `http://${req.headers.host}`) throw new ErroRequisicao('origem nao permitida', 403);
+      if (origem && origem !== `http://${req.headers.host}`) throw new ErroRequisicao('origem não permitida', 403);
       if (!String(req.headers['content-type'] ?? '').startsWith('application/json')) {
         throw new ErroRequisicao('use application/json', 415);
       }
@@ -168,11 +168,11 @@ export function criarServidor({ repoRoot, runManager, token, diagnostico }) {
       }
       if ((m = caminho.match(/^\/api\/runs\/([^/]+)$/))) {
         const meta = runManager.obter(m[1]);
-        if (!meta) throw new ErroRequisicao('run nao encontrado', 404);
+        if (!meta) throw new ErroRequisicao('run não encontrado', 404);
         return json(res, 200, meta);
       }
       if ((m = caminho.match(/^\/api\/runs\/([^/]+)\/events$/))) {
-        if (!runManager.obter(m[1])) throw new ErroRequisicao('run nao encontrado', 404);
+        if (!runManager.obter(m[1])) throw new ErroRequisicao('run não encontrado', 404);
         const bruto = Number(url.searchParams.get('desde') ?? req.headers['last-event-id'] ?? 0);
         const desde = Number.isFinite(bruto) && bruto > 0 ? Math.floor(bruto) : 0;
         return sse(req, res, m[1], desde);
@@ -195,7 +195,7 @@ export function criarServidor({ repoRoot, runManager, token, diagnostico }) {
       }
     }
 
-    throw new ErroRequisicao('rota nao encontrada', 404);
+    throw new ErroRequisicao('rota não encontrada', 404);
   }
 
   const servidor = createServer((req, res) => {
@@ -222,23 +222,36 @@ function abrirNavegador(url) {
   } catch { /* o aluno abre o endereço manualmente */ }
 }
 
-// Ctrl+C / SIGTERM: os claude rodam em grupos de processos próprios (detached),
+// Ctrl+C / SIGTERM / SIGHUP: os claude rodam em grupos de processos próprios (detached),
 // então o sinal não chega a eles. Cancela tudo, fecha as conexões e sai.
-export function instalarEncerramento({ servidor, runManager, processo = process, sair = process.exit }) {
+export function instalarEncerramento({
+  servidor, runManager, processo = process, sair = process.exit, timeoutMs = 5000,
+}) {
   let encerrando = false;
   const encerrar = async () => {
-    if (encerrando) return;
+    // Segundo sinal: o aluno quer sair já, mesmo que o encerramento ordenado trave.
+    if (encerrando) { sair(1); return; }
     encerrando = true;
+    let timer;
     try {
-      await runManager.encerrarTodos();
+      await Promise.race([
+        runManager.encerrarTodos(),
+        new Promise((_, ko) => {
+          timer = setTimeout(() => ko(new Error('tempo esgotado')), timeoutMs);
+          timer.unref();
+        }),
+      ]);
     } catch (e) {
       console.error(`painel: falha ao encerrar runs: ${e.message}`);
+    } finally {
+      clearTimeout(timer);
     }
     servidor.closeAllConnections();
     servidor.close();
     sair(0);
   };
-  for (const sinal of ['SIGINT', 'SIGTERM']) processo.on(sinal, encerrar);
+  // SIGHUP: fechar a janela do terminal; sem tratá-lo os claude (detached) ficariam órfãos.
+  for (const sinal of ['SIGINT', 'SIGTERM', 'SIGHUP']) processo.on(sinal, encerrar);
   return encerrar;
 }
 

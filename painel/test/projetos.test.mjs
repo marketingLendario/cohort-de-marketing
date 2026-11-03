@@ -95,3 +95,20 @@ test('lerFrontmatter colapsa descricao multiparagrafo (formato real do copy-funi
   assert.equal(d, 'A FUNDACAO da copy do funil. O resultado vira a fonte.');
   assert.equal(lerFrontmatter('---\ndescription: foo\n  bar\nname: x\n---\n').description, 'foo bar');
 });
+
+test('projetoDir exige o nome exato do diretório (sem variar maiúsculas)', () => {
+  const r = mkdtempSync(join(tmpdir(), 'painel-caixa-'));
+  mkdirSync(join(r, 'projetos', 'demo'), { recursive: true });
+  assert.ok(projetoDir(r, 'demo').endsWith('demo'));
+  assert.throws(() => projetoDir(r, 'DEMO'), CaminhoInvalido);
+  assert.throws(() => projetoDir(r, 'Demo'), CaminhoInvalido);
+});
+
+test('mensagens de erro de caminho saem acentuadas', () => {
+  const r = repo();
+  assert.throws(() => projetoDir(r, '../x'), /projeto inválido/);
+  assert.throws(() => projetoDir(r, 'nao-existe'), /projeto não encontrado/);
+  assert.throws(() => lerArquivo(projetoDir(r, 'alfa'), '.painel/meta.json'), /caminho não permitido/);
+  assert.throws(() => lerArquivo(projetoDir(r, 'beta'), 'sub'), /não é arquivo/);
+  assert.throws(() => lerArquivo(projetoDir(r, 'beta'), '../alfa/x'), /fora do diretório permitido/);
+});

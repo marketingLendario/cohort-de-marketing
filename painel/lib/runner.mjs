@@ -63,7 +63,7 @@ export class RunManager {
     if (run.meta.estado === 'na_fila' || run.meta.estado === 'executando') {
       throw new ErroRequisicao('run em andamento', 409);
     }
-    if (!run.meta.sessionId) throw new ErroRequisicao('run sem sessao para continuar', 409);
+    if (!run.meta.sessionId) throw new ErroRequisicao('run sem sessão para continuar', 409);
     run.meta.perguntaPendente = null;
     run.cancelado = false;
     this.#emitir(run, { tipo: 'usuario', texto });
@@ -86,7 +86,7 @@ export class RunManager {
       this.#encerrar(run);
       return;
     }
-    throw new ErroRequisicao('run nao esta em andamento', 409);
+    throw new ErroRequisicao('run não está em andamento', 409);
   }
 
   obter(id) {
@@ -134,14 +134,14 @@ export class RunManager {
     try {
       return projetoDir(this.repoRoot, slug);
     } catch (e) {
-      if (e instanceof CaminhoInvalido) throw new ErroRequisicao('projeto invalido');
+      if (e instanceof CaminhoInvalido) throw new ErroRequisicao('projeto inválido');
       throw e;
     }
   }
 
   #exigir(id) {
     const run = this.#carregar(id);
-    if (!run) throw new ErroRequisicao('run nao encontrado', 404);
+    if (!run) throw new ErroRequisicao('run não encontrado', 404);
     return run;
   }
 
@@ -268,7 +268,7 @@ export class RunManager {
         } else if (resultado?.ok) {
           this.#mudarEstado(run, run.meta.perguntaPendente ? 'aguardando_resposta' : 'concluido');
         } else {
-          run.meta.erro = resultado?.texto || stderr.trim() || `claude saiu com codigo ${codigo}`;
+          run.meta.erro = resultado?.texto || stderr.trim() || `claude saiu com código ${codigo}`;
           this.#emitir(run, { tipo: 'erro', mensagem: run.meta.erro });
           this.#mudarEstado(run, 'erro');
         }

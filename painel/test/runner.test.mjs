@@ -297,3 +297,19 @@ test('totalOuvintes reflete assinaturas e cancelamentos', async () => {
   assert.equal(m.totalOuvintes(id), 0);
   await esperar(() => estadoDe(m, id) === 'concluido');
 });
+
+test('slug com outra caixa não burla a fila nem o diretório do projeto', () => {
+  const m = novoManager(RunManager, criarRepo());
+  assert.throws(() => m.iniciar({ skill: 'avatar-funil', slug: 'DEMO' }),
+    (e) => e instanceof ErroRequisicao && e.status === 400 && /projeto inválido/.test(e.message));
+  assert.throws(() => m.listar('DEMO'), ErroRequisicao);
+});
+
+test('mensagens de erro do runner saem acentuadas', async () => {
+  const m = novoManager(RunManager, criarRepo());
+  assert.throws(() => m.cancelar('00000000-0000-0000-0000-000000000000'), /run não encontrado/);
+  const { id } = m.iniciar({ skill: 'avatar-funil', slug: 'demo' });
+  await esperar(() => estadoDe(m, id) === 'concluido');
+  assert.throws(() => m.cancelar(id), /run não está em andamento/);
+  assert.throws(() => m.iniciar({ skill: 'avatar-funil', slug: '../x' }), /projeto inválido/);
+});

@@ -42,14 +42,14 @@ export function listarArquivos(dir, { maxProfundidade = 6, maxItens = 2000 } = {
 }
 
 export function lerArquivo(dir, rel) {
-  if (typeof rel !== 'string') throw new CaminhoInvalido('caminho nao permitido');
+  if (typeof rel !== 'string') throw new CaminhoInvalido('caminho não permitido');
   const abs = resolveInside(dir, rel);
   const segmentos = relative(realpathSync(dir), abs).split(/[\\/]+/);
   if (segmentos.some((p) => IGNORAR.has(p.toLowerCase()))) {
-    throw new CaminhoInvalido('caminho nao permitido');
+    throw new CaminhoInvalido('caminho não permitido');
   }
   const st = statSync(abs);
-  if (!st.isFile()) throw new CaminhoInvalido('nao e arquivo');
+  if (!st.isFile()) throw new CaminhoInvalido('não é arquivo');
   if (st.size > MAX_BYTES) throw new CaminhoInvalido('arquivo grande demais');
   return {
     conteudo: readFileSync(abs),

@@ -22,7 +22,7 @@ export function criarArquivos({ arvore, visualizador, obterProjeto }) {
 
   async function textoDe(slug, caminho) {
     const r = await fetch(urlArquivo(slug, caminho));
-    if (!r.ok) throw new Error(`erro ${r.status}`);
+    if (!r.ok) throw new Error(`Não foi possível concluir a operação (${r.status})`);
     return r.text();
   }
 

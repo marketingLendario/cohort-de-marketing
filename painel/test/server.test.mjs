@@ -303,3 +303,76 @@ test('encerramento: SIGTERM cancela runs, fecha SSE e sai', async () => {
   }
   assert.equal(fechou, true, 'a conexão SSE deve ter sido fechada');
 });
+
+test('slug com outra caixa é rejeitado nas rotas de projeto', async () => {
+  assert.equal((await chamar('/api/projetos/DEMO/arquivos')).status, 400);
+  assert.equal((await chamar('/api/projetos/DEMO/arquivo?path=avatar.html')).status, 400);
+  assert.equal((await chamar('/api/projetos/DEMO/runs')).status, 400);
+  assert.equal((await chamar('/api/projetos/demo/arquivos')).status, 200);
+});
+
+test('erros da API saem em português acentuado', async () => {
+  const msg = async (r) => (await r.json()).erro;
+  assert.equal(await msg(await chamar('/api/nada')), 'rota não encontrada');
+  assert.equal(await msg(await chamar('/api/runs/abc')), 'run não encontrado');
+  assert.equal(await msg(await chamar('/api/projetos', { token: 'x' })), 'token inválido');
+  assert.equal(await msg(await chamar('/api/projetos/demo/arquivo?path=%2E%2E%2Fx')), 'fora do diretório permitido');
+  const mal = await fetch(`${base}/api/runs`, {
+    method: 'POST', headers: { 'x-painel-token': TOKEN, 'content-type': 'application/json' }, body: '{',
+  });
+  assert.equal(await msg(mal), 'json inválido');
+});
+
+function falsoRunManager(encerrarTodos) {
+  return { encerrarTodos };
+}
+function falsoServidor() {
+  return { closeAllConnections() {}, close() {} };
+}
+
+test('encerramento: SIGHUP também encerra os runs e sai', async () => {
+  const fakeProc = new EventEmitter();
+  let chamadas = 0;
+  const saidas = [];
+  const fim = new Promise((ok) => {
+    instalarEncerramento({
+      servidor: falsoServidor(), runManager: falsoRunManager(async () => { chamadas++; }),
+      processo: fakeProc, sair: (c) => { saidas.push(c); ok(); },
+    });
+  });
+  fakeProc.emit('SIGHUP');
+  await fim;
+  assert.equal(chamadas, 1);
+  assert.deepEqual(saidas, [0]);
+});
+
+test('encerramento: segundo sinal força a saída com código 1', async () => {
+  const fakeProc = new EventEmitter();
+  const saidas = [];
+  const forcou = new Promise((ok) => {
+    instalarEncerramento({
+      servidor: falsoServidor(), runManager: falsoRunManager(() => new Promise(() => {})),
+      processo: fakeProc, timeoutMs: 60000, sair: (c) => { saidas.push(c); ok(); },
+    });
+  });
+  fakeProc.emit('SIGINT');
+  assert.deepEqual(saidas, []);
+  fakeProc.emit('SIGINT');
+  await forcou;
+  assert.deepEqual(saidas, [1]);
+});
+
+test('encerramento: encerrarTodos que trava não impede a saída (timeout)', async (t) => {
+  t.mock.method(console, 'error', () => {});
+  const fakeProc = new EventEmitter();
+  const saidas = [];
+  const fim = new Promise((ok) => {
+    instalarEncerramento({
+      servidor: falsoServidor(), runManager: falsoRunManager(() => new Promise(() => {})),
+      processo: fakeProc, timeoutMs: 30, sair: (c) => { saidas.push(c); ok(); },
+    });
+  });
+  fakeProc.emit('SIGTERM');
+  await fim;
+  assert.deepEqual(saidas, [0]);
+});

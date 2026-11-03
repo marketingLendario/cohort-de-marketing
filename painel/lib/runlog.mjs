@@ -14,7 +14,7 @@ function pasta(dir) {
 
 // Caminho de escrita: valida o id e cria a pasta somente apos a resolucao segura.
 function arquivoEscrita(dir, id, sufixo) {
-  if (!idValido(id)) throw new CaminhoInvalido('id de run invalido');
+  if (!idValido(id)) throw new CaminhoInvalido('id de run inválido');
   const base = pasta(dir);
   mkdirSync(base, { recursive: true });
   return resolveInside(dir, `.painel/runs/${id}${sufixo}`);
