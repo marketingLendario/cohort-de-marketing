@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, realpathSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { resolveInside, CaminhoInvalido } from '../lib/paths.mjs';
@@ -45,4 +45,23 @@ test('rejeita symlink que escapa da base', () => {
   const { base, fora } = fixture();
   symlinkSync(fora, join(base, 'atalho'));
   assert.throws(() => resolveInside(base, 'atalho/segredo.txt'), CaminhoInvalido);
+});
+
+test('rejeita symlink de diretorio que escapa em arquivo inexistente', () => {
+  const { base, fora } = fixture();
+  symlinkSync(fora, join(base, 'atalho'));
+  assert.throws(() => resolveInside(base, 'atalho/novo.txt'), CaminhoInvalido);
+});
+
+test('rejeita symlink quebrado dentro da base', () => {
+  const { base, fora } = fixture();
+  symlinkSync(join(fora, 'nao-existe'), join(base, 'quebrado'));
+  assert.throws(() => resolveInside(base, 'quebrado'), CaminhoInvalido);
+});
+
+test('caminho inexistente aninhado dentro da base resolve sob a base real', () => {
+  const { base } = fixture();
+  const r = resolveInside(base, 'a/b/c.md');
+  assert.ok(r.startsWith(realpathSync(base)));
+  assert.ok(r.endsWith(join('a', 'b', 'c.md')));
 });
